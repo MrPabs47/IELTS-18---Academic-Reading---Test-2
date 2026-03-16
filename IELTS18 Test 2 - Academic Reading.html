@@ -1,0 +1,3530 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>IELTS Pabs Reading Test 2 – General Training – IELTS 19</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <style>
+    :root {
+      --bg: #ffffff;
+      --bg-secondary: #f5f5f5;
+      --text: #111111;
+      --text-soft: #555555;
+      --accent: #0057b8;
+      --accent-soft: #e5f0ff;
+      --border: #dddddd;
+      --highlight: #ffcc66;
+      --note-underline: #ff9900;
+      --danger: #c62828;
+      --correct: #1b5e20;
+      --incorrect: #b71c1c;
+      --orange: #ff9800;
+      --part-bg: #f2f2f2;
+      --part-active-bg: #ffffff;
+      --shadow-soft: 0 2px 10px rgba(0,0,0,0.08);
+      --font-size-base: 15px;
+    }
+
+    /* Themes */
+    body[data-theme="white-on-black"] {
+      --bg: #000000;
+      --bg-secondary: #111111;
+      --text: #ffffff;
+      --text-soft: #dddddd;
+      --border: #333333;
+      --accent: #90caf9;
+      --accent-soft: #1a237e;
+      --highlight: #ffcc66;
+      --note-underline: #ffcc66;
+      --part-bg: #111111;
+      --part-active-bg: #000000;
+      --shadow-soft: 0 2px 10px rgba(0,0,0,0.6);
+    }
+
+    body[data-theme="yellow-on-black"] {
+      --bg: #000000;
+      --bg-secondary: #111111;
+      --text: #ffff66;
+      --text-soft: #fff59d;
+      --border: #333333;
+      --accent: #fff176;
+      --accent-soft: #424242;
+      --highlight: #ffeb3b;
+      --note-underline: #ffeb3b;
+      --part-bg: #111111;
+      --part-active-bg: #000000;
+      --shadow-soft: 0 2px 10px rgba(0,0,0,0.6);
+    }
+
+    body {
+      margin: 0;
+      font-family: Arial, Helvetica, system-ui, -apple-system, "Segoe UI", sans-serif;
+      font-size: var(--font-size-base);
+      background: var(--bg);
+      color: var(--text);
+      overscroll-behavior: none;
+    }
+
+    body.font-large {
+      --font-size-base: 18px;
+    }
+    body.font-xlarge {
+      --font-size-base: 20px;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    /* Mode overlay (test vs study) */
+    #modeScreen {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.6);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 2000;
+    }
+
+    #modeScreenInner {
+      background: var(--bg);
+      color: var(--text);
+      padding: 24px 28px;
+      border-radius: 12px;
+      max-width: 480px;
+      box-shadow: var(--shadow-soft);
+    }
+
+    #modeScreenInner h1 {
+      margin-top: 0;
+      margin-bottom: 8px;
+      font-size: 1.4rem;
+    }
+
+    #modeScreenInner p {
+      margin-top: 0;
+      margin-bottom: 12px;
+      color: var(--text-soft);
+    }
+
+    .mode-buttons {
+      display: flex;
+      gap: 12px;
+      margin-top: 8px;
+      flex-wrap: wrap;
+    }
+
+    .mode-btn {
+      flex: 1 1 140px;
+      padding: 10px 14px;
+      border-radius: 999px;
+      border: 1px solid var(--accent);
+      background: var(--accent-soft);
+      color: var(--accent);
+      font-weight: 600;
+      cursor: pointer;
+      text-align: center;
+      transition: background 0.15s, transform 0.05s;
+    }
+
+    .mode-btn.secondary {
+      background: transparent;
+      color: var(--accent);
+    }
+
+    .mode-btn:hover {
+      background: var(--accent);
+      color: #fff;
+      transform: translateY(-1px);
+    }
+
+    #testStartScreen {
+      display: none;
+      margin-top: 14px;
+      padding-top: 14px;
+      border-top: 1px solid var(--border);
+    }
+
+    #testStartScreen label {
+      display: block;
+      font-weight: 600;
+      margin-bottom: 8px;
+    }
+
+    #studentNameInput {
+      max-width: 100%;
+      margin-bottom: 10px;
+    }
+
+    #app {
+      display: none;
+    }
+
+    /* Top bar */
+    .top-bar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 56px;
+      background: var(--bg-secondary);
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 20px;
+      z-index: 1000;
+    }
+
+    .top-left {
+      display: flex;
+      align-items: baseline;
+      gap: 16px;
+    }
+
+    .logo {
+      font-weight: 800;
+      font-size: 1.4rem;
+      letter-spacing: 0.08em;
+    }
+
+    .test-title {
+      font-size: 0.95rem;
+      color: var(--text-soft);
+    }
+
+    .top-right {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      font-size: 0.9rem;
+    }
+
+    #timerContainer {
+      display: none;
+    }
+
+    #timerDisplay {
+      font-weight: 600;
+    }
+
+    .timer-warning {
+      color: var(--danger);
+    }
+
+    #timerContainer.timer-expired {
+      color: var(--danger);
+      font-weight: 700;
+    }
+
+    .icon-group {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .icon {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 26px;
+      height: 26px;
+      color: var(--text-soft);
+    }
+
+    .icon svg,
+    .icon-button svg {
+      width: 22px;
+      height: 22px;
+      display: block;
+      stroke: currentColor;
+    }
+
+    .icon-button {
+      border: none;
+      background: none;
+      padding: 4px 8px;
+      cursor: pointer;
+      color: var(--text-soft);
+      font-size: 1.3rem;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .icon-button:hover {
+      color: var(--accent);
+    }
+
+    #fullscreenBtn.is-active {
+      color: var(--accent);
+    }
+
+    #fullscreenBtn:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
+
+    .icon-button.with-label {
+      gap: 6px;
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      padding: 6px 10px;
+      font-size: 0.86rem;
+      line-height: 1;
+    }
+
+    #fullscreenSupportNote {
+      display: none;
+      margin-top: 8px;
+      font-size: 0.82rem;
+      color: var(--text-soft);
+    }
+
+    #fullscreenLockOverlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.72);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 2100;
+      pointer-events: all;
+    }
+
+    #fullscreenLockPanel {
+      width: min(520px, 92vw);
+      background: var(--bg);
+      color: var(--text);
+      border-radius: 12px;
+      padding: 20px 22px;
+      box-shadow: var(--shadow-soft);
+      text-align: center;
+    }
+
+    /* Options overlay */
+    #optionsOverlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.55);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 1500;
+    }
+
+    #optionsPanel {
+      background: var(--bg);
+      color: var(--text);
+      width: min(520px, 95vw);
+      padding: 22px 26px;
+      border-radius: 12px;
+      box-shadow: var(--shadow-soft);
+      position: relative;
+    }
+
+    #optionsPanel h2 {
+      margin: 0 0 16px;
+      text-align: center;
+    }
+
+    .options-close {
+      position: absolute;
+      top: 8px;
+      right: 12px;
+      border: none;
+      background: none;
+      font-size: 1.4rem;
+      cursor: pointer;
+      color: var(--text-soft);
+    }
+
+    .options-section {
+      margin-top: 12px;
+      border-top: 1px solid var(--border);
+      padding-top: 10px;
+    }
+
+    .options-section h3 {
+      margin: 4px 0 8px;
+      font-size: 0.95rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--text-soft);
+    }
+
+    .options-list button {
+      width: 100%;
+      text-align: left;
+      padding: 8px 10px;
+      border-radius: 6px;
+      border: 1px solid transparent;
+      background: transparent;
+      color: var(--text);
+      cursor: pointer;
+      margin-bottom: 6px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 0.95rem;
+    }
+
+    .options-list button:hover {
+      border-color: var(--accent);
+      background: var(--accent-soft);
+    }
+
+    .options-list button.active {
+      border-color: var(--accent);
+      background: var(--accent-soft);
+      font-weight: 600;
+      color: var(--text);
+    }
+
+    .submit-button {
+      width: 100%;
+      padding: 10px 14px;
+      border-radius: 999px;
+      border: none;
+      background: #d32f2f;
+      color: #fff;
+      font-weight: 600;
+      cursor: pointer;
+      margin-bottom: 10px;
+      font-size: 1rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+
+    .submit-button:hover {
+      background: #b71c1c;
+    }
+
+    /* Main layout: fixed header + footer, scrollable middle */
+    .main-area {
+      position: fixed;
+      top: 56px;
+      bottom: 64px;
+      left: 0;
+      right: 0;
+      display: flex;
+      justify-content: center;
+      padding: 4px 6px;
+    }
+
+    .main-inner {
+      width: min(1800px, calc(100% - 6px));
+      display: flex;
+      border-radius: 12px;
+      background: var(--bg-secondary);
+      box-shadow: var(--shadow-soft);
+      overflow: hidden;
+      border: none;
+    }
+
+    .pane {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      background: var(--bg);
+    }
+
+    .pane-header {
+      padding: 10px 14px;
+      border-bottom: 1px solid var(--border);
+      background: var(--bg-secondary);
+      font-weight: 600;
+      font-size: 0.98rem;
+    }
+
+    .pane-header span {
+      font-weight: 400;
+      color: var(--text-soft);
+      margin-left: 6px;
+      font-size: 0.9rem;
+    }
+
+    .pane-content {
+      flex: 1;
+      padding: 14px 18px;
+      overflow-y: auto;
+      position: relative;
+    }
+
+    .passage-section h2 {
+      margin-top: 0;
+      margin-bottom: 8px;
+      font-size: 1.1rem;
+    }
+
+    .passage-section h3 {
+      margin-bottom: 6px;
+      margin-top: 18px;
+      font-size: 1rem;
+    }
+
+    .passage-section p {
+      margin: 4px 0;
+      line-height: 1.45;
+    }
+
+    .passage-divider {
+      margin: 24px 0 20px;
+      border-top: 1px solid var(--border);
+      padding-top: 18px;
+    }
+
+    .instruction-block {
+      margin-bottom: 10px;
+    }
+
+    .instruction-block p {
+      margin: 4px 0;
+      line-height: 1.45;
+    }
+
+    .instruction-block .instruction-title,
+    .instruction-block .instruction-subtitle {
+      font-size: inherit;
+      font-weight: inherit;
+      margin: 4px 0;
+    }
+
+    .instruction-block .instruction-note {
+      font-style: italic;
+    }
+
+    .question-block {
+      margin-bottom: 10px;
+      padding: 6px 8px;
+      border-radius: 8px;
+      border: 1px solid transparent;
+      background: transparent;
+    }
+
+    .question-block.current-question {
+      border-color: var(--accent);
+      background: var(--accent-soft);
+    }
+
+    .question-block.correct {
+      border-color: var(--correct);
+      background: rgba(67,160,71,0.08);
+    }
+
+    .question-block.incorrect {
+      border-color: var(--incorrect);
+      background: rgba(229,57,53,0.06);
+    }
+
+    .question-number-label {
+      font-weight: 600;
+      margin-right: 6px;
+    }
+
+    .question-text {
+      margin-bottom: 4px;
+    }
+
+    .options-row {
+      margin-top: 8px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .options-row label {
+      display: block;
+      padding: 6px 8px;
+      border-radius: 8px;
+      margin: 0;
+      cursor: pointer;
+      background: var(--bg-secondary);
+      border: 1px solid var(--border);
+    }
+
+    select,
+    input[type="text"] {
+      padding: 6px 8px;
+      border-radius: 6px;
+      border: 1px solid var(--border);
+      font-size: 0.95rem;
+      width: 100%;
+      max-width: 260px;
+      background: var(--bg);
+      color: var(--text);
+    }
+
+    select option,
+    select optgroup {
+      background: var(--bg);
+      color: var(--text);
+    }
+
+    input::placeholder,
+    textarea::placeholder {
+      color: var(--text-soft);
+      opacity: 0.9;
+    }
+
+    select:focus,
+    input[type="text"]:focus {
+      outline: 2px solid var(--accent);
+      outline-offset: 1px;
+    }
+
+    .inline-input {
+      position: relative;
+      display: inline-block;
+      vertical-align: middle;
+      min-width: 85px;
+      max-width: 170px;
+    }
+
+    .inline-input::before {
+      content: attr(data-q);
+      position: absolute;
+      left: 1px;
+      top: 1px;
+      bottom: 1px;
+      width: 34px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: 0.85rem;
+      color: var(--text-soft);
+      background: var(--bg-secondary);
+      border-right: 1px solid var(--border);
+      border-radius: 5px 0 0 5px;
+      pointer-events: none;
+    }
+
+    .inline-input input {
+      width: 100%;
+      padding-left: 46px;
+      height: 34px;
+      line-height: 34px;
+    }
+
+    .drag-bank {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin: 10px 0 14px;
+      padding: 10px;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      background: var(--bg-secondary);
+    }
+
+    .drag-item {
+      min-height: 36px;
+      padding: 8px 14px;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      border: 1px solid var(--border);
+      background: var(--bg);
+      cursor: grab;
+      user-select: none;
+    }
+
+    .drag-item.selected {
+      outline: 2px solid var(--accent);
+      outline-offset: 1px;
+    }
+
+    .drag-hint {
+      color: var(--text-soft);
+      font-size: 0.9rem;
+    }
+
+    .drop-zone {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 180px;
+      height: 34px;
+      padding: 0 10px;
+      border-radius: 8px;
+      border: 1px dashed var(--border);
+      background: var(--bg);
+      font-weight: 700;
+      margin-top: 6px;
+    }
+
+    .drop-zone.filled {
+      border-style: solid;
+      border-color: var(--accent);
+      background: var(--accent-soft);
+    }
+
+    .drop-zone.over {
+      border-color: var(--accent);
+    }
+
+    .correct-answer-text {
+      margin-top: 4px;
+      font-size: 0.85rem;
+      color: var(--correct);
+      display: none;
+    }
+
+    /* Bottom navigation */
+    .bottom-nav {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background: var(--bg-secondary);
+      border-top: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      padding: 4px 10px;
+      font-size: 0.92rem;
+      z-index: 900;
+    }
+
+    .bottom-row {
+      width: 100%;
+    }
+
+    /* Bottom navigation */
+    .bottom-nav {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background: var(--bg-secondary);
+      border-top: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      padding: 4px 10px;
+      font-size: 0.92rem;
+      z-index: 900;
+    }
+
+    .bottom-row {
+      width: 100%;
+    }
+
+    .bottom-row-v2 {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      width: 100%;
+    }
+
+    .bottom-left {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      flex: 1;
+      min-width: 0;
+    }
+
+    .part-summary-row {
+      display: flex;
+      gap: 8px;
+      min-width: 320px;
+    }
+
+    #questionNumbers {
+      display: flex;
+      flex: 1;
+      flex-wrap: nowrap;
+      overflow-x: auto;
+      gap: 5px;
+      padding: 1px 5px;
+      min-width: 0;
+      justify-content: flex-start;
+    }
+
+    .part-chip {
+      padding: 6px 12px;
+      border-radius: 999px;
+      background: var(--part-bg);
+      border: 1px solid transparent;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 0.94rem;
+      justify-content: center;
+      transition: background 0.1s, border-color 0.1s, color 0.1s;
+      text-align: center;
+      width: 100%;
+      min-height: 44px;
+      white-space: nowrap;
+    }
+
+    .part-chip span.count {
+      color: var(--text-soft);
+      font-size: 0.85rem;
+      white-space: nowrap;
+    }
+
+    .part-chip.active {
+      background: var(--part-active-bg);
+      border-color: var(--accent);
+      font-weight: 600;
+    }
+
+    .part-chip.complete {
+      border-color: var(--correct);
+      color: var(--correct);
+    }
+
+    .part-chip.partial {
+      border-color: var(--orange);
+      color: var(--orange);
+    }
+
+    .part-chip.unopened {
+      color: var(--text-soft);
+      border-color: transparent;
+    }
+
+    #questionNumbers {
+      scroll-behavior: smooth;
+    }
+
+    .qnav {
+      min-width: 30px;
+      padding: 4px 7px;
+      border-radius: 8px;
+      text-align: center;
+      border: 1px solid var(--border);
+      background: var(--bg);
+      cursor: pointer;
+      font-size: 0.9rem;
+      font-weight: 700;
+      flex-shrink: 0;
+    }
+
+    .qnav.current {
+      border-color: var(--accent);
+      background: var(--accent-soft);
+      font-weight: 600;
+    }
+
+    .qnav.answered {
+      border-color: var(--correct);
+      background: rgba(67,160,71,0.22);
+    }
+
+    .qnav.unanswered {
+      opacity: 0.7;
+    }
+
+    .section-arrows {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .arrow-btn,
+    .check-btn {
+      border-radius: 6px;
+      border: none;
+      padding: 5px 10px;
+      cursor: pointer;
+      font-size: 0.9rem;
+      background: var(--bg-secondary);
+      border: 1px solid var(--border);
+      color: var(--text);
+    }
+
+    .arrow-btn:hover {
+      border-color: var(--accent);
+      background: var(--accent-soft);
+    }
+
+    .check-btn {
+      background: var(--accent);
+      color: #fff;
+      border-color: var(--accent);
+      font-weight: 600;
+    }
+
+    .check-btn:hover {
+      background: #00429b;
+    }
+
+    /* Highlight & notes toolbar */
+    #selectionToolbar {
+      position: absolute;
+      padding: 4px 6px;
+      background: #222;
+      color: #fff;
+      border-radius: 999px;
+      display: none;
+      z-index: 1200;
+      font-size: 0.8rem;
+      gap: 4px;
+    }
+
+    #selectionToolbar button {
+      border: none;
+      background: transparent;
+      color: inherit;
+      padding: 4px 8px;
+      border-radius: 999px;
+      cursor: pointer;
+      font-size: 0.8rem;
+    }
+
+    #selectionToolbar button:hover {
+      background: rgba(255,255,255,0.18);
+    }
+
+    .highlighted {
+      background: var(--highlight);
+    }
+
+    .note-anchor {
+      text-decoration: underline;
+      text-decoration-color: var(--note-underline);
+      text-decoration-style: solid;
+      text-decoration-thickness: 2px;
+      position: relative;
+      cursor: pointer;
+    }
+
+    .note-anchor .note-delete {
+      position: absolute;
+      top: -10px;
+      right: -10px;
+      width: 16px;
+      height: 16px;
+      border-radius: 50%;
+      border: none;
+      font-size: 0.7rem;
+      padding: 0;
+      line-height: 16px;
+      text-align: center;
+      background: var(--danger);
+      color: #fff;
+      display: none;
+      cursor: pointer;
+    }
+
+    .note-anchor:hover .note-delete {
+      display: inline-block;
+    }
+
+    .note-window {
+      position: absolute;
+      min-width: 200px;
+      min-height: 120px;
+      max-width: 340px;
+      background: var(--bg);
+      color: var(--text);
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      box-shadow: var(--shadow-soft);
+      z-index: 1300;
+      display: flex;
+      flex-direction: column;
+      resize: both;
+      overflow: hidden;
+    }
+
+    .note-header {
+      padding: 4px 8px;
+      border-bottom: 1px solid var(--border);
+      background: var(--bg-secondary);
+      cursor: move;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 0.8rem;
+    }
+
+    .note-body {
+      flex: 1;
+      padding: 6px;
+    }
+
+    .note-body textarea {
+      width: 100%;
+      height: 100%;
+      border: none;
+      outline: none;
+      background: transparent;
+      color: inherit;
+      resize: none;
+      font-size: 0.85rem;
+    }
+
+    .note-footer {
+      padding: 4px 6px;
+      text-align: right;
+      border-top: 1px solid var(--border);
+    }
+
+    .note-footer button {
+      border: none;
+      background: none;
+      color: var(--accent);
+      cursor: pointer;
+      font-size: 0.8rem;
+    }
+
+    /* Results overlay */
+    #resultsOverlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.6);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 1600;
+    }
+
+    #resultsPanel {
+      background: var(--bg);
+      color: var(--text);
+      padding: 22px 26px;
+      border-radius: 12px;
+      box-shadow: var(--shadow-soft);
+      max-width: 520px;
+      width: 95vw;
+    }
+
+    #resultsPanel h2 {
+      margin-top: 0;
+      margin-bottom: 10px;
+    }
+
+    #resultsPanel p {
+      margin: 6px 0;
+    }
+
+    #shortcutToast {
+      position: fixed;
+      left: 50%;
+      bottom: 86px;
+      transform: translateX(-50%);
+      padding: 9px 14px;
+      border-radius: 999px;
+      border: 1px solid var(--border);
+      background: var(--bg-secondary);
+      color: var(--text);
+      font-size: 0.85rem;
+      box-shadow: var(--shadow-soft);
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.2s ease;
+      z-index: 1600;
+    }
+
+    #shortcutToast.visible {
+      opacity: 1;
+    }
+
+    /* Utility */
+    .sr-only {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      padding: 0;
+      margin: -1px;
+      overflow: hidden;
+      clip: rect(0,0,0,0);
+      white-space: nowrap;
+      border: 0;
+    }
+
+    @media (max-width: 900px) {
+      .main-inner {
+        flex-direction: column;
+      }
+      .divider {
+        display: none;
+      }
+    }
+
+    .divider {
+      width: 18px;
+      min-width: 18px;
+      background: linear-gradient(90deg, transparent 0, transparent 6px, rgba(120,120,120,0.35) 6px, rgba(120,120,120,0.35) 12px, transparent 12px, transparent 100%);
+      cursor: col-resize;
+      position: relative;
+      touch-action: none;
+    }
+
+    .divider::after {
+      content: "⇄";
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 34px;
+      height: 34px;
+      border-radius: 50%;
+      border: 2px solid #0d3d73;
+      background: #03284f;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.3rem;
+      line-height: 1;
+      color: #fff;
+      opacity: 0.98;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.2);
+    }
+
+    .question-text.gap-fill {
+      display: block;
+      line-height: 1.35;
+    }
+
+    .gap-bullet {
+      display: inline-block;
+      font-size: 1.2rem;
+      line-height: 1;
+      margin-right: 8px;
+      vertical-align: top;
+    }
+
+    .gap-answer-tail {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      white-space: nowrap;
+    }
+
+    .drop-zone-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-top: 6px;
+    }
+
+    .clear-drop-btn {
+      border: 1px solid var(--border);
+      background: var(--bg-secondary);
+      color: var(--text);
+      border-radius: 6px;
+      padding: 4px 8px;
+      cursor: pointer;
+      font-size: 0.82rem;
+    }
+  </style>
+</head>
+<body data-theme="black-on-white">
+  <!-- Mode selection -->
+  <div id="modeScreen">
+    <div id="modeScreenInner">
+      <h1>IELTS Reading Simulation</h1>
+      <p>Select how you want to use this test.</p>
+      <div class="mode-buttons">
+        <button
+          class="mode-btn"
+          data-mode="test"
+          type="button"
+          
+        >
+          Test mode (exam conditions)
+        </button>
+        <button
+          class="mode-btn secondary"
+          data-mode="study"
+          type="button"
+          
+        >
+          Study mode (show feedback)
+        </button>
+      </div>
+      <p style="font-size:0.8rem;margin-top:10px;color:var(--text-soft);">
+        In both modes you can highlight text and make notes. In Test mode you submit once at the end. In Study mode you can check and change your answers as many times as you like.
+      </p>
+
+      <div id="testStartScreen">
+        <label for="studentNameInput">Your name (for test mode results)</label>
+        <input type="text" id="studentNameInput" placeholder="Enter your full name" maxlength="80" />
+        <button class="mode-btn" type="button" onclick="window.beginTimedTest && window.beginTimedTest()">Start the test now</button>
+        <p id="fullscreenSupportNote">Full screen enforcement is limited on this device.</p>
+      </div>
+    </div>
+  </div>
+
+  <div id="app">
+    <!-- Top bar -->
+    <header class="top-bar">
+      <div class="top-left">
+        <div class="logo">IELTS Pabs</div>
+        <div class="test-title">
+          Reading Test 2 – General Training – Cambridge 19
+        </div>
+      </div>
+      <div class="top-right">
+        <div id="timerContainer" role="status" aria-live="polite" aria-atomic="true" aria-hidden="true"><span id="timerPrefix">Time left:</span> <span id="timerDisplay">60:00</span></div>
+        <div class="icon-group">
+          <span class="icon" title="Connection status">
+            <span class="sr-only">Connection status</span>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M4.93 9.93a10.5 10.5 0 0 1 14.14 0" />
+              <path d="M7.76 12.76a6.5 6.5 0 0 1 8.48 0" />
+              <path d="M10.59 15.59a2.5 2.5 0 0 1 2.82 0" />
+              <path d="M12 18h.01" />
+            </svg>
+          </span>
+          <span class="icon" title="Notifications (mock)">
+            <span class="sr-only">Notifications</span>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M15 17h5l-1.4-1.4A2 2 0 0 1 18 14.17V11a6 6 0 1 0-12 0v3.17a2 2 0 0 1-.59 1.43L4 17h5" />
+              <path d="M9 17a3 3 0 0 0 6 0" />
+            </svg>
+          </span>
+          <button id="fullscreenBtn" class="icon-button with-label" title="Enter full screen" aria-label="Enter full screen" onclick="toggleFullscreen()">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <polyline points="8 3 3 3 3 8"></polyline>
+              <line x1="3" y1="3" x2="9" y2="9"></line>
+              <polyline points="16 21 21 21 21 16"></polyline>
+              <line x1="15" y1="15" x2="21" y2="21"></line>
+              <polyline points="21 8 21 3 16 3"></polyline>
+              <line x1="15" y1="9" x2="21" y2="3"></line>
+              <polyline points="3 16 3 21 8 21"></polyline>
+              <line x1="3" y1="21" x2="9" y2="15"></line>
+            </svg><span id="fullscreenBtnLabel">Full screen</span>
+          </button>
+          <button id="optionsBtn" class="icon-button" title="Options menu" aria-label="Options menu">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="4" y1="7" x2="20" y2="7" />
+              <line x1="4" y1="12" x2="20" y2="12" />
+              <line x1="4" y1="17" x2="16" y2="17" />
+            </svg>
+          </button>
+        </div>
+      </div>
+    </header>
+
+    <!-- Options overlay -->
+    <div id="optionsOverlay">
+      <div id="optionsPanel">
+        <button class="options-close" onclick="toggleOptions(false)">✕</button>
+        <h2>Options</h2>
+
+        <button class="submit-button" onclick="handlePrimarySubmit()">
+          ✔ Submit test &amp; check answers
+        </button>
+
+        <div class="options-section">
+          <h3>Contrast</h3>
+          <div class="options-list">
+            <button id="theme-black-white" onclick="setTheme('black-on-white')">
+              <span>Black on white</span><span>✓</span>
+            </button>
+            <button id="theme-white-black" onclick="setTheme('white-on-black')">
+              <span>White on black</span><span>✓</span>
+            </button>
+            <button id="theme-yellow-black" onclick="setTheme('yellow-on-black')">
+              <span>Yellow on black</span><span>✓</span>
+            </button>
+          </div>
+        </div>
+
+        <div class="options-section">
+          <h3>Text size</h3>
+          <div class="options-list">
+            <button id="font-normal" onclick="setFontSize('normal')">
+              <span>Normal</span><span>✓</span>
+            </button>
+            <button id="font-large" onclick="setFontSize('large')">
+              <span>Large</span><span>✓</span>
+            </button>
+            <button id="font-xlarge" onclick="setFontSize('xlarge')">
+              <span>Extra large</span><span>✓</span>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Main content area -->
+    <div class="main-area">
+      <div class="main-inner">
+        <!-- Passage pane -->
+        <div class="pane" id="passagePane">
+          <div class="pane-header" id="passageHeader">
+            Part 1 <span>Read the text and answer questions 1–14.</span>
+          </div>
+          <div class="pane-content" id="passageContent">
+            <!-- Section 1 passages -->
+            <div class="passage-section" data-section="1">
+              <h2>Local campsites</h2>
+
+              <p><strong>A Prettycoat Farm</strong> This well-known campsite in the wild near Browbourne is a winner with campers who are looking for time out from their fast-paced jobs in the capital. Despite its limited facilities, the site, with its large tent pitches, is an ideal base for exploring the area and driving to the rock museum, the craft workshops or Gaydon Castle. Just follow the signs.</p>
+
+              <p><strong>B Newgammon Wild</strong> This campsite looks like it’s going to be a winner. It only opened last year, but already the website has some very positive reviews from the handful of campers who know about it so far. It offers splendid views over some of the country’s most attractive beaches, which can be accessed by steep, narrow cliff steps. You need a good level of fitness for these, and don’t forget to leave some energy for the return trip at the end of the day.</p>
+
+              <p><strong>C Oakerly Estate</strong> You won’t be disappointed when you reach Oakerly, despite the problems of getting there by car on such narrow roads. You’ll see quite a lot of motorhomes when you hit the clifftop, but there’s still plenty of room for tents on the spacious lawn that also offers a camp kitchen, restaurant and bar. Make sure you stay safe and pitch your tent within the white line around the cliff edge, though.</p>
+
+              <p><strong>D South Turnbull</strong> The emphasis at this site is on back-to-basics camping. It’s advisable to come in a group as there are few facilities and you need to do all your own cooking. The area is rather exposed, and in periods of bad weather it can’t be reached at all so check on the website before you go.</p>
+
+              <p><strong>E Boxer Trepis</strong> The 20-metre high rockfaces that surround this site are especially attractive to rock climbers, who come here to camp from hundreds of miles away so that they can attempt the climb – and not always with success, according to the website! It’s not compulsory, of course, and there are plenty of other activities for campers to get involved in, such as birdwatching and bathing in the sea.</p>
+
+              <div class="passage-divider">
+              <h2>Durridge Heights (OH) Newsletter</h2>
+
+              <p><em>Newsletter for people living in the seven-storey block of flats at Durridge Heights</em></p>
+
+              <p><strong>Water penetration</strong> As a result of the recent heavy rains, water has seeped through the walls of some flats and reached a critical level. A decision has been taken to deal with this immediately. Scaffolding will be put up on the middle section of the southern wall, and the brickwork there will be sealed temporarily with a waterproof covering to prevent any further water getting in until the major building works take place next year.</p>
+
+              <p><strong>Fire safety</strong> Following our fire safety inspection, the front doors of individual flats were upgraded or replaced in order to satisfy fire safety regulations. As advised in the previous Newsletter, the decoration of the hall side of the front doors will be incorporated into the Fire Safety Project and will be carried out in due course by the company PRO Builders.</p>
+
+              <p><strong>Internal redecorations</strong> The corridor walls on the inside of the building are redecorated every three years on a rolling basis and are being done this year. Please look out for signs indicating where the paint is wet. If you have children, make sure they keep away from the walls. DH cannot be held responsible for any spoilt clothing.</p>
+
+              <p><strong>Air fresheners</strong> We have received a small number of complaints about smells in the corridors. DH installed air fresheners some years ago. However, they were costly and the liquid in their spray stained the carpets. At present, we would prefer to ask residents to make sure smells cannot escape their front door and to seal rubbish bags when they put them in the corridor for collection and disposal by the caretaker.</p>
+
+              <p><strong>Noise and DIY</strong> While most leaseholders observe the regulations on noise, we have received complaints from others about out-of-hours drilling. Please note that any work involving hammers or electrical tools can only take place between 9.00 am and 5.30 pm on weekdays and between 9.00 am and 12.30 pm on a Saturday. There can be no exceptions to this rule. If you are planning to undertake such work during these hours, it is still polite to inform your neighbours of this so that they can make any necessary arrangements.</p>
+            </div>
+            </div>
+
+            <!-- Section 2 passages -->
+            <div class="passage-section" data-section="2" style="display:none;">
+              <h2>A day in the life of a care worker</h2>
+              <p>Care workers in Britain provide elderly and disabled people with the opportunity to remain independent at home, rather than moving into a care home. For those interested in the work, here is what a typical day could be like for a trained care worker.</p>
+              <p>Care workers often start early, as the first client of the day may need help getting out of bed and putting on their clothes; they may suffer from a condition that prevents them from doing this easily. Providing these services helps clients to look and feel as good as possible when beginning their day. The care worker may then help to cook breakfast for the client, and this is often a good time to enjoy a conversation and catch up on how they are feeling. Many clients appreciate being able to chat to someone regularly, as some may have no family members or friends living nearby. Next, the care worker may take the opportunity to do some basic housework for the client. Housework is often something that elderly people or people with disabilities may not be able to do themselves. Even something as simple as hoovering the living room can make a huge difference to a client’s day. Of course, there may be the breakfast dishes to do as well.</p>
+              <p>Later in the morning, the care worker may move on to another client in order to help them prepare their midday meal. Care workers try to ensure this is healthy because it is so important to keep clients fit and well. When that’s finished, the care worker may help the client to carry out their shopping by going with them to the local supermarket.</p>
+              <p>During the afternoon, a care worker may help a third client with an outdoor activity, which could involve going for a short walk in the local area or taking the laundry to the launderette. Elderly people may not feel confident going far on their own, so having company can be a great help.</p>
+              <p>The care worker may participate in cooking dinner with their last client and, before going home, they may also get out their client’s medication. This ensures the client remembers to take it before going to bed.</p>
+
+              <div class="passage-divider">
+              <h2>How to find a good balance between your work and your personal life</h2>
+              <p>A good work-life balance is beneficial to everyone. But how can it be achieved? The first step is to take a serious look at the amount of time you are devoting to work and set about reducing it. The main benefit most people notice once they stop working too much is an improvement in their general health and wellbeing.</p>
+              <p><strong>Tips for a healthy work-life balance</strong></p>
+              <p>A recent study showed office workers spend approximately 1,700 hours a year in front of a computer. Ensure that your workstation is set up so you’re as comfortable as possible and this will help to minimise the chance of any injuries.</p>
+              <p>Whether it’s making a hot drink, going for a walk or simply chatting with a colleague, regular breaks are vital. Your brain needs a break roughly every 90 minutes or concentration declines, leaving you with difficulty focusing and feeling sleepy.</p>
+              <p>Setting goals for both your professional and personal life is great. Remember though, to make these realistic, because setting an unattainable goal is the quickest way to damage your confidence.</p>
+              <p>Activities such as sports and gymnastics are known to decrease tension and increase endurance, two important factors towards achieving a healthy work-life balance. They also boost your belief that you can do whatever you are faced with.</p>
+              <p>Sometimes it’s easier said than done, but if you’re juggling numerous pieces of work on a daily basis, learning to prioritise is key. Try to break down your work into various categories, depending on how urgent and important each piece of work is. This will help you to plan your day and achieve more.</p>
+              <p>Ensure you have time to do the things that make you happy. If you’ve got nothing nice to look forward to and can only see a long line of work days ahead of you, this can easily become overwhelming and ultimately hinder your productivity.</p>
+              <p>It’s there for a reason and there are no prizes for giving it up, so make sure you take your annual holiday entitlement. You don’t have to be going on an exotic foreign trip – maybe you just fancy a rest day watching films or you want to take some time off to spend with a friend you don’t see enough.</p>
+              <p>Family, friends and favourite pets are the ultimate life enhancers. From evenings out to simply taking a walk in the sunshine, spending time with the ones you love is the best way to unwind fully and feel the effects of a good work-life balance.</p>
+            </div>
+            </div>
+
+            <!-- Section 3 passages -->
+            <div class="passage-section" data-section="3" style="display:none;">
+              <h2>City’s ‘Henry’ programme gives children choices while helping parents stay in the driving seat</h2>
+              <p>Leeds has become the first city in the UK to report a drop in childhood obesity after introducing a programme called ‘Henry’ to help parents set boundaries for their children and put them off sweets and junk food. Only a few cities in the world, notably Amsterdam, have managed to cut child obesity. As in Amsterdam, the decline in Leeds is most marked among families living in the most deprived areas, where the problem is worst and hardest to tackle.</p>
+              <p>‘The improvement in the most deprived children in Leeds is startling,’ said Susan Jebb, a professor of diet and population health at Oxford University, whose team has analysed the city’s data. Over four years, obesity has dropped from 11.5% to 10.5% and the trajectory is steadily downwards. Among the more affluent families, there was also a decline from 6.8% to 6%. Overall the drop was from 9.4% to 8.8%. The data comes from the national child measurement programme (NCMP), which requires all children to be weighed at the start and end of primary school. The biggest decline in obesity in Leeds is 6.4% in the reception class, at about the age of four.</p>
+              <p>No such data has been reported elsewhere in the UK, where childhood obesity is a major concern. The measurement programme shares the progress made in each city with those considered comparable. For Leeds, the 15 closest ‘neighbours’ at the start of its study period in 2009 were Sheffield, Kirklees, Bristol, Newcastle upon Tyne, Coventry, Bolton, Wakefield, Derby, Bradford, Dudley, Medway, Liverpool, Swindon, County Durham and Warrington. The obesity rates there and across the country have not shifted. Susan Jebb added that the dropping rate in Leeds appeared to be a trend. ‘This is four years, not one rogue data point,’ she said at the European Congress on Obesity in Glasgow where she presented the research.</p>
+              <p>Jebb, a former government adviser, says they cannot be sure what has turned the tide in Leeds – but it could involve a programme called ‘Henry’ that the city introduced as the core of its obesity strategy in 2009, focusing particularly on the youngest children and poorest families. ‘Henry’ (Health, Exercise, Nutrition for the Really Young) supports parents in setting boundaries for their children and taking a positive stance on issues from healthy eating to bedtimes.</p>
+              <p>‘Henry’s’ chief executive, Kim Roberts, said the drop in obesity in Leeds was ‘unprecedented … The indicators are that this isn’t happening in other cities’. The programme encourages authoritative rather than authoritarian parenting, she said. ‘Authoritarian parenting is when children are told what to eat and what to do, such as being banned from leaving the table until they have eaten their sprouts,’ said Roberts. ‘Permissive parenting is asking children what they want to do. But ‘Henry’ encourages a third approach known as authoritative parenting, where parents make it clear they are in charge, but also respond to their children.’ Instead of being asked what vegetable they want with dinner, children might be asked whether they would like carrots or broccoli. Instead of being told to go to bed, they are asked where they want to read their story beforehand.</p>
+              <p>Lisa, who joined a ‘Henry’ parenting course when her oldest daughter was two, is enthusiastic about her family’s experience of the programme. She learned a lot about healthy eating, saved money by planning meals and lost two stone herself. ‘I think it made me a better parent because of all the parenting skills stuff. I was able to share some of the ideas with my partner and as a result the kids became calmer and happier, which helped us feel less stressed too,’ she said.</p>
+              <p>Janice Burberry, the head of public health at Leeds city council, said the early years were a good time to intervene to support families. ‘Parents want to do the best for their children,’ she said. ‘We wanted to focus on prevention because it’s very, very difficult when obesity has taken hold to tackle it. We understand that there is no magic bullet here. Parents are experts in their own lives, and they know what they can and can’t achieve. The strategy of ‘Henry’ is about sitting alongside parents and thinking through what’s right for them.’</p>
+              <p>The public health minister, Seema Kennedy, was enthusiastic. ‘There are some fantastic pockets of work happening in early years already, and while still in the early phases, it is encouraging to see what can be achieved locally through interventions like this,’ she said. ‘I know how hard it can be for busy parents to make healthy choices for their families, so anything that can make it easier is a real lifeline.’</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="divider" id="divider"></div>
+
+        <!-- Questions pane -->
+        <div class="pane" id="questionPane">
+          <div class="pane-header" id="questionHeader">
+            SECTION 1 Questions 1–14
+          </div>
+          <div class="pane-content" id="questionContent">
+            <!-- Section 1 questions -->
+            <div data-section="1">
+              <div class="instruction-block">
+                <p><strong>SECTION 1</strong></p>
+                <p><strong>Questions 1–7</strong></p>
+                <p>Look at the five descriptions of campsites, A–E.</p>
+                <p>For which campsite are the following statements true?</p>
+                <p>Choose the correct letter, A–E, in boxes 1–7.</p>
+                <p class="instruction-note">NB You may use any letter more than once.</p>
+              </div>
+
+              <!-- Q1–7 matching -->
+              <div class="question-block" data-q="1">
+                <div class="question-text">
+                  <span class="question-number-label">1.</span>
+                  The site is impossible to get to at certain times.
+                </div>
+                <select name="q1">
+                  <option value="">Select…</option>
+                  <option value="A">A. Prettycoat Farm</option>
+                  <option value="B">B. Newgammon Wild</option>
+                  <option value="C">C. Oakerly Estate</option>
+                  <option value="D">D. South Turnbull</option>
+                  <option value="E">E. Boxer Trepis</option>
+                </select>
+                <div class="correct-answer-text" id="ca-1"></div>
+              </div>
+
+              <div class="question-block" data-q="2">
+                <div class="question-text">
+                  <span class="question-number-label">2.</span>
+                  It is in a convenient place for going by car to various tourist spots.
+                </div>
+                <select name="q2">
+                  <option value="">Select…</option>
+                  <option value="A">A. Prettycoat Farm</option>
+                  <option value="B">B. Newgammon Wild</option>
+                  <option value="C">C. Oakerly Estate</option>
+                  <option value="D">D. South Turnbull</option>
+                  <option value="E">E. Boxer Trepis</option>
+                </select>
+                <div class="correct-answer-text" id="ca-2"></div>
+              </div>
+
+              <div class="question-block" data-q="3">
+                <div class="question-text">
+                  <span class="question-number-label">3.</span>
+                  You should camp somewhere inside the marked zone.
+                </div>
+                <select name="q3">
+                  <option value="">Select…</option>
+                  <option value="A">A. Prettycoat Farm</option>
+                  <option value="B">B. Newgammon Wild</option>
+                  <option value="C">C. Oakerly Estate</option>
+                  <option value="D">D. South Turnbull</option>
+                  <option value="E">E. Boxer Trepis</option>
+                </select>
+                <div class="correct-answer-text" id="ca-3"></div>
+              </div>
+
+              <div class="question-block" data-q="4">
+                <div class="question-text">
+                  <span class="question-number-label">4.</span>
+                  Campers who enjoy a particular physical challenge come here.
+                </div>
+                <select name="q4">
+                  <option value="">Select…</option>
+                  <option value="A">A. Prettycoat Farm</option>
+                  <option value="B">B. Newgammon Wild</option>
+                  <option value="C">C. Oakerly Estate</option>
+                  <option value="D">D. South Turnbull</option>
+                  <option value="E">E. Boxer Trepis</option>
+                </select>
+                <div class="correct-answer-text" id="ca-4"></div>
+              </div>
+
+              <div class="question-block" data-q="5">
+                <div class="question-text">
+                  <span class="question-number-label">5.</span>
+                  The difficult journey to the site is worth the effort.
+                </div>
+                <select name="q5">
+                  <option value="">Select…</option>
+                  <option value="A">A. Prettycoat Farm</option>
+                  <option value="B">B. Newgammon Wild</option>
+                  <option value="C">C. Oakerly Estate</option>
+                  <option value="D">D. South Turnbull</option>
+                  <option value="E">E. Boxer Trepis</option>
+                </select>
+                <div class="correct-answer-text" id="ca-5"></div>
+              </div>
+
+              <div class="question-block" data-q="6">
+                <div class="question-text">
+                  <span class="question-number-label">6.</span>
+                  Few people have heard of this site.
+                </div>
+                <select name="q6">
+                  <option value="">Select…</option>
+                  <option value="A">A. Prettycoat Farm</option>
+                  <option value="B">B. Newgammon Wild</option>
+                  <option value="C">C. Oakerly Estate</option>
+                  <option value="D">D. South Turnbull</option>
+                  <option value="E">E. Boxer Trepis</option>
+                </select>
+                <div class="correct-answer-text" id="ca-6"></div>
+              </div>
+
+              <div class="question-block" data-q="7">
+                <div class="question-text">
+                  <span class="question-number-label">7.</span>
+                  Some physical effort is needed to enjoy nearby coastal areas.
+                </div>
+                <select name="q7">
+                  <option value="">Select…</option>
+                  <option value="A">A. Prettycoat Farm</option>
+                  <option value="B">B. Newgammon Wild</option>
+                  <option value="C">C. Oakerly Estate</option>
+                  <option value="D">D. South Turnbull</option>
+                  <option value="E">E. Boxer Trepis</option>
+                </select>
+                <div class="correct-answer-text" id="ca-7"></div>
+              </div>
+
+              <p><strong>Questions 8–14</strong></p>
+              <p>Do the following statements agree with the information given in the text?</p>
+              <p>In questions 8–14, choose:</p>
+              <p><strong>TRUE</strong> if the statement agrees with the information<br>
+              <strong>FALSE</strong> if the statement contradicts the information<br>
+              <strong>NOT GIVEN</strong> if there is no information on this</p>
+
+              <!-- Q8–14 TRUE/FALSE/NOT GIVEN -->
+              <!-- (rest of questions + sections 2 & 3 will be in Part 2) -->
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- selection toolbar -->
+      <div id="selectionToolbar">
+        <button onclick="toggleHighlightSelection()">Highlight</button>
+        <button onclick="makeNoteForSelection()">Make note</button>
+      </div>
+    </div>
+
+    <!-- Bottom nav -->
+    <footer class="bottom-nav">
+      <div class="bottom-row bottom-row-v2">
+        <div class="bottom-left">
+          <div class="part-summary-row">
+            <div class="part-chip active" data-section-chip="1" onclick="switchSection(1)">
+              Part 1 <span class="count" id="part1Count">0 of 14</span>
+            </div>
+            <div class="part-chip unopened" data-section-chip="2" onclick="switchSection(2)">
+              Part 2 <span class="count" id="part2Count">0 of 13</span>
+            </div>
+            <div class="part-chip unopened" data-section-chip="3" onclick="switchSection(3)">
+              Part 3 <span class="count" id="part3Count">0 of 13</span>
+            </div>
+          </div>
+
+          <div id="questionNumbers"></div>
+        </div>
+
+        <div class="section-arrows">
+          <button class="arrow-btn" onclick="prevSection()" title="Previous part">←</button>
+          <button class="arrow-btn" onclick="nextSection()" title="Next part">→</button>
+          <button class="check-btn" onclick="handlePrimarySubmit()" title="Submit test and check answers">✔ Check answers</button>
+        </div>
+      </div>
+    </footer>
+  </div>
+
+
+  <div id="fullscreenLockOverlay" role="dialog" aria-modal="true" aria-live="assertive">
+    <div id="fullscreenLockPanel">
+      <h2>Test paused</h2>
+      <p>You have left full screen. Return to full screen to continue your test.</p>
+      <button class="mode-btn" type="button" onclick="returnToFullscreenAndResume()">Return to full screen</button>
+    </div>
+  </div>
+
+  <!-- Results overlay -->
+  <div id="resultsOverlay">
+    <div id="resultsPanel">
+      <h2>Your IELTS Reading result</h2>
+      <p id="studentLine"></p>
+      <p id="fullScreenExitLine"></p>
+      <p id="focusViolationLine"></p>
+      <p id="totalTimeLine"></p>
+      <p id="scoreLine"></p>
+      <p id="bandLine"></p>
+      <p id="descriptorLine"></p>
+      <button style="margin-top:10px;" onclick="closeResults()">Close</button>
+    </div>
+  </div>
+
+  <div id="shortcutToast" role="status" aria-live="polite" aria-atomic="true"></div>
+
+  <script>
+    /***************
+     * GLOBAL STATE
+     ***************/
+    let mode = "test"; // "test" or "study"
+    let activeSection = 1;
+    let timerSeconds = 60 * 60;
+    let timerId = null;
+    let testSubmitted = false;
+    let pendingMode = null;
+    let studentName = "";
+    let isTestRunning = false;
+    let isTimerPaused = false;
+    let fullscreenSupported = false;
+    let fullScreenEnforcementEnabled = false;
+    let fullScreenExits = 0;
+    let focusViolations = 0;
+    const visitedSections = new Set();
+
+    const AVAILABLE_THEMES = [
+      "black-on-white",
+      "white-on-black",
+      "yellow-on-black",
+    ];
+    const DEFAULT_THEME = "black-on-white";
+    const STORAGE_KEYS = {
+      theme: "ielts-reading-theme",
+    };
+
+    function restoreThemePreference() {
+      const saved = localStorage.getItem(STORAGE_KEYS.theme);
+      const theme = AVAILABLE_THEMES.includes(saved) ? saved : DEFAULT_THEME;
+      document.body.setAttribute("data-theme", theme);
+    }
+
+    function setTheme(theme) {
+      if (!AVAILABLE_THEMES.includes(theme)) return;
+      document.body.setAttribute("data-theme", theme);
+      localStorage.setItem(STORAGE_KEYS.theme, theme);
+      updateThemeButtons();
+    }
+
+    function updateThemeButtons() {
+      const theme = document.body.getAttribute("data-theme") || DEFAULT_THEME;
+      const map = {
+        "black-on-white": "theme-black-white",
+        "white-on-black": "theme-white-black",
+        "yellow-on-black": "theme-yellow-black",
+      };
+      AVAILABLE_THEMES.forEach((t) => {
+        const id = map[t];
+        const btn = document.getElementById(id);
+        if (!btn) return;
+        if (t === theme) btn.classList.add("active");
+        else btn.classList.remove("active");
+      });
+    }
+
+    function setFontSize(size) {
+      document.body.classList.remove("font-large", "font-xlarge");
+      if (size === "large") document.body.classList.add("font-large");
+      if (size === "xlarge") document.body.classList.add("font-xlarge");
+      updateFontButtons();
+    }
+
+    function updateFontButtons() {
+      const sizeClass = document.body.classList.contains("font-xlarge")
+        ? "xlarge"
+        : document.body.classList.contains("font-large")
+        ? "large"
+        : "normal";
+      ["normal", "large", "xlarge"].forEach((s) => {
+        const btn = document.getElementById("font-" + s);
+        if (!btn) return;
+        if (s === sizeClass) btn.classList.add("active");
+        else btn.classList.remove("active");
+      });
+    }
+
+    const sectionRanges = {
+      1: { from: 1, to: 14 },
+      2: { from: 15, to: 27 },
+      3: { from: 28, to: 40 }
+    };
+
+    const answerKey = {
+      1: "D",
+      2: "A",
+      3: "C",
+      4: "E",
+      5: "C",
+      6: "B",
+      7: "B",
+      8: "TRUE",
+      9: "FALSE",
+      10: "NOT GIVEN",
+      11: "TRUE",
+      12: "FALSE",
+      13: "TRUE",
+      14: "FALSE",
+      15: "condition",
+      16: "conversation",
+      17: "hoovering",
+      18: "healthy",
+      19: "shopping",
+      20: "laundry",
+      21: "wellbeing",
+      22: "injuries",
+      23: "realistic",
+      24: ["prioritise", "prioritize"],
+      25: "productivity",
+      26: "holiday",
+      27: "pets",
+      28: "D",
+      29: "B",
+      30: "D",
+      31: "C",
+      32: "C",
+      33: "A",
+      34: "D",
+      35: "C",
+      36: "boundaries",
+      37: "authoritative",
+      38: "permissive",
+      39: "story",
+      40: "A"
+    };
+
+    const correctAnswerText = {
+      1: "D",
+      2: "A",
+      3: "C",
+      4: "E",
+      5: "C",
+      6: "B",
+      7: "B",
+      8: "TRUE",
+      9: "FALSE",
+      10: "NOT GIVEN",
+      11: "TRUE",
+      12: "FALSE",
+      13: "TRUE",
+      14: "FALSE",
+      15: "condition",
+      16: "conversation",
+      17: "hoovering",
+      18: "healthy",
+      19: "shopping",
+      20: "laundry",
+      21: "wellbeing",
+      22: "injuries",
+      23: "realistic",
+      24: "prioritise / prioritize",
+      25: "productivity",
+      26: "holiday",
+      27: "pets",
+      28: "D",
+      29: "B",
+      30: "D",
+      31: "C",
+      32: "C",
+      33: "A",
+      34: "D",
+      35: "C",
+      36: "boundaries",
+      37: "authoritative",
+      38: "permissive",
+      39: "story",
+      40: "A"
+    };
+
+    /********************
+     * MODE & INITIALISE
+     ********************/
+
+    restoreThemePreference();
+
+    async function beginTimedTest() {
+      const input = document.getElementById("studentNameInput");
+      studentName = input ? input.value.trim() : "";
+      if (!studentName) {
+        alert("Please enter your name before starting test mode.");
+        if (input) input.focus();
+        return;
+      }
+
+      fullScreenExits = 0;
+      focusViolations = 0;
+      fullScreenEnforcementEnabled = false;
+      fullscreenSupported = isFullscreenApiSupported();
+      updateFullscreenSupportNote(false);
+
+      if (fullscreenSupported) {
+        const entered = await requestAppFullscreen();
+        if (entered) {
+          fullScreenEnforcementEnabled = true;
+        } else {
+          updateFullscreenSupportNote(true);
+        }
+      } else {
+        updateFullscreenSupportNote(true);
+      }
+
+      const modeScreen = document.getElementById("modeScreen");
+      const startScreen = document.getElementById("testStartScreen");
+      if (startScreen) startScreen.style.display = "none";
+      if (modeScreen) modeScreen.style.display = "none";
+      startTest("test");
+
+      isTestRunning = true;
+      isTimerPaused = false;
+      startTimer();
+      updateFullscreenButton();
+    }
+
+    function startTest(selectedMode) {
+      mode = selectedMode;
+      const timerContainer = document.getElementById("timerContainer");
+
+      visitedSections.clear();
+      visitedSections.add(1);
+      activeSection = 1;
+      currentQuestion = 1;
+
+      if (timerId) {
+        clearInterval(timerId);
+        timerId = null;
+      }
+
+      if (mode === "test") {
+        if (timerContainer) {
+          timerContainer.style.display = "block";
+          timerContainer.setAttribute("aria-hidden", "false");
+        }
+        timerSeconds = 60 * 60;
+      } else {
+        if (timerContainer) {
+          timerContainer.style.display = "none";
+          timerContainer.setAttribute("aria-hidden", "true");
+        }
+        isTestRunning = false;
+        isTimerPaused = false;
+        fullScreenEnforcementEnabled = false;
+      }
+
+      document.getElementById("app").style.display = "block";
+      initQuestionInputs();
+      setupDragMatch();
+      buildQuestionNav();
+      setupSelectionListeners();
+      setupDividerDrag();
+      updateThemeButtons();
+      updateFontButtons();
+      window.addEventListener("beforeunload", (e) => {
+        if (!testSubmitted) {
+          e.preventDefault();
+          e.returnValue = "Are you sure you want to leave? All progress will be lost.";
+          return e.returnValue;
+        }
+      }, { capture: true });
+    }
+
+    // Expose for inline handlers and any future fallback uses.
+    window.startTest = startTest;
+    window.beginTimedTest = beginTimedTest;
+    window.toggleFullscreen = toggleFullscreen;
+    window.returnToFullscreenAndResume = returnToFullscreenAndResume;
+    window.confirmSubmit = confirmSubmit;
+    window.handlePrimarySubmit = handlePrimarySubmit;
+
+    let shortcutToastTimer = null;
+
+    function wireModeButtons() {
+      const buttons = document.querySelectorAll(".mode-btn[data-mode]");
+      const modeScreen = document.getElementById("modeScreen");
+
+      const activate = (btn) => {
+        const selected = btn.getAttribute("data-mode") || btn.dataset.mode || "test";
+        if (selected === "test") {
+          pendingMode = "test";
+          updateFullscreenSupportNote(!isFullscreenApiSupported());
+          const startScreen = document.getElementById("testStartScreen");
+          if (startScreen) startScreen.style.display = "block";
+          const input = document.getElementById("studentNameInput");
+          if (input) input.focus();
+          return;
+        }
+        const startScreen = document.getElementById("testStartScreen");
+        if (startScreen) startScreen.style.display = "none";
+        const modeScreenEl = document.getElementById("modeScreen");
+        if (modeScreenEl) modeScreenEl.style.display = "none";
+        studentName = "";
+        startTest(selected);
+      };
+
+      buttons.forEach((btn) => {
+        btn.addEventListener("click", () => activate(btn));
+        btn.addEventListener("keydown", (event) => {
+          if (event.key === "Enter" || event.key === " ") {
+            event.preventDefault();
+            activate(btn);
+          }
+        });
+      });
+
+      if (modeScreen && !modeScreen.dataset.wired) {
+        modeScreen.addEventListener("click", (event) => {
+          const btn = event.target.closest(".mode-btn[data-mode]");
+          if (!btn) return;
+          event.preventDefault();
+          activate(btn);
+        });
+        modeScreen.dataset.wired = "true";
+      }
+    }
+
+    function ensureModeWiring() {
+      if (document.readyState === "loading") {
+        document.addEventListener("DOMContentLoaded", wireModeButtons, { once: true });
+      } else {
+        wireModeButtons();
+      }
+    }
+
+    function startTimer() {
+      if (mode !== "test") return;
+      if (timerId) {
+        clearInterval(timerId);
+        timerId = null;
+      }
+      const display = document.getElementById("timerDisplay");
+      const timerContainer = document.getElementById("timerContainer");
+      const timerPrefix = document.getElementById("timerPrefix");
+      display.classList.remove("timer-warning");
+      if (timerContainer) timerContainer.classList.remove("timer-expired");
+      if (timerPrefix) timerPrefix.textContent = "Time left:";
+      display.textContent = formatDuration(timerSeconds);
+
+      timerId = setInterval(() => {
+        timerSeconds--;
+        const overdue = timerSeconds < 0;
+        display.textContent = formatDuration(timerSeconds);
+
+        if (overdue) {
+          display.classList.add("timer-warning");
+          if (timerContainer) timerContainer.classList.add("timer-expired");
+          if (timerPrefix) timerPrefix.textContent = "Time is up!";
+        } else if (timerSeconds <= 180) {
+          display.classList.add("timer-warning");
+          if (timerPrefix) timerPrefix.textContent = "Time left:";
+        } else {
+          display.classList.remove("timer-warning");
+          if (timerContainer) timerContainer.classList.remove("timer-expired");
+          if (timerPrefix) timerPrefix.textContent = "Time left:";
+        }
+      }, 1000);
+    }
+
+    function pauseTimer() {
+      if (timerId) {
+        clearInterval(timerId);
+        timerId = null;
+      }
+      isTimerPaused = true;
+    }
+
+    function resumeTimer() {
+      if (!isTestRunning || mode !== "test") return;
+      if (!isTimerPaused) return;
+      isTimerPaused = false;
+      startTimer();
+    }
+
+    function toggleOptions(show) {
+      const overlay = document.getElementById("optionsOverlay");
+      overlay.style.display = show ? "flex" : "none";
+    }
+
+    document.getElementById("optionsBtn").addEventListener("click", () => {
+      toggleOptions(true);
+    });
+
+    function isFullscreenApiSupported() {
+      const el = document.documentElement;
+      return !!(document.fullscreenEnabled && el && typeof el.requestFullscreen === "function");
+    }
+
+    function isFullscreenActive() {
+      return !!document.fullscreenElement;
+    }
+
+    function updateFullscreenSupportNote(show) {
+      const note = document.getElementById("fullscreenSupportNote");
+      if (!note) return;
+      note.style.display = show ? "block" : "none";
+    }
+
+    async function requestAppFullscreen() {
+      try {
+        if (!isFullscreenApiSupported()) return false;
+        await document.documentElement.requestFullscreen();
+        return isFullscreenActive();
+      } catch (err) {
+        return false;
+      }
+    }
+
+    async function exitAppFullscreen() {
+      try {
+        if (isFullscreenActive() && typeof document.exitFullscreen === "function") {
+          await document.exitFullscreen();
+        }
+      } catch (err) {
+        // silent by design
+      }
+    }
+
+    function showFullscreenLockOverlay() {
+      const overlay = document.getElementById("fullscreenLockOverlay");
+      if (overlay) overlay.style.display = "flex";
+      document.body.style.overflow = "hidden";
+    }
+
+    function hideFullscreenLockOverlay() {
+      const overlay = document.getElementById("fullscreenLockOverlay");
+      if (overlay) overlay.style.display = "none";
+      document.body.style.overflow = "";
+    }
+
+    function updateFullscreenButton() {
+      const btn = document.getElementById("fullscreenBtn");
+      const label = document.getElementById("fullscreenBtnLabel");
+      if (!btn || !label) return;
+
+      const isFullscreen = isFullscreenActive();
+      const locked = mode === "test" && isTestRunning && !testSubmitted && fullScreenEnforcementEnabled;
+
+      btn.classList.toggle("is-active", isFullscreen);
+      btn.disabled = false;
+
+      if (locked && isFullscreen) {
+        label.textContent = "Full screen locked";
+        btn.setAttribute("title", "Full screen locked");
+        btn.setAttribute("aria-label", "Full screen locked");
+        btn.disabled = true;
+        return;
+      }
+
+      if (isFullscreen) {
+        label.textContent = "Exit full screen";
+        btn.setAttribute("title", "Exit full screen");
+        btn.setAttribute("aria-label", "Exit full screen");
+      } else {
+        label.textContent = "Full screen";
+        btn.setAttribute("title", "Enter full screen");
+        btn.setAttribute("aria-label", "Enter full screen");
+      }
+    }
+
+    async function toggleFullscreen() {
+      const locked = mode === "test" && isTestRunning && !testSubmitted && fullScreenEnforcementEnabled;
+      if (locked && isFullscreenActive()) {
+        updateFullscreenButton();
+        return;
+      }
+
+      if (!isFullscreenActive()) {
+        await requestAppFullscreen();
+      } else {
+        await exitAppFullscreen();
+      }
+      updateFullscreenButton();
+    }
+
+    async function returnToFullscreenAndResume() {
+      const ok = await requestAppFullscreen();
+      if (ok) {
+        hideFullscreenLockOverlay();
+        resumeTimer();
+      }
+      updateFullscreenButton();
+    }
+
+    function handleFullscreenChange() {
+      const runningLockedTest = mode === "test" && isTestRunning && !testSubmitted && fullScreenEnforcementEnabled;
+      if (runningLockedTest) {
+        if (!isFullscreenActive()) {
+          fullScreenExits += 1;
+          pauseTimer();
+          showFullscreenLockOverlay();
+        } else {
+          hideFullscreenLockOverlay();
+          resumeTimer();
+        }
+      }
+      updateFullscreenButton();
+    }
+
+    document.addEventListener("fullscreenchange", handleFullscreenChange);
+
+    document.addEventListener("visibilitychange", () => {
+      if (mode === "test" && isTestRunning && !testSubmitted && document.hidden) {
+        focusViolations += 1;
+      }
+    });
+
+    window.addEventListener("blur", () => {
+      if (mode === "test" && isTestRunning && !testSubmitted) {
+        focusViolations += 1;
+      }
+    });
+
+    /*************************
+     * BUILD REMAINING QUESTIONS
+     *************************/
+    let questionsBuilt = false;
+    let currentQuestion = 1;
+
+    function buildRemainingQuestions() {
+      if (questionsBuilt) return;
+      questionsBuilt = true;
+
+      const qContent = document.getElementById("questionContent");
+      if (!qContent) return;
+
+      const sec1 = qContent.querySelector('[data-section="1"]');
+
+      if (sec1) {
+        // Q8–14 TRUE/FALSE/NOT GIVEN
+        sec1.insertAdjacentHTML(
+          "beforeend",
+          `
+          <div class="question-block" data-q="8">
+            <div class="question-text">
+              <span class="question-number-label">8.</span>
+              The water penetration in some flats is being treated as an emergency.
+            </div>
+            <div class="options-row">
+              <label><input type="radio" name="q8" value="TRUE" /> TRUE</label>
+              <label><input type="radio" name="q8" value="FALSE" /> FALSE</label>
+              <label><input type="radio" name="q8" value="NOT GIVEN" /> NOT GIVEN</label>
+            </div>
+            <div class="correct-answer-text" id="ca-8"></div>
+          </div>
+
+          <div class="question-block" data-q="9">
+            <div class="question-text">
+              <span class="question-number-label">9.</span>
+              The southern wall will undergo a permanent repair this year.
+            </div>
+            <div class="options-row">
+              <label><input type="radio" name="q9" value="TRUE" /> TRUE</label>
+              <label><input type="radio" name="q9" value="FALSE" /> FALSE</label>
+              <label><input type="radio" name="q9" value="NOT GIVEN" /> NOT GIVEN</label>
+            </div>
+            <div class="correct-answer-text" id="ca-9"></div>
+          </div>
+
+          <div class="question-block" data-q="10">
+            <div class="question-text">
+              <span class="question-number-label">10.</span>
+              Some people have failed to pay attention to 'wet paint' signs.
+            </div>
+            <div class="options-row">
+              <label><input type="radio" name="q10" value="TRUE" /> TRUE</label>
+              <label><input type="radio" name="q10" value="FALSE" /> FALSE</label>
+              <label><input type="radio" name="q10" value="NOT GIVEN" /> NOT GIVEN</label>
+            </div>
+            <div class="correct-answer-text" id="ca-10"></div>
+          </div>
+
+          <div class="question-block" data-q="11">
+            <div class="question-text">
+              <span class="question-number-label">11.</span>
+              Air fresheners have caused some damage in the past.
+            </div>
+            <div class="options-row">
+              <label><input type="radio" name="q11" value="TRUE" /> TRUE</label>
+              <label><input type="radio" name="q11" value="FALSE" /> FALSE</label>
+              <label><input type="radio" name="q11" value="NOT GIVEN" /> NOT GIVEN</label>
+            </div>
+            <div class="correct-answer-text" id="ca-11"></div>
+          </div>
+
+          <div class="question-block" data-q="12">
+            <div class="question-text">
+              <span class="question-number-label">12.</span>
+              Residents are responsible for removing their own rubbish from the building.
+            </div>
+            <div class="options-row">
+              <label><input type="radio" name="q12" value="TRUE" /> TRUE</label>
+              <label><input type="radio" name="q12" value="FALSE" /> FALSE</label>
+              <label><input type="radio" name="q12" value="NOT GIVEN" /> NOT GIVEN</label>
+            </div>
+            <div class="correct-answer-text" id="ca-12"></div>
+          </div>
+
+          <div class="question-block" data-q="13">
+            <div class="question-text">
+              <span class="question-number-label">13.</span>
+              Some residents have reported problems with noisy neighbours.
+            </div>
+            <div class="options-row">
+              <label><input type="radio" name="q13" value="TRUE" /> TRUE</label>
+              <label><input type="radio" name="q13" value="FALSE" /> FALSE</label>
+              <label><input type="radio" name="q13" value="NOT GIVEN" /> NOT GIVEN</label>
+            </div>
+            <div class="correct-answer-text" id="ca-13"></div>
+          </div>
+
+          <div class="question-block" data-q="14">
+            <div class="question-text">
+              <span class="question-number-label">14.</span>
+              DIY can take place outside the stated hours if your neighbour agrees.
+            </div>
+            <div class="options-row">
+              <label><input type="radio" name="q14" value="TRUE" /> TRUE</label>
+              <label><input type="radio" name="q14" value="FALSE" /> FALSE</label>
+              <label><input type="radio" name="q14" value="NOT GIVEN" /> NOT GIVEN</label>
+            </div>
+            <div class="correct-answer-text" id="ca-14"></div>
+          </div>
+        `
+        );
+      }
+
+      // SECTION 2 QUESTIONS (15–27)
+      qContent.insertAdjacentHTML(
+        "beforeend",
+        `
+        <div data-section="2" style="display:none;">
+          <p><strong>SECTION 2</strong></p>
+          <p><strong>Questions 15–20</strong></p>
+          <p>Complete the flowchart below.</p>
+          <p>Choose <strong>ONE WORD ONLY</strong> from the text for each answer.</p>
+          <p>Write your answers in boxes 15–20.</p>
+
+          <p><strong>A day in the life of a care worker</strong></p>
+
+          <div class="question-block" data-q="15">
+            <div class="question-text">
+              <span class="question-number-label">15.</span>
+              It’s an early start for the first client. You may have to help the client get up and dressed if they have a
+              <span class="inline-input"><input type="text" name="q15" /></span>
+              that makes this challenging.
+            </div>
+            <div class="correct-answer-text" id="ca-15"></div>
+          </div>
+
+          <div class="question-block" data-q="16">
+            <div class="question-text">
+              <span class="question-number-label">16.</span>
+              The next task may be cooking breakfast and it’s nice to have some
+              <span class="inline-input"><input type="text" name="q16" /></span>
+              at this time.
+            </div>
+            <div class="correct-answer-text" id="ca-16"></div>
+          </div>
+
+          <div class="question-block" data-q="17">
+            <div class="question-text">
+              <span class="question-number-label">17.</span>
+              It may be a good idea to do some housework after this, such as
+              <span class="inline-input"><input type="text" name="q17" /></span>
+              and washing up.
+            </div>
+            <div class="correct-answer-text" id="ca-17"></div>
+          </div>
+
+          <div class="question-block" data-q="18">
+            <div class="question-text">
+              <span class="question-number-label">18.</span>
+              You may then visit a second client and help them get a
+              <span class="inline-input"><input type="text" name="q18" /></span>
+              lunch ready.
+            </div>
+            <div class="correct-answer-text" id="ca-18"></div>
+          </div>
+
+          <div class="question-block" data-q="19">
+            <div class="question-text">
+              <span class="question-number-label">19.</span>
+              Lunch may be followed by some
+              <span class="inline-input"><input type="text" name="q19" /></span>.
+            </div>
+            <div class="correct-answer-text" id="ca-19"></div>
+          </div>
+
+          <div class="question-block" data-q="20">
+            <div class="question-text">
+              <span class="question-number-label">20.</span>
+              Afterwards, a third client may need help with an activity that involves going out of their home, such as doing their
+              <span class="inline-input"><input type="text" name="q20" /></span>.
+            </div>
+            <div class="correct-answer-text" id="ca-20"></div>
+          </div>
+
+          <p><strong>Questions 21–27</strong></p>
+          <p>Complete the sentences below.</p>
+          <p>Choose <strong>ONE WORD ONLY</strong> from the text for each answer.</p>
+          <p>Write your answers in boxes 21–27.</p>
+          <p><strong>How to find a good balance between your work and your personal life</strong></p>
+
+          <div class="question-block" data-q="21">
+            <div class="question-text">
+              <span class="question-number-label">21.</span>
+              People who cut down the hours they work gain most from feeling better physically and experiencing an increased sense of
+              <span class="inline-input"><input type="text" name="q21" /></span>.
+            </div>
+            <div class="correct-answer-text" id="ca-21"></div>
+          </div>
+
+          <div class="question-block" data-q="22">
+            <div class="question-text">
+              <span class="question-number-label">22.</span>
+              It is important that those who work at desks avoid
+              <span class="inline-input"><input type="text" name="q22" /></span>
+              by checking their chair, work surface and screen are in the best position.
+            </div>
+            <div class="correct-answer-text" id="ca-22"></div>
+          </div>
+
+          <div class="question-block" data-q="23">
+            <div class="question-text">
+              <span class="question-number-label">23.</span>
+              Having targets to work towards is useful but they should be
+              <span class="inline-input"><input type="text" name="q23" /></span>.
+            </div>
+            <div class="correct-answer-text" id="ca-23"></div>
+          </div>
+
+          <div class="question-block" data-q="24">
+            <div class="question-text">
+              <span class="question-number-label">24.</span>
+              When there are many different tasks to do, the ability to
+              <span class="inline-input"><input type="text" name="q24" /></span>
+              them is vital.
+            </div>
+            <div class="correct-answer-text" id="ca-24"></div>
+          </div>
+
+          <div class="question-block" data-q="25">
+            <div class="question-text">
+              <span class="question-number-label">25.</span>
+              People who give up all treats in their personal time may find their
+              <span class="inline-input"><input type="text" name="q25" /></span>
+              decreases.
+            </div>
+            <div class="correct-answer-text" id="ca-25"></div>
+          </div>
+
+          <div class="question-block" data-q="26">
+            <div class="question-text">
+              <span class="question-number-label">26.</span>
+              It is wise to use the full amount of
+              <span class="inline-input"><input type="text" name="q26" /></span>
+              allowance every year.
+            </div>
+            <div class="correct-answer-text" id="ca-26"></div>
+          </div>
+
+          <div class="question-block" data-q="27">
+            <div class="question-text">
+              <span class="question-number-label">27.</span>
+              Making time to do things with close companions, relatives or
+              <span class="inline-input"><input type="text" name="q27" /></span>
+              is a great way to relax.
+            </div>
+            <div class="correct-answer-text" id="ca-27"></div>
+          </div>
+        </div>
+      `
+      );
+
+      // SECTION 3 QUESTIONS (28–40)
+      qContent.insertAdjacentHTML(
+        "beforeend",
+        `
+        <div data-section="3" style="display:none;">
+          <p><strong>SECTION 3 Questions 28–40</strong></p>
+          <p><strong>Questions 28–31</strong></p>
+          <p>Choose the correct letter, A, B, C or D, in questions 28-31</p>
+         
+
+          <div class="question-block" data-q="28">
+            <div class="question-text">
+              <span class="question-number-label">28.</span>
+              In the first paragraph, what does the writer say about Amsterdam?
+            </div>
+            <div class="options-row">
+              <label><input type="radio" name="q28" value="A" /> A Its ‘Henry’ programme was recommended to Leeds experts.</label>
+              <label><input type="radio" name="q28" value="B" /> B It was the first world city to reduce obesity levels in children.</label>
+              <label><input type="radio" name="q28" value="C" /> C It has experienced more severe childhood obesity levels than Leeds.</label>
+              <label><input type="radio" name="q28" value="D" /> D Its pattern of success in cutting childhood obesity is like that of Leeds.</label>
+            </div>
+            <div class="correct-answer-text" id="ca-28"></div>
+          </div>
+
+          <div class="question-block" data-q="29">
+            <div class="question-text">
+              <span class="question-number-label">29.</span>
+              How did Susan Jebb respond to the fall in childhood obesity among poorer children in Leeds?
+            </div>
+            <div class="options-row">
+              <label><input type="radio" name="q29" value="A" /> A She said she had expected it.</label>
+              <label><input type="radio" name="q29" value="B" /> B She said she was amazed by the figures.</label>
+              <label><input type="radio" name="q29" value="C" /> C She wanted to review some of her team’s data.</label>
+              <label><input type="radio" name="q29" value="D" /> D She felt some results were more interesting than others.</label>
+            </div>
+            <div class="correct-answer-text" id="ca-29"></div>
+          </div>
+
+          <div class="question-block" data-q="30">
+            <div class="question-text">
+              <span class="question-number-label">30.</span>
+              According to the writer, the NCMP data indicate that
+            </div>
+            <div class="options-row">
+              <label><input type="radio" name="q30" value="A" /> A children should be weighed more frequently.</label>
+              <label><input type="radio" name="q30" value="B" /> B most primary school children need to lose weight.</label>
+              <label><input type="radio" name="q30" value="C" /> C children from wealthy families have less weight to lose than others.</label>
+              <label><input type="radio" name="q30" value="D" /> D the youngest children show the highest levels of weight loss.</label>
+            </div>
+            <div class="correct-answer-text" id="ca-30"></div>
+          </div>
+
+          <div class="question-block" data-q="31">
+            <div class="question-text">
+              <span class="question-number-label">31.</span>
+              What links the 15 places listed in the third paragraph?
+            </div>
+            <div class="options-row">
+              <label><input type="radio" name="q31" value="A" /> A They are not representative of the country overall.</label>
+              <label><input type="radio" name="q31" value="B" /> B They all joined the ‘Henry’ programme at the same time.</label>
+              <label><input type="radio" name="q31" value="C" /> C Their childhood obesity levels have remained the same since 2009.</label>
+              <label><input type="radio" name="q31" value="D" /> D They are battling childhood obesity in a different way from Leeds.</label>
+            </div>
+            <div class="correct-answer-text" id="ca-31"></div>
+          </div>
+
+          <p><strong>Questions 32–35</strong></p>
+          <p>Look at the following statements and the list of people below.</p>
+          <p>Match each statement with the correct person.</p>
+          <p>Drag a name into each answer box, or click a name then click a box.</p>
+          <p><em>NB You may use any name more than once.</em></p>
+          <p><strong>List of People</strong></p>
+
+          <div class="drag-bank" aria-label="Drag answers for questions 32 to 35">
+            <div class="drag-item" draggable="true" data-value="A" data-label="Susan Jebb">Susan Jebb</div>
+            <div class="drag-item" draggable="true" data-value="B" data-label="Kim Roberts">Kim Roberts</div>
+            <div class="drag-item" draggable="true" data-value="C" data-label="Janice Burberry">Janice Burberry</div>
+            <div class="drag-item" draggable="true" data-value="D" data-label="Seema Kennedy">Seema Kennedy</div>
+          </div>
+
+          <div class="question-block" data-q="32">
+            <div class="question-text">
+              <span class="question-number-label">32.</span>
+              The aim in Leeds was to take steps to stop weight gain among children before it became a real problem.
+            </div>
+            <select class="sr-only" name="q32">
+              <option value="">Select…</option>
+              <option value="A">A</option>
+              <option value="B">B</option>
+              <option value="C">C</option>
+              <option value="D">D</option>
+            </select>
+            <div class="drop-zone-row"><div class="drop-zone" data-for="q32" tabindex="0" role="button" aria-label="Answer box for question 32">Drop here</div><button type="button" class="clear-drop-btn" data-clear-for="q32">Clear</button></div>
+            <div class="correct-answer-text" id="ca-32"></div>
+          </div>
+
+          <div class="question-block" data-q="33">
+            <div class="question-text">
+              <span class="question-number-label">33.</span>
+              Childhood obesity levels in Leeds have fallen consistently over a period of time.
+            </div>
+            <select class="sr-only" name="q33">
+              <option value="">Select…</option>
+              <option value="A">A</option>
+              <option value="B">B</option>
+              <option value="C">C</option>
+              <option value="D">D</option>
+            </select>
+            <div class="drop-zone-row"><div class="drop-zone" data-for="q33" tabindex="0" role="button" aria-label="Answer box for question 33">Drop here</div><button type="button" class="clear-drop-btn" data-clear-for="q33">Clear</button></div>
+            <div class="correct-answer-text" id="ca-33"></div>
+          </div>
+
+          <div class="question-block" data-q="34">
+            <div class="question-text">
+              <span class="question-number-label">34.</span>
+              Something that simplifies the struggle to get children to eat well is very helpful to parents.
+            </div>
+            <select class="sr-only" name="q34">
+              <option value="">Select…</option>
+              <option value="A">A</option>
+              <option value="B">B</option>
+              <option value="C">C</option>
+              <option value="D">D</option>
+            </select>
+            <div class="drop-zone-row"><div class="drop-zone" data-for="q34" tabindex="0" role="button" aria-label="Answer box for question 34">Drop here</div><button type="button" class="clear-drop-btn" data-clear-for="q34">Clear</button></div>
+            <div class="correct-answer-text" id="ca-34"></div>
+          </div>
+
+          <div class="question-block" data-q="35">
+            <div class="question-text">
+              <span class="question-number-label">35.</span>
+              Parents in general are realistic about their potential to make changes to their children’s lifestyle.
+            </div>
+            <select class="sr-only" name="q35">
+              <option value="">Select…</option>
+              <option value="A">A</option>
+              <option value="B">B</option>
+              <option value="C">C</option>
+              <option value="D">D</option>
+            </select>
+            <div class="drop-zone-row"><div class="drop-zone" data-for="q35" tabindex="0" role="button" aria-label="Answer box for question 35">Drop here</div><button type="button" class="clear-drop-btn" data-clear-for="q35">Clear</button></div>
+            <div class="correct-answer-text" id="ca-35"></div>
+          </div>
+
+          <p><strong>Questions 36–39</strong></p>
+          <p>Complete the summary below. Choose <strong>ONE WORD ONLY</strong> from the text for each answer. Write your answers in boxes 36–39.</p>
+
+          <div class="question-block" data-q="36">
+            <div class="question-text">
+              <span class="question-number-label">36.</span>
+              ‘Henry’ was used in Leeds from 2009 in the fight against childhood obesity. The programme focuses on situations such as mealtimes and bedtimes, and it encourages parents to set firm
+              <span class="inline-input"><input type="text" name="q36" /></span>
+              during these periods.
+            </div>
+            <div class="correct-answer-text" id="ca-36"></div>
+          </div>
+
+          <div class="question-block" data-q="37">
+            <div class="question-text">
+              <span class="question-number-label">37.</span>
+              According to Kim Roberts, ‘Henry’ aims to help people become more
+              <span class="inline-input"><input type="text" name="q37" /></span>
+              as parents.
+            </div>
+            <div class="correct-answer-text" id="ca-37"></div>
+          </div>
+
+          <div class="question-block" data-q="38">
+            <div class="question-text">
+              <span class="question-number-label">38.</span>
+              In this way, they do not instruct children to do things, nor give them total freedom of choice as in a
+              <span class="inline-input"><input type="text" name="q38" /></span>
+              parenting style.
+            </div>
+            <div class="correct-answer-text" id="ca-38"></div>
+          </div>
+
+          <div class="question-block" data-q="39">
+            <div class="question-text">
+              <span class="question-number-label">39.</span>
+              Instead, they allow children to make some decisions for themselves. This might be a choice of vegetable at the dinner table or a decision about where a
+              <span class="inline-input"><input type="text" name="q39" /></span>
+              should be enjoyed in the evening.
+            </div>
+            <div class="correct-answer-text" id="ca-39"></div>
+          </div>
+
+          <p><strong>Question 40</strong></p>
+          <p>Choose the correct letter, A, B, C or D.</p>
+
+          <div class="question-block" data-q="40">
+            <div class="question-text">
+              <span class="question-number-label">40.</span>
+              Which title is the most suitable for the text?
+            </div>
+            <div class="options-row">
+              <label><input type="radio" name="q40" value="A" /> A A look at what ‘Henry’ has achieved in Leeds</label>
+              <label><input type="radio" name="q40" value="B" /> B ‘Henry’s the best,’ according to Leeds children</label>
+              <label><input type="radio" name="q40" value="C" /> C Leeds parents discuss how ‘Henry’ has helped them</label>
+              <label><input type="radio" name="q40" value="D" /> D It’s all about saying ‘no’, according to ‘Henry’</label>
+            </div>
+            <div class="correct-answer-text" id="ca-40"></div>
+          </div>
+        </div>
+      `
+      );
+    }
+
+    function stampInlineInputNumbers() {
+      document.querySelectorAll(".question-block[data-q]").forEach((block) => {
+        const qNum = block.getAttribute("data-q");
+        block.querySelectorAll(".inline-input").forEach((w) => {
+          w.setAttribute("data-q", qNum);
+        });
+      });
+    }
+
+    let dragMatchReady = false;
+
+    function setupDragMatch() {
+      if (dragMatchReady) return;
+      dragMatchReady = true;
+      let picked = "";
+      const nameByLetter = { A: "Susan Jebb", B: "Kim Roberts", C: "Janice Burberry", D: "Seema Kennedy" };
+      document.querySelectorAll(".drag-item").forEach((item) => {
+        item.addEventListener("dragstart", (e) => {
+          e.dataTransfer.setData("text/plain", item.dataset.value);
+          e.dataTransfer.effectAllowed = "copy";
+        });
+        item.addEventListener("click", () => {
+          const isAlreadySelected = item.classList.contains("selected");
+          document
+            .querySelectorAll(".drag-item")
+            .forEach((i) => i.classList.remove("selected"));
+          if (isAlreadySelected) {
+            picked = "";
+            return;
+          }
+          item.classList.add("selected");
+          picked = item.dataset.value;
+        });
+      });
+
+      function apply(zone, val) {
+        if (!/^[ABCD]$/.test(val)) return;
+        const qName = zone.dataset.for;
+        const sel = document.querySelector('select[name="' + qName + '"]');
+        if (sel) {
+          sel.value = val;
+          sel.dispatchEvent(new Event("change", { bubbles: true }));
+        }
+        zone.textContent = nameByLetter[val] || val;
+        zone.classList.add("filled");
+      }
+
+      function clear(zone) {
+        const qName = zone.dataset.for;
+        const sel = document.querySelector('select[name="' + qName + '"]');
+        if (sel) {
+          sel.value = "";
+          sel.dispatchEvent(new Event("change", { bubbles: true }));
+        }
+        zone.textContent = "Drop here";
+        zone.classList.remove("filled");
+      }
+
+      document.querySelectorAll(".drop-zone").forEach((zone) => {
+        zone.addEventListener("dragover", (e) => {
+          e.preventDefault();
+          zone.classList.add("over");
+        });
+        zone.addEventListener("dragleave", () => zone.classList.remove("over"));
+        zone.addEventListener("drop", (e) => {
+          e.preventDefault();
+          zone.classList.remove("over");
+          const val = e.dataTransfer.getData("text/plain");
+          apply(zone, val);
+        });
+        zone.addEventListener("click", () => {
+          if (picked) {
+            if (zone.classList.contains("filled")) {
+              const sel = document.querySelector('select[name="' + zone.dataset.for + '"]');
+              if (sel && sel.value === picked) {
+                clear(zone);
+                return;
+              }
+            }
+            apply(zone, picked);
+            return;
+          }
+          if (zone.classList.contains("filled")) clear(zone);
+        });
+        zone.addEventListener("keydown", (e) => {
+          if (e.key === "Backspace" || e.key === "Delete") clear(zone);
+          if (/^[abcdABCD]$/.test(e.key)) apply(zone, e.key.toUpperCase());
+        });
+        zone.addEventListener("dblclick", () => clear(zone));
+      });
+
+      document.querySelectorAll(".drop-zone").forEach((zone) => {
+        const qName = zone.dataset.for;
+        const sel = document.querySelector('select[name="' + qName + '"]');
+        if (sel && sel.value) {
+          apply(zone, sel.value);
+        }
+      });
+
+      document.querySelectorAll(".clear-drop-btn").forEach((btn) => {
+        btn.addEventListener("click", () => {
+          const qName = btn.dataset.clearFor;
+          const zone = document.querySelector('.drop-zone[data-for="' + qName + '"]');
+          if (zone) clear(zone);
+        });
+      });
+    }
+
+    
+    function enableRadioToggleOff() {
+      document.querySelectorAll('input[type="radio"]').forEach((radio) => {
+        radio.addEventListener("pointerdown", () => {
+          radio.dataset.wasChecked = radio.checked ? "1" : "0";
+        });
+        radio.addEventListener("click", () => {
+          if (radio.dataset.wasChecked === "1") {
+            radio.checked = false;
+            radio.dispatchEvent(new Event("change", { bubbles: true }));
+          }
+        });
+      });
+    }
+
+    function convertGapFillNumbersToBullets() {
+      document.querySelectorAll(".question-block[data-q]").forEach((block) => {
+        const qNum = parseInt(block.getAttribute("data-q"), 10);
+        if (!((qNum >= 15 && qNum <= 27) || (qNum >= 36 && qNum <= 39))) return;
+        const label = block.querySelector(".question-number-label");
+        const text = block.querySelector(".question-text");
+        if (!text) return;
+        if (label) label.remove();
+        text.classList.add("gap-fill");
+
+        if (!text.querySelector(".gap-bullet")) {
+          const bullet = document.createElement("span");
+          bullet.className = "gap-bullet";
+          bullet.setAttribute("aria-hidden", "true");
+          bullet.textContent = "•";
+          text.prepend(bullet);
+        }
+
+        const inputWrap = text.querySelector(".inline-input");
+        if (!inputWrap || text.querySelector(".gap-answer-tail")) return;
+
+        const tail = document.createElement("span");
+        tail.className = "gap-answer-tail";
+        inputWrap.after(tail);
+        tail.appendChild(inputWrap);
+
+        let node = tail.nextSibling;
+        while (node) {
+          const next = node.nextSibling;
+          tail.appendChild(node);
+          node = next;
+        }
+      });
+    }
+// Build all questions immediately after DOM loads (script is at the end)
+    buildRemainingQuestions();
+    stampInlineInputNumbers();
+    convertGapFillNumbersToBullets();
+    setupDragMatch();
+    enableRadioToggleOff();
+
+    /***********************
+     * INPUT & NAV HANDLING
+     ***********************/
+    function initQuestionInputs() {
+      const qPane = document.getElementById("questionContent");
+      if (!qPane) return;
+
+      stampInlineInputNumbers();
+      convertGapFillNumbersToBullets();
+
+      // Listen to changes on all inputs/selects/radios
+      qPane
+        .querySelectorAll("select, input[type='text'], input[type='radio']")
+        .forEach((el) => {
+          el.addEventListener("change", onAnswerChange);
+          if (el.type === "text") {
+            el.addEventListener("input", onAnswerChange);
+          }
+        });
+
+      // Start on section 1, question 1
+      switchSection(1);
+      highlightCurrentQuestion(1);
+      updateCounts();
+      buildQuestionNav();
+    }
+
+    function onAnswerChange(e) {
+      const name = e.target.name || "";
+      if (name.startsWith("q")) {
+        const num = parseInt(name.substring(1), 10);
+        if (!isNaN(num)) currentQuestion = num;
+      }
+      updateCounts();
+      buildQuestionNav();
+      highlightCurrentQuestion(currentQuestion);
+    }
+
+    function isAnswered(qNum) {
+      const name = "q" + qNum;
+      const radios = document.querySelectorAll(
+        "input[type='radio'][name='" + name + "']"
+      );
+      if (radios.length > 0) {
+        return Array.from(radios).some((r) => r.checked);
+      }
+      const input = document.querySelector("input[type='text'][name='" + name + "']");
+      if (input) {
+        return input.value.trim().length > 0;
+      }
+      const select = document.querySelector("select[name='" + name + "']");
+      if (select) {
+        return select.value.trim().length > 0;
+      }
+      return false;
+    }
+
+    function updateCounts() {
+      const totals = { 1: 14, 2: 13, 3: 13 };
+      const answered = { 1: 0, 2: 0, 3: 0 };
+
+      [1, 2, 3].forEach((sec) => {
+        const range = sectionRanges[sec];
+        for (let q = range.from; q <= range.to; q++) {
+          if (isAnswered(q)) answered[sec]++;
+        }
+      });
+
+      // Update chip counts and status classes
+      [1, 2, 3].forEach((sec) => {
+        const chip = document.querySelector(
+          '.part-chip[data-section-chip="' + sec + '"]'
+        );
+        const span = document.getElementById("part" + sec + "Count");
+        const countText = answered[sec] + " of " + totals[sec];
+
+        if (!chip || !span) return;
+
+        chip.classList.remove("complete", "partial", "unopened");
+        if (answered[sec] === totals[sec]) {
+          chip.classList.add("complete");
+          span.textContent = "✓";
+          span.setAttribute("aria-label", "Part " + sec + " complete");
+        } else {
+          span.textContent = countText;
+          span.removeAttribute("aria-label");
+          if (visitedSections.has(sec)) {
+            chip.classList.add("partial");
+          } else {
+            chip.classList.add("unopened");
+          }
+        }
+      });
+
+      // Also update header for active section with answered count
+      const range = sectionRanges[activeSection];
+      const secAnswered = answered[activeSection];
+      const total = totals[activeSection];
+
+      const qHeader = document.getElementById("questionHeader");
+      if (qHeader && range) {
+        qHeader.textContent =
+          "Questions " +
+          range.from +
+          "–" +
+          range.to +
+          " (" +
+          secAnswered +
+          " of " +
+          total +
+          " answered)";
+      }
+
+      const pHeader = document.getElementById("passageHeader");
+      if (pHeader) {
+        if (activeSection === 1) {
+          pHeader.textContent =
+            "Part 1 – Read the text and answer questions 1–14.";
+        } else if (activeSection === 2) {
+          pHeader.textContent =
+            "Part 2 – Read the text and answer questions 15–27.";
+        } else {
+          pHeader.textContent =
+            "Part 3 – Read the text and answer questions 28–40.";
+        }
+      }
+    }
+
+    function buildQuestionNav() {
+      const nav = document.getElementById("questionNumbers");
+      if (!nav) return;
+      nav.innerHTML = "";
+
+      const range = sectionRanges[activeSection];
+      if (!range) return;
+
+      for (let q = range.from; q <= range.to; q++) {
+        const div = document.createElement("div");
+        div.className = "qnav";
+        if (isAnswered(q)) div.classList.add("answered");
+        else div.classList.add("unanswered");
+        if (q === currentQuestion) div.classList.add("current");
+        div.textContent = q;
+        div.addEventListener("click", () => {
+          currentQuestion = q;
+          highlightCurrentQuestion(q);
+          buildQuestionNav();
+          scrollToQuestion(q);
+        });
+        nav.appendChild(div);
+      }
+    }
+
+    function highlightCurrentQuestion(qNum) {
+      document
+        .querySelectorAll(".question-block")
+        .forEach((el) => el.classList.remove("current-question"));
+      const block = document.querySelector(
+        '.question-block[data-q="' + qNum + '"]'
+      );
+      if (block) {
+        block.classList.add("current-question");
+      }
+    }
+
+    function scrollToQuestion(qNum) {
+      const block = document.querySelector(
+        '.question-block[data-q="' + qNum + '"]'
+      );
+      const qPane = document.getElementById("questionPane");
+      if (block && qPane) {
+        block.scrollIntoView({ behavior: "smooth", block: "center" });
+      }
+    }
+
+    /*****************
+     * SECTION SWITCH
+     *****************/
+    function switchSection(section) {
+      if (![1, 2, 3].includes(section)) return;
+      activeSection = section;
+      visitedSections.add(section);
+
+      // Passages
+      document
+        .querySelectorAll(".passage-section")
+        .forEach((el) => (el.style.display = "none"));
+      const pass = document.querySelector(
+        '.passage-section[data-section="' + section + '"]'
+      );
+      if (pass) pass.style.display = "block";
+
+      // Questions
+      document
+        .querySelectorAll("#questionContent > div[data-section]")
+        .forEach((el) => (el.style.display = "none"));
+      const qSec = document.querySelector(
+        '#questionContent > div[data-section="' + section + '"]'
+      );
+      if (qSec) qSec.style.display = "block";
+
+      // Chips active state
+      document
+        .querySelectorAll(".part-chip")
+        .forEach((el) => el.classList.remove("active"));
+      const chip = document.querySelector(
+        '.part-chip[data-section-chip="' + section + '"]'
+      );
+      if (chip) chip.classList.add("active");
+
+      // Set current question to first in this section if outside range
+      const range = sectionRanges[section];
+      if (currentQuestion < range.from || currentQuestion > range.to) {
+        currentQuestion = range.from;
+      }
+
+      updateCounts();
+      highlightCurrentQuestion(currentQuestion);
+      buildQuestionNav();
+    }
+
+    function prevSection() {
+      if (activeSection > 1) switchSection(activeSection - 1);
+    }
+
+    function nextSection() {
+      if (activeSection < 3) switchSection(activeSection + 1);
+    }
+
+    /***************
+     * SUBMIT & SCORE
+     ***************/
+    const bandDescriptors = {
+      9: {
+        level: "Expert user",
+        description:
+          "Has fully operational command of the language: appropriate, accurate and fluent with complete understanding.",
+      },
+      8: {
+        level: "Very good user",
+        description:
+          "Has fully operational command of the language with only occasional unsystematic inaccuracies and inappropriacies. Misunderstandings may occur in unfamiliar situations.",
+      },
+      7: {
+        level: "Good user",
+        description:
+          "Has operational command of the language, though with occasional inaccuracies, inappropriacies and misunderstandings in some situations. Generally handles complex language well and understands detailed reasoning.",
+      },
+      6: {
+        level: "Competent user",
+        description:
+          "Has generally effective command of the language despite some inaccuracies, inappropriacies and misunderstandings. Can use and understand fairly complex language, particularly in familiar situations.",
+      },
+      5: {
+        level: "Modest user",
+        description:
+          "Has partial command of the language, coping with overall meaning in most situations, though likely to make many mistakes. Should be able to handle basic communication in own field.",
+      },
+      4: {
+        level: "Limited user",
+        description:
+          "Basic competence is limited to familiar situations. Has frequent problems in understanding and expression. Is not able to use complex language.",
+      },
+      3: {
+        level: "Extremely limited user",
+        description:
+          "Conveys and understands only general meaning in very familiar situations. Frequent breakdowns in communication occur.",
+      },
+      2: {
+        level: "Intermittent user",
+        description:
+          "No real communication is possible except for the most basic information using isolated words or short formulae in familiar situations and to meet immediate needs.",
+      },
+      1: {
+        level: "Non-user",
+        description:
+          "Essentially has no ability to use the language beyond possibly a few isolated words.",
+      },
+      0: {
+        level: "Did not attempt test",
+        description: "No assessable information provided.",
+      },
+    };
+
+    function getUserAnswer(qNum) {
+      const name = "q" + qNum;
+      const radios = document.querySelectorAll(
+        "input[type='radio'][name='" + name + "']"
+      );
+      if (radios.length > 0) {
+        const checked = Array.from(radios).find((r) => r.checked);
+        return checked ? checked.value.trim() : "";
+      }
+      const input = document.querySelector("input[type='text'][name='" + name + "']");
+      if (input) return input.value.trim();
+      const select = document.querySelector("select[name='" + name + "']");
+      if (select) return select.value.trim();
+      return "";
+    }
+
+    function evaluateQuestions() {
+      let correctCount = 0;
+
+      for (let q = 1; q <= 40; q++) {
+        const user = getUserAnswer(q);
+        const key = answerKey[q];
+        let isCorrect = false;
+
+        if (!user) {
+          isCorrect = false;
+        } else if (Array.isArray(key)) {
+          isCorrect = key.some(
+            (k) => user.toLowerCase() === String(k).toLowerCase()
+          );
+        } else if (typeof key === "string") {
+          if (/^(TRUE|FALSE|NOT GIVEN)$/.test(key)) {
+            isCorrect = user.toUpperCase() === key;
+          } else if (key.length === 1) {
+            isCorrect = user.toUpperCase() === key.toUpperCase();
+          } else {
+            isCorrect = user.toLowerCase() === key.toLowerCase();
+          }
+        }
+
+        const block = document.querySelector(
+          '.question-block[data-q="' + q + '"]'
+        );
+        if (block) {
+          block.classList.remove("correct", "incorrect");
+          if (isCorrect) {
+            block.classList.add("correct");
+            correctCount++;
+          } else if (user) {
+            block.classList.add("incorrect");
+          }
+        }
+
+        const ca = document.getElementById("ca-" + q);
+        if (ca) {
+          const txt = correctAnswerText[q];
+          if (txt) {
+            ca.textContent = "Correct answer: " + txt;
+          }
+        }
+      }
+
+      return correctCount;
+    }
+
+    function computeBandScore(correct) {
+      /*
+       * IELTS General Training Reading raw score to band conversion
+       * (integer bands). These sample counts are useful for a quick
+       * sense-check during maintenance:
+       * - 15 correct ⇒ Band 4
+       * - 23 correct ⇒ Band 5
+       * - 30 correct ⇒ Band 6
+       * - 35 correct ⇒ Band 7
+       * - 40 correct ⇒ Band 9
+       */
+
+      if (correct === 0) return 0;
+      if (correct === 40) return 9;
+      if (correct >= 37) return 8;
+      if (correct >= 34) return 7;
+      if (correct >= 30) return 6;
+      if (correct >= 23) return 5;
+      if (correct >= 15) return 4;
+      if (correct >= 10) return 3;
+      if (correct >= 5) return 2;
+      return 1;
+    }
+
+
+    function formatDuration(totalSeconds) {
+      const sign = totalSeconds < 0 ? "-" : "";
+      const abs = Math.abs(totalSeconds);
+      const m = Math.floor(abs / 60).toString().padStart(2, "0");
+      const sec = (abs % 60).toString().padStart(2, "0");
+      return `${sign}${m}:${sec}`;
+    }
+
+    function showShortcutToast(message) {
+      const toast = document.getElementById("shortcutToast");
+      if (!toast) return;
+
+      toast.textContent = message;
+      toast.classList.add("visible");
+
+      if (shortcutToastTimer) {
+        clearTimeout(shortcutToastTimer);
+      }
+
+      shortcutToastTimer = setTimeout(() => {
+        toast.classList.remove("visible");
+      }, 1800);
+    }
+
+    function handlePrimarySubmit() {
+      if (mode === "test" && isTestRunning && !testSubmitted) {
+        confirmSubmit();
+        return;
+      }
+      submitTest();
+    }
+
+    document.addEventListener("keydown", (event) => {
+      const isFindShortcut =
+        (event.ctrlKey || event.metaKey) &&
+        String(event.key).toLowerCase() === "f";
+
+      if (!isFindShortcut) return;
+      if (!(mode === "test" && isTestRunning && !testSubmitted)) return;
+
+      event.preventDefault();
+      showShortcutToast("Find (CTRL + F) is disabled in Test mode.");
+    }, true);
+
+    function confirmSubmit() {
+      const ok = window.confirm("Are you sure you want to submit your test now? You will not be able to continue answering in Test mode.");
+      if (!ok) return;
+      submitTest();
+    }
+
+    function submitTest() {
+      const correctCount = evaluateQuestions();
+
+      // In both modes, show correct answer text
+      Object.keys(correctAnswerText).forEach((q) => {
+        const el = document.getElementById("ca-" + q);
+        if (el) el.style.display = "block";
+      });
+
+      updateCounts();
+      buildQuestionNav();
+
+      const band = computeBandScore(correctCount);
+      const desc = bandDescriptors[band] || bandDescriptors[0];
+
+      const studentLine = document.getElementById("studentLine");
+      const fullScreenExitLine = document.getElementById("fullScreenExitLine");
+      const focusViolationLine = document.getElementById("focusViolationLine");
+      const totalTimeLine = document.getElementById("totalTimeLine");
+      const scoreLine = document.getElementById("scoreLine");
+      const bandLine = document.getElementById("bandLine");
+      const descriptorLine = document.getElementById("descriptorLine");
+      const resultsOverlay = document.getElementById("resultsOverlay");
+
+      if (studentLine) {
+        studentLine.textContent = studentName
+          ? "Student: " + studentName
+          : "Student: Not provided";
+      }
+      if (fullScreenExitLine) {
+        fullScreenExitLine.textContent = "Full screen exits: " + fullScreenExits;
+      }
+      if (focusViolationLine) {
+        focusViolationLine.textContent = "Tab switches / focus losses: " + focusViolations;
+      }
+      if (totalTimeLine) {
+        const elapsedSeconds = 60 * 60 - timerSeconds;
+        totalTimeLine.textContent = "Total time when submitted: " + formatDuration(elapsedSeconds);
+      }
+
+      if (scoreLine)
+        scoreLine.textContent =
+          "You answered " + correctCount + " out of 40 questions correctly.";
+      if (bandLine)
+        bandLine.textContent =
+          "Estimated IELTS Reading band: " +
+          band +
+          ". Skill level: " +
+          desc.level;
+      if (descriptorLine) descriptorLine.textContent = desc.description;
+
+      if (resultsOverlay) resultsOverlay.style.display = "flex";
+
+      if (mode === "test") {
+        testSubmitted = true;
+        isTestRunning = false;
+        isTimerPaused = false;
+        hideFullscreenLockOverlay();
+        if (timerId) {
+          clearInterval(timerId);
+          timerId = null;
+        }
+        exitAppFullscreen();
+        // Disable further changes in test mode
+        document
+          .querySelectorAll("#questionContent select, #questionContent input")
+          .forEach((el) => (el.disabled = true));
+      }
+
+      // Close options overlay if open
+      toggleOptions(false);
+    }
+
+    function closeResults() {
+      const overlay = document.getElementById("resultsOverlay");
+      const studentLine = document.getElementById("studentLine");
+      const fullScreenExitLine = document.getElementById("fullScreenExitLine");
+      const focusViolationLine = document.getElementById("focusViolationLine");
+      const totalTimeLine = document.getElementById("totalTimeLine");
+      if (studentLine) studentLine.textContent = "";
+      if (fullScreenExitLine) fullScreenExitLine.textContent = "";
+      if (focusViolationLine) focusViolationLine.textContent = "";
+      if (totalTimeLine) totalTimeLine.textContent = "";
+      if (overlay) overlay.style.display = "none";
+    }
+
+    /**********************
+     * HIGHLIGHT & NOTES
+     **********************/
+    let currentNoteId = 0;
+    const notesStore = {}; // noteId -> { text }
+
+    function setupSelectionListeners() {
+      const toolbar = document.getElementById("selectionToolbar");
+      if (!toolbar) return;
+      toolbar.style.position = "fixed";
+
+      function updateToolbarPosition() {
+        const sel = window.getSelection();
+        if (!sel || sel.rangeCount === 0 || sel.isCollapsed) {
+          hideSelectionToolbar();
+          return;
+        }
+        const range = sel.getRangeAt(0);
+        const rect = range.getBoundingClientRect();
+        if (!rect || (rect.width === 0 && rect.height === 0)) {
+          hideSelectionToolbar();
+          return;
+        }
+        toolbar.style.left = rect.left + rect.width / 2 + "px";
+        toolbar.style.top = Math.max(56, rect.top - 32) + "px";
+        toolbar.style.display = "flex";
+      }
+
+      document.addEventListener("mouseup", () => {
+        setTimeout(updateToolbarPosition, 0);
+      });
+
+      document.addEventListener("keyup", (e) => {
+        if (
+          e.key === "Shift" ||
+          e.key === "ArrowLeft" ||
+          e.key === "ArrowRight" ||
+          e.key === "ArrowUp" ||
+          e.key === "ArrowDown"
+        ) {
+          setTimeout(updateToolbarPosition, 0);
+        }
+      });
+
+      document.addEventListener("mousedown", (e) => {
+        if (!toolbar.contains(e.target)) {
+          hideSelectionToolbar();
+        }
+      });
+    }
+
+    function hideSelectionToolbar() {
+      const toolbar = document.getElementById("selectionToolbar");
+      if (toolbar) toolbar.style.display = "none";
+    }
+
+    function findAncestorWithClass(node, className) {
+      let n = node;
+      while (n && n !== document) {
+        if (n.nodeType === 1 && n.classList.contains(className)) return n;
+        n = n.parentNode;
+      }
+      return null;
+    }
+
+    function toggleHighlightSelection() {
+      const sel = window.getSelection();
+      if (!sel || sel.rangeCount === 0 || sel.isCollapsed) return;
+      const range = sel.getRangeAt(0);
+      if (!range.toString().trim()) return;
+
+      const startHighlight = findAncestorWithClass(
+        range.startContainer,
+        "highlighted"
+      );
+      const endHighlight = findAncestorWithClass(
+        range.endContainer,
+        "highlighted"
+      );
+
+      if (startHighlight && startHighlight === endHighlight) {
+        // Remove the whole highlight span
+        const span = startHighlight;
+        const parent = span.parentNode;
+        while (span.firstChild) {
+          parent.insertBefore(span.firstChild, span);
+        }
+        parent.removeChild(span);
+      } else {
+        const span = document.createElement("span");
+        span.className = "highlighted";
+        try {
+          range.surroundContents(span);
+        } catch (e) {
+          // Fallback: simple replacement
+          span.textContent = range.toString();
+          range.deleteContents();
+          range.insertNode(span);
+        }
+      }
+
+      sel.removeAllRanges();
+      hideSelectionToolbar();
+    }
+
+    function makeNoteForSelection() {
+      const sel = window.getSelection();
+      if (!sel || sel.rangeCount === 0 || sel.isCollapsed) return;
+      const range = sel.getRangeAt(0);
+      if (!range.toString().trim()) return;
+
+      const noteId = "note-" + ++currentNoteId;
+
+      const span = document.createElement("span");
+      span.className = "note-anchor";
+      span.dataset.noteId = noteId;
+
+      try {
+        range.surroundContents(span);
+      } catch (e) {
+        span.textContent = range.toString();
+        range.deleteContents();
+        range.insertNode(span);
+      }
+
+      // Delete button
+      const del = document.createElement("button");
+      del.className = "note-delete";
+      del.textContent = "×";
+      del.addEventListener("click", (ev) => {
+        ev.stopPropagation();
+        deleteNote(noteId);
+      });
+      span.appendChild(del);
+
+      span.addEventListener("click", (ev) => {
+        // avoid re-opening when clicking delete
+        if ((ev.target).classList && (ev.target).classList.contains("note-delete"))
+          return;
+        openNoteWindow(noteId, span);
+      });
+
+      notesStore[noteId] = { text: "" };
+      openNoteWindow(noteId, span);
+      hideSelectionToolbar();
+      sel.removeAllRanges();
+    }
+
+    function openNoteWindow(noteId, anchorEl) {
+      // Remove existing note window for this note
+      const existing = document.querySelector(
+        '.note-window[data-note-id="' + noteId + '"]'
+      );
+      if (existing) existing.remove();
+
+      const rect = anchorEl.getBoundingClientRect();
+      const note = document.createElement("div");
+      note.className = "note-window";
+      note.dataset.noteId = noteId;
+      note.style.top = rect.bottom + 8 + "px";
+      note.style.left = rect.left + "px";
+
+      note.innerHTML = `
+        <div class="note-header">
+          <span>Note</span>
+          <button title="Close">×</button>
+        </div>
+        <div class="note-body">
+          <textarea></textarea>
+        </div>
+        <div class="note-footer">
+          <button>Done</button>
+        </div>
+      `;
+
+      document.body.appendChild(note);
+
+      const header = note.querySelector(".note-header");
+      const closeBtn = header.querySelector("button");
+      const textarea = note.querySelector("textarea");
+      const doneBtn = note.querySelector(".note-footer button");
+
+      if (notesStore[noteId] && notesStore[noteId].text) {
+        textarea.value = notesStore[noteId].text;
+      }
+
+      closeBtn.addEventListener("click", () => {
+        notesStore[noteId].text = textarea.value;
+        note.remove();
+      });
+
+      doneBtn.addEventListener("click", () => {
+        notesStore[noteId].text = textarea.value;
+        note.remove();
+      });
+
+      makeNoteDraggable(note, header);
+    }
+
+    function deleteNote(noteId) {
+      const anchor = document.querySelector(
+        '.note-anchor[data-note-id="' + noteId + '"]'
+      );
+      if (anchor) {
+        const parent = anchor.parentNode;
+        // move children except delete button
+        while (anchor.firstChild) {
+          const child = anchor.firstChild;
+          if (
+            child.nodeType === 1 &&
+            child.classList.contains("note-delete")
+          ) {
+            anchor.removeChild(child);
+          } else {
+            parent.insertBefore(child, anchor);
+          }
+        }
+        parent.removeChild(anchor);
+      }
+      const noteWin = document.querySelector(
+        '.note-window[data-note-id="' + noteId + '"]'
+      );
+      if (noteWin) noteWin.remove();
+      delete notesStore[noteId];
+    }
+
+    function makeNoteDraggable(noteEl, handleEl) {
+      let isDragging = false;
+      let startX = 0;
+      let startY = 0;
+      let startLeft = 0;
+      let startTop = 0;
+
+      handleEl.addEventListener("mousedown", (e) => {
+        e.preventDefault();
+        isDragging = true;
+        startX = e.clientX;
+        startY = e.clientY;
+        const rect = noteEl.getBoundingClientRect();
+        startLeft = rect.left;
+        startTop = rect.top;
+        document.addEventListener("mousemove", onMove);
+        document.addEventListener("mouseup", onUp);
+      });
+
+      function onMove(e) {
+        if (!isDragging) return;
+        const dx = e.clientX - startX;
+        const dy = e.clientY - startY;
+        noteEl.style.left = startLeft + dx + "px";
+        noteEl.style.top = startTop + dy + "px";
+      }
+
+      function onUp() {
+        isDragging = false;
+        document.removeEventListener("mousemove", onMove);
+        document.removeEventListener("mouseup", onUp);
+      }
+    }
+
+    /***********************
+     * RESIZABLE DIVIDER
+     ***********************/
+    function setupDividerDrag() {
+      const divider = document.getElementById("divider");
+      const mainInner = document.querySelector(".main-inner");
+      const leftPane = document.getElementById("passagePane");
+      const rightPane = document.getElementById("questionPane");
+      if (!divider || !mainInner || !leftPane || !rightPane) return;
+
+      let dragging = false;
+      let startX = 0;
+      let startWidthLeft = 0;
+      let totalWidth = 0;
+
+      function beginDrag(clientX) {
+        dragging = true;
+        const rect = mainInner.getBoundingClientRect();
+        totalWidth = rect.width;
+        startX = clientX;
+        const leftRect = leftPane.getBoundingClientRect();
+        startWidthLeft = leftRect.width;
+        document.body.style.cursor = "col-resize";
+      }
+
+      function updateDrag(clientX) {
+        if (!dragging) return;
+        const dx = clientX - startX;
+        let newLeftWidth = startWidthLeft + dx;
+        const min = Math.max(260, totalWidth * 0.2);
+        const max = Math.min(totalWidth - 260, totalWidth * 0.8);
+        if (newLeftWidth < min) newLeftWidth = min;
+        if (newLeftWidth > max) newLeftWidth = max;
+        const leftPct = (newLeftWidth / totalWidth) * 100;
+        leftPane.style.flex = "0 0 " + leftPct + "%";
+        rightPane.style.flex = "0 0 " + (100 - leftPct) + "%";
+      }
+
+      function endDrag() {
+        if (!dragging) return;
+        dragging = false;
+        document.body.style.cursor = "default";
+      }
+
+      divider.addEventListener("mousedown", (e) => {
+        e.preventDefault();
+        beginDrag(e.clientX);
+      });
+
+      divider.addEventListener("touchstart", (e) => {
+        const touch = e.touches && e.touches[0];
+        if (!touch) return;
+        e.preventDefault();
+        beginDrag(touch.clientX);
+      }, { passive: false });
+
+      document.addEventListener("mousemove", (e) => updateDrag(e.clientX));
+      document.addEventListener("touchmove", (e) => {
+        const touch = e.touches && e.touches[0];
+        if (!touch) return;
+        if (dragging) e.preventDefault();
+        updateDrag(touch.clientX);
+      }, { passive: false });
+
+      document.addEventListener("mouseup", endDrag);
+      document.addEventListener("touchend", endDrag);
+      document.addEventListener("touchcancel", endDrag);
+    }
+
+    // Ensure option buttons reflect the current theme and font selections on load.
+    updateThemeButtons();
+    updateFontButtons();
+    ensureModeWiring();
+  </script>
+</body>
+</html>
