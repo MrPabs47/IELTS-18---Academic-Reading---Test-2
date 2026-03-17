@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>IELTS Pabs Reading Test 2 – Academic IELTS 18</title>
+  <title>IELTS Pabs Reading Test 2 – Academic Reading – IELTS 18</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <style>
     :root {
@@ -1163,7 +1163,7 @@
       <div class="top-left">
         <div class="logo">IELTS Pabs</div>
         <div class="test-title">
-          Reading Test 2 – Academic IELTS 18
+          Reading Test 2 – Academic – Cambridge 18
         </div>
       </div>
       <div class="top-right">
@@ -1487,7 +1487,7 @@
   <!-- Results overlay -->
   <div id="resultsOverlay">
     <div id="resultsPanel">
-      <h2>Your IELTS Reading result</h2>
+      <h2>IELTS Academic Reading Score Board</h2>
       <p id="studentLine"></p>
       <p id="fullScreenExitLine"></p>
       <p id="focusViolationLine"></p>
@@ -2972,26 +2972,38 @@
 
     function computeBandScore(correct) {
       /*
-       * IELTS General Training Reading raw score to band conversion
-       * (integer bands). These sample counts are useful for a quick
-       * sense-check during maintenance:
-       * - 15 correct ⇒ Band 4
-       * - 23 correct ⇒ Band 5
-       * - 30 correct ⇒ Band 6
-       * - 35 correct ⇒ Band 7
-       * - 40 correct ⇒ Band 9
+       * IELTS Academic Reading raw score to band conversion
+       * 40-39 = 9
+       * 38-37 = 8.5
+       * 36-35 = 8
+       * 34-33 = 7.5
+       * 32-30 = 7
+       * 29-27 = 6.5
+       * 26-23 = 6
+       * 22-19 = 5.5
+       * 18-15 = 5
+       * 14-13 = 4.5
+       * 12-10 = 4
+       * 9-8 = 3.5
+       * 7-6 = 3
+       * 5-4 = 2.5
        */
 
-      if (correct === 0) return 0;
-      if (correct === 40) return 9;
-      if (correct >= 37) return 8;
-      if (correct >= 34) return 7;
-      if (correct >= 30) return 6;
-      if (correct >= 23) return 5;
-      if (correct >= 15) return 4;
-      if (correct >= 10) return 3;
-      if (correct >= 5) return 2;
-      return 1;
+      if (correct >= 39) return 9;
+      if (correct >= 37) return 8.5;
+      if (correct >= 35) return 8;
+      if (correct >= 33) return 7.5;
+      if (correct >= 30) return 7;
+      if (correct >= 27) return 6.5;
+      if (correct >= 23) return 6;
+      if (correct >= 19) return 5.5;
+      if (correct >= 15) return 5;
+      if (correct >= 13) return 4.5;
+      if (correct >= 10) return 4;
+      if (correct >= 8) return 3.5;
+      if (correct >= 6) return 3;
+      if (correct >= 4) return 2.5;
+      return 0;
     }
 
 
@@ -3058,7 +3070,7 @@
       buildQuestionNav();
 
       const band = computeBandScore(correctCount);
-      const desc = bandDescriptors[band] || bandDescriptors[0];
+      const desc = bandDescriptors[band] || bandDescriptors[Math.floor(band)] || bandDescriptors[0];
 
       const studentLine = document.getElementById("studentLine");
       const fullScreenExitLine = document.getElementById("fullScreenExitLine");
@@ -3090,7 +3102,7 @@
           "You answered " + correctCount + " out of 40 questions correctly.";
       if (bandLine)
         bandLine.textContent =
-          "Estimated IELTS Reading band: " +
+          "Estimated IELTS Academic Reading band: " +
           band +
           ". Skill level: " +
           desc.level;
