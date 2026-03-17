@@ -2617,7 +2617,7 @@
     function convertGapFillNumbersToBullets() {
       document.querySelectorAll(".question-block[data-q]").forEach((block) => {
         const qNum = parseInt(block.getAttribute("data-q"), 10);
-        if (!((qNum >= 15 && qNum <= 27) || (qNum >= 36 && qNum <= 39))) return;
+        if (!(qNum >= 36 && qNum <= 39)) return;
         const label = block.querySelector(".question-number-label");
         const text = block.querySelector(".question-text");
         if (!text) return;
