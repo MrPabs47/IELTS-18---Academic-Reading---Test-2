@@ -18,65 +18,26 @@
       --success: #1b5e20;
       --muted: #8a93a5;
     }
-
-    * {
-      box-sizing: border-box;
-    }
-
+    * { box-sizing: border-box; }
     body {
       margin: 0;
       font-family: Arial, Helvetica, sans-serif;
       background: linear-gradient(180deg, #eef4ff 0%, var(--bg) 200px);
       color: var(--text);
     }
-
-    .page {
-      max-width: 1100px;
-      margin: 0 auto;
-      padding: 28px 20px 48px;
-    }
-
-    .hero {
+    .page { max-width: 1100px; margin: 0 auto; padding: 28px 20px 48px; }
+    .hero, .section {
       background: var(--panel);
       border: 1px solid var(--border);
       border-radius: 20px;
       box-shadow: var(--shadow);
-      padding: 28px;
-      margin-bottom: 24px;
-    }
-
-    .hero h1 {
-      margin: 0 0 10px;
-      font-size: clamp(1.9rem, 4vw, 2.6rem);
-    }
-
-    .hero p {
-      margin: 0;
-      color: var(--text-soft);
-      line-height: 1.6;
-      max-width: 780px;
-    }
-
-    .section {
-      background: var(--panel);
-      border: 1px solid var(--border);
-      border-radius: 20px;
-      box-shadow: var(--shadow);
-      padding: 24px;
+      padding: 24px 28px;
       margin-bottom: 20px;
     }
-
-    .section h2 {
-      margin: 0 0 14px;
-      font-size: 1.15rem;
-    }
-
-    .toggle-row {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 12px;
-    }
-
+    .hero h1 { margin: 0 0 10px; font-size: clamp(1.9rem, 4vw, 2.6rem); }
+    .hero p, .hint, .mini-list, .test-meta { color: var(--text-soft); line-height: 1.6; }
+    .section h2 { margin: 0 0 14px; font-size: 1.15rem; }
+    .toggle-row { display: flex; flex-wrap: wrap; gap: 12px; }
     .toggle-btn {
       border: 1px solid var(--border);
       background: var(--panel-soft);
@@ -87,30 +48,22 @@
       font-weight: 700;
       cursor: pointer;
     }
-
     .toggle-btn.active {
       border-color: var(--accent);
       background: var(--accent-soft);
       color: var(--accent);
     }
-
     .tests-grid {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
       gap: 16px;
     }
-
     .test-card {
       border: 1px solid var(--border);
       border-radius: 16px;
       padding: 18px;
       background: var(--panel);
     }
-
-    .test-card.hidden {
-      display: none;
-    }
-
     .test-top {
       display: flex;
       align-items: center;
@@ -118,7 +71,6 @@
       gap: 10px;
       margin-bottom: 10px;
     }
-
     .test-label {
       display: inline-flex;
       align-items: center;
@@ -127,28 +79,11 @@
       padding: 5px 10px;
       font-size: 0.82rem;
       font-weight: 700;
-      background: var(--panel-soft);
-      color: var(--text-soft);
-    }
-
-    .test-label.available {
       background: #eaf7ec;
       color: var(--success);
+      white-space: nowrap;
     }
-
-    .test-title {
-      margin: 0 0 8px;
-      font-size: 1.05rem;
-      line-height: 1.4;
-    }
-
-    .test-meta {
-      margin: 0 0 16px;
-      color: var(--text-soft);
-      line-height: 1.5;
-      font-size: 0.95rem;
-    }
-
+    .test-title { margin: 0 0 8px; font-size: 1.05rem; line-height: 1.4; }
     .open-btn {
       display: inline-flex;
       align-items: center;
@@ -162,74 +97,33 @@
       background: var(--accent);
       color: #ffffff;
     }
-
-    .open-btn.disabled {
-      pointer-events: none;
-      border-color: var(--border);
-      background: var(--panel-soft);
-      color: var(--muted);
-    }
-
-    .hint {
-      margin-top: 14px;
-      color: var(--text-soft);
-      line-height: 1.6;
-      font-size: 0.95rem;
-    }
-
-    .mini-list {
-      margin: 0;
-      padding-left: 18px;
-      color: var(--text-soft);
-      line-height: 1.7;
-    }
-
-    .empty-state {
-      border: 1px dashed var(--border);
-      border-radius: 16px;
-      padding: 18px;
-      color: var(--text-soft);
-      background: var(--panel-soft);
-      display: none;
-    }
-
-    .empty-state.visible {
-      display: block;
-    }
+    .mini-list { margin: 0; padding-left: 18px; }
   </style>
 </head>
 <body>
   <div class="page">
     <section class="hero">
       <h1>IELTS Pabs Reading Hub</h1>
-      <p>
-        Choose the test type first, then open the test you want. Each test keeps its own Study mode and Test mode screen, so students go straight into the same test experience you already built.
-      </p>
+      <p>Choose Academic or General Training first, then open the test you want. Each test keeps its own Study mode and Test mode screen.</p>
     </section>
 
     <section class="section">
       <h2>1. Choose the reading type</h2>
       <div class="toggle-row" id="typeButtons"></div>
-      <p class="hint">
-        This launcher is designed to stay simple. You can keep adding tests here as you upload or migrate them into this repository.
-      </p>
+      <p class="hint">This local master bundle keeps the final source HTML files organised so you can upload the whole structure to GitHub later.</p>
     </section>
 
     <section class="section">
       <h2>2. Choose the test</h2>
       <div class="tests-grid" id="testsGrid"></div>
-      <div class="empty-state" id="emptyState">
-        There are no tests listed for this type yet. Add the HTML file to this repository, then add one more entry to the <strong>tests</strong> array inside <strong>index.html</strong>.
-      </div>
     </section>
 
     <section class="section">
-      <h2>Recommended structure for future tests</h2>
+      <h2>Folder structure</h2>
       <ul class="mini-list">
         <li>academic/cambridge-18/test-2/</li>
         <li>general-training/cambridge-19/test-2/</li>
-        <li>Inside each test folder keep the HTML, passages.txt, questions.txt, answers.txt, and spec.md</li>
-        <li>Once a test is migrated into folders, just update its link here</li>
+        <li>general-training/cambridge-19/test-3/</li>
       </ul>
     </section>
   </div>
@@ -245,25 +139,22 @@
         type: 'academic',
         title: 'Cambridge 18 Test 2',
         subtitle: 'Academic Reading',
-        status: 'available',
-        href: './IELTS18 Test 2 - Academic Reading.html',
-        note: 'Available now in this repository.'
+        href: './academic/cambridge-18/test-2/IELTS18%20Test%202%20-%20Academic%20Reading.html',
+        note: 'Master HTML file'
       },
       {
         type: 'general-training',
         title: 'Cambridge 19 Test 2',
         subtitle: 'General Training Reading',
-        status: 'coming-soon',
-        href: '#',
-        note: 'Add the HTML file to this repo, then replace this placeholder link.'
+        href: './general-training/cambridge-19/test-2/IELTS19%20Test%202%20-%20Reading%20-%20GT.html',
+        note: 'Master HTML file'
       },
       {
         type: 'general-training',
         title: 'Cambridge 19 Test 3',
         subtitle: 'General Training Reading',
-        status: 'coming-soon',
-        href: '#',
-        note: 'Add the HTML file to this repo, then replace this placeholder link.'
+        href: './general-training/cambridge-19/test-3/IELTS19%20Test%203%20-%20Reading%20-%20GT.html',
+        note: 'Master HTML file'
       }
     ];
 
@@ -272,7 +163,6 @@
     function renderTypeButtons() {
       const wrap = document.getElementById('typeButtons');
       wrap.innerHTML = '';
-
       testTypes.forEach((type) => {
         const btn = document.createElement('button');
         btn.className = 'toggle-btn' + (type.id === activeType ? ' active' : '');
@@ -289,36 +179,18 @@
 
     function renderTests() {
       const grid = document.getElementById('testsGrid');
-      const empty = document.getElementById('emptyState');
       grid.innerHTML = '';
-
-      const filtered = tests.filter((test) => test.type === activeType);
-
-      if (!filtered.length) {
-        empty.classList.add('visible');
-        return;
-      }
-
-      empty.classList.remove('visible');
-
-      filtered.forEach((test) => {
+      tests.filter(test => test.type === activeType).forEach((test) => {
         const card = document.createElement('article');
         card.className = 'test-card';
-
-        const statusLabel = test.status === 'available' ? 'Available' : 'Coming soon';
-        const statusClass = test.status === 'available' ? 'available' : '';
-        const buttonClass = test.status === 'available' ? 'open-btn' : 'open-btn disabled';
-        const buttonText = test.status === 'available' ? 'Open test' : 'Not ready yet';
-
         card.innerHTML = `
           <div class="test-top">
             <h3 class="test-title">${test.title}</h3>
-            <span class="test-label ${statusClass}">${statusLabel}</span>
+            <span class="test-label">Available</span>
           </div>
           <p class="test-meta"><strong>${test.subtitle}</strong><br>${test.note}</p>
-          <a class="${buttonClass}" href="${test.href}">${buttonText}</a>
+          <a class="open-btn" href="${test.href}">Open test</a>
         `;
-
         grid.appendChild(card);
       });
     }
