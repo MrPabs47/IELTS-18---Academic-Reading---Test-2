@@ -1,0 +1,2772 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>IELTS Pabs Reading Test 2 – General Training – Cambridge 19</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <style>
+    :root {
+      --bg: #ffffff;
+      --bg-secondary: #f5f5f5;
+      --text: #111111;
+      --text-soft: #555555;
+      --accent: #0057b8;
+      --accent-soft: #e5f0ff;
+      --border: #dddddd;
+      --highlight: #ffcc66;
+      --note-underline: #ff9900;
+      --danger: #c62828;
+      --correct: #1b5e20;
+      --incorrect: #b71c1c;
+      --orange: #ff9800;
+      --part-bg: #f2f2f2;
+      --part-active-bg: #ffffff;
+      --shadow-soft: 0 2px 10px rgba(0,0,0,0.08);
+      --font-size-base: 15px;
+    }
+
+    /* Themes */
+    body[data-theme="white-on-black"] {
+      --bg: #000000;
+      --bg-secondary: #111111;
+      --text: #ffffff;
+      --text-soft: #dddddd;
+      --border: #333333;
+      --accent: #90caf9;
+      --accent-soft: #1a237e;
+      --highlight: #ffcc66;
+      --note-underline: #ffcc66;
+      --part-bg: #111111;
+      --part-active-bg: #000000;
+      --shadow-soft: 0 2px 10px rgba(0,0,0,0.6);
+    }
+
+    body[data-theme="yellow-on-black"] {
+      --bg: #000000;
+      --bg-secondary: #111111;
+      --text: #ffff66;
+      --text-soft: #fff59d;
+      --border: #333333;
+      --accent: #fff176;
+      --accent-soft: #424242;
+      --highlight: #ffeb3b;
+      --note-underline: #ffeb3b;
+      --part-bg: #111111;
+      --part-active-bg: #000000;
+      --shadow-soft: 0 2px 10px rgba(0,0,0,0.6);
+    }
+
+    body {
+      margin: 0;
+      font-family: Arial, Helvetica, system-ui, -apple-system, "Segoe UI", sans-serif;
+      font-size: var(--font-size-base);
+      background: var(--bg);
+      color: var(--text);
+      overscroll-behavior: none;
+    }
+
+    body.font-large {
+      --font-size-base: 18px;
+    }
+    body.font-xlarge {
+      --font-size-base: 20px;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    /* Mode overlay (test vs study) */
+    #modeScreen {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.6);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 2000;
+    }
+
+    #modeScreenInner {
+      background: var(--bg);
+      color: var(--text);
+      padding: 24px 28px;
+      border-radius: 12px;
+      max-width: 480px;
+      box-shadow: var(--shadow-soft);
+    }
+
+    #modeScreenInner h1 {
+      margin-top: 0;
+      margin-bottom: 8px;
+      font-size: 1.4rem;
+    }
+
+    #modeScreenInner p {
+      margin-top: 0;
+      margin-bottom: 12px;
+      color: var(--text-soft);
+    }
+
+    .mode-buttons {
+      display: flex;
+      gap: 12px;
+      margin-top: 8px;
+      flex-wrap: wrap;
+    }
+
+    .mode-btn {
+      flex: 1 1 140px;
+      padding: 10px 14px;
+      border-radius: 999px;
+      border: 1px solid var(--accent);
+      background: var(--accent-soft);
+      color: var(--accent);
+      font-weight: 600;
+      cursor: pointer;
+      text-align: center;
+      transition: background 0.15s, transform 0.05s;
+    }
+
+    .mode-btn.secondary {
+      background: transparent;
+      color: var(--accent);
+    }
+
+    .mode-btn:hover {
+      background: var(--accent);
+      color: #fff;
+      transform: translateY(-1px);
+    }
+
+    #app {
+      display: none;
+    }
+
+    /* Top bar */
+    .top-bar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 56px;
+      background: var(--bg-secondary);
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 20px;
+      z-index: 1000;
+    }
+
+    .top-left {
+      display: flex;
+      align-items: baseline;
+      gap: 16px;
+    }
+
+    .logo {
+      font-weight: 800;
+      font-size: 1.4rem;
+      letter-spacing: 0.08em;
+    }
+
+    .test-title {
+      font-size: 0.95rem;
+      color: var(--text-soft);
+    }
+
+    .top-right {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      font-size: 0.9rem;
+    }
+
+    #timerContainer {
+      display: none;
+    }
+
+    #timerDisplay {
+      font-weight: 600;
+    }
+
+    .timer-warning {
+      color: var(--danger);
+    }
+
+    .icon-group {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .icon {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 26px;
+      height: 26px;
+      color: var(--text-soft);
+    }
+
+    .icon svg,
+    .icon-button svg {
+      width: 22px;
+      height: 22px;
+      display: block;
+      stroke: currentColor;
+    }
+
+    .icon-button {
+      border: none;
+      background: none;
+      padding: 4px 8px;
+      cursor: pointer;
+      color: var(--text-soft);
+      font-size: 1.3rem;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .icon-button:hover {
+      color: var(--accent);
+    }
+
+    /* Options overlay */
+    #optionsOverlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.55);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 1500;
+    }
+
+    #optionsPanel {
+      background: var(--bg);
+      color: var(--text);
+      width: min(520px, 95vw);
+      padding: 22px 26px;
+      border-radius: 12px;
+      box-shadow: var(--shadow-soft);
+      position: relative;
+    }
+
+    #optionsPanel h2 {
+      margin: 0 0 16px;
+      text-align: center;
+    }
+
+    .options-close {
+      position: absolute;
+      top: 8px;
+      right: 12px;
+      border: none;
+      background: none;
+      font-size: 1.4rem;
+      cursor: pointer;
+      color: var(--text-soft);
+    }
+
+    .options-section {
+      margin-top: 12px;
+      border-top: 1px solid var(--border);
+      padding-top: 10px;
+    }
+
+    .options-section h3 {
+      margin: 4px 0 8px;
+      font-size: 0.95rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--text-soft);
+    }
+
+    .options-list button {
+      width: 100%;
+      text-align: left;
+      padding: 8px 10px;
+      border-radius: 6px;
+      border: 1px solid transparent;
+      background: transparent;
+      color: var(--text);
+      cursor: pointer;
+      margin-bottom: 6px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 0.95rem;
+    }
+
+    .options-list button:hover {
+      border-color: var(--accent);
+      background: var(--accent-soft);
+    }
+
+    .options-list button.active {
+      border-color: var(--accent);
+      background: var(--accent-soft);
+      font-weight: 600;
+      color: var(--text);
+    }
+
+    .submit-button {
+      width: 100%;
+      padding: 10px 14px;
+      border-radius: 999px;
+      border: none;
+      background: #d32f2f;
+      color: #fff;
+      font-weight: 600;
+      cursor: pointer;
+      margin-bottom: 10px;
+      font-size: 1rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+
+    .submit-button:hover {
+      background: #b71c1c;
+    }
+
+    /* Main layout: fixed header + footer, scrollable middle */
+    .main-area {
+      position: fixed;
+      top: 56px;
+      bottom: 64px;
+      left: 0;
+      right: 0;
+      display: flex;
+      justify-content: center;
+      padding: 4px 6px;
+    }
+
+    .main-inner {
+      width: min(1800px, calc(100% - 6px));
+      display: flex;
+      border-radius: 12px;
+      background: var(--bg-secondary);
+      box-shadow: var(--shadow-soft);
+      overflow: hidden;
+      border: none;
+    }
+
+    .pane {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      background: var(--bg);
+    }
+
+    .pane-header {
+      padding: 10px 14px;
+      border-bottom: 1px solid var(--border);
+      background: var(--bg-secondary);
+      font-weight: 600;
+      font-size: 0.98rem;
+    }
+
+    .pane-header span {
+      font-weight: 400;
+      color: var(--text-soft);
+      margin-left: 6px;
+      font-size: 0.9rem;
+    }
+
+    .pane-content {
+      flex: 1;
+      padding: 14px 18px;
+      overflow-y: auto;
+      position: relative;
+    }
+
+    .passage-section h2 {
+      margin-top: 0;
+      margin-bottom: 8px;
+      font-size: 1.1rem;
+    }
+
+    .passage-section h3 {
+      margin-bottom: 6px;
+      margin-top: 18px;
+      font-size: 1rem;
+    }
+
+    .passage-section p {
+      margin: 4px 0;
+      line-height: 1.45;
+    }
+
+    .question-block {
+      margin-bottom: 10px;
+      padding: 6px 8px;
+      border-radius: 8px;
+      border: 1px solid transparent;
+      background: transparent;
+    }
+
+    .question-block.current-question {
+      border-color: var(--accent);
+      background: var(--accent-soft);
+    }
+
+    .question-block.correct {
+      border-color: var(--correct);
+      background: rgba(67,160,71,0.08);
+    }
+
+    .question-block.incorrect {
+      border-color: var(--incorrect);
+      background: rgba(229,57,53,0.06);
+    }
+
+    .question-number-label {
+      font-weight: 600;
+      margin-right: 6px;
+    }
+
+    .question-text {
+      margin-bottom: 4px;
+    }
+
+    .options-row {
+      margin-top: 8px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .options-row label {
+      display: block;
+      padding: 6px 8px;
+      border-radius: 8px;
+      margin: 0;
+      cursor: pointer;
+      background: var(--bg-secondary);
+      border: 1px solid var(--border);
+    }
+
+    select,
+    input[type="text"] {
+      padding: 6px 8px;
+      border-radius: 6px;
+      border: 1px solid var(--border);
+      font-size: 0.95rem;
+      width: 100%;
+      max-width: 260px;
+      background: var(--bg);
+      color: var(--text);
+    }
+
+    select option,
+    select optgroup {
+      background: var(--bg);
+      color: var(--text);
+    }
+
+    input::placeholder,
+    textarea::placeholder {
+      color: var(--text-soft);
+      opacity: 0.9;
+    }
+
+    select:focus,
+    input[type="text"]:focus {
+      outline: 2px solid var(--accent);
+      outline-offset: 1px;
+    }
+
+    .inline-input {
+      position: relative;
+      display: inline-block;
+      vertical-align: middle;
+      min-width: 110px;
+      max-width: 220px;
+    }
+
+    .inline-input::before {
+      content: attr(data-q);
+      position: absolute;
+      left: 1px;
+      top: 1px;
+      bottom: 1px;
+      width: 34px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: 0.85rem;
+      color: var(--text-soft);
+      background: var(--bg-secondary);
+      border-right: 1px solid var(--border);
+      border-radius: 5px 0 0 5px;
+      pointer-events: none;
+    }
+
+    .inline-input input {
+      width: 100%;
+      padding-left: 46px;
+      height: 34px;
+      line-height: 34px;
+    }
+
+    .drag-bank {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin: 10px 0 14px;
+      padding: 10px;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      background: var(--bg-secondary);
+    }
+
+    .drag-item {
+      width: 34px;
+      height: 34px;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 800;
+      border: 1px solid var(--border);
+      background: var(--bg);
+      cursor: grab;
+      user-select: none;
+    }
+
+    .drag-item.selected {
+      outline: 2px solid var(--accent);
+      outline-offset: 1px;
+    }
+
+    .drag-hint {
+      color: var(--text-soft);
+      font-size: 0.9rem;
+    }
+
+    .drop-zone {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 120px;
+      height: 34px;
+      border-radius: 8px;
+      border: 1px dashed var(--border);
+      background: var(--bg);
+      font-weight: 800;
+      margin-top: 6px;
+    }
+
+    .drop-zone.filled {
+      border-style: solid;
+      border-color: var(--accent);
+      background: var(--accent-soft);
+    }
+
+    .drop-zone.over {
+      border-color: var(--accent);
+    }
+
+    .correct-answer-text {
+      margin-top: 4px;
+      font-size: 0.85rem;
+      color: var(--correct);
+      display: none;
+    }
+
+    /* Bottom navigation */
+    .bottom-nav {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background: var(--bg-secondary);
+      border-top: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      padding: 6px 10px;
+      font-size: 0.92rem;
+      z-index: 900;
+    }
+
+    .bottom-row {
+      width: 100%;
+    }
+
+    .bottom-row-v2 {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      width: 100%;
+    }
+
+    .bottom-left {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      flex: 1;
+      min-width: 0;
+    }
+
+    .part-summary-row {
+      display: flex;
+      gap: 8px;
+      min-width: 320px;
+    }
+
+    #questionNumbers {
+      display: flex;
+      flex: 1;
+      flex-wrap: nowrap;
+      overflow-x: auto;
+      gap: 5px;
+      padding: 1px 5px;
+      min-width: 0;
+      justify-content: flex-start;
+    }
+
+    .part-chip {
+      padding: 8px 12px;
+      border-radius: 999px;
+      background: var(--part-bg);
+      border: 1px solid transparent;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 0.94rem;
+      justify-content: center;
+      transition: background 0.1s, border-color 0.1s, color 0.1s;
+      text-align: center;
+      width: 100%;
+    }
+
+    .part-chip span.count {
+      color: var(--text-soft);
+      font-size: 0.85rem;
+    }
+
+    .part-chip.active {
+      background: var(--part-active-bg);
+      border-color: var(--accent);
+      font-weight: 600;
+    }
+
+    .part-chip.complete {
+      border-color: var(--correct);
+      color: var(--correct);
+    }
+
+    .part-chip.partial {
+      border-color: var(--orange);
+      color: var(--orange);
+    }
+
+    .part-chip.unopened {
+      color: var(--text-soft);
+      border-color: transparent;
+    }
+
+    #questionNumbers {
+      scroll-behavior: smooth;
+    }
+
+    .qnav {
+      min-width: 30px;
+      padding: 4px 7px;
+      border-radius: 8px;
+      text-align: center;
+      border: 1px solid var(--border);
+      background: var(--bg);
+      cursor: pointer;
+      font-size: 0.9rem;
+      font-weight: 700;
+      flex-shrink: 0;
+    }
+
+    .qnav.current {
+      border-color: var(--accent);
+      background: var(--accent-soft);
+      font-weight: 600;
+    }
+
+    .qnav.answered {
+      border-color: var(--correct);
+      background: rgba(67,160,71,0.12);
+    }
+
+    .qnav.unanswered {
+      opacity: 0.7;
+    }
+
+    .section-arrows {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .arrow-btn,
+    .check-btn {
+      border-radius: 6px;
+      border: none;
+      padding: 6px 10px;
+      cursor: pointer;
+      font-size: 0.9rem;
+      background: var(--bg-secondary);
+      border: 1px solid var(--border);
+      color: var(--text);
+    }
+
+    .arrow-btn:hover {
+      border-color: var(--accent);
+      background: var(--accent-soft);
+    }
+
+    .check-btn {
+      background: var(--accent);
+      color: #fff;
+      border-color: var(--accent);
+      font-weight: 600;
+    }
+
+    .check-btn:hover {
+      background: #00429b;
+    }
+
+    /* Highlight & notes toolbar */
+    #selectionToolbar {
+      position: absolute;
+      padding: 4px 6px;
+      background: #222;
+      color: #fff;
+      border-radius: 999px;
+      display: none;
+      z-index: 1200;
+      font-size: 0.8rem;
+      gap: 4px;
+    }
+
+    #selectionToolbar button {
+      border: none;
+      background: transparent;
+      color: inherit;
+      padding: 4px 8px;
+      border-radius: 999px;
+      cursor: pointer;
+      font-size: 0.8rem;
+    }
+
+    #selectionToolbar button:hover {
+      background: rgba(255,255,255,0.18);
+    }
+
+    .highlighted {
+      background: var(--highlight);
+    }
+
+    .note-anchor {
+      text-decoration: underline;
+      text-decoration-color: var(--note-underline);
+      text-decoration-style: solid;
+      text-decoration-thickness: 2px;
+      position: relative;
+      cursor: pointer;
+    }
+
+    .note-anchor .note-delete {
+      position: absolute;
+      top: -10px;
+      right: -10px;
+      width: 16px;
+      height: 16px;
+      border-radius: 50%;
+      border: none;
+      font-size: 0.7rem;
+      padding: 0;
+      line-height: 16px;
+      text-align: center;
+      background: var(--danger);
+      color: #fff;
+      display: none;
+      cursor: pointer;
+    }
+
+    .note-anchor:hover .note-delete {
+      display: inline-block;
+    }
+
+    .note-window {
+      position: absolute;
+      min-width: 200px;
+      min-height: 120px;
+      max-width: 340px;
+      background: var(--bg);
+      color: var(--text);
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      box-shadow: var(--shadow-soft);
+      z-index: 1300;
+      display: flex;
+      flex-direction: column;
+      resize: both;
+      overflow: hidden;
+    }
+
+    .note-header {
+      padding: 4px 8px;
+      border-bottom: 1px solid var(--border);
+      background: var(--bg-secondary);
+      cursor: move;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 0.8rem;
+    }
+
+    .note-body {
+      flex: 1;
+      padding: 6px;
+    }
+
+    .note-body textarea {
+      width: 100%;
+      height: 100%;
+      border: none;
+      outline: none;
+      background: transparent;
+      color: inherit;
+      resize: none;
+      font-size: 0.85rem;
+    }
+
+    .note-footer {
+      padding: 4px 6px;
+      text-align: right;
+      border-top: 1px solid var(--border);
+    }
+
+    .note-footer button {
+      border: none;
+      background: none;
+      color: var(--accent);
+      cursor: pointer;
+      font-size: 0.8rem;
+    }
+
+    /* Results overlay */
+    #resultsOverlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.6);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 1600;
+    }
+
+    #resultsPanel {
+      background: var(--bg);
+      color: var(--text);
+      padding: 22px 26px;
+      border-radius: 12px;
+      box-shadow: var(--shadow-soft);
+      max-width: 520px;
+      width: 95vw;
+    }
+
+    #resultsPanel h2 {
+      margin-top: 0;
+      margin-bottom: 10px;
+    }
+
+    #resultsPanel p {
+      margin: 6px 0;
+    }
+
+    /* Utility */
+    .sr-only {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      padding: 0;
+      margin: -1px;
+      overflow: hidden;
+      clip: rect(0,0,0,0);
+      white-space: nowrap;
+      border: 0;
+    }
+
+    @media (max-width: 900px) {
+      .main-inner {
+        flex-direction: column;
+      }
+      .divider {
+        display: none;
+      }
+    }
+
+    .divider {
+      width: 2px;
+      background: transparent;
+      cursor: col-resize;
+      position: relative;
+    }
+
+    .divider::after {
+      content: "↔";
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      font-size: 0.6rem;
+      color: var(--text-soft);
+      opacity: 0.25;
+    }
+  </style>
+</head>
+<body data-theme="black-on-white">
+  <!-- Mode selection -->
+  <div id="modeScreen">
+    <div id="modeScreenInner">
+      <h1>IELTS Reading Simulation</h1>
+      <p>Select how you want to use this test.</p>
+      <div class="mode-buttons">
+        <button
+          class="mode-btn"
+          data-mode="test"
+          type="button"
+          onclick="window.startTest && window.startTest('test')"
+        >
+          Test mode (exam conditions)
+        </button>
+        <button
+          class="mode-btn secondary"
+          data-mode="study"
+          type="button"
+          onclick="window.startTest && window.startTest('study')"
+        >
+          Study mode (show feedback)
+        </button>
+      </div>
+      <p style="font-size:0.8rem;margin-top:10px;color:var(--text-soft);">
+        In both modes you can highlight text and make notes. In Test mode you submit once at the end. In Study mode you can check and change your answers as many times as you like.
+      </p>
+    </div>
+  </div>
+
+  <div id="app">
+    <!-- Top bar -->
+    <header class="top-bar">
+      <div class="top-left">
+        <div class="logo">IELTS Pabs</div>
+        <div class="test-title">
+          Reading Test 2 – General Training – Cambridge 19
+        </div>
+      </div>
+      <div class="top-right">
+        <div id="timerContainer" role="status" aria-live="polite" aria-atomic="true" aria-hidden="true">Time left: <span id="timerDisplay">60:00</span></div>
+        <div class="icon-group">
+          <span class="icon" title="Connection status">
+            <span class="sr-only">Connection status</span>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M4.93 9.93a10.5 10.5 0 0 1 14.14 0" />
+              <path d="M7.76 12.76a6.5 6.5 0 0 1 8.48 0" />
+              <path d="M10.59 15.59a2.5 2.5 0 0 1 2.82 0" />
+              <path d="M12 18h.01" />
+            </svg>
+          </span>
+          <span class="icon" title="Notifications (mock)">
+            <span class="sr-only">Notifications</span>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M15 17h5l-1.4-1.4A2 2 0 0 1 18 14.17V11a6 6 0 1 0-12 0v3.17a2 2 0 0 1-.59 1.43L4 17h5" />
+              <path d="M9 17a3 3 0 0 0 6 0" />
+            </svg>
+          </span>
+          <button id="optionsBtn" class="icon-button" title="Options menu" aria-label="Options menu">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="4" y1="7" x2="20" y2="7" />
+              <line x1="4" y1="12" x2="20" y2="12" />
+              <line x1="4" y1="17" x2="16" y2="17" />
+            </svg>
+          </button>
+        </div>
+      </div>
+    </header>
+
+    <!-- Options overlay -->
+    <div id="optionsOverlay">
+      <div id="optionsPanel">
+        <button class="options-close" onclick="toggleOptions(false)">✕</button>
+        <h2>Options</h2>
+
+        <button class="submit-button" onclick="submitTest()">
+          ✔ Submit test &amp; check answers
+        </button>
+
+        <div class="options-section">
+          <h3>Contrast</h3>
+          <div class="options-list">
+            <button id="theme-black-white" onclick="setTheme('black-on-white')">
+              <span>Black on white</span><span>✓</span>
+            </button>
+            <button id="theme-white-black" onclick="setTheme('white-on-black')">
+              <span>White on black</span><span>✓</span>
+            </button>
+            <button id="theme-yellow-black" onclick="setTheme('yellow-on-black')">
+              <span>Yellow on black</span><span>✓</span>
+            </button>
+          </div>
+        </div>
+
+        <div class="options-section">
+          <h3>Text size</h3>
+          <div class="options-list">
+            <button id="font-normal" onclick="setFontSize('normal')">
+              <span>Normal</span><span>✓</span>
+            </button>
+            <button id="font-large" onclick="setFontSize('large')">
+              <span>Large</span><span>✓</span>
+            </button>
+            <button id="font-xlarge" onclick="setFontSize('xlarge')">
+              <span>Extra large</span><span>✓</span>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Main content area -->
+    <div class="main-area">
+      <div class="main-inner">
+        <!-- Passage pane -->
+        <div class="pane" id="passagePane">
+          <div class="pane-header" id="passageHeader">
+            Part 1 <span>Read the text and answer questions 1–14.</span>
+          </div>
+          <div class="pane-content" id="passageContent">
+            <!-- Section 1 passages -->
+            <div class="passage-section" data-section="1">
+              <h2>Film reviews</h2>
+
+              <p><strong>A Purple Rainbow: The Truth</strong> Having actors playing popular rock band Purple Rainbow seemed like a bad idea, but in fact they’re impressive musicians themselves. Their fans in the film were actual fans of the group and transferred their enthusiasm to the actors very convincingly. I assumed there would be plenty of music, linked by weak dialogue, but I was wrong. And the support that band members gave to lead singer Jerry Cosgrove when tragedy entered his life had me close to tears, giving me a new appreciation of the band.</p>
+
+              <p><strong>B Home Fires</strong> I expected a standard, rather dull, story about domestic life, like the director’s last two films. Instead, Home Fires had me on the edge of my seat with excitement. It’s certainly worth a second viewing. Having said that, although it is apparently a film intended for all ages, many children would find the long discussions of relationship issues boring, and they contributed little or nothing to the film.</p>
+
+              <p><strong>C The Jeffersons</strong> One of the most popular films of the past half century is Mary and Tom, and a remake of it seems unnecessary. Nevertheless, The Jeffersons has some delightful elements, particularly the acting of Yvonne Richards. She really brought the character she played to life, but sadly, neither she nor the other actors could make the script sound natural.</p>
+
+              <p><strong>D Space Challenge 5</strong> This film makes an important ethical point about treating other people with respect, but that is likely to be missed by many teenagers, the target audience, as it assumes familiarity with the world as it was 20 years ago. With change happening so fast these days, many of the references will leave them confused.</p>
+
+              <p><strong>E Uplands</strong> Uplands could have been a delightful film: it has a charming story, witty dialogue, and is visually breathtaking. But the two lead actors are at their best in thrillers, not films like this one. James Petherick, who plays the hero, fails to gain the sympathy of the audience, who should be moved by the ups and downs in his life.</p>
+
+              <h2>Sports events in New Zealand</h2>
+
+              <p><strong>A McLeans Island Run</strong> This unique running and cycling event winds its way through the Canterbury countryside and finishes in Orana Park, where your spectators will include lions, tigers, gorillas and giraffes. Whether you’re a first-timer or a seasoned professional, there’s a distance to suit you. Choose from the short, the sprint or the standard distance. You can race to help other people too. If you get some friends or workmates to take part, you’ll be in with a chance to win $25,000 to put towards a good cause of your choice.</p>
+
+              <p><strong>B The Pioneer</strong> The Pioneer is an awe-inspiring seven-day mountain bike race through New Zealand’s pristine Southern Alps. It is the first race of its kind to link together over 500 km of farm tracks, cycle trails, double track and single track riding in a very special part of the world where soaring mountain peaks, crystal-clear lakes, and high country await. If you’re looking for a mountain bike race to get you inspired, this is it!</p>
+
+              <p><strong>C Race Drive Experience</strong> If you have ever wanted to experience the extreme thrill of driving a 6000cc race car, then this is definitely for you! You start off your Race Drive Experience by meeting the skilled team of racing drivers at the Motorsport Park Raceway, before being fully kitted out with one of our race suits and safety helmet. Then you are strapped into the passenger seat of one of our racing cars and taken on a demo drive, covering racing lines, braking points and race driving tricks. Finally you take the driver’s seat and can undertake your own high-speed laps of the circuit.</p>
+
+              <p><strong>D Banks Peninsular Walking Festival</strong> The Banks Peninsula Walking Festival offers guided walks all over the Banks Peninsula. The guides, all volunteers, are local people who love to share their passion for this special place with those from the wider community. Participants are guaranteed an enjoyable experience as they relax, get to know new people and absorb the stories and atmosphere of this fantastic land.</p>
+            </div>
+
+            <!-- Section 2 passages -->
+            <div class="passage-section" data-section="2" style="display:none;">
+              <h2>What to do if you are made redundant</h2>
+
+              <p>Employees are made redundant when a company has to reduce the workforce because a job or jobs are no longer needed. It has nothing to do with the employees’ ability to do their jobs. However, dealing with redundancy can be difficult. Here are some tips on how to cope.</p>
+
+              <p>First of all, don’t panic. It’s common for people to either rush into a flurry of activity or be frozen by the shock of being suddenly made redundant. The best course of action is to keep calm and draw up a list of all of the things you need to arrange in the months ahead. It’s important to find out what your rights are. Obtain a copy of the in-house redundancy policy if there is one and check out your contract for exit terms.</p>
+
+              <p>Try to maintain good relations wherever possible with your employer, even if you are angry about the manner of your exit. You will still need a reasonable reference when the time comes to move on, and it may be that your boss can make useful introductions or offer you consultancy work.</p>
+
+              <p>Help from a professional outplacement company can make a huge difference to your job search success and reduce the amount of time taken to find your next role. You can purchase this yourself, but there are advantages to having it arranged via your company.</p>
+
+              <p>Don’t rush into applying for any or every job that comes up. Take stock of what you have to offer, what you want to do, and carry out in-depth research to find out what employers are actually looking for. Talk to people in your target industry for career advice and information. This information will be invaluable in helping you identify potential employers.</p>
+
+              <p>Assess whether there are any gaps in experience or qualifications that could be a barrier to getting another job and address them. Enrol on some of those courses you have always been too busy to go on: not only will this enhance your skills, it also shows your commitment to continuous professional development.</p>
+
+              <p>Redundancy enables you to move your career forward in line with your own personal agenda. Although it can be traumatic, many people find that redundancy is actually the incentive they need to take their career in the direction they actually want to go. So think about what you really want, and go for it.</p>
+
+              <h2>Palvin’s Restaurant</h2>
+              <h3>Instructions to new kitchen staff</h3>
+
+              <p>Dress standards at our restaurants are extremely important whichever area you work in. The following information will help ensure that you have a professional appearance every day as you carry out your foodservice duties.</p>
+
+              <p>Palvin’s Restaurant chain provides new kitchen staff with their uniforms and you are advised to come to work with a note of your chest, waist and hip measurements to assist in this process. On your first day, you’ll be issued with two pairs of trousers, two aprons, two jackets and two hats. Once you’re happy that you have the correct size, please take the garments home and add a name tag to each one. Put these inside the garments so that they cannot be seen.</p>
+
+              <p>Kitchen work can be messy, and it is up to you to make sure that your uniform is kept clean, but you will receive a laundry allowance to help you do this. Towels are available at work, but it’s a good idea to bring your own too in case you need it. You can keep this and any other personal items safe in the lockers that are available for use while you’re on duty. It’s advisable to bring your own small padlock for these.</p>
+
+              <p>Uniforms should not be worn outside work. You should wear your normal clothes to and from work but make sure they’re respectable. For example, hoodies and other similar tops are not acceptable in the kitchens; if it’s cold, wear a jacket. When you arrive at work, you can use the changing facilities located next to the lockers to put on your uniform. You can wear your own shoes in the kitchens as long as they’re sturdy and enclosed. We strongly recommend rubber soles so that they do not slip on the floor.</p>
+
+              <p>If you incur any injuries that require crutches while you’re working for the company, you cannot then take on any tasks that involve standing up. However, if such a situation should occur, we will make every effort to place you in an appropriate area where you can sit down to work so you will not need to take time off. Employees who have smaller injuries, such as hand cuts, need to check with their manager whether they can come to work: you may have to take time off to avoid infection.</p>
+            </div>
+
+            <!-- Section 3 passages -->
+            <div class="passage-section" data-section="3" style="display:none;">
+              <h2>The forgotten role of women in medieval arts</h2>
+
+              <p><strong>A</strong> A team of archaeologists recently and unexpectedly revealed direct archaeological evidence of the involvement of medieval women in the production of manuscripts. This challenges the widespread assumptions that men were the sole producers of books throughout the period in European history known as the Middle Ages (600 to 1500 AD). They did so by identifying particles of blue pigment in the fossilised dental plaque of a medieval woman as lapis lazuli, an extremely valuable stone at the time. The findings are the first of their kind and strongly suggest it will be possible to increase the profile of ancient female artists in the historical and archaeological record by analysing their dirty teeth.</p>
+
+              <p><strong>B</strong> This discovery was made possible by applying technological advances in the field of archaeological science to a little-studied deposit on teeth known as tartar, which is mineralised dental plaque. In most societies today, oral hygiene practices are part of our daily routine, meaning that dental plaque is regularly removed and doesn’t have a chance to build up on our teeth. This was not the case in the past. Plaque built up and mineralised over the course of people’s lives. This solid deposit has unique archaeological potential. A key characteristic of dental plaque is that while it forms it has the ability to entrap a wide range of microscopic and molecular debris that enters a person’s mouth. When dental plaque hardens and becomes tartar, it can entomb these particles and molecules for hundreds or thousands of years, potentially even millions.</p>
+
+              <p><strong>C</strong> The majority of scholarly work conducted on ancient tartar has been centred on what people ate but, besides taking in food, the human mouth is subject to a constant influx of particles of different types directly from the environment. Tree and grass pollen, spores, cotton fibres, medicinal plants and micro-charcoal have all been reported among the finds from this type of dental analysis. Despite such promising evidence, the value of tartar as environmental evidence has not, so far, been much exploited.</p>
+
+              <p><strong>D</strong> The team analysed the skeletal remains of a female individual, known as B78, who lived in the 11th to 12th century. She was buried in the grounds of a former women’s monastery in Dalheim, Germany, that is in ruins today but was occupied by various religious groups for around a thousand years. They found well over 100 bright blue particles, in the form of small crystals and individual flecks, scattered throughout the tartar which was still preserved on her teeth. Her skeletal remains had not indicated anything particular about her life, besides a general indication that she probably did not do any hard labour. The blue particles were unlike any other discovery, firstly because of their colour, and secondly because of their sheer number.</p>
+
+              <p><strong>E</strong> To be sure about the nature of the particles of bright blue powder trapped in the woman’s tartar, a range of microscopy techniques were used. All techniques provided the same results: the blue specks were lazurite, the blue portion of the lapis lazuli stone, a substance more precious than gold in Medieval Europe. Afghanistan was the only source of the stone at the time, and the preparation of the pigment took great skill.</p>
+
+              <p><strong>F</strong> So how did particles of this precious material end up deposited on this woman’s teeth? A variety of reasons were possible, from painting to accidental ingestion during pigment preparation, or even the consumption of the powder as a medicine. But the way in which the blue particles were found in her tartar, single flecks in different areas, pointed to repeated exposure, not a single intake. And creating a vivid blue pigment from lapis lazuli required an Arabic method of oil flotation that did not appear in European artists’ manuals until after the 15th century. This all suggests that it’s more likely that this ultramarine pigment was brought into the region as a finished product for use by artists.</p>
+
+              <p><strong>G</strong> The most likely explanation, then, is that this was an artist who repeatedly used her lips to make a fine point on the end of her brush in order to paint intricate detail on manuscripts. This finding suggests that women were more involved in the production of books throughout the Middle Ages than tends to be thought. Before the 12th century fewer than one per cent of the books that still remain can be traced to the work of women. Additionally, artists are largely invisible in both the historic and archaeological records as they rarely signed their work before the 15th century and, until now, there have been no known skeletal markers directly associated with producing art. The work strongly points to the possibility of using microscopic particles entombed in ancient tartar to track the artists of ancient times. It also suggests that it may be possible to track other dusty crafts using this method and thereby reveal the invisible workforce behind many forms of art.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="divider" id="divider"></div>
+
+        <!-- Questions pane -->
+        <div class="pane" id="questionPane">
+          <div class="pane-header" id="questionHeader">
+            Questions 1–14
+          </div>
+          <div class="pane-content" id="questionContent">
+            <!-- Section 1 questions -->
+            <div data-section="1">
+              <p><strong>SECTION 1 Questions 1 to 14</strong></p>
+
+              <p>Read the text and answer Questions 1 to 8.</p>
+              <p>Look at the five film reviews, A to E.</p>
+              <p>For which film review are the following statements true?</p>
+              <p>Write the correct letter, A to E.</p>
+              <p><strong>NB</strong> You may use any letter more than once.</p>
+
+              <p>A Purple Rainbow: The Truth</p>
+              <p>B Home Fires</p>
+              <p>C The Jeffersons</p>
+              <p>D Space Challenge 5</p>
+              <p>E Uplands</p>
+
+              <div class="drag-bank" aria-label="Drag answers for questions 1 to 8">
+                <div class="drag-item" draggable="true" data-value="A">A</div>
+                <div class="drag-item" draggable="true" data-value="B">B</div>
+                <div class="drag-item" draggable="true" data-value="C">C</div>
+                <div class="drag-item" draggable="true" data-value="D">D</div>
+                <div class="drag-item" draggable="true" data-value="E">E</div>
+                <div class="drag-hint">Drag a letter into each answer box, or click a letter then click a box.</div>
+              </div>
+
+              <div class="question-block" data-q="1">
+                <div class="question-text"><span class="question-number-label">1.</span> The reviewer thinks some of the cast are unsuitable for their roles.</div>
+                <select class="sr-only" name="q1">
+                  <option value="">Select…</option>
+                  <option value="A">A</option><option value="B">B</option><option value="C">C</option><option value="D">D</option><option value="E">E</option>
+                </select>
+                <div class="drop-zone" data-for="q1" tabindex="0" role="button" aria-label="Answer box for question 1">Drop here</div>
+                <div class="correct-answer-text" id="ca-1"></div>
+              </div>
+
+              <div class="question-block" data-q="2">
+                <div class="question-text"><span class="question-number-label">2.</span> The dialogue in this film seems unrealistic.</div>
+                <select class="sr-only" name="q2">
+                  <option value="">Select…</option>
+                  <option value="A">A</option><option value="B">B</option><option value="C">C</option><option value="D">D</option><option value="E">E</option>
+                </select>
+                <div class="drop-zone" data-for="q2" tabindex="0" role="button" aria-label="Answer box for question 2">Drop here</div>
+                <div class="correct-answer-text" id="ca-2"></div>
+              </div>
+
+              <div class="question-block" data-q="3">
+                <div class="question-text"><span class="question-number-label">3.</span> The reviewer found this film unexpectedly emotional.</div>
+                <select class="sr-only" name="q3">
+                  <option value="">Select…</option>
+                  <option value="A">A</option><option value="B">B</option><option value="C">C</option><option value="D">D</option><option value="E">E</option>
+                </select>
+                <div class="drop-zone" data-for="q3" tabindex="0" role="button" aria-label="Answer box for question 3">Drop here</div>
+                <div class="correct-answer-text" id="ca-3"></div>
+              </div>
+
+              <div class="question-block" data-q="4">
+                <div class="question-text"><span class="question-number-label">4.</span> This film contains dialogue that is uninteresting for some viewers.</div>
+                <select class="sr-only" name="q4">
+                  <option value="">Select…</option>
+                  <option value="A">A</option><option value="B">B</option><option value="C">C</option><option value="D">D</option><option value="E">E</option>
+                </select>
+                <div class="drop-zone" data-for="q4" tabindex="0" role="button" aria-label="Answer box for question 4">Drop here</div>
+                <div class="correct-answer-text" id="ca-4"></div>
+              </div>
+
+              <div class="question-block" data-q="5">
+                <div class="question-text"><span class="question-number-label">5.</span> This film carries a moral message.</div>
+                <select class="sr-only" name="q5">
+                  <option value="">Select…</option>
+                  <option value="A">A</option><option value="B">B</option><option value="C">C</option><option value="D">D</option><option value="E">E</option>
+                </select>
+                <div class="drop-zone" data-for="q5" tabindex="0" role="button" aria-label="Answer box for question 5">Drop here</div>
+                <div class="correct-answer-text" id="ca-5"></div>
+              </div>
+
+              <div class="question-block" data-q="6">
+                <div class="question-text"><span class="question-number-label">6.</span> Non-actors take part in this film.</div>
+                <select class="sr-only" name="q6">
+                  <option value="">Select…</option>
+                  <option value="A">A</option><option value="B">B</option><option value="C">C</option><option value="D">D</option><option value="E">E</option>
+                </select>
+                <div class="drop-zone" data-for="q6" tabindex="0" role="button" aria-label="Answer box for question 6">Drop here</div>
+                <div class="correct-answer-text" id="ca-6"></div>
+              </div>
+
+              <div class="question-block" data-q="7">
+                <div class="question-text"><span class="question-number-label">7.</span> The reviewer thinks this film should be seen again.</div>
+                <select class="sr-only" name="q7">
+                  <option value="">Select…</option>
+                  <option value="A">A</option><option value="B">B</option><option value="C">C</option><option value="D">D</option><option value="E">E</option>
+                </select>
+                <div class="drop-zone" data-for="q7" tabindex="0" role="button" aria-label="Answer box for question 7">Drop here</div>
+                <div class="correct-answer-text" id="ca-7"></div>
+              </div>
+
+              <div class="question-block" data-q="8">
+                <div class="question-text"><span class="question-number-label">8.</span> This film mentions things that audience members won’t know about.</div>
+                <select class="sr-only" name="q8">
+                  <option value="">Select…</option>
+                  <option value="A">A</option><option value="B">B</option><option value="C">C</option><option value="D">D</option><option value="E">E</option>
+                </select>
+                <div class="drop-zone" data-for="q8" tabindex="0" role="button" aria-label="Answer box for question 8">Drop here</div>
+                <div class="correct-answer-text" id="ca-8"></div>
+              </div>
+
+              <p>Read the text and answer Questions 9 to 14.</p>
+              <p>Look at the four advertisements for sports events, A to D.</p>
+              <p>For which event are the following statements true?</p>
+              <p>Write the correct letter, A to D.</p>
+              <p><strong>NB</strong> You may use any letter more than once.</p>
+
+              <p>A McLeans Island Run</p>
+              <p>B The Pioneer</p>
+              <p>C Race Drive Experience</p>
+              <p>D Banks Peninsular Walking Festival</p>
+
+              <div class="drag-bank" aria-label="Drag answers for questions 9 to 14">
+                <div class="drag-item" draggable="true" data-value="A">A</div>
+                <div class="drag-item" draggable="true" data-value="B">B</div>
+                <div class="drag-item" draggable="true" data-value="C">C</div>
+                <div class="drag-item" draggable="true" data-value="D">D</div>
+                <div class="drag-hint">Drag a letter into each answer box, or click a letter then click a box.</div>
+              </div>
+
+              <div class="question-block" data-q="9">
+                <div class="question-text"><span class="question-number-label">9.</span> You see spectacular scenery.</div>
+                <select class="sr-only" name="q9">
+                  <option value="">Select…</option>
+                  <option value="A">A</option><option value="B">B</option><option value="C">C</option><option value="D">D</option>
+                </select>
+                <div class="drop-zone" data-for="q9" tabindex="0" role="button" aria-label="Answer box for question 9">Drop here</div>
+                <div class="correct-answer-text" id="ca-9"></div>
+              </div>
+
+              <div class="question-block" data-q="10">
+                <div class="question-text"><span class="question-number-label">10.</span> You are provided with special clothing.</div>
+                <select class="sr-only" name="q10">
+                  <option value="">Select…</option>
+                  <option value="A">A</option><option value="B">B</option><option value="C">C</option><option value="D">D</option>
+                </select>
+                <div class="drop-zone" data-for="q10" tabindex="0" role="button" aria-label="Answer box for question 10">Drop here</div>
+                <div class="correct-answer-text" id="ca-10"></div>
+              </div>
+
+              <div class="question-block" data-q="11">
+                <div class="question-text"><span class="question-number-label">11.</span> You may be watched while you are doing the activity.</div>
+                <select class="sr-only" name="q11">
+                  <option value="">Select…</option>
+                  <option value="A">A</option><option value="B">B</option><option value="C">C</option><option value="D">D</option>
+                </select>
+                <div class="drop-zone" data-for="q11" tabindex="0" role="button" aria-label="Answer box for question 11">Drop here</div>
+                <div class="correct-answer-text" id="ca-11"></div>
+              </div>
+
+              <div class="question-block" data-q="12">
+                <div class="question-text"><span class="question-number-label">12.</span> You watch someone else before doing the activity yourself.</div>
+                <select class="sr-only" name="q12">
+                  <option value="">Select…</option>
+                  <option value="A">A</option><option value="B">B</option><option value="C">C</option><option value="D">D</option>
+                </select>
+                <div class="drop-zone" data-for="q12" tabindex="0" role="button" aria-label="Answer box for question 12">Drop here</div>
+                <div class="correct-answer-text" id="ca-12"></div>
+              </div>
+
+              <div class="question-block" data-q="13">
+                <div class="question-text"><span class="question-number-label">13.</span> You meet people who are expert at the activity.</div>
+                <select class="sr-only" name="q13">
+                  <option value="">Select…</option>
+                  <option value="A">A</option><option value="B">B</option><option value="C">C</option><option value="D">D</option>
+                </select>
+                <div class="drop-zone" data-for="q13" tabindex="0" role="button" aria-label="Answer box for question 13">Drop here</div>
+                <div class="correct-answer-text" id="ca-13"></div>
+              </div>
+
+              <div class="question-block" data-q="14">
+                <div class="question-text"><span class="question-number-label">14.</span> You can raise money for a charity.</div>
+                <select class="sr-only" name="q14">
+                  <option value="">Select…</option>
+                  <option value="A">A</option><option value="B">B</option><option value="C">C</option><option value="D">D</option>
+                </select>
+                <div class="drop-zone" data-for="q14" tabindex="0" role="button" aria-label="Answer box for question 14">Drop here</div>
+                <div class="correct-answer-text" id="ca-14"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- selection toolbar -->
+      <div id="selectionToolbar">
+        <button onclick="toggleHighlightSelection()">Highlight</button>
+        <button onclick="makeNoteForSelection()">Make note</button>
+      </div>
+    </div>
+
+    <!-- Bottom nav -->
+    <footer class="bottom-nav">
+      <div class="bottom-row bottom-row-v2">
+        <div class="bottom-left">
+          <div class="part-summary-row">
+            <div class="part-chip active" data-section-chip="1" onclick="switchSection(1)">
+              Part 1 <span class="count" id="part1Count">0 of 14</span>
+            </div>
+            <div class="part-chip unopened" data-section-chip="2" onclick="switchSection(2)">
+              Part 2 <span class="count" id="part2Count">0 of 13</span>
+            </div>
+            <div class="part-chip unopened" data-section-chip="3" onclick="switchSection(3)">
+              Part 3 <span class="count" id="part3Count">0 of 13</span>
+            </div>
+          </div>
+
+          <div id="questionNumbers"></div>
+        </div>
+
+        <div class="section-arrows">
+          <button class="arrow-btn" onclick="prevSection()" title="Previous part">←</button>
+          <button class="arrow-btn" onclick="nextSection()" title="Next part">→</button>
+          <button class="check-btn" onclick="submitTest()" title="Submit test and check answers">✔ Check answers</button>
+        </div>
+      </div>
+    </footer>
+  </div>
+
+  <!-- Results overlay -->
+  <div id="resultsOverlay">
+    <div id="resultsPanel">
+      <h2>Your IELTS Reading result</h2>
+      <p id="scoreLine"></p>
+      <p id="bandLine"></p>
+      <p id="descriptorLine"></p>
+      <button style="margin-top:10px;" onclick="closeResults()">Close</button>
+    </div>
+  </div>
+
+  <script>
+    /***************
+     * GLOBAL STATE
+     ***************/
+    let mode = "test"; // "test" or "study"
+    let activeSection = 1;
+    let timerSeconds = 60 * 60;
+    let timerId = null;
+    let testSubmitted = false;
+    const visitedSections = new Set();
+
+    const AVAILABLE_THEMES = [
+      "black-on-white",
+      "white-on-black",
+      "yellow-on-black",
+    ];
+    const DEFAULT_THEME = "black-on-white";
+    const STORAGE_KEYS = {
+      theme: "ielts-reading-theme",
+    };
+
+    function restoreThemePreference() {
+      const saved = localStorage.getItem(STORAGE_KEYS.theme);
+      const theme = AVAILABLE_THEMES.includes(saved) ? saved : DEFAULT_THEME;
+      document.body.setAttribute("data-theme", theme);
+    }
+
+    function setTheme(theme) {
+      if (!AVAILABLE_THEMES.includes(theme)) return;
+      document.body.setAttribute("data-theme", theme);
+      localStorage.setItem(STORAGE_KEYS.theme, theme);
+      updateThemeButtons();
+    }
+
+    function updateThemeButtons() {
+      const theme = document.body.getAttribute("data-theme") || DEFAULT_THEME;
+      const map = {
+        "black-on-white": "theme-black-white",
+        "white-on-black": "theme-white-black",
+        "yellow-on-black": "theme-yellow-black",
+      };
+      AVAILABLE_THEMES.forEach((t) => {
+        const id = map[t];
+        const btn = document.getElementById(id);
+        if (!btn) return;
+        if (t === theme) btn.classList.add("active");
+        else btn.classList.remove("active");
+      });
+    }
+
+    function setFontSize(size) {
+      document.body.classList.remove("font-large", "font-xlarge");
+      if (size === "large") document.body.classList.add("font-large");
+      if (size === "xlarge") document.body.classList.add("font-xlarge");
+      updateFontButtons();
+    }
+
+    function updateFontButtons() {
+      const sizeClass = document.body.classList.contains("font-xlarge")
+        ? "xlarge"
+        : document.body.classList.contains("font-large")
+        ? "large"
+        : "normal";
+      ["normal", "large", "xlarge"].forEach((s) => {
+        const btn = document.getElementById("font-" + s);
+        if (!btn) return;
+        if (s === sizeClass) btn.classList.add("active");
+        else btn.classList.remove("active");
+      });
+    }
+
+    const sectionRanges = {
+      1: { from: 1, to: 14 },
+      2: { from: 15, to: 27 },
+      3: { from: 28, to: 40 }
+    };
+
+    const answerKey = {
+      1: "E",
+      2: "C",
+      3: "A",
+      4: "B",
+      5: "D",
+      6: "A",
+      7: "B",
+      8: "D",
+      9: "B",
+      10: "C",
+      11: "A",
+      12: "C",
+      13: "C",
+      14: "A",
+      15: "list",
+      16: "reference",
+      17: "consultancy",
+      18: "outplacement",
+      19: "research",
+      20: "gaps",
+      21: "incentive",
+      22: "measurements",
+      23: "laundry allowance",
+      24: "respectable",
+      25: "hoodies",
+      26: "crutches",
+      27: "hand cuts",
+      28: "C",
+      29: "A",
+      30: "B",
+      31: "A",
+      32: "D",
+      33: "B",
+      34: "D",
+      35: "C",
+      36: "F",
+      37: "gold",
+      38: "skill",
+      39: "point",
+      40: "manuscripts"
+    };
+
+    const correctAnswerText = {
+      1: "E",
+      2: "C",
+      3: "A",
+      4: "B",
+      5: "D",
+      6: "A",
+      7: "B",
+      8: "D",
+      9: "B",
+      10: "C",
+      11: "A",
+      12: "C",
+      13: "C",
+      14: "A",
+      15: "list",
+      16: "reference",
+      17: "consultancy",
+      18: "outplacement",
+      19: "research",
+      20: "gaps",
+      21: "incentive",
+      22: "measurements",
+      23: "laundry allowance",
+      24: "respectable",
+      25: "hoodies",
+      26: "crutches",
+      27: "hand cuts",
+      28: "C",
+      29: "A",
+      30: "B",
+      31: "A",
+      32: "D",
+      33: "B",
+      34: "D",
+      35: "C",
+      36: "F",
+      37: "gold",
+      38: "skill",
+      39: "point",
+      40: "manuscripts"
+    };
+
+    /********************
+     * MODE & INITIALISE
+     ********************/
+
+    restoreThemePreference();
+
+    function startTest(selectedMode) {
+      mode = selectedMode;
+      const timerContainer = document.getElementById("timerContainer");
+
+      visitedSections.clear();
+      visitedSections.add(1);
+      activeSection = 1;
+      currentQuestion = 1;
+
+      if (timerId) {
+        clearInterval(timerId);
+        timerId = null;
+      }
+
+      if (mode === "test") {
+        if (timerContainer) {
+          timerContainer.style.display = "block";
+          timerContainer.setAttribute("aria-hidden", "false");
+        }
+        startTimer();
+      } else {
+        if (timerContainer) {
+          timerContainer.style.display = "none";
+          timerContainer.setAttribute("aria-hidden", "true");
+        }
+      }
+
+      document.getElementById("modeScreen").style.display = "none";
+      document.getElementById("app").style.display = "block";
+      initQuestionInputs();
+      setupDragMatch();
+      buildQuestionNav();
+      setupSelectionListeners();
+      setupDividerDrag();
+      updateThemeButtons();
+      updateFontButtons();
+      window.addEventListener("beforeunload", (e) => {
+        if (!testSubmitted) {
+          e.preventDefault();
+          e.returnValue = "Are you sure you want to leave? All progress will be lost.";
+          return e.returnValue;
+        }
+      }, { capture: true });
+    }
+
+    // Expose for inline handlers and any future fallback uses.
+    window.startTest = startTest;
+
+    function wireModeButtons() {
+      const buttons = document.querySelectorAll(".mode-btn[data-mode]");
+      const modeScreen = document.getElementById("modeScreen");
+
+      const activate = (btn) => {
+        const selected = btn.getAttribute("data-mode") || btn.dataset.mode || "test";
+        startTest(selected);
+      };
+
+      buttons.forEach((btn) => {
+        btn.addEventListener("click", () => activate(btn));
+        btn.addEventListener("keydown", (event) => {
+          if (event.key === "Enter" || event.key === " ") {
+            event.preventDefault();
+            activate(btn);
+          }
+        });
+      });
+
+      if (modeScreen && !modeScreen.dataset.wired) {
+        modeScreen.addEventListener("click", (event) => {
+          const btn = event.target.closest(".mode-btn[data-mode]");
+          if (!btn) return;
+          event.preventDefault();
+          activate(btn);
+        });
+        modeScreen.dataset.wired = "true";
+      }
+    }
+
+    function ensureModeWiring() {
+      if (document.readyState === "loading") {
+        document.addEventListener("DOMContentLoaded", wireModeButtons, { once: true });
+      } else {
+        wireModeButtons();
+      }
+    }
+
+    function startTimer() {
+      if (mode !== "test") return;
+      const display = document.getElementById("timerDisplay");
+      display.classList.remove("timer-warning");
+      const initialMinutes = Math.floor(timerSeconds / 60)
+        .toString()
+        .padStart(2, "0");
+      const initialSeconds = (timerSeconds % 60).toString().padStart(2, "0");
+      display.textContent = `${initialMinutes}:${initialSeconds}`;
+
+      timerId = setInterval(() => {
+        timerSeconds--;
+        if (timerSeconds < 0) {
+          clearInterval(timerId);
+          if (!testSubmitted) {
+            alert("Time is up! The test will be submitted.");
+            submitTest();
+          }
+          return;
+        }
+        const m = Math.floor(timerSeconds / 60)
+          .toString()
+          .padStart(2, "0");
+        const s = (timerSeconds % 60).toString().padStart(2, "0");
+        display.textContent = `${m}:${s}`;
+        if (timerSeconds <= 180) {
+          display.classList.add("timer-warning");
+        }
+      }, 1000);
+    }
+
+    function toggleOptions(show) {
+      const overlay = document.getElementById("optionsOverlay");
+      overlay.style.display = show ? "flex" : "none";
+    }
+
+    document.getElementById("optionsBtn").addEventListener("click", () => {
+      toggleOptions(true);
+    });
+
+    /*************************
+     * BUILD REMAINING QUESTIONS
+     *************************/
+    let questionsBuilt = false;
+    let currentQuestion = 1;
+
+    function buildRemainingQuestions() {
+      if (questionsBuilt) return;
+      questionsBuilt = true;
+
+      const qContent = document.getElementById("questionContent");
+      if (!qContent) return;
+
+      // SECTION 2 QUESTIONS (15–27)
+      qContent.insertAdjacentHTML(
+        "beforeend",
+        `
+        <div data-section="2" style="display:none;">
+          <p><strong>SECTION 2 Questions 15 to 27</strong></p>
+
+          <p>Read the text and answer Questions 15 to 21.</p>
+          <p><strong>Complete the notes below.</strong></p>
+          <p>Choose <strong>ONE WORD ONLY</strong> from the text for each answer.</p>
+
+          <div class="question-block" data-q="15">
+            <div class="question-text"><span class="question-number-label">15.</span> Start by considering what needs to be done and make a ______ to work through.</div>
+            <input type="text" name="q15" autocomplete="off" />
+            <div class="correct-answer-text" id="ca-15"></div>
+          </div>
+
+          <div class="question-block" data-q="16">
+            <div class="question-text"><span class="question-number-label">16.</span> You want to receive a positive ______ from them for a future post.</div>
+            <input type="text" name="q16" autocomplete="off" />
+            <div class="correct-answer-text" id="ca-16"></div>
+          </div>
+
+          <div class="question-block" data-q="17">
+            <div class="question-text"><span class="question-number-label">17.</span> You might get some ______ projects from them in the future.</div>
+            <input type="text" name="q17" autocomplete="off" />
+            <div class="correct-answer-text" id="ca-17"></div>
+          </div>
+
+          <div class="question-block" data-q="18">
+            <div class="question-text"><span class="question-number-label">18.</span> Find an organisation that specialises in ______ to help you look for another job.</div>
+            <input type="text" name="q18" autocomplete="off" />
+            <div class="correct-answer-text" id="ca-18"></div>
+          </div>
+
+          <div class="question-block" data-q="19">
+            <div class="question-text"><span class="question-number-label">19.</span> Invest time in doing serious ______ concerning the current requirements in your sector.</div>
+            <input type="text" name="q19" autocomplete="off" />
+            <div class="correct-answer-text" id="ca-19"></div>
+          </div>
+
+          <div class="question-block" data-q="20">
+            <div class="question-text"><span class="question-number-label">20.</span> Consider if your work and training records contain ______ that might prevent you finding work.</div>
+            <input type="text" name="q20" autocomplete="off" />
+            <div class="correct-answer-text" id="ca-20"></div>
+          </div>
+
+          <div class="question-block" data-q="21">
+            <div class="question-text"><span class="question-number-label">21.</span> Look on redundancy as a useful ______ to advance, rather than the end of your career.</div>
+            <input type="text" name="q21" autocomplete="off" />
+            <div class="correct-answer-text" id="ca-21"></div>
+          </div>
+
+          <p>Read the text and answer Questions 22 to 27.</p>
+          <p><strong>Complete the sentences below.</strong></p>
+          <p>Choose <strong>NO MORE THAN TWO WORDS</strong> from the text for each answer.</p>
+
+          <div class="question-block" data-q="22">
+            <div class="question-text"><span class="question-number-label">22.</span> New staff must record their own body ______ before arriving at work.</div>
+            <input type="text" name="q22" autocomplete="off" />
+            <div class="correct-answer-text" id="ca-22"></div>
+          </div>
+
+          <div class="question-block" data-q="23">
+            <div class="question-text"><span class="question-number-label">23.</span> You should use your ______ to ensure that your uniform is never dirty.</div>
+            <input type="text" name="q23" autocomplete="off" />
+            <div class="correct-answer-text" id="ca-23"></div>
+          </div>
+
+          <div class="question-block" data-q="24">
+            <div class="question-text"><span class="question-number-label">24.</span> Clothes worn to travel to work must be ______.</div>
+            <input type="text" name="q24" autocomplete="off" />
+            <div class="correct-answer-text" id="ca-24"></div>
+          </div>
+
+          <div class="question-block" data-q="25">
+            <div class="question-text"><span class="question-number-label">25.</span> Casual wear, such as ______, should not be worn in the kitchen area.</div>
+            <input type="text" name="q25" autocomplete="off" />
+            <div class="correct-answer-text" id="ca-25"></div>
+          </div>
+
+          <div class="question-block" data-q="26">
+            <div class="question-text"><span class="question-number-label">26.</span> Staff using ______ may still come to work.</div>
+            <input type="text" name="q26" autocomplete="off" />
+            <div class="correct-answer-text" id="ca-26"></div>
+          </div>
+
+          <div class="question-block" data-q="27">
+            <div class="question-text"><span class="question-number-label">27.</span> Please contact the manager before arriving at the kitchens if you have any ______ or other similar injuries.</div>
+            <input type="text" name="q27" autocomplete="off" />
+            <div class="correct-answer-text" id="ca-27"></div>
+          </div>
+        </div>
+      `
+      );
+
+      // SECTION 3 QUESTIONS (28–40)
+      qContent.insertAdjacentHTML(
+        "beforeend",
+        `
+        <div data-section="3" style="display:none;">
+          <p><strong>SECTION 3 Questions 28 to 40</strong></p>
+
+          <p>Read the text and answer Questions 28 to 40.</p>
+
+          <p><strong>Questions 28 to 32</strong></p>
+          <p>Choose the correct letter, A, B, C or D.</p>
+
+          <div class="question-block" data-q="28">
+            <div class="question-text"><span class="question-number-label">28.</span> In Paragraph A, what does the writer say about the archaeology team’s work?</div>
+            <label><input type="radio" name="q28" value="A" /> A It confirmed what they had assumed when they started it.</label><br />
+            <label><input type="radio" name="q28" value="B" /> B It was hard to persuade other historians about their findings.</label><br />
+            <label><input type="radio" name="q28" value="C" /> C It could reveal the importance of various women in history.</label><br />
+            <label><input type="radio" name="q28" value="D" /> D It could help identify the number of books written in the Middle Ages.</label>
+            <div class="correct-answer-text" id="ca-28"></div>
+          </div>
+
+          <div class="question-block" data-q="29">
+            <div class="question-text"><span class="question-number-label">29.</span> What point does the writer make about dental tartar in Paragraph C?</div>
+            <label><input type="radio" name="q29" value="A" /> A Archaeologists could make more use of it than they do at present.</label><br />
+            <label><input type="radio" name="q29" value="B" /> B Some particles are more easily trapped in it than others.</label><br />
+            <label><input type="radio" name="q29" value="C" /> C The environment can cause it to break down.</label><br />
+            <label><input type="radio" name="q29" value="D" /> D Changes in people’s diet have influenced its composition.</label>
+            <div class="correct-answer-text" id="ca-29"></div>
+          </div>
+
+          <div class="question-block" data-q="30">
+            <div class="question-text"><span class="question-number-label">30.</span> What did the skeleton of B78 suggest about her?</div>
+            <label><input type="radio" name="q30" value="A" /> A She had not been very old when she died.</label><br />
+            <label><input type="radio" name="q30" value="B" /> B Her life had not been very physically demanding.</label><br />
+            <label><input type="radio" name="q30" value="C" /> C Her teeth had more tartar than most skeletons of that age.</label><br />
+            <label><input type="radio" name="q30" value="D" /> D She had been given a grander burial than other women of her time.</label>
+            <div class="correct-answer-text" id="ca-30"></div>
+          </div>
+
+          <div class="question-block" data-q="31">
+            <div class="question-text"><span class="question-number-label">31.</span> What is the writer doing in Paragraph F?</div>
+            <label><input type="radio" name="q31" value="A" /> A supporting the team’s view that the blue pigment was imported</label><br />
+            <label><input type="radio" name="q31" value="B" /> B explaining why artists in Europe liked to use the blue pigment</label><br />
+            <label><input type="radio" name="q31" value="C" /> C comparing artistic designs using the blue pigment in different parts of the world</label><br />
+            <label><input type="radio" name="q31" value="D" /> D criticising arguments put forward by other scientists about the blue pigment</label>
+            <div class="correct-answer-text" id="ca-31"></div>
+          </div>
+
+          <div class="question-block" data-q="32">
+            <div class="question-text"><span class="question-number-label">32.</span> What problem does the writer highlight about medieval artists in Paragraph G?</div>
+            <label><input type="radio" name="q32" value="A" /> A the poor facilities available to females in the profession</label><br />
+            <label><input type="radio" name="q32" value="B" /> B the small number of projects available to them</label><br />
+            <label><input type="radio" name="q32" value="C" /> C the difficulties locating their skeletal remains for study</label><br />
+            <label><input type="radio" name="q32" value="D" /> D the lack of evidence for their contribution to books</label>
+            <div class="correct-answer-text" id="ca-32"></div>
+          </div>
+
+          <p><strong>Questions 33 to 36</strong></p>
+          <p>The text has seven paragraphs, A to G.</p>
+          <p>Which paragraph mentions the following?</p>
+          <p>Write the correct letter, A to G.</p>
+
+          <div class="drag-bank" aria-label="Drag answers for questions 33 to 36">
+            <div class="drag-item" draggable="true" data-value="A">A</div>
+            <div class="drag-item" draggable="true" data-value="B">B</div>
+            <div class="drag-item" draggable="true" data-value="C">C</div>
+            <div class="drag-item" draggable="true" data-value="D">D</div>
+            <div class="drag-item" draggable="true" data-value="E">E</div>
+            <div class="drag-item" draggable="true" data-value="F">F</div>
+            <div class="drag-item" draggable="true" data-value="G">G</div>
+            <div class="drag-hint">Drag a letter into each answer box, or click a letter then click a box.</div>
+          </div>
+
+          <div class="question-block" data-q="33">
+            <div class="question-text"><span class="question-number-label">33.</span> reference to the possible length of time that tartar can preserve particles from the air</div>
+            <select class="sr-only" name="q33">
+              <option value="">Select…</option>
+              <option value="A">A</option><option value="B">B</option><option value="C">C</option>
+              <option value="D">D</option><option value="E">E</option><option value="F">F</option><option value="G">G</option>
+            </select>
+            <div class="drop-zone" data-for="q33" tabindex="0" role="button" aria-label="Answer box for question 33">Drop here</div>
+            <div class="correct-answer-text" id="ca-33"></div>
+          </div>
+
+          <div class="question-block" data-q="34">
+            <div class="question-text"><span class="question-number-label">34.</span> two reasons why the particles that the team found in teeth were unique</div>
+            <select class="sr-only" name="q34">
+              <option value="">Select…</option>
+              <option value="A">A</option><option value="B">B</option><option value="C">C</option>
+              <option value="D">D</option><option value="E">E</option><option value="F">F</option><option value="G">G</option>
+            </select>
+            <div class="drop-zone" data-for="q34" tabindex="0" role="button" aria-label="Answer box for question 34">Drop here</div>
+            <div class="correct-answer-text" id="ca-34"></div>
+          </div>
+
+          <div class="question-block" data-q="35">
+            <div class="question-text"><span class="question-number-label">35.</span> various examples of the types of particle that can be discovered in old teeth</div>
+            <select class="sr-only" name="q35">
+              <option value="">Select…</option>
+              <option value="A">A</option><option value="B">B</option><option value="C">C</option>
+              <option value="D">D</option><option value="E">E</option><option value="F">F</option><option value="G">G</option>
+            </select>
+            <div class="drop-zone" data-for="q35" tabindex="0" role="button" aria-label="Answer box for question 35">Drop here</div>
+            <div class="correct-answer-text" id="ca-35"></div>
+          </div>
+
+          <div class="question-block" data-q="36">
+            <div class="question-text"><span class="question-number-label">36.</span> a suggestion that the blue pigment might have been used in medieval times to cure illness</div>
+            <select class="sr-only" name="q36">
+              <option value="">Select…</option>
+              <option value="A">A</option><option value="B">B</option><option value="C">C</option>
+              <option value="D">D</option><option value="E">E</option><option value="F">F</option><option value="G">G</option>
+            </select>
+            <div class="drop-zone" data-for="q36" tabindex="0" role="button" aria-label="Answer box for question 36">Drop here</div>
+            <div class="correct-answer-text" id="ca-36"></div>
+          </div>
+
+          <p><strong>Questions 37 to 40</strong></p>
+          <p><strong>Complete the summary below.</strong></p>
+          <p>Choose <strong>ONE WORD ONLY</strong> from the text for each answer.</p>
+
+          <p><strong>Lapis lazuli</strong></p>
+          <p>A blue pigment used to create artworks in Europe in the Middle Ages was derived from a stone called lapis lazuli. In medieval times, even <span class="blank">37</span> ______ was not as valuable. Lapis lazuli could only be found in Afghanistan and a lot of <span class="blank">38</span> ______ was needed to make the pigment from the stone.</p>
+          <p>The procedure used to do this appeared much later in the manuals used by European artists and this suggests that the product came to their countries as an imported powder. Artists often had to make a <span class="blank">39</span> ______ on their brushes using their mouths, which then enabled them to produce the fine features needed for <span class="blank">40</span> ______ and books.</p>
+
+          <div class="question-block" data-q="37">
+            <div class="question-text"><span class="question-number-label">37.</span></div>
+            <input type="text" name="q37" autocomplete="off" />
+            <div class="correct-answer-text" id="ca-37"></div>
+          </div>
+
+          <div class="question-block" data-q="38">
+            <div class="question-text"><span class="question-number-label">38.</span></div>
+            <input type="text" name="q38" autocomplete="off" />
+            <div class="correct-answer-text" id="ca-38"></div>
+          </div>
+
+          <div class="question-block" data-q="39">
+            <div class="question-text"><span class="question-number-label">39.</span></div>
+            <input type="text" name="q39" autocomplete="off" />
+            <div class="correct-answer-text" id="ca-39"></div>
+          </div>
+
+          <div class="question-block" data-q="40">
+            <div class="question-text"><span class="question-number-label">40.</span></div>
+            <input type="text" name="q40" autocomplete="off" />
+            <div class="correct-answer-text" id="ca-40"></div>
+          </div>
+        </div>
+      `
+      );
+    }
+
+    function stampInlineInputNumbers() {
+      document.querySelectorAll(".question-block[data-q]").forEach((block) => {
+        const qNum = block.getAttribute("data-q");
+        block.querySelectorAll(".inline-input").forEach((w) => {
+          w.setAttribute("data-q", qNum);
+        });
+      });
+    }
+
+    let dragMatchReady = false;
+
+    function setupDragMatch() {
+      if (dragMatchReady) return;
+      dragMatchReady = true;
+      let picked = "";
+      document.querySelectorAll(".drag-item").forEach((item) => {
+        item.addEventListener("dragstart", (e) => {
+          e.dataTransfer.setData("text/plain", item.dataset.value);
+          e.dataTransfer.effectAllowed = "copy";
+        });
+        item.addEventListener("click", () => {
+          document
+            .querySelectorAll(".drag-item")
+            .forEach((i) => i.classList.remove("selected"));
+          item.classList.add("selected");
+          picked = item.dataset.value;
+        });
+      });
+
+      function apply(zone, val) {
+        const qName = zone.dataset.for;
+        const sel = document.querySelector('select[name="' + qName + '"]');
+        if (sel) {
+          const allowed = Array.from(sel.options).some((o) => o.value === val);
+          if (!allowed) return;
+          sel.value = val;
+          sel.dispatchEvent(new Event("change", { bubbles: true }));
+        }
+        zone.textContent = val;
+        zone.classList.add("filled");
+      }
+
+      function clear(zone) {
+        const qName = zone.dataset.for;
+        const sel = document.querySelector('select[name="' + qName + '"]');
+        if (sel) {
+          sel.value = "";
+          sel.dispatchEvent(new Event("change", { bubbles: true }));
+        }
+        zone.textContent = "Drop here";
+        zone.classList.remove("filled");
+      }
+
+      document.querySelectorAll(".drop-zone").forEach((zone) => {
+        zone.addEventListener("dragover", (e) => {
+          e.preventDefault();
+          zone.classList.add("over");
+        });
+        zone.addEventListener("dragleave", () => zone.classList.remove("over"));
+        zone.addEventListener("drop", (e) => {
+          e.preventDefault();
+          zone.classList.remove("over");
+          const val = e.dataTransfer.getData("text/plain");
+          apply(zone, val);
+        });
+        zone.addEventListener("click", () => {
+          if (picked) apply(zone, picked);
+        });
+        zone.addEventListener("keydown", (e) => {
+          if (e.key === "Backspace" || e.key === "Delete") clear(zone);
+
+          const key = e.key.toUpperCase();
+          if (!/^[A-Z]$/.test(key)) return;
+
+          const qName = zone.dataset.for;
+          const sel = document.querySelector('select[name="' + qName + '"]');
+          if (!sel) return;
+
+          const allowed = Array.from(sel.options).some((o) => o.value === key);
+          if (allowed) apply(zone, key);
+        });
+        zone.addEventListener("dblclick", () => clear(zone));
+      });
+
+      document.querySelectorAll(".drop-zone").forEach((zone) => {
+        const qName = zone.dataset.for;
+        const sel = document.querySelector('select[name="' + qName + '"]');
+        if (sel && sel.value) {
+          apply(zone, sel.value);
+        }
+      });
+    }
+
+    // Build all questions immediately after DOM loads (script is at the end)
+    buildRemainingQuestions();
+    stampInlineInputNumbers();
+    setupDragMatch();
+
+    /***********************
+     * INPUT & NAV HANDLING
+     ***********************/
+    function initQuestionInputs() {
+      const qPane = document.getElementById("questionContent");
+      if (!qPane) return;
+
+      stampInlineInputNumbers();
+
+      // Listen to changes on all inputs/selects/radios
+      qPane
+        .querySelectorAll("select, input[type='text'], input[type='radio']")
+        .forEach((el) => {
+          el.addEventListener("change", onAnswerChange);
+          if (el.type === "text") {
+            el.addEventListener("input", onAnswerChange);
+          }
+        });
+
+      // Start on section 1, question 1
+      switchSection(1);
+      highlightCurrentQuestion(1);
+      updateCounts();
+      buildQuestionNav();
+    }
+
+    function onAnswerChange(e) {
+      const name = e.target.name || "";
+      if (name.startsWith("q")) {
+        const num = parseInt(name.substring(1), 10);
+        if (!isNaN(num)) currentQuestion = num;
+      }
+      updateCounts();
+      buildQuestionNav();
+      highlightCurrentQuestion(currentQuestion);
+    }
+
+    function isAnswered(qNum) {
+      const name = "q" + qNum;
+      const radios = document.querySelectorAll(
+        "input[type='radio'][name='" + name + "']"
+      );
+      if (radios.length > 0) {
+        return Array.from(radios).some((r) => r.checked);
+      }
+      const input = document.querySelector("input[type='text'][name='" + name + "']");
+      if (input) {
+        return input.value.trim().length > 0;
+      }
+      const select = document.querySelector("select[name='" + name + "']");
+      if (select) {
+        return select.value.trim().length > 0;
+      }
+      return false;
+    }
+
+    function updateCounts() {
+      const totals = { 1: 14, 2: 13, 3: 13 };
+      const answered = { 1: 0, 2: 0, 3: 0 };
+
+      [1, 2, 3].forEach((sec) => {
+        const range = sectionRanges[sec];
+        for (let q = range.from; q <= range.to; q++) {
+          if (isAnswered(q)) answered[sec]++;
+        }
+      });
+
+      // Update chip counts and status classes
+      [1, 2, 3].forEach((sec) => {
+        const chip = document.querySelector(
+          '.part-chip[data-section-chip="' + sec + '"]'
+        );
+        const span = document.getElementById("part" + sec + "Count");
+        const countText = answered[sec] + " of " + totals[sec];
+
+        if (!chip || !span) return;
+
+        chip.classList.remove("complete", "partial", "unopened");
+        if (answered[sec] === totals[sec]) {
+          chip.classList.add("complete");
+          span.textContent = "✓";
+          span.setAttribute("aria-label", "Part " + sec + " complete");
+        } else {
+          span.textContent = countText;
+          span.removeAttribute("aria-label");
+          if (visitedSections.has(sec)) {
+            chip.classList.add("partial");
+          } else {
+            chip.classList.add("unopened");
+          }
+        }
+      });
+
+      // Also update header for active section with answered count
+      const range = sectionRanges[activeSection];
+      const secAnswered = answered[activeSection];
+      const total = totals[activeSection];
+
+      const qHeader = document.getElementById("questionHeader");
+      if (qHeader && range) {
+        qHeader.textContent =
+          "Questions " +
+          range.from +
+          "–" +
+          range.to +
+          " (" +
+          secAnswered +
+          " of " +
+          total +
+          " answered)";
+      }
+
+      const pHeader = document.getElementById("passageHeader");
+      if (pHeader) {
+        if (activeSection === 1) {
+          pHeader.textContent =
+            "Part 1 – Read the text and answer questions 1–14.";
+        } else if (activeSection === 2) {
+          pHeader.textContent =
+            "Part 2 – Read the text and answer questions 15–27.";
+        } else {
+          pHeader.textContent =
+            "Part 3 – Read the text and answer questions 28–40.";
+        }
+      }
+    }
+
+    function buildQuestionNav() {
+      const nav = document.getElementById("questionNumbers");
+      if (!nav) return;
+      nav.innerHTML = "";
+
+      const range = sectionRanges[activeSection];
+      if (!range) return;
+
+      for (let q = range.from; q <= range.to; q++) {
+        const div = document.createElement("div");
+        div.className = "qnav";
+        if (isAnswered(q)) div.classList.add("answered");
+        else div.classList.add("unanswered");
+        if (q === currentQuestion) div.classList.add("current");
+        div.textContent = q;
+        div.addEventListener("click", () => {
+          currentQuestion = q;
+          highlightCurrentQuestion(q);
+          buildQuestionNav();
+          scrollToQuestion(q);
+        });
+        nav.appendChild(div);
+      }
+    }
+
+    function highlightCurrentQuestion(qNum) {
+      document
+        .querySelectorAll(".question-block")
+        .forEach((el) => el.classList.remove("current-question"));
+      const block = document.querySelector(
+        '.question-block[data-q="' + qNum + '"]'
+      );
+      if (block) {
+        block.classList.add("current-question");
+      }
+    }
+
+    function scrollToQuestion(qNum) {
+      const block = document.querySelector(
+        '.question-block[data-q="' + qNum + '"]'
+      );
+      const qPane = document.getElementById("questionPane");
+      if (block && qPane) {
+        block.scrollIntoView({ behavior: "smooth", block: "center" });
+      }
+    }
+
+    /*****************
+     * SECTION SWITCH
+     *****************/
+    function switchSection(section) {
+      if (![1, 2, 3].includes(section)) return;
+      activeSection = section;
+      visitedSections.add(section);
+
+      // Passages
+      document
+        .querySelectorAll(".passage-section")
+        .forEach((el) => (el.style.display = "none"));
+      const pass = document.querySelector(
+        '.passage-section[data-section="' + section + '"]'
+      );
+      if (pass) pass.style.display = "block";
+
+      // Questions
+      document
+        .querySelectorAll("#questionContent > div[data-section]")
+        .forEach((el) => (el.style.display = "none"));
+      const qSec = document.querySelector(
+        '#questionContent > div[data-section="' + section + '"]'
+      );
+      if (qSec) qSec.style.display = "block";
+
+      // Chips active state
+      document
+        .querySelectorAll(".part-chip")
+        .forEach((el) => el.classList.remove("active"));
+      const chip = document.querySelector(
+        '.part-chip[data-section-chip="' + section + '"]'
+      );
+      if (chip) chip.classList.add("active");
+
+      // Set current question to first in this section if outside range
+      const range = sectionRanges[section];
+      if (currentQuestion < range.from || currentQuestion > range.to) {
+        currentQuestion = range.from;
+      }
+
+      updateCounts();
+      highlightCurrentQuestion(currentQuestion);
+      buildQuestionNav();
+    }
+
+    function prevSection() {
+      if (activeSection > 1) switchSection(activeSection - 1);
+    }
+
+    function nextSection() {
+      if (activeSection < 3) switchSection(activeSection + 1);
+    }
+
+    /***************
+     * SUBMIT & SCORE
+     ***************/
+    const bandDescriptors = {
+      9: {
+        level: "Expert user",
+        description:
+          "Has fully operational command of the language: appropriate, accurate and fluent with complete understanding.",
+      },
+      8: {
+        level: "Very good user",
+        description:
+          "Has fully operational command of the language with only occasional unsystematic inaccuracies and inappropriacies. Misunderstandings may occur in unfamiliar situations.",
+      },
+      7: {
+        level: "Good user",
+        description:
+          "Has operational command of the language, though with occasional inaccuracies, inappropriacies and misunderstandings in some situations. Generally handles complex language well and understands detailed reasoning.",
+      },
+      6: {
+        level: "Competent user",
+        description:
+          "Has generally effective command of the language despite some inaccuracies, inappropriacies and misunderstandings. Can use and understand fairly complex language, particularly in familiar situations.",
+      },
+      5: {
+        level: "Modest user",
+        description:
+          "Has partial command of the language, coping with overall meaning in most situations, though likely to make many mistakes. Should be able to handle basic communication in own field.",
+      },
+      4: {
+        level: "Limited user",
+        description:
+          "Basic competence is limited to familiar situations. Has frequent problems in understanding and expression. Is not able to use complex language.",
+      },
+      3: {
+        level: "Extremely limited user",
+        description:
+          "Conveys and understands only general meaning in very familiar situations. Frequent breakdowns in communication occur.",
+      },
+      2: {
+        level: "Intermittent user",
+        description:
+          "No real communication is possible except for the most basic information using isolated words or short formulae in familiar situations and to meet immediate needs.",
+      },
+      1: {
+        level: "Non-user",
+        description:
+          "Essentially has no ability to use the language beyond possibly a few isolated words.",
+      },
+      0: {
+        level: "Did not attempt test",
+        description: "No assessable information provided.",
+      },
+    };
+
+    function getUserAnswer(qNum) {
+      const name = "q" + qNum;
+      const radios = document.querySelectorAll(
+        "input[type='radio'][name='" + name + "']"
+      );
+      if (radios.length > 0) {
+        const checked = Array.from(radios).find((r) => r.checked);
+        return checked ? checked.value.trim() : "";
+      }
+      const input = document.querySelector("input[type='text'][name='" + name + "']");
+      if (input) return input.value.trim();
+      const select = document.querySelector("select[name='" + name + "']");
+      if (select) return select.value.trim();
+      return "";
+    }
+
+    const normalise = (s) => (s || "").toLowerCase().trim().replace(/\s+/g, " ");
+
+    function evaluateQuestions() {
+      let correctCount = 0;
+
+      for (let q = 1; q <= 40; q++) {
+        const user = getUserAnswer(q);
+        const key = answerKey[q];
+        let isCorrect = false;
+
+        if (!user) {
+          isCorrect = false;
+        } else if (Array.isArray(key)) {
+          isCorrect = key.some(
+            (k) => user.toLowerCase() === String(k).toLowerCase()
+          );
+        } else if (typeof key === "string") {
+          if (/^(TRUE|FALSE|NOT GIVEN)$/.test(key)) {
+            isCorrect = user.toUpperCase() === key;
+          } else if (key.length === 1) {
+            isCorrect = user.toUpperCase() === key.toUpperCase();
+          } else if (q === 23 || q === 27) {
+            isCorrect = normalise(user) === normalise(key);
+          } else {
+            isCorrect = user.toLowerCase() === key.toLowerCase();
+          }
+        }
+
+        const block = document.querySelector(
+          '.question-block[data-q="' + q + '"]'
+        );
+        if (block) {
+          block.classList.remove("correct", "incorrect");
+          if (isCorrect) {
+            block.classList.add("correct");
+            correctCount++;
+          } else if (user) {
+            block.classList.add("incorrect");
+          }
+        }
+
+        const ca = document.getElementById("ca-" + q);
+        if (ca) {
+          const txt = correctAnswerText[q];
+          if (txt) {
+            ca.textContent = "Correct answer: " + txt;
+          }
+        }
+      }
+
+      return correctCount;
+    }
+
+    function computeBandScore(correct) {
+      /*
+       * IELTS General Training Reading raw score to band conversion
+       * (integer bands). These sample counts are useful for a quick
+       * sense-check during maintenance:
+       * - 15 correct ⇒ Band 4
+       * - 23 correct ⇒ Band 5
+       * - 30 correct ⇒ Band 6
+       * - 35 correct ⇒ Band 7
+       * - 40 correct ⇒ Band 9
+       */
+
+      if (correct === 0) return 0;
+      if (correct === 40) return 9;
+      if (correct >= 37) return 8;
+      if (correct >= 34) return 7;
+      if (correct >= 30) return 6;
+      if (correct >= 23) return 5;
+      if (correct >= 15) return 4;
+      if (correct >= 10) return 3;
+      if (correct >= 5) return 2;
+      return 1;
+    }
+
+    function submitTest() {
+      const correctCount = evaluateQuestions();
+
+      // In both modes, show correct answer text
+      Object.keys(correctAnswerText).forEach((q) => {
+        const el = document.getElementById("ca-" + q);
+        if (el) el.style.display = "block";
+      });
+
+      updateCounts();
+      buildQuestionNav();
+
+      const band = computeBandScore(correctCount);
+      const desc = bandDescriptors[band] || bandDescriptors[0];
+
+      const scoreLine = document.getElementById("scoreLine");
+      const bandLine = document.getElementById("bandLine");
+      const descriptorLine = document.getElementById("descriptorLine");
+      const resultsOverlay = document.getElementById("resultsOverlay");
+
+      if (scoreLine)
+        scoreLine.textContent =
+          "You answered " + correctCount + " out of 40 questions correctly.";
+      if (bandLine)
+        bandLine.textContent =
+          "Estimated IELTS Reading band: " +
+          band +
+          ". Skill level: " +
+          desc.level;
+      if (descriptorLine) descriptorLine.textContent = desc.description;
+
+      if (resultsOverlay) resultsOverlay.style.display = "flex";
+
+      if (mode === "test") {
+        testSubmitted = true;
+        if (timerId) {
+          clearInterval(timerId);
+          timerId = null;
+        }
+        // Disable further changes in test mode
+        document
+          .querySelectorAll("#questionContent select, #questionContent input")
+          .forEach((el) => (el.disabled = true));
+      }
+
+      // Close options overlay if open
+      toggleOptions(false);
+    }
+
+    function closeResults() {
+      const overlay = document.getElementById("resultsOverlay");
+      if (overlay) overlay.style.display = "none";
+    }
+
+    /**********************
+     * HIGHLIGHT & NOTES
+     **********************/
+    let currentNoteId = 0;
+    const notesStore = {}; // noteId -> { text }
+
+    function setupSelectionListeners() {
+      const toolbar = document.getElementById("selectionToolbar");
+      if (!toolbar) return;
+      toolbar.style.position = "fixed";
+
+      function updateToolbarPosition() {
+        const sel = window.getSelection();
+        if (!sel || sel.rangeCount === 0 || sel.isCollapsed) {
+          hideSelectionToolbar();
+          return;
+        }
+        const range = sel.getRangeAt(0);
+        const rect = range.getBoundingClientRect();
+        if (!rect || (rect.width === 0 && rect.height === 0)) {
+          hideSelectionToolbar();
+          return;
+        }
+        toolbar.style.left = rect.left + rect.width / 2 + "px";
+        toolbar.style.top = Math.max(56, rect.top - 32) + "px";
+        toolbar.style.display = "flex";
+      }
+
+      document.addEventListener("mouseup", () => {
+        setTimeout(updateToolbarPosition, 0);
+      });
+
+      document.addEventListener("keyup", (e) => {
+        if (
+          e.key === "Shift" ||
+          e.key === "ArrowLeft" ||
+          e.key === "ArrowRight" ||
+          e.key === "ArrowUp" ||
+          e.key === "ArrowDown"
+        ) {
+          setTimeout(updateToolbarPosition, 0);
+        }
+      });
+
+      document.addEventListener("mousedown", (e) => {
+        if (!toolbar.contains(e.target)) {
+          hideSelectionToolbar();
+        }
+      });
+    }
+
+    function hideSelectionToolbar() {
+      const toolbar = document.getElementById("selectionToolbar");
+      if (toolbar) toolbar.style.display = "none";
+    }
+
+    function findAncestorWithClass(node, className) {
+      let n = node;
+      while (n && n !== document) {
+        if (n.nodeType === 1 && n.classList.contains(className)) return n;
+        n = n.parentNode;
+      }
+      return null;
+    }
+
+    function toggleHighlightSelection() {
+      const sel = window.getSelection();
+      if (!sel || sel.rangeCount === 0 || sel.isCollapsed) return;
+      const range = sel.getRangeAt(0);
+      if (!range.toString().trim()) return;
+
+      const startHighlight = findAncestorWithClass(
+        range.startContainer,
+        "highlighted"
+      );
+      const endHighlight = findAncestorWithClass(
+        range.endContainer,
+        "highlighted"
+      );
+
+      if (startHighlight && startHighlight === endHighlight) {
+        // Remove the whole highlight span
+        const span = startHighlight;
+        const parent = span.parentNode;
+        while (span.firstChild) {
+          parent.insertBefore(span.firstChild, span);
+        }
+        parent.removeChild(span);
+      } else {
+        const span = document.createElement("span");
+        span.className = "highlighted";
+        try {
+          range.surroundContents(span);
+        } catch (e) {
+          // Fallback: simple replacement
+          span.textContent = range.toString();
+          range.deleteContents();
+          range.insertNode(span);
+        }
+      }
+
+      sel.removeAllRanges();
+      hideSelectionToolbar();
+    }
+
+    function makeNoteForSelection() {
+      const sel = window.getSelection();
+      if (!sel || sel.rangeCount === 0 || sel.isCollapsed) return;
+      const range = sel.getRangeAt(0);
+      if (!range.toString().trim()) return;
+
+      const noteId = "note-" + ++currentNoteId;
+
+      const span = document.createElement("span");
+      span.className = "note-anchor";
+      span.dataset.noteId = noteId;
+
+      try {
+        range.surroundContents(span);
+      } catch (e) {
+        span.textContent = range.toString();
+        range.deleteContents();
+        range.insertNode(span);
+      }
+
+      // Delete button
+      const del = document.createElement("button");
+      del.className = "note-delete";
+      del.textContent = "×";
+      del.addEventListener("click", (ev) => {
+        ev.stopPropagation();
+        deleteNote(noteId);
+      });
+      span.appendChild(del);
+
+      span.addEventListener("click", (ev) => {
+        // avoid re-opening when clicking delete
+        if ((ev.target).classList && (ev.target).classList.contains("note-delete"))
+          return;
+        openNoteWindow(noteId, span);
+      });
+
+      notesStore[noteId] = { text: "" };
+      openNoteWindow(noteId, span);
+      hideSelectionToolbar();
+      sel.removeAllRanges();
+    }
+
+    function openNoteWindow(noteId, anchorEl) {
+      // Remove existing note window for this note
+      const existing = document.querySelector(
+        '.note-window[data-note-id="' + noteId + '"]'
+      );
+      if (existing) existing.remove();
+
+      const rect = anchorEl.getBoundingClientRect();
+      const note = document.createElement("div");
+      note.className = "note-window";
+      note.dataset.noteId = noteId;
+      note.style.top = rect.bottom + 8 + "px";
+      note.style.left = rect.left + "px";
+
+      note.innerHTML = `
+        <div class="note-header">
+          <span>Note</span>
+          <button title="Close">×</button>
+        </div>
+        <div class="note-body">
+          <textarea></textarea>
+        </div>
+        <div class="note-footer">
+          <button>Done</button>
+        </div>
+      `;
+
+      document.body.appendChild(note);
+
+      const header = note.querySelector(".note-header");
+      const closeBtn = header.querySelector("button");
+      const textarea = note.querySelector("textarea");
+      const doneBtn = note.querySelector(".note-footer button");
+
+      if (notesStore[noteId] && notesStore[noteId].text) {
+        textarea.value = notesStore[noteId].text;
+      }
+
+      closeBtn.addEventListener("click", () => {
+        notesStore[noteId].text = textarea.value;
+        note.remove();
+      });
+
+      doneBtn.addEventListener("click", () => {
+        notesStore[noteId].text = textarea.value;
+        note.remove();
+      });
+
+      makeNoteDraggable(note, header);
+    }
+
+    function deleteNote(noteId) {
+      const anchor = document.querySelector(
+        '.note-anchor[data-note-id="' + noteId + '"]'
+      );
+      if (anchor) {
+        const parent = anchor.parentNode;
+        // move children except delete button
+        while (anchor.firstChild) {
+          const child = anchor.firstChild;
+          if (
+            child.nodeType === 1 &&
+            child.classList.contains("note-delete")
+          ) {
+            anchor.removeChild(child);
+          } else {
+            parent.insertBefore(child, anchor);
+          }
+        }
+        parent.removeChild(anchor);
+      }
+      const noteWin = document.querySelector(
+        '.note-window[data-note-id="' + noteId + '"]'
+      );
+      if (noteWin) noteWin.remove();
+      delete notesStore[noteId];
+    }
+
+    function makeNoteDraggable(noteEl, handleEl) {
+      let isDragging = false;
+      let startX = 0;
+      let startY = 0;
+      let startLeft = 0;
+      let startTop = 0;
+
+      handleEl.addEventListener("mousedown", (e) => {
+        e.preventDefault();
+        isDragging = true;
+        startX = e.clientX;
+        startY = e.clientY;
+        const rect = noteEl.getBoundingClientRect();
+        startLeft = rect.left;
+        startTop = rect.top;
+        document.addEventListener("mousemove", onMove);
+        document.addEventListener("mouseup", onUp);
+      });
+
+      function onMove(e) {
+        if (!isDragging) return;
+        const dx = e.clientX - startX;
+        const dy = e.clientY - startY;
+        noteEl.style.left = startLeft + dx + "px";
+        noteEl.style.top = startTop + dy + "px";
+      }
+
+      function onUp() {
+        isDragging = false;
+        document.removeEventListener("mousemove", onMove);
+        document.removeEventListener("mouseup", onUp);
+      }
+    }
+
+    /***********************
+     * RESIZABLE DIVIDER
+     ***********************/
+    function setupDividerDrag() {
+      const divider = document.getElementById("divider");
+      const mainInner = document.querySelector(".main-inner");
+      const leftPane = document.getElementById("passagePane");
+      const rightPane = document.getElementById("questionPane");
+      if (!divider || !mainInner || !leftPane || !rightPane) return;
+
+      let dragging = false;
+      let startX = 0;
+      let startWidthLeft = 0;
+      let totalWidth = 0;
+
+      divider.addEventListener("mousedown", (e) => {
+        e.preventDefault();
+        dragging = true;
+        const rect = mainInner.getBoundingClientRect();
+        totalWidth = rect.width;
+        startX = e.clientX;
+        const leftRect = leftPane.getBoundingClientRect();
+        startWidthLeft = leftRect.width;
+        document.body.style.cursor = "col-resize";
+      });
+
+      document.addEventListener("mousemove", (e) => {
+        if (!dragging) return;
+        const dx = e.clientX - startX;
+        let newLeftWidth = startWidthLeft + dx;
+        const min = totalWidth * 0.25;
+        const max = totalWidth * 0.75;
+        if (newLeftWidth < min) newLeftWidth = min;
+        if (newLeftWidth > max) newLeftWidth = max;
+        const leftPct = (newLeftWidth / totalWidth) * 100;
+        leftPane.style.flex = "0 0 " + leftPct + "%";
+        rightPane.style.flex = "0 0 " + (100 - leftPct) + "%";
+      });
+
+      document.addEventListener("mouseup", () => {
+        if (!dragging) return;
+        dragging = false;
+        document.body.style.cursor = "default";
+      });
+    }
+
+    // Ensure option buttons reflect the current theme and font selections on load.
+    updateThemeButtons();
+    updateFontButtons();
+    ensureModeWiring();
+  </script>
+</body>
+
+</html>

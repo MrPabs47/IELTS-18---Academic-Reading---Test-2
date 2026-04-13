@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>IELTS Pabs Reading Hub</title>
+  <style>
+    :root {
+      --bg: #f7f8fb;
+      --panel: #ffffff;
+      --panel-soft: #f2f5fb;
+      --text: #111827;
+      --text-soft: #5b6474;
+      --accent: #0057b8;
+      --accent-soft: #e8f1ff;
+      --border: #d9dfeb;
+      --shadow: 0 10px 30px rgba(15, 23, 42, 0.08);
+      --success: #1b5e20;
+      --muted: #8a93a5;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: Arial, Helvetica, sans-serif;
+      background: linear-gradient(180deg, #eef4ff 0%, var(--bg) 200px);
+      color: var(--text);
+    }
+    .page { max-width: 1100px; margin: 0 auto; padding: 28px 20px 48px; }
+    .hero, .section {
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      box-shadow: var(--shadow);
+      padding: 24px 28px;
+      margin-bottom: 20px;
+    }
+    .hero h1 { margin: 0 0 10px; font-size: clamp(1.9rem, 4vw, 2.6rem); }
+    .hero p, .hint, .mini-list, .test-meta { color: var(--text-soft); line-height: 1.6; }
+    .section h2 { margin: 0 0 14px; font-size: 1.15rem; }
+    .toggle-row { display: flex; flex-wrap: wrap; gap: 12px; }
+    .toggle-btn {
+      border: 1px solid var(--border);
+      background: var(--panel-soft);
+      color: var(--text);
+      border-radius: 999px;
+      padding: 12px 18px;
+      font-size: 1rem;
+      font-weight: 700;
+      cursor: pointer;
+    }
+    .toggle-btn.active {
+      border-color: var(--accent);
+      background: var(--accent-soft);
+      color: var(--accent);
+    }
+    .tests-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 16px;
+    }
+    .test-card {
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 18px;
+      background: var(--panel);
+    }
+    .test-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      margin-bottom: 10px;
+    }
+    .test-label {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      border-radius: 999px;
+      padding: 5px 10px;
+      font-size: 0.82rem;
+      font-weight: 700;
+      background: #eaf7ec;
+      color: var(--success);
+      white-space: nowrap;
+    }
+    .test-title { margin: 0 0 8px; font-size: 1.05rem; line-height: 1.4; }
+    .open-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      text-decoration: none;
+      width: 100%;
+      border-radius: 12px;
+      padding: 11px 14px;
+      font-weight: 700;
+      border: 1px solid var(--accent);
+      background: var(--accent);
+      color: #ffffff;
+    }
+    .mini-list { margin: 0; padding-left: 18px; }
+  </style>
+</head>
+<body>
+  <div class="page">
+    <section class="hero">
+      <h1>IELTS Pabs Reading Hub</h1>
+      <p>Choose Academic or General Training first, then open the test you want. Each test keeps its own Study mode and Test mode screen.</p>
+    </section>
+
+    <section class="section">
+      <h2>1. Choose the reading type</h2>
+      <div class="toggle-row" id="typeButtons"></div>
+      <p class="hint">This local master bundle keeps the final source HTML files organised so you can upload the whole structure to GitHub later.</p>
+    </section>
+
+    <section class="section">
+      <h2>2. Choose the test</h2>
+      <div class="tests-grid" id="testsGrid"></div>
+    </section>
+
+    <section class="section">
+      <h2>Folder structure</h2>
+      <ul class="mini-list">
+        <li>academic/cambridge-18/test-2/</li>
+        <li>general-training/cambridge-19/test-2/</li>
+        <li>general-training/cambridge-19/test-3/</li>
+      </ul>
+    </section>
+  </div>
+
+  <script>
+    const testTypes = [
+      { id: 'academic', label: 'Academic' },
+      { id: 'general-training', label: 'General Training' }
+    ];
+
+    const tests = [
+      {
+        type: 'academic',
+        title: 'Cambridge 18 Test 2',
+        subtitle: 'Academic Reading',
+        href: './academic/cambridge-18/test-2/IELTS18%20Test%202%20-%20Academic%20Reading.html',
+        note: 'Master HTML file'
+      },
+      {
+        type: 'general-training',
+        title: 'Cambridge 19 Test 2',
+        subtitle: 'General Training Reading',
+        href: './general-training/cambridge-19/test-2/IELTS19%20Test%202%20-%20Reading%20-%20GT.html',
+        note: 'Master HTML file'
+      },
+      {
+        type: 'general-training',
+        title: 'Cambridge 19 Test 3',
+        subtitle: 'General Training Reading',
+        href: './general-training/cambridge-19/test-3/IELTS19%20Test%203%20-%20Reading%20-%20GT.html',
+        note: 'Master HTML file'
+      }
+    ];
+
+    let activeType = 'academic';
+
+    function renderTypeButtons() {
+      const wrap = document.getElementById('typeButtons');
+      wrap.innerHTML = '';
+      testTypes.forEach((type) => {
+        const btn = document.createElement('button');
+        btn.className = 'toggle-btn' + (type.id === activeType ? ' active' : '');
+        btn.type = 'button';
+        btn.textContent = type.label;
+        btn.addEventListener('click', () => {
+          activeType = type.id;
+          renderTypeButtons();
+          renderTests();
+        });
+        wrap.appendChild(btn);
+      });
+    }
+
+    function renderTests() {
+      const grid = document.getElementById('testsGrid');
+      grid.innerHTML = '';
+      tests.filter(test => test.type === activeType).forEach((test) => {
+        const card = document.createElement('article');
+        card.className = 'test-card';
+        card.innerHTML = `
+          <div class="test-top">
+            <h3 class="test-title">${test.title}</h3>
+            <span class="test-label">Available</span>
+          </div>
+          <p class="test-meta"><strong>${test.subtitle}</strong><br>${test.note}</p>
+          <a class="open-btn" href="${test.href}">Open test</a>
+        `;
+        grid.appendChild(card);
+      });
+    }
+
+    renderTypeButtons();
+    renderTests();
+  </script>
+</body>
+</html>
