@@ -1,0 +1,26 @@
+Use `academic/cambridge-18/test-2/IELTS18 Test 2 - Academic Reading.html` as the base template.
+
+Create a new file called:
+`academic/cambridge-16/test-2/IELTS16 Test 2 - Academic Reading.html`
+
+Use these source files when they are added to this folder:
+- `academic/cambridge-16/test-2/passages.txt`
+- `academic/cambridge-16/test-2/questions.txt`
+- `academic/cambridge-16/test-2/answers.txt`
+- `academic/cambridge-16/test-2/spec.md`
+
+Requirements:
+- Keep the existing layout, styling, timer, split panes, bottom navigation, highlighting, notes, full screen behaviour, and scoring system.
+- Replace only the reading passages, question blocks, answer key, test title, and section headers.
+- Follow the exact question type mapping in `spec.md`.
+- Reuse existing widgets where possible.
+- Do not add new UI patterns unless absolutely necessary.
+- Keep the file standalone and working as a single HTML file.
+
+After editing, verify:
+1. section ranges are correct
+2. all 40 answers map correctly
+3. question numbering is continuous
+4. Study mode shows correct answers
+5. Test mode still scores properly
+6. the new file is linked from the main hub `index.html`
