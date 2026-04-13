@@ -1,0 +1,3017 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>IELTS Pabs Reading Test 2 – Academic Reading – IELTS 16</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <style>
+    :root {
+      --bg: #ffffff;
+      --bg-secondary: #f5f5f5;
+      --text: #111111;
+      --text-soft: #555555;
+      --accent: #0057b8;
+      --accent-soft: #e5f0ff;
+      --border: #dddddd;
+      --highlight: #ffcc66;
+      --note-underline: #ff9900;
+      --danger: #c62828;
+      --correct: #1b5e20;
+      --incorrect: #b71c1c;
+      --orange: #ff9800;
+      --part-bg: #f2f2f2;
+      --part-active-bg: #ffffff;
+      --shadow-soft: 0 2px 10px rgba(0,0,0,0.08);
+      --font-size-base: 15px;
+    }
+
+    /* Themes */
+    body[data-theme="white-on-black"] {
+      --bg: #000000;
+      --bg-secondary: #111111;
+      --text: #ffffff;
+      --text-soft: #dddddd;
+      --border: #333333;
+      --accent: #90caf9;
+      --accent-soft: #1a237e;
+      --highlight: #ffcc66;
+      --note-underline: #ffcc66;
+      --part-bg: #111111;
+      --part-active-bg: #000000;
+      --shadow-soft: 0 2px 10px rgba(0,0,0,0.6);
+    }
+
+    body[data-theme="yellow-on-black"] {
+      --bg: #000000;
+      --bg-secondary: #111111;
+      --text: #ffff66;
+      --text-soft: #fff59d;
+      --border: #333333;
+      --accent: #fff176;
+      --accent-soft: #424242;
+      --highlight: #ffeb3b;
+      --note-underline: #ffeb3b;
+      --part-bg: #111111;
+      --part-active-bg: #000000;
+      --shadow-soft: 0 2px 10px rgba(0,0,0,0.6);
+    }
+
+    body {
+      margin: 0;
+      font-family: Arial, Helvetica, system-ui, -apple-system, "Segoe UI", sans-serif;
+      font-size: var(--font-size-base);
+      background: var(--bg);
+      color: var(--text);
+      overscroll-behavior: none;
+    }
+
+    body.font-large {
+      --font-size-base: 18px;
+    }
+    body.font-xlarge {
+      --font-size-base: 20px;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    /* Mode overlay (test vs study) */
+    #modeScreen {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.6);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 2000;
+    }
+
+    #modeScreenInner {
+      background: var(--bg);
+      color: var(--text);
+      padding: 24px 28px;
+      border-radius: 12px;
+      max-width: 480px;
+      box-shadow: var(--shadow-soft);
+    }
+
+    #modeScreenInner h1 {
+      margin-top: 0;
+      margin-bottom: 8px;
+      font-size: 1.4rem;
+    }
+
+    #modeScreenInner p {
+      margin-top: 0;
+      margin-bottom: 12px;
+      color: var(--text-soft);
+    }
+
+    .mode-buttons {
+      display: flex;
+      gap: 12px;
+      margin-top: 8px;
+      flex-wrap: wrap;
+    }
+
+    .mode-btn {
+      flex: 1 1 140px;
+      padding: 10px 14px;
+      border-radius: 999px;
+      border: 1px solid var(--accent);
+      background: var(--accent-soft);
+      color: var(--accent);
+      font-weight: 600;
+      cursor: pointer;
+      text-align: center;
+      transition: background 0.15s, transform 0.05s;
+    }
+
+    .mode-btn.secondary {
+      background: transparent;
+      color: var(--accent);
+    }
+
+    .mode-btn:hover {
+      background: var(--accent);
+      color: #fff;
+      transform: translateY(-1px);
+    }
+
+    #testStartScreen {
+      display: none;
+      margin-top: 14px;
+      padding-top: 14px;
+      border-top: 1px solid var(--border);
+    }
+
+    #testStartScreen label {
+      display: block;
+      font-weight: 600;
+      margin-bottom: 8px;
+    }
+
+    #studentNameInput {
+      max-width: 100%;
+      margin-bottom: 10px;
+    }
+
+    #app {
+      display: none;
+    }
+
+    /* Top bar */
+    .top-bar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 56px;
+      background: var(--bg-secondary);
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 20px;
+      z-index: 1000;
+    }
+
+    .top-left {
+      display: flex;
+      align-items: baseline;
+      gap: 16px;
+    }
+
+    .logo {
+      font-weight: 800;
+      font-size: 1.4rem;
+      letter-spacing: 0.08em;
+    }
+
+    .test-title {
+      font-size: 0.95rem;
+      color: var(--text-soft);
+    }
+
+    .top-right {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      font-size: 0.9rem;
+    }
+
+    #timerContainer {
+      display: none;
+    }
+
+    #timerDisplay {
+      font-weight: 600;
+    }
+
+    .timer-warning {
+      color: var(--danger);
+    }
+
+    #timerContainer.timer-expired {
+      color: var(--danger);
+      font-weight: 700;
+    }
+
+    .icon-group {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .icon {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 26px;
+      height: 26px;
+      color: var(--text-soft);
+    }
+
+    .icon svg,
+    .icon-button svg {
+      width: 22px;
+      height: 22px;
+      display: block;
+      stroke: currentColor;
+    }
+
+    .icon-button {
+      border: none;
+      background: none;
+      padding: 4px 8px;
+      cursor: pointer;
+      color: var(--text-soft);
+      font-size: 1.3rem;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .icon-button:hover {
+      color: var(--accent);
+    }
+
+    #fullscreenBtn.is-active {
+      color: var(--accent);
+    }
+
+    #fullscreenBtn:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
+
+    .icon-button.with-label {
+      gap: 6px;
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      padding: 6px 10px;
+      font-size: 0.86rem;
+      line-height: 1;
+    }
+
+    #fullscreenSupportNote {
+      display: none;
+      margin-top: 8px;
+      font-size: 0.82rem;
+      color: var(--text-soft);
+    }
+
+    #fullscreenLockOverlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.72);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 2100;
+      pointer-events: all;
+    }
+
+    #fullscreenLockPanel {
+      width: min(520px, 92vw);
+      background: var(--bg);
+      color: var(--text);
+      border-radius: 12px;
+      padding: 20px 22px;
+      box-shadow: var(--shadow-soft);
+      text-align: center;
+    }
+
+    /* Options overlay */
+    #optionsOverlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.55);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 1500;
+    }
+
+    #optionsPanel {
+      background: var(--bg);
+      color: var(--text);
+      width: min(520px, 95vw);
+      padding: 22px 26px;
+      border-radius: 12px;
+      box-shadow: var(--shadow-soft);
+      position: relative;
+    }
+
+    #optionsPanel h2 {
+      margin: 0 0 16px;
+      text-align: center;
+    }
+
+    .options-close {
+      position: absolute;
+      top: 8px;
+      right: 12px;
+      border: none;
+      background: none;
+      font-size: 1.4rem;
+      cursor: pointer;
+      color: var(--text-soft);
+    }
+
+    .options-section {
+      margin-top: 12px;
+      border-top: 1px solid var(--border);
+      padding-top: 10px;
+    }
+
+    .options-section h3 {
+      margin: 4px 0 8px;
+      font-size: 0.95rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--text-soft);
+    }
+
+    .options-list button {
+      width: 100%;
+      text-align: left;
+      padding: 8px 10px;
+      border-radius: 6px;
+      border: 1px solid transparent;
+      background: transparent;
+      color: var(--text);
+      cursor: pointer;
+      margin-bottom: 6px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 0.95rem;
+    }
+
+    .options-list button:hover {
+      border-color: var(--accent);
+      background: var(--accent-soft);
+    }
+
+    .options-list button.active {
+      border-color: var(--accent);
+      background: var(--accent-soft);
+      font-weight: 600;
+      color: var(--text);
+    }
+
+    .submit-button {
+      width: 100%;
+      padding: 10px 14px;
+      border-radius: 999px;
+      border: none;
+      background: #d32f2f;
+      color: #fff;
+      font-weight: 600;
+      cursor: pointer;
+      margin-bottom: 10px;
+      font-size: 1rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+
+    .submit-button:hover {
+      background: #b71c1c;
+    }
+
+    /* Main layout: fixed header + footer, scrollable middle */
+    .main-area {
+      position: fixed;
+      top: 56px;
+      bottom: 64px;
+      left: 0;
+      right: 0;
+      display: flex;
+      justify-content: center;
+      padding: 4px 6px;
+    }
+
+    .main-inner {
+      width: min(1800px, calc(100% - 6px));
+      display: flex;
+      border-radius: 12px;
+      background: var(--bg-secondary);
+      box-shadow: var(--shadow-soft);
+      overflow: hidden;
+      border: none;
+    }
+
+    .pane {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      background: var(--bg);
+    }
+
+    .pane-header {
+      padding: 10px 14px;
+      border-bottom: 1px solid var(--border);
+      background: var(--bg-secondary);
+      font-weight: 600;
+      font-size: 0.98rem;
+    }
+
+    .pane-header span {
+      font-weight: 400;
+      color: var(--text-soft);
+      margin-left: 6px;
+      font-size: 0.9rem;
+    }
+
+    .pane-content {
+      flex: 1;
+      padding: 14px 18px;
+      overflow-y: auto;
+      position: relative;
+    }
+
+    .passage-section h2 {
+      margin-top: 0;
+      margin-bottom: 8px;
+      font-size: 1.1rem;
+    }
+
+    .passage-section h3 {
+      margin-bottom: 6px;
+      margin-top: 18px;
+      font-size: 1rem;
+    }
+
+    .passage-section p {
+      margin: 4px 0;
+      line-height: 1.45;
+    }
+
+    .passage-divider {
+      margin: 24px 0 20px;
+      border-top: 1px solid var(--border);
+      padding-top: 18px;
+    }
+
+    .instruction-block {
+      margin-bottom: 10px;
+    }
+
+    .instruction-block p {
+      margin: 4px 0;
+      line-height: 1.45;
+    }
+
+    .instruction-block .instruction-title,
+    .instruction-block .instruction-subtitle {
+      font-size: inherit;
+      font-weight: inherit;
+      margin: 4px 0;
+    }
+
+    .instruction-block .instruction-note {
+      font-style: italic;
+    }
+
+    .question-block {
+      margin-bottom: 10px;
+      padding: 6px 8px;
+      border-radius: 8px;
+      border: 1px solid transparent;
+      background: transparent;
+    }
+
+    .question-block.current-question {
+      border-color: var(--accent);
+      background: var(--accent-soft);
+    }
+
+    .question-block.correct {
+      border-color: var(--correct);
+      background: rgba(67,160,71,0.08);
+    }
+
+    .question-block.incorrect {
+      border-color: var(--incorrect);
+      background: rgba(229,57,53,0.06);
+    }
+
+    .question-number-label {
+      font-weight: 600;
+      margin-right: 6px;
+    }
+
+    .question-text {
+      margin-bottom: 4px;
+    }
+
+    .options-row {
+      margin-top: 8px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .options-row label {
+      display: block;
+      padding: 6px 8px;
+      border-radius: 8px;
+      margin: 0;
+      cursor: pointer;
+      background: var(--bg-secondary);
+      border: 1px solid var(--border);
+    }
+
+    select,
+    input[type="text"] {
+      padding: 6px 8px;
+      border-radius: 6px;
+      border: 1px solid var(--border);
+      font-size: 0.95rem;
+      width: 100%;
+      max-width: 260px;
+      background: var(--bg);
+      color: var(--text);
+    }
+
+    select option,
+    select optgroup {
+      background: var(--bg);
+      color: var(--text);
+    }
+
+    input::placeholder,
+    textarea::placeholder {
+      color: var(--text-soft);
+      opacity: 0.9;
+    }
+
+    select:focus,
+    input[type="text"]:focus {
+      outline: 2px solid var(--accent);
+      outline-offset: 1px;
+    }
+
+    .inline-input {
+      position: relative;
+      display: inline-block;
+      vertical-align: middle;
+      min-width: 85px;
+      max-width: 170px;
+    }
+
+    .inline-input::before {
+      content: attr(data-q);
+      position: absolute;
+      left: 1px;
+      top: 1px;
+      bottom: 1px;
+      width: 34px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: 0.85rem;
+      color: var(--text-soft);
+      background: var(--bg-secondary);
+      border-right: 1px solid var(--border);
+      border-radius: 5px 0 0 5px;
+      pointer-events: none;
+    }
+
+    .inline-input input {
+      width: 100%;
+      padding-left: 46px;
+      height: 34px;
+      line-height: 34px;
+    }
+
+    .drag-bank {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin: 10px 0 14px;
+      padding: 10px;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      background: var(--bg-secondary);
+    }
+
+    .drag-item {
+      min-height: 36px;
+      padding: 8px 14px;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      border: 1px solid var(--border);
+      background: var(--bg);
+      cursor: grab;
+      user-select: none;
+    }
+
+    .drag-item.selected {
+      outline: 2px solid var(--accent);
+      outline-offset: 1px;
+    }
+
+    .drag-hint {
+      color: var(--text-soft);
+      font-size: 0.9rem;
+    }
+
+    .drop-zone {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 180px;
+      height: 34px;
+      padding: 0 10px;
+      border-radius: 8px;
+      border: 1px dashed var(--border);
+      background: var(--bg);
+      font-weight: 700;
+      margin-top: 6px;
+    }
+
+    .drop-zone.filled {
+      border-style: solid;
+      border-color: var(--accent);
+      background: var(--accent-soft);
+    }
+
+    .drop-zone.over {
+      border-color: var(--accent);
+    }
+
+    .correct-answer-text {
+      margin-top: 4px;
+      font-size: 0.85rem;
+      color: var(--correct);
+      display: none;
+    }
+
+    /* Bottom navigation */
+    .bottom-nav {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background: var(--bg-secondary);
+      border-top: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      padding: 4px 10px;
+      font-size: 0.92rem;
+      z-index: 900;
+    }
+
+    .bottom-row {
+      width: 100%;
+    }
+
+    /* Bottom navigation */
+    .bottom-nav {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background: var(--bg-secondary);
+      border-top: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      padding: 4px 10px;
+      font-size: 0.92rem;
+      z-index: 900;
+    }
+
+    .bottom-row {
+      width: 100%;
+    }
+
+    .bottom-row-v2 {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      width: 100%;
+    }
+
+    .bottom-left {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      flex: 1;
+      min-width: 0;
+    }
+
+    .part-summary-row {
+      display: flex;
+      gap: 8px;
+      min-width: 320px;
+    }
+
+    #questionNumbers {
+      display: flex;
+      flex: 1;
+      flex-wrap: nowrap;
+      overflow-x: auto;
+      gap: 5px;
+      padding: 1px 5px;
+      min-width: 0;
+      justify-content: flex-start;
+    }
+
+    .part-chip {
+      padding: 6px 12px;
+      border-radius: 999px;
+      background: var(--part-bg);
+      border: 1px solid transparent;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 0.94rem;
+      justify-content: center;
+      transition: background 0.1s, border-color 0.1s, color 0.1s;
+      text-align: center;
+      width: 100%;
+      min-height: 44px;
+      white-space: nowrap;
+    }
+
+    .part-chip span.count {
+      color: var(--text-soft);
+      font-size: 0.85rem;
+      white-space: nowrap;
+    }
+
+    .part-chip.active {
+      background: var(--part-active-bg);
+      border-color: var(--accent);
+      font-weight: 600;
+    }
+
+    .part-chip.complete {
+      border-color: var(--correct);
+      color: var(--correct);
+    }
+
+    .part-chip.partial {
+      border-color: var(--orange);
+      color: var(--orange);
+    }
+
+    .part-chip.unopened {
+      color: var(--text-soft);
+      border-color: transparent;
+    }
+
+    #questionNumbers {
+      scroll-behavior: smooth;
+    }
+
+    .qnav {
+      min-width: 30px;
+      padding: 4px 7px;
+      border-radius: 8px;
+      text-align: center;
+      border: 1px solid var(--border);
+      background: var(--bg);
+      cursor: pointer;
+      font-size: 0.9rem;
+      font-weight: 700;
+      flex-shrink: 0;
+    }
+
+    .qnav.current {
+      border-color: var(--accent);
+      background: var(--accent-soft);
+      font-weight: 600;
+    }
+
+    .qnav.answered {
+      border-color: var(--correct);
+      background: rgba(67,160,71,0.22);
+    }
+
+    .qnav.unanswered {
+      opacity: 0.7;
+    }
+
+    .section-arrows {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .arrow-btn,
+    .check-btn {
+      border-radius: 6px;
+      border: none;
+      padding: 5px 10px;
+      cursor: pointer;
+      font-size: 0.9rem;
+      background: var(--bg-secondary);
+      border: 1px solid var(--border);
+      color: var(--text);
+    }
+
+    .arrow-btn:hover {
+      border-color: var(--accent);
+      background: var(--accent-soft);
+    }
+
+    .check-btn {
+      background: var(--accent);
+      color: #fff;
+      border-color: var(--accent);
+      font-weight: 600;
+    }
+
+    .check-btn:hover {
+      background: #00429b;
+    }
+
+    /* Highlight & notes toolbar */
+    #selectionToolbar {
+      position: absolute;
+      padding: 4px 6px;
+      background: #222;
+      color: #fff;
+      border-radius: 999px;
+      display: none;
+      z-index: 1200;
+      font-size: 0.8rem;
+      gap: 4px;
+    }
+
+    #selectionToolbar button {
+      border: none;
+      background: transparent;
+      color: inherit;
+      padding: 4px 8px;
+      border-radius: 999px;
+      cursor: pointer;
+      font-size: 0.8rem;
+    }
+
+    #selectionToolbar button:hover {
+      background: rgba(255,255,255,0.18);
+    }
+
+    .highlighted {
+      background: var(--highlight);
+    }
+
+    .note-anchor {
+      text-decoration: underline;
+      text-decoration-color: var(--note-underline);
+      text-decoration-style: solid;
+      text-decoration-thickness: 2px;
+      position: relative;
+      cursor: pointer;
+    }
+
+    .note-anchor .note-delete {
+      position: absolute;
+      top: -10px;
+      right: -10px;
+      width: 16px;
+      height: 16px;
+      border-radius: 50%;
+      border: none;
+      font-size: 0.7rem;
+      padding: 0;
+      line-height: 16px;
+      text-align: center;
+      background: var(--danger);
+      color: #fff;
+      display: none;
+      cursor: pointer;
+    }
+
+    .note-anchor:hover .note-delete {
+      display: inline-block;
+    }
+
+    .note-window {
+      position: absolute;
+      min-width: 200px;
+      min-height: 120px;
+      max-width: 340px;
+      background: var(--bg);
+      color: var(--text);
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      box-shadow: var(--shadow-soft);
+      z-index: 1300;
+      display: flex;
+      flex-direction: column;
+      resize: both;
+      overflow: hidden;
+    }
+
+    .note-header {
+      padding: 4px 8px;
+      border-bottom: 1px solid var(--border);
+      background: var(--bg-secondary);
+      cursor: move;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 0.8rem;
+    }
+
+    .note-body {
+      flex: 1;
+      padding: 6px;
+    }
+
+    .note-body textarea {
+      width: 100%;
+      height: 100%;
+      border: none;
+      outline: none;
+      background: transparent;
+      color: inherit;
+      resize: none;
+      font-size: 0.85rem;
+    }
+
+    .note-footer {
+      padding: 4px 6px;
+      text-align: right;
+      border-top: 1px solid var(--border);
+    }
+
+    .note-footer button {
+      border: none;
+      background: none;
+      color: var(--accent);
+      cursor: pointer;
+      font-size: 0.8rem;
+    }
+
+    /* Results overlay */
+    #resultsOverlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.6);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 1600;
+    }
+
+    #resultsPanel {
+      background: var(--bg);
+      color: var(--text);
+      padding: 22px 26px;
+      border-radius: 12px;
+      box-shadow: var(--shadow-soft);
+      max-width: 520px;
+      width: 95vw;
+    }
+
+    #resultsPanel h2 {
+      margin-top: 0;
+      margin-bottom: 10px;
+    }
+
+    #resultsPanel p {
+      margin: 6px 0;
+    }
+
+    #shortcutToast {
+      position: fixed;
+      left: 50%;
+      bottom: 86px;
+      transform: translateX(-50%);
+      padding: 9px 14px;
+      border-radius: 999px;
+      border: 1px solid var(--border);
+      background: var(--bg-secondary);
+      color: var(--text);
+      font-size: 0.85rem;
+      box-shadow: var(--shadow-soft);
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.2s ease;
+      z-index: 1600;
+    }
+
+    #shortcutToast.visible {
+      opacity: 1;
+    }
+
+    /* Utility */
+    .sr-only {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      padding: 0;
+      margin: -1px;
+      overflow: hidden;
+      clip: rect(0,0,0,0);
+      white-space: nowrap;
+      border: 0;
+    }
+
+    @media (max-width: 900px) {
+      .main-inner {
+        flex-direction: column;
+      }
+      .divider {
+        display: none;
+      }
+    }
+
+    .divider {
+      width: 18px;
+      min-width: 18px;
+      background: linear-gradient(90deg, transparent 0, transparent 6px, rgba(120,120,120,0.35) 6px, rgba(120,120,120,0.35) 12px, transparent 12px, transparent 100%);
+      cursor: col-resize;
+      position: relative;
+      touch-action: none;
+    }
+
+    .divider::after {
+      content: "⇄";
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 34px;
+      height: 34px;
+      border-radius: 50%;
+      border: 2px solid #0d3d73;
+      background: #03284f;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.3rem;
+      line-height: 1;
+      color: #fff;
+      opacity: 0.98;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.2);
+    }
+
+    .question-text.gap-fill {
+      display: block;
+      line-height: 1.35;
+    }
+
+    .gap-bullet {
+      display: inline-block;
+      font-size: 1.2rem;
+      line-height: 1;
+      margin-right: 8px;
+      vertical-align: top;
+    }
+
+    .gap-answer-tail {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      white-space: nowrap;
+    }
+
+    .drop-zone-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-top: 6px;
+    }
+
+    .clear-drop-btn {
+      border: 1px solid var(--border);
+      background: var(--bg-secondary);
+      color: var(--text);
+      border-radius: 6px;
+      padding: 4px 8px;
+      cursor: pointer;
+      font-size: 0.82rem;
+    }
+  </style>
+</head>
+<body data-theme="black-on-white">
+  <!-- Mode selection -->
+  <div id="modeScreen">
+    <div id="modeScreenInner">
+      <h1>IELTS Reading Simulation</h1>
+      <p>Select how you want to use this test.</p>
+      <div class="mode-buttons">
+        <button
+          class="mode-btn"
+          data-mode="test"
+          type="button"
+          
+        >
+          Test mode (exam conditions)
+        </button>
+        <button
+          class="mode-btn secondary"
+          data-mode="study"
+          type="button"
+          
+        >
+          Study mode (show feedback)
+        </button>
+      </div>
+      <p style="font-size:0.8rem;margin-top:10px;color:var(--text-soft);">
+        In both modes you can highlight text and make notes. In Test mode you submit once at the end. In Study mode you can check and change your answers as many times as you like.
+      </p>
+
+      <div id="testStartScreen">
+        <label for="studentNameInput">Your name (for test mode results)</label>
+        <input type="text" id="studentNameInput" placeholder="Enter your full name" maxlength="80" />
+        <button class="mode-btn" type="button" onclick="window.beginTimedTest && window.beginTimedTest()">Start the test now</button>
+        <p id="fullscreenSupportNote">Full screen enforcement is limited on this device.</p>
+      </div>
+    </div>
+  </div>
+
+  <div id="app">
+    <!-- Top bar -->
+    <header class="top-bar">
+      <div class="top-left">
+        <div class="logo">IELTS Pabs</div>
+        <div class="test-title">
+          Reading Test 2 – Academic – Cambridge 16
+        </div>
+      </div>
+      <div class="top-right">
+        <div id="timerContainer" role="status" aria-live="polite" aria-atomic="true" aria-hidden="true"><span id="timerPrefix">Time left:</span> <span id="timerDisplay">60:00</span></div>
+        <div class="icon-group">
+          <span class="icon" title="Connection status">
+            <span class="sr-only">Connection status</span>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M4.93 9.93a10.5 10.5 0 0 1 14.14 0" />
+              <path d="M7.76 12.76a6.5 6.5 0 0 1 8.48 0" />
+              <path d="M10.59 15.59a2.5 2.5 0 0 1 2.82 0" />
+              <path d="M12 18h.01" />
+            </svg>
+          </span>
+          <span class="icon" title="Notifications (mock)">
+            <span class="sr-only">Notifications</span>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M15 17h5l-1.4-1.4A2 2 0 0 1 18 14.17V11a6 6 0 1 0-12 0v3.17a2 2 0 0 1-.59 1.43L4 17h5" />
+              <path d="M9 17a3 3 0 0 0 6 0" />
+            </svg>
+          </span>
+          <button id="fullscreenBtn" class="icon-button with-label" title="Enter full screen" aria-label="Enter full screen" onclick="toggleFullscreen()">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <polyline points="8 3 3 3 3 8"></polyline>
+              <line x1="3" y1="3" x2="9" y2="9"></line>
+              <polyline points="16 21 21 21 21 16"></polyline>
+              <line x1="15" y1="15" x2="21" y2="21"></line>
+              <polyline points="21 8 21 3 16 3"></polyline>
+              <line x1="15" y1="9" x2="21" y2="3"></line>
+              <polyline points="3 16 3 21 8 21"></polyline>
+              <line x1="3" y1="21" x2="9" y2="15"></line>
+            </svg><span id="fullscreenBtnLabel">Full screen</span>
+          </button>
+          <button id="optionsBtn" class="icon-button" title="Options menu" aria-label="Options menu">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="4" y1="7" x2="20" y2="7" />
+              <line x1="4" y1="12" x2="20" y2="12" />
+              <line x1="4" y1="17" x2="16" y2="17" />
+            </svg>
+          </button>
+        </div>
+      </div>
+    </header>
+
+    <!-- Options overlay -->
+    <div id="optionsOverlay">
+      <div id="optionsPanel">
+        <button class="options-close" onclick="toggleOptions(false)">✕</button>
+        <h2>Options</h2>
+
+        <button class="submit-button" onclick="handlePrimarySubmit()">
+          ✔ Submit test &amp; check answers
+        </button>
+
+        <div class="options-section">
+          <h3>Contrast</h3>
+          <div class="options-list">
+            <button id="theme-black-white" onclick="setTheme('black-on-white')">
+              <span>Black on white</span><span>✓</span>
+            </button>
+            <button id="theme-white-black" onclick="setTheme('white-on-black')">
+              <span>White on black</span><span>✓</span>
+            </button>
+            <button id="theme-yellow-black" onclick="setTheme('yellow-on-black')">
+              <span>Yellow on black</span><span>✓</span>
+            </button>
+          </div>
+        </div>
+
+        <div class="options-section">
+          <h3>Text size</h3>
+          <div class="options-list">
+            <button id="font-normal" onclick="setFontSize('normal')">
+              <span>Normal</span><span>✓</span>
+            </button>
+            <button id="font-large" onclick="setFontSize('large')">
+              <span>Large</span><span>✓</span>
+            </button>
+            <button id="font-xlarge" onclick="setFontSize('xlarge')">
+              <span>Extra large</span><span>✓</span>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Main content area -->
+    <div class="main-area">
+      <div class="main-inner">
+        <!-- Passage pane -->
+        <div class="pane" id="passagePane">
+          <div class="pane-header" id="passageHeader">
+            Part 1 <span>Read the text and answer questions 1–13.</span>
+          </div>
+          <div class="pane-content" id="passageContent">
+            <!-- Section 1 passages -->
+                        <div class="passage-section" data-section="1">
+              <h2>The White Horse of Uffington</h2>
+              <p>The cutting of huge figures or ‘geoglyphs’ into the earth of English hillsides has taken place for more than 3,000 years. There are 56 hill figures scattered around England, with the vast majority on the chalk downlands of the country’s southern counties. The figures include giants, horses, crosses and regimental badges. Although the majority of these geoglyphs date within the last 300 years or so, there are one or two that are much older.</p>
+              <p>The most famous of these figures is perhaps also the most mysterious – the Uffington White Horse in Oxfordshire. The White Horse has recently been re-dated and shown to be even older than its previously assigned ancient pre-Roman Iron Age* date. More controversial is the date of the enigmatic Long Man of Wilmington in Sussex. While many historians are convinced the figure is prehistoric, others believe that it was the work of an artistic monk from a nearby priory and was created between the 11th and 15th centuries.</p>
+              <p>The method of cutting these huge figures was simply to remove the overlying grass to reveal the gleaming white chalk below. However, the grass would soon grow over the geoglyph again unless it was regularly cleaned or scoured by a fairly large team of people. One reason that the vast majority of hill figures have disappeared is that when the traditions associated with the figures faded, people no longer bothered or remembered to clear away the grass to expose the chalk outline. Furthermore, over hundreds of years the outlines would sometimes change due to people not always cutting in exactly the same place, thus creating a different shape to the original geoglyph. That fact that any ancient hill figures survive at all in England today is testament to the strength and continuity of local customs and beliefs which, in one case at least, must stretch back over millennia.</p>
+              <p>The Uffington White Horse is a unique, stylised representation of a horse consisting of a long, sleek back, thin disjointed legs, a streaming tail, and a bird-like beaked head. The elegant creature almost melts into the landscape. The horse is situated 2.5 km from Uffington village on a steep slope close to the Late Bronze Age* (c. 7th century BCE) hillfort of Uffington Castle and below the Ridgeway, a long-distance Neolithic** track.</p>
+              <p>The Uffington Horse is also surrounded by Bronze Age burial mounds. It is not far from the Bronze Age cemetery of Lambourn Seven Barrows, which consists of more than 30 well-preserved burial mounds. The carving has been placed in such a way as to make it extremely difficult to see from close quarters, and like many geoglyphs is best appreciated from the air. Nevertheless, there are certain areas of the Vale of the White Horse, the valley containing and named after the enigmatic creature, from which an adequate impression may be gained. Indeed on a clear day the carving can be seen from up to 30 km away.</p>
+              <p>The earliest evidence of a horse at Uffington is from the 1070s CE when ‘White Horse Hill’ is mentioned in documents from the nearby Abbey of Abingdon, and the first reference to the horse itself is soon after, in 1190 CE. However, the carving is believed to date back much further than that. Due to the similarity of the Uffington White Horse to the stylised depictions of horses on 1st century BCE coins, it had been thought that the creature must also date to that period.</p>
+              <p>However, in 1995 Optically Stimulated Luminescence (OSL) testing was carried out by the Oxford Archaeological Unit on soil from two of the lower layers of the horse’s body, and from another cut near the base. The result was a date for the horse’s construction somewhere between 1400 and 600 BCE – in other words, it had a Late Bronze Age or Early Iron Age origin.</p>
+              <p>The latter end of this date range would tie the carving of the horse in with occupation of the nearby Uffington hillfort, indicating that it may represent a tribal emblem making the land of the inhabitants of the hillfort. Alternatively, the carving may have been carried out during a Bronze or Iron Age ritual. Some researchers see the horse as representing the Celtic*** horse goddess Epona, who was worshipped as a protector of horses, and for her associations with fertility. However, the cult of Epona was not imported from Gaul (France) until around the first century CE. This date is at least six centuries after the Uffington Horse was probably carved. Nevertheless, the horse had great ritual and economic significance during the Bronze and Iron Ages, as attested by its depictions on jewellery and other metal objects. It is possible that the carving represents a goddess in native mythology, such as Rhiannon, described in later Welsh mythology as a beautiful woman dressed in gold and riding a white horse.</p>
+              <p>The fact that geoglyphs can disappear easily, along with their associated rituals and meaning, indicates that they were never intended to be anything more than temporary gestures. But this does not lessen their importance. These giant carving are a fascinating glimpse into the minds of their creators and how they viewed the landscape in which they lived.</p>
+              <p><em>* Iron Age: a period (in Britain 800 BCE – 43 CE) that is characterised by the use of iron tools</em></p>
+              <p><em>** Bronze Age: a period (in Britain c. 2,500 BCE – 800 BCE) that is characterised by the development of bronze tools</em></p>
+              <p><em>*** Neolithic: a period (in Britain c. 4,000 BCE – c. 2,500 BCE) that is significant for the spread of agricultural practices, and the use of stone tools</em></p>
+              <p><em>**** Celtic: an ancient people who migrated from Europe to Britain before the Romans</em></p>
+            </div>
+            <!-- Section 2 passages -->
+                        <div class="passage-section" data-section="2" style="display:none;">
+              <h2>I contain multitudes</h2>
+              <h3>Wendy Moore reviews Ed Yong’s book about microbes</h3>
+              <p>Microbes, most of them bacteria, have populated this planet since long before animal life developed and they will outlive us. Invisible to the naked eye, they are ubiquitous. They inhabit the soil, air, rocks and water and are present within every form of life, from seaweed and coral to dogs and humans. And, as Yong explains in his utterly absorbing and hugely important book we mess with them at our peril.</p>
+              <p>Every species has its own colony of microbes, called a ‘microbiome’, and these microbes vary not only between species but also between individuals and within different parts of each individual. What is amazing is that while the number of human cells in the average person is about 30 trillion, the number of microbial ones is higher – about 39 trillion. At best, Yong informs us, we are only 50 per cent human. Indeed, some scientists even suggest we should think of each species and its microbes as a single unit, dubbed a ‘holobiont’.</p>
+              <p>In each human there are microbes that live only in the stomach, the mouth or the armpit and by and large they do so peacefully. So ‘bad’ microbes are just microbes out of context. Microbes that sit contentedly in the human gut (where there are more microbes than there are stars in the galaxy) can become deadly if they find their way into the bloodstream. These communities are constantly changing too. The right hand shares just one sixth of its microbes with the left hand. And, of course, we are surrounded by microbes. Every time we eat, we swallow a million microbes in each gram of food; we are continually swapping microbes with other humans, pets and the world at large.</p>
+              <p>It’s a fascinating topic and Yong, a young British science journalist, is an extraordinarily adept guide. Writing with lightness and panache, he has a knack of explaining complex science in terms that are both easy to understand and totally enthralling. Yong is on a mission. Leading us gently by the hand, he takes us into the world of microbes – a bizarre, alien planet – in a bid to persuade us to love them as much as he does. By the end, we do.</p>
+              <p>For most of human history we had no idea that microbes existed. The first man to see these extraordinarily potent creatures was a Dutch lens-maker called Antony van Leeuwenhoek in the 1670s. Using microscopes of his own design that could magnify up to 270 times, he examined a drop of water from a nearby lake and found it teeming with tiny creatures he called ‘animalcules’. It wasn’t until nearly two hundred years later that the research of French biologist Louis Pasteur indicated that some microbes caused disease. It was Pasteur’s ‘germ theory’ that gave bacteria the poor image that endures today.</p>
+              <p>Yong’s book is in many ways a plea for microbial tolerance, pointing out that while fewer than one hundred species of bacteria bring disease, many thousands more play a vital role in maintaining our health. The book also acknowledges that our attitude towards bacteria is not a simple one. We tend to see the dangers posed by bacteria, yet at the same time we are sold yoghurts and drinks that supposedly nurture ‘friendly’ bacteria. In reality, says Yong, bacteria should not be viewed as either friends or foes, villains or heroes. Instead we should realise we have a symbiotic relationship, that can be mutually beneficial or mutually destructive.</p>
+              <p>What then do these millions of organisms do? The answer is pretty much everything. New research is now unravelling the ways in which bacteria aid digestion, regulate our immune systems, eliminate toxins, produce vitamins, affect our behaviour and even combat obesity. ‘They actually help us become who we are,’ says Yong. But we are facing a growing problem. Our obsession with hygiene, our overuse of antibiotics and our unhealthy, low-fibre diets are disrupting the bacterial balance and may be responsible for soaring rates of allergies and immune problems, such as inflammatory bowel disease (IBD).</p>
+              <p>The most recent research actually turns accepted norms upside down. For example, there are studies indicating that the excessive use of household detergents and antibacterial products actually destroys the microbes that normally keep the more dangerous germs at bay. Other studies show that keeping a dog as a pet gives children early exposure to a diverse range of bacteria, which may help protect them against allergies later.</p>
+              <p>The readers of Yong’s book must be prepared for a decidedly unglamorous world. Among the less appealing case studies is one about a fungus that is wiping out entire populations of frogs and that can be halted by a rare microbial bacterium. Another is about squid that carry luminescent bacteria that protect them against predators. However, if you can overcome your distaste for some of the investigations, the reasons for Yong’s enthusiasm become clear. The microbial world is a place of wonder. Already, in an attempt to stop mosquitoes spreading dengue fever – a disease that infects 400 million people a year – mosquitoes are being loaded with a bacterium to block the disease. In the future, our ability to manipulate microbes means we could construct buildings with useful microbes built into their walls to fight off infections. Just imagine a neonatal hospital ward coated in a specially mixed cocktail of microbes so that babies get the best start in life.</p>
+            </div>
+            <!-- Section 3 passages -->
+                        <div class="passage-section" data-section="3" style="display:none;">
+              <h2>How to make wise decisions</h2>
+              <p>Across cultures, wisdom has been considered one of the most revered human qualities. Although the truly wise may seem few and far between, empirical research examining wisdom suggests that it isn’t an exceptional trait possessed by a small handful of bearded philosophers after all – in fact, the latest studies suggest that most of us have the ability to make wise decisions, given the right context.</p>
+              <p>‘It appears that experiential, situational, and cultural factors are even more powerful in shaping wisdom than previously imagined,’ says Associate Professor Igor Grossmann of the University of Waterloo in Ontario, Canada. ‘Recent empirical findings from cognitive, developmental, social, and personality psychology cumulatively suggest that people’s ability to reason wisely varies dramatically across experiential and situational contexts. Understanding the role of such contextual factors offers unique insights into understanding wisdom in daily life, as well as how it can be enhanced and taught.’</p>
+              <p>It seems that it’s not so much that some people simply possess wisdom and others lack it, but that our ability to reason wisely depends on a variety of external factors. ‘It is impossible to characterize thought processes attributed to wisdom without considering the role of contextual factors,’ explains Grossmann. ‘In other words, wisdom is not solely an “inner quality” but rather unfolds as a function of situations people happen to be in. Some situations are more likely to promote wisdom than others.’</p>
+              <p>Coming up with a definition of wisdom is challenging, but Grossmann and his colleagues have identified four key characteristics as part of a framework of wise reasoning. One is intellectual humility or recognition of the limits of our own knowledge, and another is appreciation of perspectives wider than the issue at hand. Sensitivity to the possibility of change in social relations is also key, along with compromise or integration of different attitudes and beliefs.</p>
+              <p>Grossmann and his colleagues have also found that one of the most reliable ways to support wisdom in our own day-to-day decisions is to look at scenarios from a third-party perspective, as though giving advice to a friend. Research suggests that when adopting a first-person viewpoint we focus on ‘the focal features of the environment’ and when we adopt a third-person, ‘observer’ viewpoint we reason more broadly and focus more on interpersonal and moral ideals such as justice and impartiality. Looking at problems from this more expansive viewpoint appears to foster cognitive processes related to wise decisions.</p>
+              <p>What are we to do, then, when confronted with situations like a disagreement with a spouse or negotiating a contract at work, that require us to take a personal stake? Grossmann argues that even when we aren’t able to change the situation, we can still evaluate these experiences from different perspectives.</p>
+              <p>For example, in one experiment that took place during the peak of a recent economic recession, graduating college seniors were asked to reflect on their job prospects. The students were instructed to imagine their career either ‘as if you were a distant observer’ or ‘before your own eyes as if you were right there’. Participants in the group assigned to the ‘distant observer’ role displayed more wisdom-related reasoning (intellectual humility and recognition of change) than did participants in the control group.</p>
+              <p>In another study, couples in long-term romantic relationships were instructed to visualize an unresolved relationship conflict either through the eyes of an outsider or from their own perspective. Participants then discussed the incident with their partner for 10 minutes, after which they wrote down their thoughts about it. Couples in the ‘other’s eyes’ condition were significantly more likely to rely on wise reasoning – recognizing others’ perspectives and searching for a compromise – compared to the couples in the egocentric condition.</p>
+              <p>‘Ego-decentering promotes greater focus on others and enables a bigger picture, conceptual view of the experience, affording recognition of intellectual humility and change,’ says Grossmann.</p>
+              <p>We might associate wisdom with intelligence or particular personality traits, but research shows only a small positive relationship between wise thinking and crystallized intelligence and the personality traits of openness and agreeableness. ‘It is remarkable how much people can vary in their wisdom from one situation to the next, and how much stronger such contextual effects are for understanding the relationship between wise judgment and its social and affective outcomes as compared to the generalized “traits”,’ Grossmann explains. ‘That is, knowing how wisely a person behaves in a given situation is more informative for understanding their emotions or likelihood to forgive [or] retaliate as compared to knowing whether the person may be wise “in general”.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="divider" id="divider"></div>
+
+        <!-- Questions pane -->
+        <div class="pane" id="questionPane">
+          <div class="pane-header" id="questionHeader">
+            SECTION 1 Questions 1–13
+          </div>
+          <div class="pane-content" id="questionContent">
+            <!-- Section 1 questions -->
+                        <div data-section="1">
+              <div class="instruction-block">
+                <p><strong>SECTION 1</strong></p>
+                <p><strong>Questions 1–8</strong></p>
+                <p>Do the following statements agree with the information given in Reading Passage 1?</p>
+                <p><strong>TRUE</strong> if the statement agrees with the information<br><strong>FALSE</strong> if the statement contradicts the information<br><strong>NOT GIVEN</strong> if there is no information on this</p>
+              </div>
+              <div class="question-block" data-q="1"><div class="question-text"><span class="question-number-label">1.</span> Most geoglyphs in England are located in a particular area of the country.</div><div class="options-row"><label><input type="radio" name="q1" value="TRUE" /> TRUE</label><label><input type="radio" name="q1" value="FALSE" /> FALSE</label><label><input type="radio" name="q1" value="NOT GIVEN" /> NOT GIVEN</label></div><div class="correct-answer-text" id="ca-1"></div></div>
+              <div class="question-block" data-q="2"><div class="question-text"><span class="question-number-label">2.</span> There are more geoglyphs in the shape of a horse than any other creature.</div><div class="options-row"><label><input type="radio" name="q2" value="TRUE" /> TRUE</label><label><input type="radio" name="q2" value="FALSE" /> FALSE</label><label><input type="radio" name="q2" value="NOT GIVEN" /> NOT GIVEN</label></div><div class="correct-answer-text" id="ca-2"></div></div>
+              <div class="question-block" data-q="3"><div class="question-text"><span class="question-number-label">3.</span> A recent dating of the Uffington White Horse indicates that people were mistaken about its age.</div><div class="options-row"><label><input type="radio" name="q3" value="TRUE" /> TRUE</label><label><input type="radio" name="q3" value="FALSE" /> FALSE</label><label><input type="radio" name="q3" value="NOT GIVEN" /> NOT GIVEN</label></div><div class="correct-answer-text" id="ca-3"></div></div>
+              <div class="question-block" data-q="4"><div class="question-text"><span class="question-number-label">4.</span> Historians have come to an agreement about the origins of the Long Man of Wilmington.</div><div class="options-row"><label><input type="radio" name="q4" value="TRUE" /> TRUE</label><label><input type="radio" name="q4" value="FALSE" /> FALSE</label><label><input type="radio" name="q4" value="NOT GIVEN" /> NOT GIVEN</label></div><div class="correct-answer-text" id="ca-4"></div></div>
+              <div class="question-block" data-q="5"><div class="question-text"><span class="question-number-label">5.</span> Geoglyphs were created by people placing white chalk on the hillside.</div><div class="options-row"><label><input type="radio" name="q5" value="TRUE" /> TRUE</label><label><input type="radio" name="q5" value="FALSE" /> FALSE</label><label><input type="radio" name="q5" value="NOT GIVEN" /> NOT GIVEN</label></div><div class="correct-answer-text" id="ca-5"></div></div>
+              <div class="question-block" data-q="6"><div class="question-text"><span class="question-number-label">6.</span> Many geoglyphs in England are no longer visible.</div><div class="options-row"><label><input type="radio" name="q6" value="TRUE" /> TRUE</label><label><input type="radio" name="q6" value="FALSE" /> FALSE</label><label><input type="radio" name="q6" value="NOT GIVEN" /> NOT GIVEN</label></div><div class="correct-answer-text" id="ca-6"></div></div>
+              <div class="question-block" data-q="7"><div class="question-text"><span class="question-number-label">7.</span> The shape of some geoglyphs has been altered over time.</div><div class="options-row"><label><input type="radio" name="q7" value="TRUE" /> TRUE</label><label><input type="radio" name="q7" value="FALSE" /> FALSE</label><label><input type="radio" name="q7" value="NOT GIVEN" /> NOT GIVEN</label></div><div class="correct-answer-text" id="ca-7"></div></div>
+              <div class="question-block" data-q="8"><div class="question-text"><span class="question-number-label">8.</span> The fame of the Uffington White Horse is due to its size.</div><div class="options-row"><label><input type="radio" name="q8" value="TRUE" /> TRUE</label><label><input type="radio" name="q8" value="FALSE" /> FALSE</label><label><input type="radio" name="q8" value="NOT GIVEN" /> NOT GIVEN</label></div><div class="correct-answer-text" id="ca-8"></div></div>
+
+              <p><strong>Questions 9–13</strong></p>
+              <p>Complete the summary below.</p>
+              <p>Choose <strong>ONE WORD ONLY</strong> from the passage for each answer.</p>
+              <p><strong>The Uffington White Horse</strong></p>
+
+              <div class="question-block" data-q="9"><div class="question-text"><span class="question-number-label">9.</span> The location of the Uffington White Horse includes a nearby ancient road known as the <span class="inline-input"><input type="text" name="q9" /></span>.</div><div class="correct-answer-text" id="ca-9"></div></div>
+              <div class="question-block" data-q="10"><div class="question-text"><span class="question-number-label">10.</span> First reference to White Horse Hill appears in <span class="inline-input"><input type="text" name="q10" /></span> from the 1070s.</div><div class="correct-answer-text" id="ca-10"></div></div>
+              <div class="question-block" data-q="11"><div class="question-text"><span class="question-number-label">11.</span> According to analysis of the surrounding <span class="inline-input"><input type="text" name="q11" /></span>, the Horse is Late Bronze Age / Early Iron Age.</div><div class="correct-answer-text" id="ca-11"></div></div>
+              <div class="question-block" data-q="12"><div class="question-text"><span class="question-number-label">12.</span> It may have represented goddess Epona, associated with protection of horses and <span class="inline-input"><input type="text" name="q12" /></span>.</div><div class="correct-answer-text" id="ca-12"></div></div>
+              <div class="question-block" data-q="13"><div class="question-text"><span class="question-number-label">13.</span> Another possibility is a representation of the Welsh goddess called <span class="inline-input"><input type="text" name="q13" /></span>.</div><div class="correct-answer-text" id="ca-13"></div></div>
+            </div>
+          </div>
+        </div>
+
+      <!-- selection toolbar -->
+      <div id="selectionToolbar">
+        <button onclick="toggleHighlightSelection()">Highlight</button>
+        <button onclick="makeNoteForSelection()">Make note</button>
+      </div>
+    </div>
+
+    <!-- Bottom nav -->
+    <footer class="bottom-nav">
+      <div class="bottom-row bottom-row-v2">
+        <div class="bottom-left">
+          <div class="part-summary-row">
+            <div class="part-chip active" data-section-chip="1" onclick="switchSection(1)">
+              Part 1 <span class="count" id="part1Count">0 of 13</span>
+            </div>
+            <div class="part-chip unopened" data-section-chip="2" onclick="switchSection(2)">
+              Part 2 <span class="count" id="part2Count">0 of 13</span>
+            </div>
+            <div class="part-chip unopened" data-section-chip="3" onclick="switchSection(3)">
+              Part 3 <span class="count" id="part3Count">0 of 14</span>
+            </div>
+          </div>
+
+          <div id="questionNumbers"></div>
+        </div>
+
+        <div class="section-arrows">
+          <button class="arrow-btn" onclick="prevSection()" title="Previous part">←</button>
+          <button class="arrow-btn" onclick="nextSection()" title="Next part">→</button>
+          <button class="check-btn" onclick="handlePrimarySubmit()" title="Submit test and check answers">✔ Check answers</button>
+        </div>
+      </div>
+    </footer>
+  </div>
+
+
+  <div id="fullscreenLockOverlay" role="dialog" aria-modal="true" aria-live="assertive">
+    <div id="fullscreenLockPanel">
+      <h2>Test paused</h2>
+      <p>You have left full screen. Return to full screen to continue your test.</p>
+      <button class="mode-btn" type="button" onclick="returnToFullscreenAndResume()">Return to full screen</button>
+    </div>
+  </div>
+
+  <!-- Results overlay -->
+  <div id="resultsOverlay">
+    <div id="resultsPanel">
+      <h2>IELTS Academic Reading Score Board</h2>
+      <p id="studentLine"></p>
+      <p id="fullScreenExitLine"></p>
+      <p id="focusViolationLine"></p>
+      <p id="totalTimeLine"></p>
+      <p id="scoreLine"></p>
+      <p id="bandLine"></p>
+      <p id="descriptorLine"></p>
+      <button style="margin-top:10px;" onclick="closeResults()">Close</button>
+    </div>
+  </div>
+
+  <div id="shortcutToast" role="status" aria-live="polite" aria-atomic="true"></div>
+
+  <script>
+    /***************
+     * GLOBAL STATE
+     ***************/
+    let mode = "test"; // "test" or "study"
+    let activeSection = 1;
+    let timerSeconds = 60 * 60;
+    let timerId = null;
+    let testSubmitted = false;
+    let pendingMode = null;
+    let studentName = "";
+    let isTestRunning = false;
+    let isTimerPaused = false;
+    let fullscreenSupported = false;
+    let fullScreenEnforcementEnabled = false;
+    let fullScreenExits = 0;
+    let focusViolations = 0;
+    const visitedSections = new Set();
+
+    const AVAILABLE_THEMES = [
+      "black-on-white",
+      "white-on-black",
+      "yellow-on-black",
+    ];
+    const DEFAULT_THEME = "black-on-white";
+    const STORAGE_KEYS = {
+      theme: "ielts-reading-theme",
+    };
+
+    function restoreThemePreference() {
+      const saved = localStorage.getItem(STORAGE_KEYS.theme);
+      const theme = AVAILABLE_THEMES.includes(saved) ? saved : DEFAULT_THEME;
+      document.body.setAttribute("data-theme", theme);
+    }
+
+    function setTheme(theme) {
+      if (!AVAILABLE_THEMES.includes(theme)) return;
+      document.body.setAttribute("data-theme", theme);
+      localStorage.setItem(STORAGE_KEYS.theme, theme);
+      updateThemeButtons();
+    }
+
+    function updateThemeButtons() {
+      const theme = document.body.getAttribute("data-theme") || DEFAULT_THEME;
+      const map = {
+        "black-on-white": "theme-black-white",
+        "white-on-black": "theme-white-black",
+        "yellow-on-black": "theme-yellow-black",
+      };
+      AVAILABLE_THEMES.forEach((t) => {
+        const id = map[t];
+        const btn = document.getElementById(id);
+        if (!btn) return;
+        if (t === theme) btn.classList.add("active");
+        else btn.classList.remove("active");
+      });
+    }
+
+    function setFontSize(size) {
+      document.body.classList.remove("font-large", "font-xlarge");
+      if (size === "large") document.body.classList.add("font-large");
+      if (size === "xlarge") document.body.classList.add("font-xlarge");
+      updateFontButtons();
+    }
+
+    function updateFontButtons() {
+      const sizeClass = document.body.classList.contains("font-xlarge")
+        ? "xlarge"
+        : document.body.classList.contains("font-large")
+        ? "large"
+        : "normal";
+      ["normal", "large", "xlarge"].forEach((s) => {
+        const btn = document.getElementById("font-" + s);
+        if (!btn) return;
+        if (s === sizeClass) btn.classList.add("active");
+        else btn.classList.remove("active");
+      });
+    }
+
+    const sectionRanges = {
+      1: { from: 1, to: 13 },
+      2: { from: 14, to: 26 },
+      3: { from: 27, to: 40 }
+    };
+
+    const answerKey = {
+      1: "TRUE",
+      2: "NOT GIVEN",
+      3: "TRUE",
+      4: "FALSE",
+      5: "FALSE",
+      6: "TRUE",
+      7: "TRUE",
+      8: "NOT GIVEN",
+      9: "Ridgeway",
+      10: "documents",
+      11: "soil",
+      12: "fertility",
+      13: "Rhiannon",
+      14: "D",
+      15: "C",
+      16: "A",
+      17: "G",
+      18: "B",
+      19: "H",
+      20: "E",
+      21: "YES",
+      22: "NO",
+      23: "NOT GIVEN",
+      24: "YES",
+      25: "NOT GIVEN",
+      26: "NO",
+      27: "B",
+      28: "C",
+      29: "B",
+      30: "D",
+      31: "D",
+      32: "A",
+      33: "C",
+      34: "F",
+      35: "G",
+      36: "FALSE",
+      37: "NOT GIVEN",
+      38: "NOT GIVEN",
+      39: "TRUE",
+      40: "TRUE"
+    };
+
+    const correctAnswerText = {
+      1: "TRUE",
+      2: "NOT GIVEN",
+      3: "TRUE",
+      4: "FALSE",
+      5: "FALSE",
+      6: "TRUE",
+      7: "TRUE",
+      8: "NOT GIVEN",
+      9: "Ridgeway",
+      10: "documents",
+      11: "soil",
+      12: "fertility",
+      13: "Rhiannon",
+      14: "D",
+      15: "C",
+      16: "A",
+      17: "G",
+      18: "B",
+      19: "H",
+      20: "E",
+      21: "YES",
+      22: "NO",
+      23: "NOT GIVEN",
+      24: "YES",
+      25: "NOT GIVEN",
+      26: "NO",
+      27: "B",
+      28: "C",
+      29: "B",
+      30: "D",
+      31: "D",
+      32: "A",
+      33: "C",
+      34: "F",
+      35: "G",
+      36: "FALSE",
+      37: "NOT GIVEN",
+      38: "NOT GIVEN",
+      39: "TRUE",
+      40: "TRUE"
+    };
+
+    /********************
+     * MODE & INITIALISE
+     ********************/
+
+    restoreThemePreference();
+
+    async function beginTimedTest() {
+      const input = document.getElementById("studentNameInput");
+      studentName = input ? input.value.trim() : "";
+      if (!studentName) {
+        alert("Please enter your name before starting test mode.");
+        if (input) input.focus();
+        return;
+      }
+
+      fullScreenExits = 0;
+      focusViolations = 0;
+      fullScreenEnforcementEnabled = false;
+      fullscreenSupported = isFullscreenApiSupported();
+      updateFullscreenSupportNote(false);
+
+      if (fullscreenSupported) {
+        const entered = await requestAppFullscreen();
+        if (entered) {
+          fullScreenEnforcementEnabled = true;
+        } else {
+          updateFullscreenSupportNote(true);
+        }
+      } else {
+        updateFullscreenSupportNote(true);
+      }
+
+      const modeScreen = document.getElementById("modeScreen");
+      const startScreen = document.getElementById("testStartScreen");
+      if (startScreen) startScreen.style.display = "none";
+      if (modeScreen) modeScreen.style.display = "none";
+      startTest("test");
+
+      isTestRunning = true;
+      isTimerPaused = false;
+      startTimer();
+      updateFullscreenButton();
+    }
+
+    function startTest(selectedMode) {
+      mode = selectedMode;
+      const timerContainer = document.getElementById("timerContainer");
+
+      visitedSections.clear();
+      visitedSections.add(1);
+      activeSection = 1;
+      currentQuestion = 1;
+
+      if (timerId) {
+        clearInterval(timerId);
+        timerId = null;
+      }
+
+      if (mode === "test") {
+        if (timerContainer) {
+          timerContainer.style.display = "block";
+          timerContainer.setAttribute("aria-hidden", "false");
+        }
+        timerSeconds = 60 * 60;
+      } else {
+        if (timerContainer) {
+          timerContainer.style.display = "none";
+          timerContainer.setAttribute("aria-hidden", "true");
+        }
+        isTestRunning = false;
+        isTimerPaused = false;
+        fullScreenEnforcementEnabled = false;
+      }
+
+      document.getElementById("app").style.display = "block";
+      initQuestionInputs();
+      setupDragMatch();
+      buildQuestionNav();
+      setupSelectionListeners();
+      setupDividerDrag();
+      updateThemeButtons();
+      updateFontButtons();
+      window.addEventListener("beforeunload", (e) => {
+        if (!testSubmitted) {
+          e.preventDefault();
+          e.returnValue = "Are you sure you want to leave? All progress will be lost.";
+          return e.returnValue;
+        }
+      }, { capture: true });
+    }
+
+    // Expose for inline handlers and any future fallback uses.
+    window.startTest = startTest;
+    window.beginTimedTest = beginTimedTest;
+    window.toggleFullscreen = toggleFullscreen;
+    window.returnToFullscreenAndResume = returnToFullscreenAndResume;
+    window.confirmSubmit = confirmSubmit;
+    window.handlePrimarySubmit = handlePrimarySubmit;
+
+    let shortcutToastTimer = null;
+
+    function wireModeButtons() {
+      const buttons = document.querySelectorAll(".mode-btn[data-mode]");
+      const modeScreen = document.getElementById("modeScreen");
+
+      const activate = (btn) => {
+        const selected = btn.getAttribute("data-mode") || btn.dataset.mode || "test";
+        if (selected === "test") {
+          pendingMode = "test";
+          updateFullscreenSupportNote(!isFullscreenApiSupported());
+          const startScreen = document.getElementById("testStartScreen");
+          if (startScreen) startScreen.style.display = "block";
+          const input = document.getElementById("studentNameInput");
+          if (input) input.focus();
+          return;
+        }
+        const startScreen = document.getElementById("testStartScreen");
+        if (startScreen) startScreen.style.display = "none";
+        const modeScreenEl = document.getElementById("modeScreen");
+        if (modeScreenEl) modeScreenEl.style.display = "none";
+        studentName = "";
+        startTest(selected);
+      };
+
+      buttons.forEach((btn) => {
+        btn.addEventListener("click", () => activate(btn));
+        btn.addEventListener("keydown", (event) => {
+          if (event.key === "Enter" || event.key === " ") {
+            event.preventDefault();
+            activate(btn);
+          }
+        });
+      });
+
+      if (modeScreen && !modeScreen.dataset.wired) {
+        modeScreen.addEventListener("click", (event) => {
+          const btn = event.target.closest(".mode-btn[data-mode]");
+          if (!btn) return;
+          event.preventDefault();
+          activate(btn);
+        });
+        modeScreen.dataset.wired = "true";
+      }
+    }
+
+    function ensureModeWiring() {
+      if (document.readyState === "loading") {
+        document.addEventListener("DOMContentLoaded", wireModeButtons, { once: true });
+      } else {
+        wireModeButtons();
+      }
+    }
+
+    function startTimer() {
+      if (mode !== "test") return;
+      if (timerId) {
+        clearInterval(timerId);
+        timerId = null;
+      }
+      const display = document.getElementById("timerDisplay");
+      const timerContainer = document.getElementById("timerContainer");
+      const timerPrefix = document.getElementById("timerPrefix");
+      display.classList.remove("timer-warning");
+      if (timerContainer) timerContainer.classList.remove("timer-expired");
+      if (timerPrefix) timerPrefix.textContent = "Time left:";
+      display.textContent = formatDuration(timerSeconds);
+
+      timerId = setInterval(() => {
+        timerSeconds--;
+        const overdue = timerSeconds < 0;
+        display.textContent = formatDuration(timerSeconds);
+
+        if (overdue) {
+          display.classList.add("timer-warning");
+          if (timerContainer) timerContainer.classList.add("timer-expired");
+          if (timerPrefix) timerPrefix.textContent = "Time is up!";
+        } else if (timerSeconds <= 180) {
+          display.classList.add("timer-warning");
+          if (timerPrefix) timerPrefix.textContent = "Time left:";
+        } else {
+          display.classList.remove("timer-warning");
+          if (timerContainer) timerContainer.classList.remove("timer-expired");
+          if (timerPrefix) timerPrefix.textContent = "Time left:";
+        }
+      }, 1000);
+    }
+
+    function pauseTimer() {
+      if (timerId) {
+        clearInterval(timerId);
+        timerId = null;
+      }
+      isTimerPaused = true;
+    }
+
+    function resumeTimer() {
+      if (!isTestRunning || mode !== "test") return;
+      if (!isTimerPaused) return;
+      isTimerPaused = false;
+      startTimer();
+    }
+
+    function toggleOptions(show) {
+      const overlay = document.getElementById("optionsOverlay");
+      overlay.style.display = show ? "flex" : "none";
+    }
+
+    document.getElementById("optionsBtn").addEventListener("click", () => {
+      toggleOptions(true);
+    });
+
+    function isFullscreenApiSupported() {
+      const el = document.documentElement;
+      return !!(document.fullscreenEnabled && el && typeof el.requestFullscreen === "function");
+    }
+
+    function isFullscreenActive() {
+      return !!document.fullscreenElement;
+    }
+
+    function updateFullscreenSupportNote(show) {
+      const note = document.getElementById("fullscreenSupportNote");
+      if (!note) return;
+      note.style.display = show ? "block" : "none";
+    }
+
+    async function requestAppFullscreen() {
+      try {
+        if (!isFullscreenApiSupported()) return false;
+        await document.documentElement.requestFullscreen();
+        return isFullscreenActive();
+      } catch (err) {
+        return false;
+      }
+    }
+
+    async function exitAppFullscreen() {
+      try {
+        if (isFullscreenActive() && typeof document.exitFullscreen === "function") {
+          await document.exitFullscreen();
+        }
+      } catch (err) {
+        // silent by design
+      }
+    }
+
+    function showFullscreenLockOverlay() {
+      const overlay = document.getElementById("fullscreenLockOverlay");
+      if (overlay) overlay.style.display = "flex";
+      document.body.style.overflow = "hidden";
+    }
+
+    function hideFullscreenLockOverlay() {
+      const overlay = document.getElementById("fullscreenLockOverlay");
+      if (overlay) overlay.style.display = "none";
+      document.body.style.overflow = "";
+    }
+
+    function updateFullscreenButton() {
+      const btn = document.getElementById("fullscreenBtn");
+      const label = document.getElementById("fullscreenBtnLabel");
+      if (!btn || !label) return;
+
+      const isFullscreen = isFullscreenActive();
+      const locked = mode === "test" && isTestRunning && !testSubmitted && fullScreenEnforcementEnabled;
+
+      btn.classList.toggle("is-active", isFullscreen);
+      btn.disabled = false;
+
+      if (locked && isFullscreen) {
+        label.textContent = "Full screen locked";
+        btn.setAttribute("title", "Full screen locked");
+        btn.setAttribute("aria-label", "Full screen locked");
+        btn.disabled = true;
+        return;
+      }
+
+      if (isFullscreen) {
+        label.textContent = "Exit full screen";
+        btn.setAttribute("title", "Exit full screen");
+        btn.setAttribute("aria-label", "Exit full screen");
+      } else {
+        label.textContent = "Full screen";
+        btn.setAttribute("title", "Enter full screen");
+        btn.setAttribute("aria-label", "Enter full screen");
+      }
+    }
+
+    async function toggleFullscreen() {
+      const locked = mode === "test" && isTestRunning && !testSubmitted && fullScreenEnforcementEnabled;
+      if (locked && isFullscreenActive()) {
+        updateFullscreenButton();
+        return;
+      }
+
+      if (!isFullscreenActive()) {
+        await requestAppFullscreen();
+      } else {
+        await exitAppFullscreen();
+      }
+      updateFullscreenButton();
+    }
+
+    async function returnToFullscreenAndResume() {
+      const ok = await requestAppFullscreen();
+      if (ok) {
+        hideFullscreenLockOverlay();
+        resumeTimer();
+      }
+      updateFullscreenButton();
+    }
+
+    function handleFullscreenChange() {
+      const runningLockedTest = mode === "test" && isTestRunning && !testSubmitted && fullScreenEnforcementEnabled;
+      if (runningLockedTest) {
+        if (!isFullscreenActive()) {
+          fullScreenExits += 1;
+          pauseTimer();
+          showFullscreenLockOverlay();
+        } else {
+          hideFullscreenLockOverlay();
+          resumeTimer();
+        }
+      }
+      updateFullscreenButton();
+    }
+
+    document.addEventListener("fullscreenchange", handleFullscreenChange);
+
+    document.addEventListener("visibilitychange", () => {
+      if (mode === "test" && isTestRunning && !testSubmitted && document.hidden) {
+        focusViolations += 1;
+      }
+    });
+
+    window.addEventListener("blur", () => {
+      if (mode === "test" && isTestRunning && !testSubmitted) {
+        focusViolations += 1;
+      }
+    });
+
+    /*************************
+     * BUILD REMAINING QUESTIONS
+     *************************/
+    let questionsBuilt = false;
+    let currentQuestion = 1;
+
+    function buildRemainingQuestions() {
+      if (questionsBuilt) return;
+      questionsBuilt = true;
+
+      const qContent = document.getElementById("questionContent");
+      if (!qContent) return;
+
+      qContent.insertAdjacentHTML(
+        "beforeend",
+        `
+        <div data-section="2" style="display:none;">
+          <p><strong>SECTION 2</strong></p>
+          <p><strong>Questions 14–16</strong></p>
+          <p>Choose the correct letter, A, B, C or D.</p>
+
+          <div class="question-block" data-q="14"><div class="question-text"><span class="question-number-label">14.</span> What point does the writer make about microbes in the first paragraph?</div><div class="options-row"><label><input type="radio" name="q14" value="A" /> A. They adapt quickly to their environment.</label><label><input type="radio" name="q14" value="B" /> B. The risk they pose has been exaggerated.</label><label><input type="radio" name="q14" value="C" /> C. They are more plentiful in animal life than plant life.</label><label><input type="radio" name="q14" value="D" /> D. They will continue to exist for longer than the human race.</label></div><div class="correct-answer-text" id="ca-14"></div></div>
+          <div class="question-block" data-q="15"><div class="question-text"><span class="question-number-label">15.</span> In the second paragraph, the writer is impressed by the fact that</div><div class="options-row"><label><input type="radio" name="q15" value="A" /> A. each species tends to have vastly different microbes.</label><label><input type="radio" name="q15" value="B" /> B. some parts of the body contain relatively few microbes.</label><label><input type="radio" name="q15" value="C" /> C. the average individual has more microbial cells than human ones.</label><label><input type="radio" name="q15" value="D" /> D. scientists have limited understanding of how microbial cells behave.</label></div><div class="correct-answer-text" id="ca-15"></div></div>
+          <div class="question-block" data-q="16"><div class="question-text"><span class="question-number-label">16.</span> What is the writer doing in the fifth paragraph?</div><div class="options-row"><label><input type="radio" name="q16" value="A" /> A. explaining how a discovery was made</label><label><input type="radio" name="q16" value="B" /> B. comparing scientists’ theories about microbes</label><label><input type="radio" name="q16" value="C" /> C. describing confusion among scientists</label><label><input type="radio" name="q16" value="D" /> D. giving details of how microbes cause disease</label></div><div class="correct-answer-text" id="ca-16"></div></div>
+
+          <p><strong>Questions 17–20</strong></p>
+          <p>Complete the summary using the list of words, A–H, below.</p>
+          <div class="question-block" data-q="17"><div class="question-text"><span class="question-number-label">17.</span> Many have a beneficial effect, and only a relatively small number lead to <select name="q17"><option value="">Select…</option><option value="A">A</option><option value="B">B</option><option value="C">C</option><option value="D">D</option><option value="E">E</option><option value="F">F</option><option value="G">G</option><option value="H">H</option></select>.</div><div class="correct-answer-text" id="ca-17"></div></div>
+          <div class="question-block" data-q="18"><div class="question-text"><span class="question-number-label">18.</span> We should accept that our relationship with microbes is one based on <select name="q18"><option value="">Select…</option><option value="A">A</option><option value="B">B</option><option value="C">C</option><option value="D">D</option><option value="E">E</option><option value="F">F</option><option value="G">G</option><option value="H">H</option></select>.</div><div class="correct-answer-text" id="ca-18"></div></div>
+          <div class="question-block" data-q="19"><div class="question-text"><span class="question-number-label">19.</span> Our poor <select name="q19"><option value="">Select…</option><option value="A">A</option><option value="B">B</option><option value="C">C</option><option value="D">D</option><option value="E">E</option><option value="F">F</option><option value="G">G</option><option value="H">H</option></select>, our overuse of antibiotics, and our excessive focus on 20 are upsetting the bacterial balance.</div><div class="correct-answer-text" id="ca-19"></div></div>
+          <div class="question-block" data-q="20"><div class="question-text"><span class="question-number-label">20.</span> Our poor 19, our overuse of antibiotics, and our excessive focus on <select name="q20"><option value="">Select…</option><option value="A">A</option><option value="B">B</option><option value="C">C</option><option value="D">D</option><option value="E">E</option><option value="F">F</option><option value="G">G</option><option value="H">H</option></select> are upsetting the bacterial balance.</div><div class="correct-answer-text" id="ca-20"></div></div>
+          <div class="instruction-block"><p><strong>A.</strong> solution</p><p><strong>B.</strong> partnership</p><p><strong>C.</strong> destruction</p><p><strong>D.</strong> exaggeration</p><p><strong>E.</strong> cleanliness</p><p><strong>F.</strong> regulations</p><p><strong>G.</strong> illness</p><p><strong>H.</strong> nutrition</p></div>
+
+          <p><strong>Questions 21–26</strong></p>
+          <p>Do the following statements agree with the claims of the writer in Reading Passage 2?</p>
+          <p><strong>YES</strong> if the statement agrees with the claims of the writer<br><strong>NO</strong> if the statement contradicts the claims of the writer<br><strong>NOT GIVEN</strong> if it is impossible to say what the writer thinks about this</p>
+          <div class="question-block" data-q="21"><div class="question-text"><span class="question-number-label">21.</span> It is possible that using antibacterial products in the home fails to have the desired effect.</div><div class="options-row"><label><input type="radio" name="q21" value="YES"/> YES</label><label><input type="radio" name="q21" value="NO"/> NO</label><label><input type="radio" name="q21" value="NOT GIVEN"/> NOT GIVEN</label></div><div class="correct-answer-text" id="ca-21"></div></div>
+          <div class="question-block" data-q="22"><div class="question-text"><span class="question-number-label">22.</span> It is a good idea to ensure that children come into contact with as few bacteria as possible.</div><div class="options-row"><label><input type="radio" name="q22" value="YES"/> YES</label><label><input type="radio" name="q22" value="NO"/> NO</label><label><input type="radio" name="q22" value="NOT GIVEN"/> NOT GIVEN</label></div><div class="correct-answer-text" id="ca-22"></div></div>
+          <div class="question-block" data-q="23"><div class="question-text"><span class="question-number-label">23.</span> Yong’s book contains more case studies than are necessary.</div><div class="options-row"><label><input type="radio" name="q23" value="YES"/> YES</label><label><input type="radio" name="q23" value="NO"/> NO</label><label><input type="radio" name="q23" value="NOT GIVEN"/> NOT GIVEN</label></div><div class="correct-answer-text" id="ca-23"></div></div>
+          <div class="question-block" data-q="24"><div class="question-text"><span class="question-number-label">24.</span> The case study about bacteria that prevent squid from being attacked may have limited appeal.</div><div class="options-row"><label><input type="radio" name="q24" value="YES"/> YES</label><label><input type="radio" name="q24" value="NO"/> NO</label><label><input type="radio" name="q24" value="NOT GIVEN"/> NOT GIVEN</label></div><div class="correct-answer-text" id="ca-24"></div></div>
+          <div class="question-block" data-q="25"><div class="question-text"><span class="question-number-label">25.</span> Efforts to control dengue fever have been surprisingly successful.</div><div class="options-row"><label><input type="radio" name="q25" value="YES"/> YES</label><label><input type="radio" name="q25" value="NO"/> NO</label><label><input type="radio" name="q25" value="NOT GIVEN"/> NOT GIVEN</label></div><div class="correct-answer-text" id="ca-25"></div></div>
+          <div class="question-block" data-q="26"><div class="question-text"><span class="question-number-label">26.</span> Microbes that reduce the risk of infection have already been put inside the walls of some hospital wards.</div><div class="options-row"><label><input type="radio" name="q26" value="YES"/> YES</label><label><input type="radio" name="q26" value="NO"/> NO</label><label><input type="radio" name="q26" value="NOT GIVEN"/> NOT GIVEN</label></div><div class="correct-answer-text" id="ca-26"></div></div>
+        </div>
+
+        <div data-section="3" style="display:none;">
+          <p><strong>SECTION 3 Questions 27–40</strong></p>
+          <p><strong>Questions 27–30</strong></p>
+          <p>Choose the correct letter, A, B, C or D.</p>
+          <div class="question-block" data-q="27"><div class="question-text"><span class="question-number-label">27.</span> What point does the writer make in the first paragraph?</div><div class="options-row"><label><input type="radio" name="q27" value="A"/> A. Wisdom appears to be unique to the human race.</label><label><input type="radio" name="q27" value="B"/> B. A basic assumption about wisdom may be wrong.</label><label><input type="radio" name="q27" value="C"/> C. Concepts of wisdom may depend on the society we belong to.</label><label><input type="radio" name="q27" value="D"/> D. There is still much to be discovered about the nature of wisdom.</label></div><div class="correct-answer-text" id="ca-27"></div></div>
+          <div class="question-block" data-q="28"><div class="question-text"><span class="question-number-label">28.</span> What does Igor Grossmann suggest about the ability to make wise decisions?</div><div class="options-row"><label><input type="radio" name="q28" value="A"/> A. It can vary greatly from one person to another.</label><label><input type="radio" name="q28" value="B"/> B. Earlier research into it was based on unreliable data.</label><label><input type="radio" name="q28" value="C"/> C. The importance of certain influences on it was underestimated.</label><label><input type="radio" name="q28" value="D"/> D. Various branches of psychology define it according to their own criteria.</label></div><div class="correct-answer-text" id="ca-28"></div></div>
+          <div class="question-block" data-q="29"><div class="question-text"><span class="question-number-label">29.</span> According to the third paragraph, Grossmann claims that the level of wisdom an individual shows</div><div class="options-row"><label><input type="radio" name="q29" value="A"/> A. can be greater than they think it is.</label><label><input type="radio" name="q29" value="B"/> B. will be different in different circumstances.</label><label><input type="radio" name="q29" value="C"/> C. may be determined by particular aspects of their personality.</label><label><input type="radio" name="q29" value="D"/> D. should develop over time as a result of their life experiences.</label></div><div class="correct-answer-text" id="ca-29"></div></div>
+          <div class="question-block" data-q="30"><div class="question-text"><span class="question-number-label">30.</span> What is described in the fifth paragraph?</div><div class="options-row"><label><input type="radio" name="q30" value="A"/> A. a difficulty encountered when attempting to reason wisely</label><label><input type="radio" name="q30" value="B"/> B. an example of the type of person who is likely to reason wisely</label><label><input type="radio" name="q30" value="C"/> C. a controversial view about the benefits of reasoning wisely</label><label><input type="radio" name="q30" value="D"/> D. a recommended strategy that can help people to reason wisely</label></div><div class="correct-answer-text" id="ca-30"></div></div>
+
+          <p><strong>Questions 31–35</strong></p>
+          <p>Complete the summary using the list of words, A–J, below.</p>
+          <div class="question-block" data-q="31"><div class="question-text"><span class="question-number-label">31.</span> A certain degree of <select name="q31"><option value="">Select…</option><option value="A">A</option><option value="B">B</option><option value="C">C</option><option value="D">D</option><option value="E">E</option><option value="F">F</option><option value="G">G</option><option value="H">H</option><option value="I">I</option><option value="J">J</option></select> is important regarding the limits of our knowledge.</div><div class="correct-answer-text" id="ca-31"></div></div>
+          <div class="question-block" data-q="32"><div class="question-text"><span class="question-number-label">32.</span> We should take into account <select name="q32"><option value="">Select…</option><option value="A">A</option><option value="B">B</option><option value="C">C</option><option value="D">D</option><option value="E">E</option><option value="F">F</option><option value="G">G</option><option value="H">H</option><option value="I">I</option><option value="J">J</option></select> which may differ from our own.</div><div class="correct-answer-text" id="ca-32"></div></div>
+          <div class="question-block" data-q="33"><div class="question-text"><span class="question-number-label">33.</span> We should be able to take a broad <select name="q33"><option value="">Select…</option><option value="A">A</option><option value="B">B</option><option value="C">C</option><option value="D">D</option><option value="E">E</option><option value="F">F</option><option value="G">G</option><option value="H">H</option><option value="I">I</option><option value="J">J</option></select> of a situation.</div><div class="correct-answer-text" id="ca-33"></div></div>
+          <div class="question-block" data-q="34"><div class="question-text"><span class="question-number-label">34.</span> It is better to regard scenarios with <select name="q34"><option value="">Select…</option><option value="A">A</option><option value="B">B</option><option value="C">C</option><option value="D">D</option><option value="E">E</option><option value="F">F</option><option value="G">G</option><option value="H">H</option><option value="I">I</option><option value="J">J</option></select>.</div><div class="correct-answer-text" id="ca-34"></div></div>
+          <div class="question-block" data-q="35"><div class="question-text"><span class="question-number-label">35.</span> Avoiding first-person perspective helps focus on <select name="q35"><option value="">Select…</option><option value="A">A</option><option value="B">B</option><option value="C">C</option><option value="D">D</option><option value="E">E</option><option value="F">F</option><option value="G">G</option><option value="H">H</option><option value="I">I</option><option value="J">J</option></select> and moral ideals.</div><div class="correct-answer-text" id="ca-35"></div></div>
+          <div class="instruction-block"><p><strong>A.</strong> opinions</p><p><strong>B.</strong> confidence</p><p><strong>C.</strong> view</p><p><strong>D.</strong> modesty</p><p><strong>E.</strong> problems</p><p><strong>F.</strong> objectivity</p><p><strong>G.</strong> fairness</p><p><strong>H.</strong> experiences</p><p><strong>I.</strong> range</p><p><strong>J.</strong> reasons</p></div>
+
+          <p><strong>Questions 36–40</strong></p>
+          <p>Do the following statements agree with the information given in Reading Passage 3?</p>
+          <p><strong>TRUE</strong> if the statement agrees with the information<br><strong>FALSE</strong> if the statement contradicts the information<br><strong>NOT GIVEN</strong> if there is no information on this</p>
+          <div class="question-block" data-q="36"><div class="question-text"><span class="question-number-label">36.</span> Students participating in the job prospects experiment could choose one of two perspectives to take.</div><div class="options-row"><label><input type="radio" name="q36" value="TRUE"/> TRUE</label><label><input type="radio" name="q36" value="FALSE"/> FALSE</label><label><input type="radio" name="q36" value="NOT GIVEN"/> NOT GIVEN</label></div><div class="correct-answer-text" id="ca-36"></div></div>
+          <div class="question-block" data-q="37"><div class="question-text"><span class="question-number-label">37.</span> Participants in the couples experiment were aware that they were taking part in a study about wise reasoning.</div><div class="options-row"><label><input type="radio" name="q37" value="TRUE"/> TRUE</label><label><input type="radio" name="q37" value="FALSE"/> FALSE</label><label><input type="radio" name="q37" value="NOT GIVEN"/> NOT GIVEN</label></div><div class="correct-answer-text" id="ca-37"></div></div>
+          <div class="question-block" data-q="38"><div class="question-text"><span class="question-number-label">38.</span> In the couples experiments, the length of the couples’ relationships had an impact on the results.</div><div class="options-row"><label><input type="radio" name="q38" value="TRUE"/> TRUE</label><label><input type="radio" name="q38" value="FALSE"/> FALSE</label><label><input type="radio" name="q38" value="NOT GIVEN"/> NOT GIVEN</label></div><div class="correct-answer-text" id="ca-38"></div></div>
+          <div class="question-block" data-q="39"><div class="question-text"><span class="question-number-label">39.</span> In both experiments, the participants who looked at the situation from a more detached viewpoint tended to make wiser decisions.</div><div class="options-row"><label><input type="radio" name="q39" value="TRUE"/> TRUE</label><label><input type="radio" name="q39" value="FALSE"/> FALSE</label><label><input type="radio" name="q39" value="NOT GIVEN"/> NOT GIVEN</label></div><div class="correct-answer-text" id="ca-39"></div></div>
+          <div class="question-block" data-q="40"><div class="question-text"><span class="question-number-label">40.</span> Grossmann believes that a person’s wisdom is determined by their intelligence to only a very limited extent.</div><div class="options-row"><label><input type="radio" name="q40" value="TRUE"/> TRUE</label><label><input type="radio" name="q40" value="FALSE"/> FALSE</label><label><input type="radio" name="q40" value="NOT GIVEN"/> NOT GIVEN</label></div><div class="correct-answer-text" id="ca-40"></div></div>
+        </div>
+      `
+      );
+    }
+
+    function stampInlineInputNumbers() {
+      document.querySelectorAll(".question-block[data-q]").forEach((block) => {
+        const qNum = block.getAttribute("data-q");
+        block.querySelectorAll(".inline-input").forEach((w) => {
+          w.setAttribute("data-q", qNum);
+        });
+      });
+    }
+
+    let dragMatchReady = false;
+
+    function setupDragMatch() {
+      if (dragMatchReady) return;
+      dragMatchReady = true;
+      let picked = "";
+      const nameByLetter = { A: "Susan Jebb", B: "Kim Roberts", C: "Janice Burberry", D: "Seema Kennedy" };
+      document.querySelectorAll(".drag-item").forEach((item) => {
+        item.addEventListener("dragstart", (e) => {
+          e.dataTransfer.setData("text/plain", item.dataset.value);
+          e.dataTransfer.effectAllowed = "copy";
+        });
+        item.addEventListener("click", () => {
+          const isAlreadySelected = item.classList.contains("selected");
+          document
+            .querySelectorAll(".drag-item")
+            .forEach((i) => i.classList.remove("selected"));
+          if (isAlreadySelected) {
+            picked = "";
+            return;
+          }
+          item.classList.add("selected");
+          picked = item.dataset.value;
+        });
+      });
+
+      function apply(zone, val) {
+        if (!/^[ABCD]$/.test(val)) return;
+        const qName = zone.dataset.for;
+        const sel = document.querySelector('select[name="' + qName + '"]');
+        if (sel) {
+          sel.value = val;
+          sel.dispatchEvent(new Event("change", { bubbles: true }));
+        }
+        zone.textContent = nameByLetter[val] || val;
+        zone.classList.add("filled");
+      }
+
+      function clear(zone) {
+        const qName = zone.dataset.for;
+        const sel = document.querySelector('select[name="' + qName + '"]');
+        if (sel) {
+          sel.value = "";
+          sel.dispatchEvent(new Event("change", { bubbles: true }));
+        }
+        zone.textContent = "Drop here";
+        zone.classList.remove("filled");
+      }
+
+      document.querySelectorAll(".drop-zone").forEach((zone) => {
+        zone.addEventListener("dragover", (e) => {
+          e.preventDefault();
+          zone.classList.add("over");
+        });
+        zone.addEventListener("dragleave", () => zone.classList.remove("over"));
+        zone.addEventListener("drop", (e) => {
+          e.preventDefault();
+          zone.classList.remove("over");
+          const val = e.dataTransfer.getData("text/plain");
+          apply(zone, val);
+        });
+        zone.addEventListener("click", () => {
+          if (picked) {
+            if (zone.classList.contains("filled")) {
+              const sel = document.querySelector('select[name="' + zone.dataset.for + '"]');
+              if (sel && sel.value === picked) {
+                clear(zone);
+                return;
+              }
+            }
+            apply(zone, picked);
+            return;
+          }
+          if (zone.classList.contains("filled")) clear(zone);
+        });
+        zone.addEventListener("keydown", (e) => {
+          if (e.key === "Backspace" || e.key === "Delete") clear(zone);
+          if (/^[abcdABCD]$/.test(e.key)) apply(zone, e.key.toUpperCase());
+        });
+        zone.addEventListener("dblclick", () => clear(zone));
+      });
+
+      document.querySelectorAll(".drop-zone").forEach((zone) => {
+        const qName = zone.dataset.for;
+        const sel = document.querySelector('select[name="' + qName + '"]');
+        if (sel && sel.value) {
+          apply(zone, sel.value);
+        }
+      });
+
+      document.querySelectorAll(".clear-drop-btn").forEach((btn) => {
+        btn.addEventListener("click", () => {
+          const qName = btn.dataset.clearFor;
+          const zone = document.querySelector('.drop-zone[data-for="' + qName + '"]');
+          if (zone) clear(zone);
+        });
+      });
+    }
+
+    
+    function enableRadioToggleOff() {
+      document.querySelectorAll('input[type="radio"]').forEach((radio) => {
+        radio.addEventListener("pointerdown", () => {
+          radio.dataset.wasChecked = radio.checked ? "1" : "0";
+        });
+        radio.addEventListener("click", () => {
+          if (radio.dataset.wasChecked === "1") {
+            radio.checked = false;
+            radio.dispatchEvent(new Event("change", { bubbles: true }));
+          }
+        });
+      });
+    }
+
+    function convertGapFillNumbersToBullets() {
+      document.querySelectorAll(".question-block[data-q]").forEach((block) => {
+        const qNum = parseInt(block.getAttribute("data-q"), 10);
+        if (!(qNum >= 34 && qNum <= 40)) return;
+        const label = block.querySelector(".question-number-label");
+        const text = block.querySelector(".question-text");
+        if (!text) return;
+        if (label) label.remove();
+        text.classList.add("gap-fill");
+
+        if (!text.querySelector(".gap-bullet")) {
+          const bullet = document.createElement("span");
+          bullet.className = "gap-bullet";
+          bullet.setAttribute("aria-hidden", "true");
+          bullet.textContent = "•";
+          text.prepend(bullet);
+        }
+
+        const inputWrap = text.querySelector(".inline-input");
+        if (!inputWrap || text.querySelector(".gap-answer-tail")) return;
+
+        const tail = document.createElement("span");
+        tail.className = "gap-answer-tail";
+        inputWrap.after(tail);
+        tail.appendChild(inputWrap);
+
+        let node = tail.nextSibling;
+        while (node) {
+          const next = node.nextSibling;
+          tail.appendChild(node);
+          node = next;
+        }
+      });
+    }
+// Build all questions immediately after DOM loads (script is at the end)
+    buildRemainingQuestions();
+    stampInlineInputNumbers();
+    convertGapFillNumbersToBullets();
+    setupDragMatch();
+    enableRadioToggleOff();
+
+    /***********************
+     * INPUT & NAV HANDLING
+     ***********************/
+    function initQuestionInputs() {
+      const qPane = document.getElementById("questionContent");
+      if (!qPane) return;
+
+      stampInlineInputNumbers();
+
+      // Listen to changes on all inputs/selects/radios
+      qPane
+        .querySelectorAll("select, input[type='text'], input[type='radio']")
+        .forEach((el) => {
+          el.addEventListener("change", onAnswerChange);
+          if (el.type === "text") {
+            el.addEventListener("input", onAnswerChange);
+          }
+        });
+
+      // Start on section 1, question 1
+      switchSection(1);
+      highlightCurrentQuestion(1);
+      updateCounts();
+      buildQuestionNav();
+    }
+
+    function onAnswerChange(e) {
+      const name = e.target.name || "";
+      if (name.startsWith("q")) {
+        const num = parseInt(name.substring(1), 10);
+        if (!isNaN(num)) currentQuestion = num;
+      }
+      updateCounts();
+      buildQuestionNav();
+      highlightCurrentQuestion(currentQuestion);
+    }
+
+    function isAnswered(qNum) {
+      const name = "q" + qNum;
+      const radios = document.querySelectorAll(
+        "input[type='radio'][name='" + name + "']"
+      );
+      if (radios.length > 0) {
+        return Array.from(radios).some((r) => r.checked);
+      }
+      const input = document.querySelector("input[type='text'][name='" + name + "']");
+      if (input) {
+        return input.value.trim().length > 0;
+      }
+      const select = document.querySelector("select[name='" + name + "']");
+      if (select) {
+        return select.value.trim().length > 0;
+      }
+      return false;
+    }
+
+    function updateCounts() {
+      const totals = { 1: 13, 2: 13, 3: 14 };
+      const answered = { 1: 0, 2: 0, 3: 0 };
+
+      [1, 2, 3].forEach((sec) => {
+        const range = sectionRanges[sec];
+        for (let q = range.from; q <= range.to; q++) {
+          if (isAnswered(q)) answered[sec]++;
+        }
+      });
+
+      // Update chip counts and status classes
+      [1, 2, 3].forEach((sec) => {
+        const chip = document.querySelector(
+          '.part-chip[data-section-chip="' + sec + '"]'
+        );
+        const span = document.getElementById("part" + sec + "Count");
+        const countText = answered[sec] + " of " + totals[sec];
+
+        if (!chip || !span) return;
+
+        chip.classList.remove("complete", "partial", "unopened");
+        if (answered[sec] === totals[sec]) {
+          chip.classList.add("complete");
+          span.textContent = "✓";
+          span.setAttribute("aria-label", "Part " + sec + " complete");
+        } else {
+          span.textContent = countText;
+          span.removeAttribute("aria-label");
+          if (visitedSections.has(sec)) {
+            chip.classList.add("partial");
+          } else {
+            chip.classList.add("unopened");
+          }
+        }
+      });
+
+      // Also update header for active section with answered count
+      const range = sectionRanges[activeSection];
+      const secAnswered = answered[activeSection];
+      const total = totals[activeSection];
+
+      const qHeader = document.getElementById("questionHeader");
+      if (qHeader && range) {
+        qHeader.textContent =
+          "Questions " +
+          range.from +
+          "–" +
+          range.to +
+          " (" +
+          secAnswered +
+          " of " +
+          total +
+          " answered)";
+      }
+
+      const pHeader = document.getElementById("passageHeader");
+      if (pHeader) {
+        if (activeSection === 1) {
+          pHeader.textContent =
+            "Part 1 – Read the text and answer questions 1–13.";
+        } else if (activeSection === 2) {
+          pHeader.textContent =
+            "Part 2 – Read the text and answer questions 14–26.";
+        } else {
+          pHeader.textContent =
+            "Part 3 – Read the text and answer questions 27–40.";
+        }
+      }
+    }
+
+    function buildQuestionNav() {
+      const nav = document.getElementById("questionNumbers");
+      if (!nav) return;
+      nav.innerHTML = "";
+
+      const range = sectionRanges[activeSection];
+      if (!range) return;
+
+      for (let q = range.from; q <= range.to; q++) {
+        const div = document.createElement("div");
+        div.className = "qnav";
+        if (isAnswered(q)) div.classList.add("answered");
+        else div.classList.add("unanswered");
+        if (q === currentQuestion) div.classList.add("current");
+        div.textContent = q;
+        div.addEventListener("click", () => {
+          currentQuestion = q;
+          highlightCurrentQuestion(q);
+          buildQuestionNav();
+          scrollToQuestion(q);
+        });
+        nav.appendChild(div);
+      }
+    }
+
+    function highlightCurrentQuestion(qNum) {
+      document
+        .querySelectorAll(".question-block")
+        .forEach((el) => el.classList.remove("current-question"));
+      const block = document.querySelector(
+        '.question-block[data-q="' + qNum + '"]'
+      );
+      if (block) {
+        block.classList.add("current-question");
+      }
+    }
+
+    function scrollToQuestion(qNum) {
+      const block = document.querySelector(
+        '.question-block[data-q="' + qNum + '"]'
+      );
+      const qPane = document.getElementById("questionPane");
+      if (block && qPane) {
+        block.scrollIntoView({ behavior: "smooth", block: "center" });
+      }
+    }
+
+    /*****************
+     * SECTION SWITCH
+     *****************/
+    function switchSection(section) {
+      if (![1, 2, 3].includes(section)) return;
+      activeSection = section;
+      visitedSections.add(section);
+
+      // Passages
+      document
+        .querySelectorAll(".passage-section")
+        .forEach((el) => (el.style.display = "none"));
+      const pass = document.querySelector(
+        '.passage-section[data-section="' + section + '"]'
+      );
+      if (pass) pass.style.display = "block";
+
+      // Questions
+      document
+        .querySelectorAll("#questionContent > div[data-section]")
+        .forEach((el) => (el.style.display = "none"));
+      const qSec = document.querySelector(
+        '#questionContent > div[data-section="' + section + '"]'
+      );
+      if (qSec) qSec.style.display = "block";
+
+      // Chips active state
+      document
+        .querySelectorAll(".part-chip")
+        .forEach((el) => el.classList.remove("active"));
+      const chip = document.querySelector(
+        '.part-chip[data-section-chip="' + section + '"]'
+      );
+      if (chip) chip.classList.add("active");
+
+      // Set current question to first in this section if outside range
+      const range = sectionRanges[section];
+      if (currentQuestion < range.from || currentQuestion > range.to) {
+        currentQuestion = range.from;
+      }
+
+      updateCounts();
+      highlightCurrentQuestion(currentQuestion);
+      buildQuestionNav();
+    }
+
+    function prevSection() {
+      if (activeSection > 1) switchSection(activeSection - 1);
+    }
+
+    function nextSection() {
+      if (activeSection < 3) switchSection(activeSection + 1);
+    }
+
+    /***************
+     * SUBMIT & SCORE
+     ***************/
+    const bandDescriptors = {
+      9: {
+        level: "Expert user",
+        description:
+          "Has fully operational command of the language: appropriate, accurate and fluent with complete understanding.",
+      },
+      8: {
+        level: "Very good user",
+        description:
+          "Has fully operational command of the language with only occasional unsystematic inaccuracies and inappropriacies. Misunderstandings may occur in unfamiliar situations.",
+      },
+      7: {
+        level: "Good user",
+        description:
+          "Has operational command of the language, though with occasional inaccuracies, inappropriacies and misunderstandings in some situations. Generally handles complex language well and understands detailed reasoning.",
+      },
+      6: {
+        level: "Competent user",
+        description:
+          "Has generally effective command of the language despite some inaccuracies, inappropriacies and misunderstandings. Can use and understand fairly complex language, particularly in familiar situations.",
+      },
+      5: {
+        level: "Modest user",
+        description:
+          "Has partial command of the language, coping with overall meaning in most situations, though likely to make many mistakes. Should be able to handle basic communication in own field.",
+      },
+      4: {
+        level: "Limited user",
+        description:
+          "Basic competence is limited to familiar situations. Has frequent problems in understanding and expression. Is not able to use complex language.",
+      },
+      3: {
+        level: "Extremely limited user",
+        description:
+          "Conveys and understands only general meaning in very familiar situations. Frequent breakdowns in communication occur.",
+      },
+      2: {
+        level: "Intermittent user",
+        description:
+          "No real communication is possible except for the most basic information using isolated words or short formulae in familiar situations and to meet immediate needs.",
+      },
+      1: {
+        level: "Non-user",
+        description:
+          "Essentially has no ability to use the language beyond possibly a few isolated words.",
+      },
+      0: {
+        level: "Did not attempt test",
+        description: "No assessable information provided.",
+      },
+    };
+
+    function getUserAnswer(qNum) {
+      const name = "q" + qNum;
+      const radios = document.querySelectorAll(
+        "input[type='radio'][name='" + name + "']"
+      );
+      if (radios.length > 0) {
+        const checked = Array.from(radios).find((r) => r.checked);
+        return checked ? checked.value.trim() : "";
+      }
+      const input = document.querySelector("input[type='text'][name='" + name + "']");
+      if (input) return input.value.trim();
+      const select = document.querySelector("select[name='" + name + "']");
+      if (select) return select.value.trim();
+      return "";
+    }
+
+    function evaluateQuestions() {
+      let correctCount = 0;
+
+      for (let q = 1; q <= 40; q++) {
+        const user = getUserAnswer(q);
+        const key = answerKey[q];
+        let isCorrect = false;
+
+        if (!user) {
+          isCorrect = false;
+        } else if (Array.isArray(key)) {
+          isCorrect = key.some(
+            (k) => user.toLowerCase() === String(k).toLowerCase()
+          );
+        } else if (typeof key === "string") {
+          if (/^(TRUE|FALSE|NOT GIVEN)$/.test(key)) {
+            isCorrect = user.toUpperCase() === key;
+          } else if (key.length === 1) {
+            isCorrect = user.toUpperCase() === key.toUpperCase();
+          } else {
+            isCorrect = user.toLowerCase() === key.toLowerCase();
+          }
+        }
+
+        const block = document.querySelector(
+          '.question-block[data-q="' + q + '"]'
+        );
+        if (block) {
+          block.classList.remove("correct", "incorrect");
+          if (isCorrect) {
+            block.classList.add("correct");
+            correctCount++;
+          } else if (user) {
+            block.classList.add("incorrect");
+          }
+        }
+
+        const ca = document.getElementById("ca-" + q);
+        if (ca) {
+          const txt = correctAnswerText[q];
+          if (txt) {
+            ca.textContent = "Correct answer: " + txt;
+          }
+        }
+      }
+
+      return correctCount;
+    }
+
+    function computeBandScore(correct) {
+      /*
+       * IELTS Academic Reading raw score to band conversion
+       * 40-39 = 9
+       * 38-37 = 8.5
+       * 36-35 = 8
+       * 34-33 = 7.5
+       * 32-30 = 7
+       * 29-27 = 6.5
+       * 26-23 = 6
+       * 22-19 = 5.5
+       * 18-15 = 5
+       * 14-13 = 4.5
+       * 12-10 = 4
+       * 9-8 = 3.5
+       * 7-6 = 3
+       * 5-4 = 2.5
+       */
+
+      if (correct >= 39) return 9;
+      if (correct >= 37) return 8.5;
+      if (correct >= 35) return 8;
+      if (correct >= 33) return 7.5;
+      if (correct >= 30) return 7;
+      if (correct >= 27) return 6.5;
+      if (correct >= 23) return 6;
+      if (correct >= 19) return 5.5;
+      if (correct >= 15) return 5;
+      if (correct >= 13) return 4.5;
+      if (correct >= 10) return 4;
+      if (correct >= 8) return 3.5;
+      if (correct >= 6) return 3;
+      if (correct >= 4) return 2.5;
+      return 0;
+    }
+
+
+    function formatDuration(totalSeconds) {
+      const sign = totalSeconds < 0 ? "-" : "";
+      const abs = Math.abs(totalSeconds);
+      const m = Math.floor(abs / 60).toString().padStart(2, "0");
+      const sec = (abs % 60).toString().padStart(2, "0");
+      return `${sign}${m}:${sec}`;
+    }
+
+    function showShortcutToast(message) {
+      const toast = document.getElementById("shortcutToast");
+      if (!toast) return;
+
+      toast.textContent = message;
+      toast.classList.add("visible");
+
+      if (shortcutToastTimer) {
+        clearTimeout(shortcutToastTimer);
+      }
+
+      shortcutToastTimer = setTimeout(() => {
+        toast.classList.remove("visible");
+      }, 1800);
+    }
+
+    function handlePrimarySubmit() {
+      if (mode === "test" && isTestRunning && !testSubmitted) {
+        confirmSubmit();
+        return;
+      }
+      submitTest();
+    }
+
+    document.addEventListener("keydown", (event) => {
+      const isFindShortcut =
+        (event.ctrlKey || event.metaKey) &&
+        String(event.key).toLowerCase() === "f";
+
+      if (!isFindShortcut) return;
+      if (!(mode === "test" && isTestRunning && !testSubmitted)) return;
+
+      event.preventDefault();
+      showShortcutToast("Find (CTRL + F) is disabled in Test mode.");
+    }, true);
+
+    function confirmSubmit() {
+      const ok = window.confirm("Are you sure you want to submit your test now? You will not be able to continue answering in Test mode.");
+      if (!ok) return;
+      submitTest();
+    }
+
+    function submitTest() {
+      const correctCount = evaluateQuestions();
+
+      // In both modes, show correct answer text
+      Object.keys(correctAnswerText).forEach((q) => {
+        const el = document.getElementById("ca-" + q);
+        if (el) el.style.display = "block";
+      });
+
+      updateCounts();
+      buildQuestionNav();
+
+      const band = computeBandScore(correctCount);
+      const desc = bandDescriptors[band] || bandDescriptors[Math.floor(band)] || bandDescriptors[0];
+
+      const studentLine = document.getElementById("studentLine");
+      const fullScreenExitLine = document.getElementById("fullScreenExitLine");
+      const focusViolationLine = document.getElementById("focusViolationLine");
+      const totalTimeLine = document.getElementById("totalTimeLine");
+      const scoreLine = document.getElementById("scoreLine");
+      const bandLine = document.getElementById("bandLine");
+      const descriptorLine = document.getElementById("descriptorLine");
+      const resultsOverlay = document.getElementById("resultsOverlay");
+
+      if (studentLine) {
+        studentLine.textContent = studentName
+          ? "Student: " + studentName
+          : "Student: Not provided";
+      }
+      if (fullScreenExitLine) {
+        fullScreenExitLine.textContent = "Full screen exits: " + fullScreenExits;
+      }
+      if (focusViolationLine) {
+        focusViolationLine.textContent = "Tab switches / focus losses: " + focusViolations;
+      }
+      if (totalTimeLine) {
+        const elapsedSeconds = 60 * 60 - timerSeconds;
+        totalTimeLine.textContent = "Total time when submitted: " + formatDuration(elapsedSeconds);
+      }
+
+      if (scoreLine)
+        scoreLine.textContent =
+          "You answered " + correctCount + " out of 40 questions correctly.";
+      if (bandLine)
+        bandLine.textContent =
+          "Estimated IELTS Academic Reading band: " +
+          band +
+          ". Skill level: " +
+          desc.level;
+      if (descriptorLine) descriptorLine.textContent = desc.description;
+
+      if (resultsOverlay) resultsOverlay.style.display = "flex";
+
+      if (mode === "test") {
+        testSubmitted = true;
+        isTestRunning = false;
+        isTimerPaused = false;
+        hideFullscreenLockOverlay();
+        if (timerId) {
+          clearInterval(timerId);
+          timerId = null;
+        }
+        exitAppFullscreen();
+        // Disable further changes in test mode
+        document
+          .querySelectorAll("#questionContent select, #questionContent input")
+          .forEach((el) => (el.disabled = true));
+      }
+
+      // Close options overlay if open
+      toggleOptions(false);
+    }
+
+    function closeResults() {
+      const overlay = document.getElementById("resultsOverlay");
+      const studentLine = document.getElementById("studentLine");
+      const fullScreenExitLine = document.getElementById("fullScreenExitLine");
+      const focusViolationLine = document.getElementById("focusViolationLine");
+      const totalTimeLine = document.getElementById("totalTimeLine");
+      if (studentLine) studentLine.textContent = "";
+      if (fullScreenExitLine) fullScreenExitLine.textContent = "";
+      if (focusViolationLine) focusViolationLine.textContent = "";
+      if (totalTimeLine) totalTimeLine.textContent = "";
+      if (overlay) overlay.style.display = "none";
+    }
+
+    /**********************
+     * HIGHLIGHT & NOTES
+     **********************/
+    let currentNoteId = 0;
+    const notesStore = {}; // noteId -> { text }
+
+    function setupSelectionListeners() {
+      const toolbar = document.getElementById("selectionToolbar");
+      if (!toolbar) return;
+      toolbar.style.position = "fixed";
+
+      function updateToolbarPosition() {
+        const sel = window.getSelection();
+        if (!sel || sel.rangeCount === 0 || sel.isCollapsed) {
+          hideSelectionToolbar();
+          return;
+        }
+        const range = sel.getRangeAt(0);
+        const rect = range.getBoundingClientRect();
+        if (!rect || (rect.width === 0 && rect.height === 0)) {
+          hideSelectionToolbar();
+          return;
+        }
+        toolbar.style.left = rect.left + rect.width / 2 + "px";
+        toolbar.style.top = Math.max(56, rect.top - 32) + "px";
+        toolbar.style.display = "flex";
+      }
+
+      document.addEventListener("mouseup", () => {
+        setTimeout(updateToolbarPosition, 0);
+      });
+
+      document.addEventListener("keyup", (e) => {
+        if (
+          e.key === "Shift" ||
+          e.key === "ArrowLeft" ||
+          e.key === "ArrowRight" ||
+          e.key === "ArrowUp" ||
+          e.key === "ArrowDown"
+        ) {
+          setTimeout(updateToolbarPosition, 0);
+        }
+      });
+
+      document.addEventListener("mousedown", (e) => {
+        if (!toolbar.contains(e.target)) {
+          hideSelectionToolbar();
+        }
+      });
+    }
+
+    function hideSelectionToolbar() {
+      const toolbar = document.getElementById("selectionToolbar");
+      if (toolbar) toolbar.style.display = "none";
+    }
+
+    function findAncestorWithClass(node, className) {
+      let n = node;
+      while (n && n !== document) {
+        if (n.nodeType === 1 && n.classList.contains(className)) return n;
+        n = n.parentNode;
+      }
+      return null;
+    }
+
+    function toggleHighlightSelection() {
+      const sel = window.getSelection();
+      if (!sel || sel.rangeCount === 0 || sel.isCollapsed) return;
+      const range = sel.getRangeAt(0);
+      if (!range.toString().trim()) return;
+
+      const startHighlight = findAncestorWithClass(
+        range.startContainer,
+        "highlighted"
+      );
+      const endHighlight = findAncestorWithClass(
+        range.endContainer,
+        "highlighted"
+      );
+
+      if (startHighlight && startHighlight === endHighlight) {
+        // Remove the whole highlight span
+        const span = startHighlight;
+        const parent = span.parentNode;
+        while (span.firstChild) {
+          parent.insertBefore(span.firstChild, span);
+        }
+        parent.removeChild(span);
+      } else {
+        const span = document.createElement("span");
+        span.className = "highlighted";
+        try {
+          range.surroundContents(span);
+        } catch (e) {
+          // Fallback: simple replacement
+          span.textContent = range.toString();
+          range.deleteContents();
+          range.insertNode(span);
+        }
+      }
+
+      sel.removeAllRanges();
+      hideSelectionToolbar();
+    }
+
+    function makeNoteForSelection() {
+      const sel = window.getSelection();
+      if (!sel || sel.rangeCount === 0 || sel.isCollapsed) return;
+      const range = sel.getRangeAt(0);
+      if (!range.toString().trim()) return;
+
+      const noteId = "note-" + ++currentNoteId;
+
+      const span = document.createElement("span");
+      span.className = "note-anchor";
+      span.dataset.noteId = noteId;
+
+      try {
+        range.surroundContents(span);
+      } catch (e) {
+        span.textContent = range.toString();
+        range.deleteContents();
+        range.insertNode(span);
+      }
+
+      // Delete button
+      const del = document.createElement("button");
+      del.className = "note-delete";
+      del.textContent = "×";
+      del.addEventListener("click", (ev) => {
+        ev.stopPropagation();
+        deleteNote(noteId);
+      });
+      span.appendChild(del);
+
+      span.addEventListener("click", (ev) => {
+        // avoid re-opening when clicking delete
+        if ((ev.target).classList && (ev.target).classList.contains("note-delete"))
+          return;
+        openNoteWindow(noteId, span);
+      });
+
+      notesStore[noteId] = { text: "" };
+      openNoteWindow(noteId, span);
+      hideSelectionToolbar();
+      sel.removeAllRanges();
+    }
+
+    function openNoteWindow(noteId, anchorEl) {
+      // Remove existing note window for this note
+      const existing = document.querySelector(
+        '.note-window[data-note-id="' + noteId + '"]'
+      );
+      if (existing) existing.remove();
+
+      const rect = anchorEl.getBoundingClientRect();
+      const note = document.createElement("div");
+      note.className = "note-window";
+      note.dataset.noteId = noteId;
+      note.style.top = rect.bottom + 8 + "px";
+      note.style.left = rect.left + "px";
+
+      note.innerHTML = `
+        <div class="note-header">
+          <span>Note</span>
+          <button title="Close">×</button>
+        </div>
+        <div class="note-body">
+          <textarea></textarea>
+        </div>
+        <div class="note-footer">
+          <button>Done</button>
+        </div>
+      `;
+
+      document.body.appendChild(note);
+
+      const header = note.querySelector(".note-header");
+      const closeBtn = header.querySelector("button");
+      const textarea = note.querySelector("textarea");
+      const doneBtn = note.querySelector(".note-footer button");
+
+      if (notesStore[noteId] && notesStore[noteId].text) {
+        textarea.value = notesStore[noteId].text;
+      }
+
+      closeBtn.addEventListener("click", () => {
+        notesStore[noteId].text = textarea.value;
+        note.remove();
+      });
+
+      doneBtn.addEventListener("click", () => {
+        notesStore[noteId].text = textarea.value;
+        note.remove();
+      });
+
+      makeNoteDraggable(note, header);
+    }
+
+    function deleteNote(noteId) {
+      const anchor = document.querySelector(
+        '.note-anchor[data-note-id="' + noteId + '"]'
+      );
+      if (anchor) {
+        const parent = anchor.parentNode;
+        // move children except delete button
+        while (anchor.firstChild) {
+          const child = anchor.firstChild;
+          if (
+            child.nodeType === 1 &&
+            child.classList.contains("note-delete")
+          ) {
+            anchor.removeChild(child);
+          } else {
+            parent.insertBefore(child, anchor);
+          }
+        }
+        parent.removeChild(anchor);
+      }
+      const noteWin = document.querySelector(
+        '.note-window[data-note-id="' + noteId + '"]'
+      );
+      if (noteWin) noteWin.remove();
+      delete notesStore[noteId];
+    }
+
+    function makeNoteDraggable(noteEl, handleEl) {
+      let isDragging = false;
+      let startX = 0;
+      let startY = 0;
+      let startLeft = 0;
+      let startTop = 0;
+
+      handleEl.addEventListener("mousedown", (e) => {
+        e.preventDefault();
+        isDragging = true;
+        startX = e.clientX;
+        startY = e.clientY;
+        const rect = noteEl.getBoundingClientRect();
+        startLeft = rect.left;
+        startTop = rect.top;
+        document.addEventListener("mousemove", onMove);
+        document.addEventListener("mouseup", onUp);
+      });
+
+      function onMove(e) {
+        if (!isDragging) return;
+        const dx = e.clientX - startX;
+        const dy = e.clientY - startY;
+        noteEl.style.left = startLeft + dx + "px";
+        noteEl.style.top = startTop + dy + "px";
+      }
+
+      function onUp() {
+        isDragging = false;
+        document.removeEventListener("mousemove", onMove);
+        document.removeEventListener("mouseup", onUp);
+      }
+    }
+
+    /***********************
+     * RESIZABLE DIVIDER
+     ***********************/
+    function setupDividerDrag() {
+      const divider = document.getElementById("divider");
+      const mainInner = document.querySelector(".main-inner");
+      const leftPane = document.getElementById("passagePane");
+      const rightPane = document.getElementById("questionPane");
+      if (!divider || !mainInner || !leftPane || !rightPane) return;
+
+      let dragging = false;
+      let startX = 0;
+      let startWidthLeft = 0;
+      let totalWidth = 0;
+
+      function beginDrag(clientX) {
+        dragging = true;
+        const rect = mainInner.getBoundingClientRect();
+        totalWidth = rect.width;
+        startX = clientX;
+        const leftRect = leftPane.getBoundingClientRect();
+        startWidthLeft = leftRect.width;
+        document.body.style.cursor = "col-resize";
+      }
+
+      function updateDrag(clientX) {
+        if (!dragging) return;
+        const dx = clientX - startX;
+        let newLeftWidth = startWidthLeft + dx;
+        const min = Math.max(260, totalWidth * 0.2);
+        const max = Math.min(totalWidth - 260, totalWidth * 0.8);
+        if (newLeftWidth < min) newLeftWidth = min;
+        if (newLeftWidth > max) newLeftWidth = max;
+        const leftPct = (newLeftWidth / totalWidth) * 100;
+        leftPane.style.flex = "0 0 " + leftPct + "%";
+        rightPane.style.flex = "0 0 " + (100 - leftPct) + "%";
+      }
+
+      function endDrag() {
+        if (!dragging) return;
+        dragging = false;
+        document.body.style.cursor = "default";
+      }
+
+      divider.addEventListener("mousedown", (e) => {
+        e.preventDefault();
+        beginDrag(e.clientX);
+      });
+
+      divider.addEventListener("touchstart", (e) => {
+        const touch = e.touches && e.touches[0];
+        if (!touch) return;
+        e.preventDefault();
+        beginDrag(touch.clientX);
+      }, { passive: false });
+
+      document.addEventListener("mousemove", (e) => updateDrag(e.clientX));
+      document.addEventListener("touchmove", (e) => {
+        const touch = e.touches && e.touches[0];
+        if (!touch) return;
+        if (dragging) e.preventDefault();
+        updateDrag(touch.clientX);
+      }, { passive: false });
+
+      document.addEventListener("mouseup", endDrag);
+      document.addEventListener("touchend", endDrag);
+      document.addEventListener("touchcancel", endDrag);
+    }
+
+    // Ensure option buttons reflect the current theme and font selections on load.
+    updateThemeButtons();
+    updateFontButtons();
+    ensureModeWiring();
+  </script>
+</body>
+</html>

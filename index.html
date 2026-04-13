@@ -13,77 +13,176 @@
       --text-soft: #5b6474;
       --accent: #0057b8;
       --accent-soft: #e8f1ff;
+      --gt: #2e7d32;
+      --gt-soft: #e8f6ea;
       --border: #d9dfeb;
       --shadow: 0 10px 30px rgba(15, 23, 42, 0.08);
       --success: #1b5e20;
       --muted: #8a93a5;
     }
+
     * { box-sizing: border-box; }
+
     body {
       margin: 0;
       font-family: Arial, Helvetica, sans-serif;
-      background: linear-gradient(180deg, #eef4ff 0%, var(--bg) 200px);
+      background: linear-gradient(180deg, #eef4ff 0%, var(--bg) 220px);
       color: var(--text);
     }
-    .page { max-width: 1100px; margin: 0 auto; padding: 28px 20px 48px; }
-    .hero, .section {
+
+    .page {
+      max-width: 980px;
+      margin: 0 auto;
+      padding: 28px 18px 44px;
+    }
+
+    .hero,
+    .section {
       background: var(--panel);
       border: 1px solid var(--border);
       border-radius: 20px;
       box-shadow: var(--shadow);
-      padding: 24px 28px;
-      margin-bottom: 20px;
+      padding: 24px;
+      margin-bottom: 18px;
     }
+
     .hero h1 { margin: 0 0 10px; font-size: clamp(1.9rem, 4vw, 2.6rem); }
-    .hero p, .hint, .mini-list, .test-meta { color: var(--text-soft); line-height: 1.6; }
-    .section h2 { margin: 0 0 14px; font-size: 1.15rem; }
-    .toggle-row { display: flex; flex-wrap: wrap; gap: 12px; }
-    .toggle-btn {
+    .hero p { margin: 0; color: var(--text-soft); line-height: 1.6; }
+
+    .section h2 {
+      margin: 0;
+      font-size: clamp(1.35rem, 2.8vw, 1.65rem);
+    }
+
+    .section-subtitle {
+      margin: 10px 0 0;
+      color: var(--text-soft);
+      line-height: 1.6;
+    }
+
+    .screen {
+      opacity: 1;
+      transform: translateY(0);
+      transition: opacity .22s ease, transform .22s ease;
+    }
+
+    .screen[hidden] {
+      display: none;
+    }
+
+    .type-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(220px, 1fr));
+      gap: 16px;
+      margin-top: 16px;
+    }
+
+    .type-card {
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      padding: 18px;
+      background: var(--panel);
+      cursor: pointer;
+      text-align: left;
+      box-shadow: 0 6px 18px rgba(15, 23, 42, 0.06);
+      transition: transform .15s ease, box-shadow .15s ease;
+    }
+
+    .type-card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 24px rgba(15, 23, 42, 0.12);
+    }
+
+    .type-card h3 {
+      margin: 0 0 6px;
+      font-size: 1.2rem;
+    }
+
+    .type-card p {
+      margin: 0;
+      color: var(--text-soft);
+      line-height: 1.5;
+    }
+
+    .type-card.academic {
+      border-color: #b7d3ff;
+      background: linear-gradient(140deg, #f5f9ff 0%, #edf4ff 100%);
+    }
+
+    .type-card.academic h3 { color: #0b4a9b; }
+
+    .type-card.general {
+      border-color: #b8e0bb;
+      background: linear-gradient(140deg, #f5fcf5 0%, #ecf8ed 100%);
+    }
+
+    .type-card.general h3 { color: #25692a; }
+
+    .top-actions {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 14px;
+    }
+
+    .back-btn {
       border: 1px solid var(--border);
       background: var(--panel-soft);
       color: var(--text);
       border-radius: 999px;
-      padding: 12px 18px;
-      font-size: 1rem;
+      padding: 10px 14px;
+      font-size: 0.95rem;
       font-weight: 700;
       cursor: pointer;
     }
-    .toggle-btn.active {
-      border-color: var(--accent);
-      background: var(--accent-soft);
-      color: var(--accent);
-    }
+
     .tests-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-      gap: 16px;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 14px;
+      margin-top: 14px;
     }
+
     .test-card {
       border: 1px solid var(--border);
       border-radius: 16px;
-      padding: 18px;
+      padding: 16px;
       background: var(--panel);
     }
+
     .test-top {
       display: flex;
       align-items: center;
       justify-content: space-between;
       gap: 10px;
-      margin-bottom: 10px;
+      margin-bottom: 8px;
     }
+
     .test-label {
       display: inline-flex;
       align-items: center;
-      gap: 6px;
       border-radius: 999px;
       padding: 5px 10px;
-      font-size: 0.82rem;
+      font-size: 0.8rem;
       font-weight: 700;
       background: #eaf7ec;
       color: var(--success);
       white-space: nowrap;
     }
-    .test-title { margin: 0 0 8px; font-size: 1.05rem; line-height: 1.4; }
+
+    .test-title {
+      margin: 0;
+      font-size: 1.03rem;
+      line-height: 1.35;
+    }
+
+    .test-meta {
+      margin: 0 0 10px;
+      color: var(--text-soft);
+      line-height: 1.55;
+    }
+
     .open-btn {
       display: inline-flex;
       align-items: center;
@@ -97,34 +196,54 @@
       background: var(--accent);
       color: #ffffff;
     }
-    .mini-list { margin: 0; padding-left: 18px; }
+
+    .empty-state {
+      border: 1px dashed var(--border);
+      border-radius: 14px;
+      padding: 18px;
+      color: var(--muted);
+      background: #fafcff;
+    }
+
+    @media (max-width: 720px) {
+      .page { padding: 20px 14px 36px; }
+      .hero, .section { padding: 18px; }
+      .type-grid { grid-template-columns: 1fr; }
+      .top-actions { align-items: flex-start; flex-direction: column; }
+    }
   </style>
 </head>
 <body>
   <div class="page">
     <section class="hero">
       <h1>IELTS Pabs Reading Hub</h1>
-      <p>Choose Academic or General Training first, then open the test you want. Each test keeps its own Study mode and Test mode screen.</p>
+      <p>Pick your reading type first, then open a full practice test in one tap.</p>
     </section>
 
-    <section class="section">
-      <h2>1. Choose the reading type</h2>
-      <div class="toggle-row" id="typeButtons"></div>
-      <p class="hint">This local master bundle keeps the final source HTML files organised so you can upload the whole structure to GitHub later.</p>
+    <section id="typeScreen" class="section screen">
+      <h2>What are we practising today?</h2>
+      <p class="section-subtitle">Choose your IELTS reading test type to continue.</p>
+      <div class="type-grid">
+        <button class="type-card academic" type="button" onclick="chooseType('academic')">
+          <h3>Academic</h3>
+          <p>For university-focused IELTS Reading practice.</p>
+        </button>
+        <button class="type-card general" type="button" onclick="chooseType('general-training')">
+          <h3>General Training</h3>
+          <p>For everyday and workplace reading tasks.</p>
+        </button>
+      </div>
     </section>
 
-    <section class="section">
-      <h2>2. Choose the test</h2>
+    <section id="testsScreen" class="section screen" hidden>
+      <div class="top-actions">
+        <button class="back-btn" type="button" onclick="goBackToTypeSelection()">← Back</button>
+        <div>
+          <h2 id="testsHeading">Reading Tests</h2>
+          <p id="testsSubtitle" class="section-subtitle"></p>
+        </div>
+      </div>
       <div class="tests-grid" id="testsGrid"></div>
-    </section>
-
-    <section class="section">
-      <h2>Folder structure</h2>
-      <ul class="mini-list">
-        <li>academic/cambridge-18/test-2/</li>
-        <li>general-training/cambridge-19/test-2/</li>
-        <li>general-training/cambridge-19/test-3/</li>
-      </ul>
     </section>
   </div>
 
@@ -135,6 +254,13 @@
     ];
 
     const tests = [
+      {
+        type: 'academic',
+        title: 'Cambridge 16 Test 2',
+        subtitle: 'Academic Reading',
+        href: './academic/cambridge-16/test-2/IELTS16%20Test%202%20-%20Academic%20Reading.html',
+        note: 'Master HTML file'
+      },
       {
         type: 'academic',
         title: 'Cambridge 18 Test 2',
@@ -158,29 +284,29 @@
       }
     ];
 
-    let activeType = 'academic';
+    let currentScreen = 'type-selection';
+    let activeType = null;
 
-    function renderTypeButtons() {
-      const wrap = document.getElementById('typeButtons');
-      wrap.innerHTML = '';
-      testTypes.forEach((type) => {
-        const btn = document.createElement('button');
-        btn.className = 'toggle-btn' + (type.id === activeType ? ' active' : '');
-        btn.type = 'button';
-        btn.textContent = type.label;
-        btn.addEventListener('click', () => {
-          activeType = type.id;
-          renderTypeButtons();
-          renderTests();
-        });
-        wrap.appendChild(btn);
-      });
+    function screenCopy(typeId) {
+      const selected = testTypes.find((t) => t.id === typeId);
+      const label = selected ? selected.label : 'Reading';
+      return {
+        heading: `${label} Reading Tests`,
+        subtitle: `Choose a ${label.toLowerCase()} test to start your practice.`
+      };
     }
 
     function renderTests() {
       const grid = document.getElementById('testsGrid');
       grid.innerHTML = '';
-      tests.filter(test => test.type === activeType).forEach((test) => {
+
+      const filtered = tests.filter((test) => test.type === activeType);
+      if (!filtered.length) {
+        grid.innerHTML = '<div class="empty-state">No tests available for this type yet.</div>';
+        return;
+      }
+
+      filtered.forEach((test) => {
         const card = document.createElement('article');
         card.className = 'test-card';
         card.innerHTML = `
@@ -195,8 +321,53 @@
       });
     }
 
-    renderTypeButtons();
-    renderTests();
+    function setScreen(screen, { pushHash = true } = {}) {
+      currentScreen = screen;
+
+      const typeScreen = document.getElementById('typeScreen');
+      const testsScreen = document.getElementById('testsScreen');
+
+      if (screen === 'type-selection') {
+        typeScreen.hidden = false;
+        testsScreen.hidden = true;
+        if (pushHash) history.replaceState(null, '', window.location.pathname + window.location.search);
+        return;
+      }
+
+      typeScreen.hidden = true;
+      testsScreen.hidden = false;
+
+      const copy = screenCopy(activeType);
+      document.getElementById('testsHeading').textContent = copy.heading;
+      document.getElementById('testsSubtitle').textContent = copy.subtitle;
+      renderTests();
+
+      if (pushHash && activeType) history.replaceState(null, '', `#${activeType}`);
+    }
+
+    function chooseType(typeId) {
+      activeType = typeId;
+      setScreen('test-selection');
+    }
+
+    function goBackToTypeSelection() {
+      activeType = null;
+      setScreen('type-selection');
+    }
+
+    function initFromHash() {
+      const hash = window.location.hash.replace('#', '');
+      const valid = testTypes.some((t) => t.id === hash);
+      if (valid) {
+        activeType = hash;
+        setScreen('test-selection', { pushHash: false });
+      } else {
+        setScreen('type-selection', { pushHash: false });
+      }
+    }
+
+    window.addEventListener('hashchange', initFromHash);
+    initFromHash();
   </script>
 </body>
 </html>
