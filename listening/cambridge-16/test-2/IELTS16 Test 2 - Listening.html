@@ -21,7 +21,7 @@
       --shadow-soft: 0 2px 10px rgba(0,0,0,0.08);
       --font-size-base: 15px;
       --footer-h: 82px;
-      --header-h: 56px;
+      --header-h: 84px;
     }
     * { box-sizing: border-box; }
     body {
@@ -34,6 +34,17 @@
     }
     body.font-large { --font-size-base: 18px; }
     body.font-xlarge { --font-size-base: 20px; }
+    .sr-only {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      padding: 0;
+      margin: -1px;
+      overflow: hidden;
+      clip: rect(0,0,0,0);
+      white-space: nowrap;
+      border: 0;
+    }
 
     #modeScreen, #resultsOverlay, #optionsOverlay {
       position: fixed;
@@ -84,21 +95,81 @@
     #app { display:none; }
 
     .top-bar {
-      position: fixed; top:0; left:0; right:0; height:56px; background: var(--bg-secondary); border-bottom:1px solid var(--border);
-      display:flex; align-items:center; justify-content:space-between; padding:0 20px; z-index:1000;
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      min-height: var(--header-h);
+      background: var(--bg-secondary);
+      border-bottom: 1px solid var(--border);
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto;
+      align-items: start;
+      gap: 16px;
+      padding: 10px 18px;
+      z-index: 1000;
     }
-    .top-left { display:flex; align-items:baseline; gap:16px; }
-    .logo { font-weight:800; font-size:1.4rem; letter-spacing:.08em; }
-    .meta-title { font-size:.95rem; color: var(--text-soft); }
-    .test-title { font-size:.95rem; color: var(--text-soft); }
-    .audio-status { font-size:.9rem; color: var(--text-soft); margin-top:2px; }
-    .audio-status.hidden { visibility:hidden; }
-    .top-right { display:flex; align-items:center; gap:16px; font-size:.9rem; }
-    #timerContainer { display:none; }
+    .top-left {
+      display: flex;
+      align-items: flex-start;
+      gap: 16px;
+      min-width: 0;
+    }
+    .logo {
+      font-weight: 800;
+      font-size: 1.4rem;
+      letter-spacing: .08em;
+      line-height: 1;
+      padding-top: 2px;
+      flex-shrink: 0;
+    }
+    .title-stack {
+      min-width: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+    .meta-title {
+      font-size: .95rem;
+      color: var(--text-soft);
+      line-height: 1.2;
+    }
+    .test-title {
+      font-size: .95rem;
+      color: var(--text-soft);
+      line-height: 1.2;
+    }
+    .audio-status {
+      font-size: .9rem;
+      color: var(--text-soft);
+      line-height: 1.2;
+    }
+    .audio-status.hidden { display: none; }
+    .top-right {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      font-size: .9rem;
+      flex-shrink: 0;
+      white-space: nowrap;
+      padding-top: 1px;
+    }
+    #timerContainer {
+      display:none;
+      white-space: nowrap;
+    }
     #timerDisplay { font-weight:600; }
     .timer-warning { color:#c62828; }
-    .icon-group { display:flex; align-items:center; gap:10px; }
-    .icon { display:inline-flex; align-items:center; justify-content:center; width:26px; height:26px; color: var(--text-soft); }
+    .icon-group { display:flex; align-items:center; gap:8px; }
+    .icon {
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      width:28px;
+      height:28px;
+      color: var(--text-soft);
+      flex-shrink: 0;
+    }
     .icon svg, .icon-button svg {
       width:22px; height:22px; display:block; stroke: currentColor; fill:none; stroke-width:1.8; stroke-linecap:round; stroke-linejoin:round;
     }
@@ -146,7 +217,9 @@
       padding:10px 14px;
       border-bottom:1px solid var(--border);
       background: var(--bg-secondary);
-      position: sticky; top: var(--header-h); z-index: 10;
+      position: sticky;
+      top: var(--header-h);
+      z-index: 10;
     }
     .audio-bar.visible { display:block; }
     .audio-bar label { display:block; font-weight:600; margin-bottom:6px; }
@@ -164,9 +237,12 @@
       border-radius: 8px;
       border: 1px solid transparent;
       background: transparent;
-      scroll-margin-top: calc(var(--header-h) + 80px);
+      scroll-margin-top: calc(var(--header-h) + 20px);
     }
-    .question-block.current { border-color: var(--accent); background: var(--accent-soft); }
+    .question-block.current {
+      border-color: transparent;
+      background: transparent;
+    }
     .question-block.correct { border-color: var(--correct); background: rgba(67,160,71,0.08); }
     .question-block.incorrect { border-color: var(--incorrect); background: rgba(229,57,53,0.06); }
 
@@ -234,7 +310,7 @@
       grid-template-columns:repeat(4,1fr);
       align-items:stretch;
       min-width:0;
-      gap: 0;
+      gap:0;
     }
     .part-group {
       border-right:1px solid var(--border);
@@ -243,7 +319,9 @@
       justify-content:flex-start;
       padding:8px 12px 10px;
       min-width:0;
+      cursor:pointer;
     }
+    .part-group:hover { background: rgba(0,0,0,0.02); }
     .part-group:last-child { border-right:none; }
     .part-progress { height:4px; background:#d8dde5; border-radius:999px; overflow:hidden; margin-bottom:6px; }
     .part-progress-fill { height:100%; width:0; background: var(--correct); }
@@ -270,6 +348,13 @@
     }
 
     @media (max-width:1100px) {
+      .top-bar {
+        grid-template-columns: 1fr;
+        gap: 8px;
+      }
+      .top-right {
+        justify-content: flex-end;
+      }
       .footer-main { grid-template-columns:1fr 1fr; height:auto; }
       .footer-bar { height:auto; min-height: var(--footer-h); }
       .main { padding-bottom: 180px; }
@@ -283,6 +368,7 @@
       .floating-nav { right:14px; }
       .footer-main { grid-template-columns:1fr; }
       .main { padding-bottom: 320px; }
+      .top-right { justify-content: space-between; }
     }
   </style>
 </head>
@@ -344,10 +430,10 @@
     <header class="top-bar">
       <div class="top-left">
         <div class="logo">IELTS Pabs</div>
-        <div>
+        <div class="title-stack">
           <div class="meta-title" id="candidateLine">Candidate:</div>
           <div class="test-title">Listening Test 2 – Cambridge 16</div>
-          <div class="audio-status hidden" id="audioStatus"><span aria-hidden="true">🔊</span><span id="audioStatusText">Audio is playing</span></div>
+          <div class="audio-status hidden" id="audioStatus"><span aria-hidden="true">🔊</span> <span id="audioStatusText">Audio is playing</span></div>
         </div>
       </div>
       <div class="top-right">
@@ -409,6 +495,7 @@
   <script>
     let mode = "test";
     let activeSection = 1;
+    let playbackSection = 1;
     let timerSeconds = 30 * 60;
     let timerId = null;
     let submitted = false;
@@ -501,6 +588,7 @@
     const sectionAudio = document.getElementById('sectionAudio');
     const sectionAudioSource = document.getElementById('sectionAudioSource');
     const audioStatus = document.getElementById('audioStatus');
+    const audioStatusText = document.getElementById('audioStatusText');
     const candidateLine = document.getElementById('candidateLine');
     const footerMain = document.getElementById('footerMain');
     const prevSectionBtn = document.getElementById('prevSectionBtn');
@@ -515,6 +603,9 @@
 
     function updateCandidateLine() {
       candidateLine.textContent = studentName ? `Candidate: ${studentName}` : 'Candidate:';
+    }
+    function updateAudioStatusLabel() {
+      audioStatusText.textContent = `Audio is playing: Part ${playbackSection}`;
     }
     function formatDuration(totalSeconds) {
       const sign = totalSeconds < 0 ? '-' : '';
@@ -572,6 +663,7 @@
     }
 
     function playCurrentSectionAudio() {
+      updateAudioStatusLabel();
       const playPromise = sectionAudio.play();
       if (playPromise && typeof playPromise.catch === 'function') {
         playPromise.catch(() => {});
@@ -581,13 +673,14 @@
     function updateSectionAudio() {
       const shouldShow = mode === 'study' || submitted;
       audioBar.classList.toggle('visible', shouldShow);
-      const src = audioSources[activeSection] || '';
+      const sectionForAudio = shouldShow ? activeSection : playbackSection;
+      const src = audioSources[sectionForAudio] || '';
       if (sectionAudioSource.getAttribute('src') !== src) {
         sectionAudio.pause();
         sectionAudioSource.setAttribute('src', src);
         sectionAudio.load();
       }
-      if (mode === 'test' && !submitted) {
+      if (mode === 'test' && !submitted && sectionAudio.paused) {
         playCurrentSectionAudio();
       }
     }
@@ -599,6 +692,10 @@
         part.className = 'part-group';
         part.dataset.section = sec;
         part.innerHTML = `<div class="part-progress"><div class="part-progress-fill" id="progress-${sec}"></div></div><div class="part-top"><span>${range.label}</span><span class="count" id="count-${sec}">0 of ${range.to - range.from + 1}</span></div><div class="question-nav-row" id="nav-${sec}"></div>`;
+        part.addEventListener('click', (event) => {
+          if (event.target.closest('.qnav')) return;
+          switchSection(Number(sec));
+        });
         footerMain.appendChild(part);
         const navRow = part.querySelector(`#nav-${sec}`);
         for (let q = range.from; q <= range.to; q += 1) {
@@ -759,6 +856,8 @@
     function startApp(selectedMode) {
       mode = selectedMode;
       submitted = false;
+      activeSection = 1;
+      playbackSection = 1;
       modeScreen.style.display = 'none';
       testStartScreen.style.display = 'none';
       app.style.display = 'block';
@@ -803,11 +902,23 @@
     prevSectionBtn.addEventListener('click', () => { if (activeSection > 1) switchSection(activeSection - 1); });
     nextSectionBtn.addEventListener('click', () => { if (activeSection < 4) switchSection(activeSection + 1); });
     sectionAudio.addEventListener('play', () => {
+      updateAudioStatusLabel();
       audioStatus.classList.remove('hidden');
-      document.getElementById('audioStatusText').textContent = 'Audio is playing';
     });
-    sectionAudio.addEventListener('pause', () => audioStatus.classList.add('hidden'));
-    sectionAudio.addEventListener('ended', () => audioStatus.classList.add('hidden'));
+    sectionAudio.addEventListener('pause', () => {
+      if (!(mode === 'test' && !submitted)) audioStatus.classList.add('hidden');
+    });
+    sectionAudio.addEventListener('ended', () => {
+      if (mode === 'test' && !submitted) {
+        if (playbackSection < 4) {
+          playbackSection += 1;
+          updateSectionAudio();
+          playCurrentSectionAudio();
+          return;
+        }
+      }
+      audioStatus.classList.add('hidden');
+    });
 
     restoreThemePreference();
     updateThemeButtons();
