@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>IELTS Pabs Listening Test 2 – IELTS 16</title>
+  <style>
+    :root {
+      --bg: #f7f8fb;
+      --panel: #ffffff;
+      --panel-soft: #f2f5fb;
+      --text: #111827;
+      --text-soft: #5b6474;
+      --accent: #0057b8;
+      --border: #d9dfeb;
+      --shadow: 0 10px 30px rgba(15, 23, 42, 0.08);
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: Arial, Helvetica, sans-serif;
+      background: linear-gradient(180deg, #eef4ff 0%, var(--bg) 220px);
+      color: var(--text);
+    }
+    .page {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 24px 18px 40px;
+    }
+    .hero, .panel {
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      box-shadow: var(--shadow);
+      padding: 22px;
+      margin-bottom: 18px;
+    }
+    h1 { margin: 0 0 8px; font-size: clamp(1.8rem, 4vw, 2.4rem); }
+    h2 { margin: 0 0 12px; font-size: 1.2rem; }
+    p { line-height: 1.6; color: var(--text-soft); }
+    .mode-row, .section-row { display: flex; flex-wrap: wrap; gap: 12px; }
+    .chip, .btn {
+      border: 1px solid var(--border);
+      background: var(--panel-soft);
+      color: var(--text);
+      border-radius: 999px;
+      padding: 10px 16px;
+      font-weight: 700;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .btn.primary {
+      background: var(--accent);
+      border-color: var(--accent);
+      color: white;
+    }
+    .layout {
+      display: grid;
+      grid-template-columns: 340px 1fr;
+      gap: 18px;
+    }
+    .question-list { display: grid; gap: 14px; }
+    .question-block {
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 14px;
+      background: var(--panel);
+    }
+    .question-block label {
+      display: block;
+      font-weight: 700;
+      margin-bottom: 8px;
+    }
+    .question-block input, .question-block select {
+      width: 100%;
+      max-width: 260px;
+      padding: 8px 10px;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      font-size: 0.96rem;
+    }
+    audio { width: 100%; }
+    .placeholder {
+      border: 1px dashed var(--border);
+      border-radius: 14px;
+      padding: 16px;
+      background: var(--panel-soft);
+    }
+    @media (max-width: 900px) {
+      .layout { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <div class="page">
+    <section class="hero">
+      <h1>IELTS Pabs Listening Hub Starter</h1>
+      <p>This page is only a safe scaffold on a separate branch. It does not affect the live Reading site on GitHub Pages.</p>
+      <div class="mode-row">
+        <span class="chip">Study mode ready</span>
+        <span class="chip">Test mode placeholder</span>
+        <span class="chip">GitHub Pages friendly</span>
+      </div>
+    </section>
+
+    <section class="panel">
+      <h2>IELTS 16 Test 2 Listening</h2>
+      <p>Add the MP3 file later at <strong>listening/cambridge-16/test-2/audio/test-2.mp3</strong>. Once that file exists, replace the placeholder source below if needed.</p>
+      <audio controls>
+        <source src="./audio/test-2.mp3" type="audio/mpeg" />
+        Your browser does not support the audio element.
+      </audio>
+    </section>
+
+    <div class="layout">
+      <section class="panel">
+        <h2>Sections</h2>
+        <div class="section-row">
+          <span class="chip">Part 1</span>
+          <span class="chip">Part 2</span>
+          <span class="chip">Part 3</span>
+          <span class="chip">Part 4</span>
+        </div>
+        <div class="placeholder" style="margin-top:14px;">
+          <p><strong>Next step:</strong> add the real listening sections, questions, and answers files in this folder, then use the existing Codex prompt to build the full page.</p>
+        </div>
+      </section>
+
+      <section class="panel">
+        <h2>Question area</h2>
+        <div class="question-list">
+          <div class="question-block">
+            <label for="q1">1. Example short-answer question</label>
+            <input id="q1" type="text" placeholder="Type your answer" />
+          </div>
+          <div class="question-block">
+            <label for="q2">2. Example multiple-choice question</label>
+            <select id="q2">
+              <option value="">Choose an answer</option>
+              <option>A</option>
+              <option>B</option>
+              <option>C</option>
+            </select>
+          </div>
+        </div>
+        <div style="margin-top:16px; display:flex; gap:12px; flex-wrap:wrap;">
+          <a class="btn" href="#">Previous section</a>
+          <a class="btn" href="#">Next section</a>
+          <a class="btn primary" href="#">Submit test</a>
+        </div>
+      </section>
+    </div>
+  </div>
+</body>
+</html>
