@@ -1,0 +1,29 @@
+Create a standalone IELTS Listening test page in this file:
+`listening/cambridge-16/test-2/IELTS16 Test 2 - Listening.html`
+
+Important:
+- Work only in this branch and in the listening folder.
+- Do not modify any existing Reading files.
+- Do not edit the live hub on main.
+
+Use these source files when they are added:
+- `listening/cambridge-16/test-2/sections.txt`
+- `listening/cambridge-16/test-2/questions.txt`
+- `listening/cambridge-16/test-2/answers.txt`
+- `listening/cambridge-16/test-2/spec.md`
+
+Requirements:
+- Standalone HTML file.
+- Header with title.
+- Audio player area for MP3 playback.
+- Section navigation.
+- IELTS-style answer inputs.
+- Study mode and Test mode if practical.
+- Clear layout for desktop and mobile.
+- Easy to reuse for future Listening tests.
+
+After editing, verify:
+1. No Reading files were changed.
+2. The new Listening file opens on its own.
+3. The audio player area is present.
+4. The page is ready for GitHub Pages later.
