@@ -292,7 +292,7 @@
       const label = selected ? selected.label : 'Reading';
       return {
         heading: `${label} Reading Tests`,
-        subtitle: `Choose a ${label.toLowerCase()} test to start your practice.`
+        subtitle: `Choose ${label === "Academic" ? "an" : "a"} ${label.toLowerCase()} test to start your practice.`
       };
     }
 
