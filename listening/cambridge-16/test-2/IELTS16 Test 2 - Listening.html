@@ -18,18 +18,23 @@
       --incorrect: #b71c1c;
       --shadow-soft: 0 2px 10px rgba(0,0,0,0.08);
       --font-size-base: 15px;
-      --footer-h: 84px;
+      --footer-h: 72px;
       --header-h: 66px;
     }
     * { box-sizing: border-box; }
-    html, body { overflow-x: hidden; }
+    html, body {
+      overflow-x: hidden;
+      overflow-y: auto;
+      height: auto;
+    }
     body {
       margin: 0;
       font-family: Arial, Helvetica, system-ui, -apple-system, "Segoe UI", sans-serif;
       font-size: var(--font-size-base);
       background: var(--bg);
       color: var(--text);
-      overscroll-behavior: none;
+      overscroll-behavior-x: none;
+      overscroll-behavior-y: auto;
     }
     body.font-large { --font-size-base: 17px; }
     body.font-xlarge { --font-size-base: 19px; }
@@ -242,6 +247,44 @@
       stroke-linejoin: round;
     }
     .icon-button:hover, .logo-link:hover .logo { color: var(--accent); }
+    #fullscreenBtn.is-active { color: var(--accent); }
+    #fullscreenBtn:disabled { opacity: 0.6; cursor: not-allowed; }
+    .icon-button.with-label {
+      gap: 6px;
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      padding: 6px 10px;
+      font-size: 0.82rem;
+      line-height: 1;
+    }
+    #fullscreenSupportNote {
+      display: none;
+      margin-top: 8px;
+      font-size: 0.82rem;
+      color: var(--text-soft);
+    }
+    #fullscreenLockOverlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.72);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 2100;
+      pointer-events: all;
+    }
+    #fullscreenLockPanel {
+      width: min(520px, 92vw);
+      background: var(--panel);
+      color: var(--text);
+      border-radius: 12px;
+      padding: 20px 22px;
+      box-shadow: var(--shadow-soft);
+      text-align: center;
+      border: 1px solid var(--border);
+    }
+    #fullscreenLockPanel h2 { margin: 0 0 8px; }
+    #fullscreenLockPanel p { margin: 0 0 14px; color: var(--text-soft); }
     #optionsPanel {
       background: var(--panel);
       color: var(--text);
@@ -315,6 +358,14 @@
     .content-shell {
       background: var(--bg);
       min-height: calc(100vh - var(--header-h) - var(--footer-h) - 20px);
+    }
+    .main,
+    .page,
+    .content-shell,
+    .section-panel,
+    .drag-layout,
+    .drag-bank {
+      overflow-y: visible;
     }
     .audio-bar {
       display: none;
@@ -535,28 +586,36 @@
       grid-template-columns: repeat(4, minmax(0, 1fr));
       min-width: 0;
     }
+    .footer-main[data-active-section="1"] { grid-template-columns: 1.9fr 0.7fr 0.7fr 0.7fr; }
+    .footer-main[data-active-section="2"] { grid-template-columns: 0.7fr 1.9fr 0.7fr 0.7fr; }
+    .footer-main[data-active-section="3"] { grid-template-columns: 0.7fr 0.7fr 1.9fr 0.7fr; }
+    .footer-main[data-active-section="4"] { grid-template-columns: 0.7fr 0.7fr 0.7fr 1.9fr; }
     .part-group {
       border-right: 1px solid var(--border);
       display: flex;
       flex-direction: column;
-      justify-content: flex-start;
-      padding: 8px 10px 9px;
+      justify-content: center;
+      padding: 6px 10px 5px;
       min-width: 0;
       cursor: pointer;
+      gap: 4px;
     }
     .part-group:last-child { border-right: none; }
     .part-group:hover { background: rgba(0,0,0,0.03); }
-    .part-progress { height: 4px; background: #d8dde5; border-radius: 999px; overflow: hidden; margin-bottom: 7px; }
+    .part-progress { height: 3px; background: #d8dde5; border-radius: 999px; overflow: hidden; margin-bottom: 3px; }
     .part-progress-fill { height: 100%; width: 0; background: var(--correct); }
     .part-top {
       display: flex;
-      justify-content: center;
+      justify-content: flex-start;
       align-items: center;
-      gap: 8px;
+      gap: 7px;
       font-weight: 700;
-      min-height: 22px;
+      min-height: 24px;
       white-space: nowrap;
+      min-width: 0;
+      overflow: hidden;
     }
+    .part-top .part-label { flex-shrink: 0; }
     .part-top .count { color: var(--text-soft); font-weight: 400; }
     .part-top .tick {
       display: none;
@@ -567,31 +626,31 @@
     .part-group.complete .tick { display: inline; }
     .question-nav-row {
       display: none;
-      flex-wrap: nowrap;
-      overflow-x: auto;
-      gap: 5px;
-      padding-top: 6px;
-      justify-content: center;
-      scroll-behavior: smooth;
+      align-items: center;
+      gap: 4px;
+      margin-left: 2px;
+      white-space: nowrap;
+      min-width: 0;
     }
-    .part-group.active .question-nav-row { display: flex; }
+    .part-group.active .question-nav-row { display: inline-flex; }
     .qnav {
-      min-width: 30px;
-      padding: 4px 7px;
-      border-radius: 8px;
+      min-width: 24px;
+      padding: 2px 5px;
+      border-radius: 6px;
       text-align: center;
       border: 1px solid var(--border);
       background: var(--panel);
       cursor: pointer;
-      font-size: 0.9rem;
+      font-size: 0.82rem;
       font-weight: 700;
+      line-height: 1.2;
       flex-shrink: 0;
       color: var(--text);
     }
     .qnav.current { border-color: var(--accent); background: var(--accent-soft); }
     .qnav.answered { border-color: var(--correct); background: rgba(67,160,71,0.18); }
     .submit-corner {
-      width: 72px;
+      width: 64px;
       border-left: 1px solid var(--border);
       display: flex;
       align-items: center;
@@ -599,13 +658,13 @@
       background: var(--bg-secondary);
     }
     .submit-corner button {
-      width: 52px;
-      height: 52px;
+      width: 44px;
+      height: 44px;
       border: none;
       background: transparent;
       color: var(--text-soft);
       cursor: pointer;
-      font-size: 1.8rem;
+      font-size: 1.55rem;
       font-weight: 900;
     }
     @media (max-width: 1180px) {
@@ -623,7 +682,7 @@
     @media (max-width: 980px) {
       .footer-main { grid-template-columns: 1fr 1fr; }
       .footer-bar { height: auto; min-height: var(--footer-h); }
-      .main { padding-bottom: 190px; }
+      .main { padding-bottom: 170px; }
     }
     @media (max-width: 760px) {
       .info-strip { gap: 8px; }
@@ -631,7 +690,7 @@
       .drag-slot, .drag-clear { grid-column: 2 / 3; }
       .drag-clear { width: 80px; }
       .footer-main { grid-template-columns: 1fr; }
-      .main { padding-bottom: 330px; }
+      .main { padding-bottom: 300px; }
       .top-right { width: 100%; justify-content: space-between; }
     }
   </style>
@@ -650,6 +709,7 @@
         <label for="studentNameInput">Your name (for test mode results)</label>
         <input type="text" id="studentNameInput" placeholder="Enter your full name" maxlength="80" />
         <button class="mode-btn" type="button" id="startTestBtn">Start the test now</button>
+        <p id="fullscreenSupportNote">Full screen enforcement is limited on this device.</p>
       </div>
     </div>
   </div>
@@ -705,6 +765,18 @@
         <div class="icon-group">
           <span class="icon" title="Connection status"><span class="sr-only">Connection status</span><svg viewBox="0 0 24 24"><path d="M4.93 9.93a10.5 10.5 0 0 1 14.14 0"/><path d="M7.76 12.76a6.5 6.5 0 0 1 8.48 0"/><path d="M10.59 15.59a2.5 2.5 0 0 1 2.82 0"/><path d="M12 18h.01"/></svg></span>
           <span class="icon" title="Notifications"><span class="sr-only">Notifications</span><svg viewBox="0 0 24 24"><path d="M15 17h5l-1.4-1.4A2 2 0 0 1 18 14.17V11a6 6 0 1 0-12 0v3.17a2 2 0 0 1-.59 1.43L4 17h5"/><path d="M9 17a3 3 0 0 0 6 0"/></svg></span>
+          <button id="fullscreenBtn" class="icon-button with-label" title="Enter full screen" aria-label="Enter full screen">
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <polyline points="8 3 3 3 3 8"></polyline>
+              <line x1="3" y1="3" x2="9" y2="9"></line>
+              <polyline points="16 21 21 21 21 16"></polyline>
+              <line x1="15" y1="15" x2="21" y2="21"></line>
+              <polyline points="21 8 21 3 16 3"></polyline>
+              <line x1="15" y1="9" x2="21" y2="3"></line>
+              <polyline points="3 16 3 21 8 21"></polyline>
+              <line x1="3" y1="21" x2="9" y2="15"></line>
+            </svg><span id="fullscreenBtnLabel">Full screen</span>
+          </button>
           <button id="optionsBtn" class="icon-button" title="Options menu" aria-label="Options menu"><svg viewBox="0 0 24 24"><line x1="4" y1="7" x2="20" y2="7"/><line x1="4" y1="12" x2="20" y2="12"/><line x1="4" y1="17" x2="16" y2="17"/></svg></button>
         </div>
       </div>
@@ -766,6 +838,13 @@
     <div class="floating-nav"><button type="button" class="nav-arrow prev" id="prevSectionBtn" aria-label="Previous section">←</button><button type="button" class="nav-arrow" id="nextSectionBtn" aria-label="Next section">→</button></div>
     <footer class="footer-bar"><div class="footer-main" id="footerMain"></div><div class="submit-corner"><button type="button" id="footerSubmitBtn" aria-label="Submit test">✓</button></div></footer>
   </div>
+  <div id="fullscreenLockOverlay" role="dialog" aria-modal="true" aria-live="assertive">
+    <div id="fullscreenLockPanel">
+      <h2>Full screen required</h2>
+      <p>You have left full screen. Return to full screen to continue your test.</p>
+      <button class="mode-btn" type="button" id="returnFullscreenBtn">Return to full screen</button>
+    </div>
+  </div>
 
   <script>
     const audioSources = { 1: '../../../Test 2 Part 1.mp3', 2: '../../../Test 2 Part 2.mp3', 3: '../../../Test 2 Part 3.mp3', 4: '../../../Test 2 Part 4.mp3' };
@@ -775,6 +854,7 @@
     const listeningBands = [{min:39,band:9,level:'Expert user',description:'Has fully operational command of the language: accurate, appropriate and fluent with complete understanding.'},{min:37,band:8.5,level:'Very good user',description:'Has fully operational command with only occasional unsystematic inaccuracies.'},{min:35,band:8,level:'Very good user',description:'Understands detailed listening well and handles a wide range of language successfully.'},{min:32,band:7.5,level:'Good user',description:'Shows strong listening ability with only occasional lapses.'},{min:30,band:7,level:'Good user',description:'Has operational command of the language, though with occasional misunderstandings.'},{min:26,band:6.5,level:'Competent user',description:'Generally effective listening in a range of familiar and less familiar situations.'},{min:23,band:6,level:'Competent user',description:'Can understand main ideas and much detail, despite some inaccuracies.'},{min:18,band:5.5,level:'Modest user',description:'Can cope with overall meaning in most situations, but errors still affect performance.'},{min:16,band:5,level:'Modest user',description:'Partial command of the language with noticeable limits in understanding.'},{min:13,band:4.5,level:'Limited user',description:'Basic competence is limited to more familiar situations.'},{min:11,band:4,level:'Limited user',description:'Frequent problems occur in understanding.'},{min:9,band:3.5,level:'Extremely limited user',description:'Conveys and understands only general meaning in very familiar situations.'},{min:7,band:3,level:'Extremely limited user',description:'Very limited understanding beyond familiar language.'},{min:5,band:2.5,level:'Intermittent user',description:'Only the most basic information is understood.'},{min:0,band:0,level:'Did not attempt test',description:'No assessable information provided.'}];
     const groupedQuestionMap = {19:'19-20',20:'19-20',1:'1-10',2:'1-10',3:'1-10',4:'1-10',5:'1-10',6:'1-10',7:'1-10',8:'1-10',9:'1-10',10:'1-10',16:'16-18',17:'16-18',18:'16-18',25:'25-30',26:'25-30',27:'25-30',28:'25-30',29:'25-30',30:'25-30',31:'31-40',32:'31-40',33:'31-40',34:'31-40',35:'31-40',36:'31-40',37:'31-40',38:'31-40',39:'31-40',40:'31-40'};
     let mode = 'test', activeSection = 1, playbackSection = 1, timerSeconds = 30*60, timerId = null, submitted = false, studentName = '', currentQuestion = 1, selectedDragChoice = '';
+    let fullscreenSupported = false, fullScreenEnforcementEnabled = false, fullScreenExits = 0;
     const dragAssignments = {16:'',17:'',18:''};
     const AVAILABLE_THEMES = ['black-on-white','white-on-black','yellow-on-black'];
     const DEFAULT_THEME = 'black-on-white';
@@ -783,6 +863,7 @@
     const modeScreen = document.getElementById('modeScreen');
     const testStartScreen = document.getElementById('testStartScreen');
     const startTestBtn = document.getElementById('startTestBtn');
+    const fullscreenSupportNote = document.getElementById('fullscreenSupportNote');
     const studentNameInput = document.getElementById('studentNameInput');
     const app = document.getElementById('app');
     const audioBar = document.getElementById('audioBar');
@@ -795,13 +876,91 @@
     const prevSectionBtn = document.getElementById('prevSectionBtn');
     const nextSectionBtn = document.getElementById('nextSectionBtn');
     const optionsBtn = document.getElementById('optionsBtn');
+    const fullscreenBtn = document.getElementById('fullscreenBtn');
+    const fullscreenBtnLabel = document.getElementById('fullscreenBtnLabel');
     const optionsOverlay = document.getElementById('optionsOverlay');
     const closeOptionsBtn = document.getElementById('closeOptionsBtn');
     const menuSubmitBtn = document.getElementById('menuSubmitBtn');
     const footerSubmitBtn = document.getElementById('footerSubmitBtn');
     const resultsOverlay = document.getElementById('resultsOverlay');
+    const fullscreenLockOverlay = document.getElementById('fullscreenLockOverlay');
+    const returnFullscreenBtn = document.getElementById('returnFullscreenBtn');
     const closeResultsBtn = document.getElementById('closeResultsBtn');
     const homeLink = document.getElementById('homeLink');
+
+    function fullscreenElement(){ return document.fullscreenElement || document.webkitFullscreenElement || document.msFullscreenElement || null; }
+    function fullscreenEnabled(){ return Boolean(document.fullscreenEnabled || document.webkitFullscreenEnabled || document.msFullscreenEnabled); }
+    function isFullscreenApiSupported(){
+      const el=document.documentElement;
+      if(!el) return false;
+      return Boolean(
+        fullscreenEnabled() ||
+        typeof el.requestFullscreen==='function' ||
+        typeof el.webkitRequestFullscreen==='function' ||
+        typeof el.msRequestFullscreen==='function'
+      );
+    }
+    function isFullscreenActive(){ return !!fullscreenElement(); }
+    function updateFullscreenSupportNote(show){ if(fullscreenSupportNote) fullscreenSupportNote.style.display = show ? 'block' : 'none'; }
+    async function requestAppFullscreen(){
+      try{
+        if(!isFullscreenApiSupported()) return false;
+        const el=document.documentElement;
+        const request = el.requestFullscreen || el.webkitRequestFullscreen || el.msRequestFullscreen;
+        if(typeof request!=='function') return false;
+        const result = request.call(el);
+        if(result && typeof result.then==='function') await result;
+        return isFullscreenActive();
+      } catch(_) { return false; }
+    }
+    async function exitAppFullscreen(){
+      try{
+        if(!isFullscreenActive()) return;
+        const exit = document.exitFullscreen || document.webkitExitFullscreen || document.msExitFullscreen;
+        if(typeof exit!=='function') return;
+        const result = exit.call(document);
+        if(result && typeof result.then==='function') await result;
+      } catch(_) {}
+    }
+    function showFullscreenLockOverlay(){ if(fullscreenLockOverlay) fullscreenLockOverlay.style.display='flex'; }
+    function hideFullscreenLockOverlay(){ if(fullscreenLockOverlay) fullscreenLockOverlay.style.display='none'; }
+    function updateFullscreenButton(){
+      if(!fullscreenBtn || !fullscreenBtnLabel) return;
+      const isFullscreen=isFullscreenActive();
+      const locked=mode==='test' && app.style.display==='block' && !submitted && fullScreenEnforcementEnabled;
+      fullscreenBtn.classList.toggle('is-active', isFullscreen);
+      fullscreenBtn.disabled=false;
+      if(locked && isFullscreen){
+        fullscreenBtnLabel.textContent='Full screen locked';
+        fullscreenBtn.setAttribute('title','Full screen locked');
+        fullscreenBtn.setAttribute('aria-label','Full screen locked');
+        fullscreenBtn.disabled=true;
+        return;
+      }
+      fullscreenBtnLabel.textContent = isFullscreen ? 'Exit full screen' : 'Full screen';
+      fullscreenBtn.setAttribute('title', isFullscreen ? 'Exit full screen' : 'Enter full screen');
+      fullscreenBtn.setAttribute('aria-label', isFullscreen ? 'Exit full screen' : 'Enter full screen');
+    }
+    async function toggleFullscreen(){
+      const locked=mode==='test' && app.style.display==='block' && !submitted && fullScreenEnforcementEnabled;
+      if(locked && isFullscreenActive()){ updateFullscreenButton(); return; }
+      if(!isFullscreenActive()) await requestAppFullscreen();
+      else await exitAppFullscreen();
+      updateFullscreenButton();
+    }
+    async function returnToFullscreenAndResume(){
+      const ok = await requestAppFullscreen();
+      if(ok) hideFullscreenLockOverlay();
+      updateFullscreenButton();
+    }
+    function handleFullscreenChange(){
+      const runningLockedTest = mode==='test' && app.style.display==='block' && !submitted && fullScreenEnforcementEnabled;
+      if(runningLockedTest){
+        if(!isFullscreenActive()){ fullScreenExits += 1; showFullscreenLockOverlay(); }
+        else hideFullscreenLockOverlay();
+      } else hideFullscreenLockOverlay();
+      updateFullscreenButton();
+    }
 
     function restoreThemePreference() { const saved = localStorage.getItem(STORAGE_KEYS.theme); const theme = AVAILABLE_THEMES.includes(saved) ? saved : DEFAULT_THEME; document.body.setAttribute('data-theme', theme); }
     function setTheme(theme) { if (!AVAILABLE_THEMES.includes(theme)) return; document.body.setAttribute('data-theme', theme); localStorage.setItem(STORAGE_KEYS.theme, theme); updateThemeButtons(); }
@@ -821,18 +980,29 @@
     function isAnswered(q){ if(q===19||q===20) return getTwoAnswerSelection().length >= (q===19?1:2); return String(getUserAnswer(q)).trim().length>0; }
     function playCurrentSectionAudio(){ updateAudioStatusLabel(); const p=sectionAudio.play(); if(p && typeof p.catch === 'function') p.catch(()=>{}); }
     function updateSectionAudio(){ const shouldShow = mode==='study' || submitted; audioBar.classList.toggle('visible', shouldShow); const sectionForAudio = shouldShow ? activeSection : playbackSection; const src = audioSources[sectionForAudio] || ''; if(sectionAudioSource.getAttribute('src') !== src){ sectionAudio.pause(); sectionAudioSource.setAttribute('src', src); sectionAudio.load(); } if(mode==='test' && !submitted && sectionAudio.paused){ playCurrentSectionAudio(); } }
-    function buildFooter(){ footerMain.innerHTML=''; Object.entries(sectionRanges).forEach(([sec,range])=>{ const part=document.createElement('div'); part.className='part-group'; part.dataset.section=sec; part.innerHTML=`<div class="part-progress"><div class="part-progress-fill" id="progress-${sec}"></div></div><div class="part-top"><span>${range.label}</span><span class="tick" id="tick-${sec}">✓</span><span class="count" id="count-${sec}">0 of ${range.to-range.from+1}</span></div><div class="question-nav-row" id="nav-${sec}"></div>`; part.addEventListener('click',(event)=>{ if(event.target.closest('.qnav')) return; switchSection(Number(sec)); }); footerMain.appendChild(part); const navRow=part.querySelector(`#nav-${sec}`); for(let q=range.from;q<=range.to;q+=1){ const btn=document.createElement('button'); btn.type='button'; btn.className='qnav'; btn.dataset.q=q; btn.textContent=q; btn.addEventListener('click',()=>jumpToQuestion(q)); navRow.appendChild(btn);} }); updateFooterState(); }
-    function updateFooterState(){ Object.entries(sectionRanges).forEach(([sec,range])=>{ const total=range.to-range.from+1; let answered=0; for(let q=range.from;q<=range.to;q+=1){ if(isAnswered(q)) answered+=1; const btn=footerMain.querySelector(`.qnav[data-q="${q}"]`); if(btn){ btn.classList.toggle('answered', isAnswered(q)); btn.classList.toggle('current', q===currentQuestion); } } const countEl=document.getElementById(`count-${sec}`); if(countEl) countEl.textContent=`${answered} of ${total}`; const progressEl=document.getElementById(`progress-${sec}`); if(progressEl) progressEl.style.width=`${(answered/total)*100}%`; const tickEl=document.getElementById(`tick-${sec}`); if(tickEl) tickEl.style.display = answered===total ? 'inline' : 'none'; const groupEl=footerMain.querySelector(`.part-group[data-section="${sec}"]`); if(groupEl){ groupEl.classList.toggle('active', Number(sec)===activeSection); groupEl.classList.toggle('complete', answered===total); } }); }
+    function buildFooter(){ footerMain.innerHTML=''; Object.entries(sectionRanges).forEach(([sec,range])=>{ const part=document.createElement('div'); part.className='part-group'; part.dataset.section=sec; part.innerHTML=`<div class="part-progress"><div class="part-progress-fill" id="progress-${sec}"></div></div><div class="part-top"><span class="part-label">${range.label}</span><span class="count" id="count-${sec}">0 of ${range.to-range.from+1}</span><span class="tick" id="tick-${sec}">✓</span><div class="question-nav-row" id="nav-${sec}"></div></div>`; part.addEventListener('click',(event)=>{ if(event.target.closest('.qnav')) return; switchSection(Number(sec)); }); footerMain.appendChild(part); const navRow=part.querySelector(`#nav-${sec}`); for(let q=range.from;q<=range.to;q+=1){ const btn=document.createElement('button'); btn.type='button'; btn.className='qnav'; btn.dataset.q=q; btn.textContent=q; btn.addEventListener('click',()=>jumpToQuestion(q)); navRow.appendChild(btn);} }); updateFooterState(); }
+    function updateFooterState(){ Object.entries(sectionRanges).forEach(([sec,range])=>{ const total=range.to-range.from+1; let answered=0; for(let q=range.from;q<=range.to;q+=1){ if(isAnswered(q)) answered+=1; const btn=footerMain.querySelector(`.qnav[data-q="${q}"]`); if(btn){ btn.classList.toggle('answered', isAnswered(q)); btn.classList.toggle('current', q===currentQuestion); } } const countEl=document.getElementById(`count-${sec}`); if(countEl) countEl.textContent=`${answered} of ${total}`; const progressEl=document.getElementById(`progress-${sec}`); if(progressEl) progressEl.style.width=`${(answered/total)*100}%`; const tickEl=document.getElementById(`tick-${sec}`); if(tickEl) tickEl.style.display = answered===total ? 'inline' : 'none'; const groupEl=footerMain.querySelector(`.part-group[data-section="${sec}"]`); if(groupEl){ groupEl.classList.toggle('active', Number(sec)===activeSection); groupEl.classList.toggle('complete', answered===total); } }); footerMain.dataset.activeSection=String(activeSection); }
     function highlightCurrentQuestion(q){ document.querySelectorAll('.question-block').forEach((block)=>block.classList.remove('current')); const group=groupedQuestionMap[q]; let block=document.querySelector(`.question-block[data-q="${q}"]`); if(!block && group) block=document.querySelector(`.question-block[data-qgroup="${group}"]`); if(block) block.classList.add('current'); }
     function switchSection(section){ activeSection=section; document.querySelectorAll('.section-panel').forEach((panel)=>panel.classList.toggle('active', Number(panel.dataset.section)===section)); const range=sectionRanges[section]; if(currentQuestion<range.from || currentQuestion>range.to) currentQuestion=range.from; updateSectionAudio(); updateFooterState(); highlightCurrentQuestion(currentQuestion); prevSectionBtn.disabled = section===1; nextSectionBtn.disabled = section===4; }
     function jumpToQuestion(q){ const section=getSectionForQuestion(q); switchSection(section); currentQuestion=q; updateFooterState(); highlightCurrentQuestion(q); const group=groupedQuestionMap[q]; let selector=`.question-block[data-q="${q}"]`; if(group) selector=`.question-block[data-qgroup="${group}"]`; const block=document.querySelector(selector); if(block) block.scrollIntoView({behavior:'smooth', block:'start'}); }
     function bindInputs(){ document.querySelectorAll('input[type="text"], select, input[type="radio"], input[type="checkbox"]').forEach((el)=>{ el.addEventListener('change', onAnswerChange); if(el.type==='text') el.addEventListener('input', onAnswerChange); }); document.querySelectorAll('input[name="q19_20"]').forEach((el)=>{ el.addEventListener('change', ()=>{ const checked=getTwoAnswerSelection(); if(checked.length>2) el.checked=false; document.getElementById('twoAnswerWarning').textContent=''; onAnswerChange(); }); }); }
     function onAnswerChange(evt){ if(evt && evt.target && evt.target.name){ const name=evt.target.name; if(name==='q19_20') currentQuestion=19; else if(name.startsWith('q')){ const n=parseInt(name.replace(/\D/g,''),10); if(!isNaN(n)) currentQuestion=n; } } updateFooterState(); highlightCurrentQuestion(currentQuestion); }
+    function setupWheelFallback(){
+      document.addEventListener('wheel',(event)=>{
+        if(event.defaultPrevented || event.ctrlKey || Math.abs(event.deltaY) < 1) return;
+        if(modeScreen.style.display !== 'none' || resultsOverlay.style.display !== 'none' || optionsOverlay.style.display !== 'none') return;
+        const target = event.target instanceof Element ? event.target : null;
+        if(!target || !target.closest('.main')) return;
+        if(target.closest('.question-nav-row')) return;
+        window.scrollBy({ top: event.deltaY, left: 0, behavior: 'auto' });
+        event.preventDefault();
+      }, { passive: false });
+    }
     function showCorrectAnswer(id,text){ const el=document.getElementById(id); if(!el) return; el.style.display='block'; el.textContent=`Correct answer: ${text}`; }
     function markBlock(q,correctState){ const group=groupedQuestionMap[q]; let block=document.querySelector(`.question-block[data-q="${q}"]`); if(!block && group) block=document.querySelector(`.question-block[data-qgroup="${group}"]`); if(!block) return; if(correctState===true){ block.classList.add('correct'); block.classList.remove('incorrect'); } else if(correctState===false){ block.classList.add('incorrect'); block.classList.remove('correct'); } }
     function evaluateAll(){ let totalCorrect=0; for(let q=1;q<=40;q+=1){ const answered=isAnswered(q); const correct=answered ? isCorrect(q) : false; if(correct) totalCorrect+=1; if(answered) markBlock(q, correct); } showCorrectAnswer('ca-1-10','1 frame, 2 195, 3 payment, 4 Grandparents, 5 colour / color, 6 hand, 7 background, 8 focus, 9 ten days / 10 days, 10 plastic'); showCorrectAnswer('ca-16-18','16 D, 17 A, 18 B'); showCorrectAnswer('ca-19-20','19 B, 20 C'); showCorrectAnswer('ca-25-30','25 history, 26 paper, 27 humans / people, 28 stress, 29 graph, 30 evaluate'); showCorrectAnswer('ca-31-40','31 creativity, 32 therapy, 33 fitness, 34 balance, 35 brain, 36 motivation, 37 isolation, 38 calories, 39 obesity, 40 habit'); for(let q=11;q<=15;q+=1) showCorrectAnswer(`ca-${q}`, displayAnswers[q]); for(let q=21;q<=24;q+=1) showCorrectAnswer(`ca-${q}`, displayAnswers[q]); return totalCorrect; }
     function bandFromScore(score){ return listeningBands.find((row)=>score>=row.min) || listeningBands[listeningBands.length-1]; }
-    function submitTest(){ const totalCorrect=evaluateAll(); submitted=true; updateSectionAudio(); if(mode==='test'){ document.querySelectorAll('input, select').forEach((el)=>{ el.disabled=true; }); if(timerId){ clearInterval(timerId); timerId=null; } } const bandInfo=bandFromScore(totalCorrect); document.getElementById('studentLine').innerHTML=`<strong>Candidate:</strong> ${studentName || 'Not provided'}`; document.getElementById('timeLine').innerHTML=`<strong>Time at submission:</strong> ${formatDuration((30*60)-timerSeconds)}`; document.getElementById('scoreLine').innerHTML=`<strong>Score:</strong> ${totalCorrect} out of 40`; document.getElementById('bandLine').innerHTML=`<strong>Estimated IELTS Listening band:</strong> ${bandInfo.band} (${bandInfo.level})`; document.getElementById('descriptorLine').textContent=bandInfo.description; resultsOverlay.style.display='flex'; openOptions(false); }
+    function submitTest(){ const totalCorrect=evaluateAll(); submitted=true; fullScreenEnforcementEnabled=false; hideFullscreenLockOverlay(); updateFullscreenButton(); updateSectionAudio(); if(mode==='test'){ document.querySelectorAll('input, select').forEach((el)=>{ el.disabled=true; }); if(timerId){ clearInterval(timerId); timerId=null; } } const bandInfo=bandFromScore(totalCorrect); document.getElementById('studentLine').innerHTML=`<strong>Candidate:</strong> ${studentName || 'Not provided'}`; document.getElementById('timeLine').innerHTML=`<strong>Time at submission:</strong> ${formatDuration((30*60)-timerSeconds)}`; document.getElementById('scoreLine').innerHTML=`<strong>Score:</strong> ${totalCorrect} out of 40`; document.getElementById('bandLine').innerHTML=`<strong>Estimated IELTS Listening band:</strong> ${bandInfo.band} (${bandInfo.level})`; document.getElementById('descriptorLine').textContent=bandInfo.description; resultsOverlay.style.display='flex'; openOptions(false); }
     function handleSubmit(){ const ok=window.confirm('Are you sure you want to submit your test now?'); if(ok) submitTest(); }
     function startApp(selectedMode){ mode=selectedMode; submitted=false; activeSection=1; playbackSection=1; modeScreen.style.display='none'; testStartScreen.style.display='none'; app.style.display='block'; updateCandidateLine(); buildFooter(); bindInputs(); setupDragMatch(); switchSection(1); startTimer(); updateThemeButtons(); updateFontButtons(); }
     function setupDragMatch(){ const bank=document.getElementById('dragBank16to18'); if(!bank) return; bank.querySelectorAll('.drag-choice').forEach((choice)=>{ if(choice.dataset.bound==='yes') return; choice.dataset.bound='yes'; choice.addEventListener('dragstart',(e)=>{ e.dataTransfer.setData('text/plain', choice.dataset.value); }); choice.addEventListener('click',()=>{ bank.querySelectorAll('.drag-choice').forEach((c)=>c.classList.remove('selected')); choice.classList.add('selected'); selectedDragChoice = choice.dataset.value; }); }); document.querySelectorAll('.drag-slot').forEach((slot)=>{ if(slot.dataset.bound==='yes') return; slot.dataset.bound='yes'; slot.addEventListener('dragover',(e)=>{ e.preventDefault(); slot.classList.add('over'); }); slot.addEventListener('dragleave',()=>slot.classList.remove('over')); slot.addEventListener('drop',(e)=>{ e.preventDefault(); slot.classList.remove('over'); const val=e.dataTransfer.getData('text/plain'); if(val) setDragAssignment(Number(slot.dataset.q), val); }); slot.addEventListener('click',()=>{ if(selectedDragChoice) setDragAssignment(Number(slot.dataset.q), selectedDragChoice); }); }); document.querySelectorAll('.drag-clear').forEach((btn)=>{ if(btn.dataset.bound==='yes') return; btn.dataset.bound='yes'; btn.addEventListener('click',()=>clearDragAssignment(Number(btn.dataset.clearQ))); }); renderDragAssignments(); }
@@ -840,9 +1010,12 @@
     function clearDragAssignment(questionNumber){ dragAssignments[questionNumber]=''; const select=document.querySelector(`select[name="q${questionNumber}"]`); if(select){ select.value=''; select.dispatchEvent(new Event('change',{bubbles:true})); } renderDragAssignments(); }
     function renderDragAssignments(){ document.querySelectorAll('.drag-slot').forEach((slot)=>{ const q=Number(slot.dataset.q); const val=dragAssignments[q]; slot.textContent = val || 'Drop here'; slot.classList.toggle('filled', Boolean(val)); }); document.querySelectorAll('#dragBank16to18 .drag-choice').forEach((choice)=>{ const used=[16,17,18].some((q)=>dragAssignments[q]===choice.dataset.value); choice.classList.toggle('used', used); }); }
 
+    setupWheelFallback();
     modeButtons.forEach((btn)=>{ btn.addEventListener('click',()=>{ const selected=btn.dataset.mode; if(selected==='test'){ testStartScreen.style.display='block'; studentNameInput.focus(); return; } studentName=''; startApp('study'); }); });
-    startTestBtn.addEventListener('click',()=>{ const value=studentNameInput.value.trim(); if(!value){ alert('Please enter your name before starting test mode.'); studentNameInput.focus(); return; } studentName=value; startApp('test'); });
+    startTestBtn.addEventListener('click',async ()=>{ const value=studentNameInput.value.trim(); if(!value){ alert('Please enter your name before starting test mode.'); studentNameInput.focus(); return; } studentName=value; fullscreenSupported=isFullscreenApiSupported(); fullScreenExits=0; fullScreenEnforcementEnabled=false; updateFullscreenSupportNote(false); if(fullscreenSupported){ const ok=await requestAppFullscreen(); if(!ok) updateFullscreenSupportNote(true); else fullScreenEnforcementEnabled=true; } else { updateFullscreenSupportNote(true); } startApp('test'); updateFullscreenButton(); });
     optionsBtn.addEventListener('click',()=>openOptions(true));
+    fullscreenBtn.addEventListener('click',()=>{ toggleFullscreen(); });
+    returnFullscreenBtn.addEventListener('click',()=>{ returnToFullscreenAndResume(); });
     closeOptionsBtn.addEventListener('click',()=>openOptions(false));
     menuSubmitBtn.addEventListener('click', handleSubmit);
     footerSubmitBtn.addEventListener('click', handleSubmit);
@@ -860,7 +1033,11 @@
     document.getElementById('font-xlarge').addEventListener('click',()=>setFontSize('xlarge'));
     homeLink.addEventListener('click',(e)=>{ e.preventDefault(); if(window.confirm('Do you want to leave this test and return to the home page? Any unsaved progress will be lost.')) window.location.href='../../../index.html'; });
     window.addEventListener('beforeunload',(e)=>{ if(submitted) return; e.preventDefault(); e.returnValue='Are you sure you want to leave? Your progress will be lost.'; return e.returnValue; });
+    document.addEventListener('fullscreenchange', handleFullscreenChange);
+    document.addEventListener('webkitfullscreenchange', handleFullscreenChange);
+    document.addEventListener('MSFullscreenChange', handleFullscreenChange);
     restoreThemePreference(); updateThemeButtons(); updateFontButtons();
+    updateFullscreenButton();
   </script>
 </body>
 </html>
