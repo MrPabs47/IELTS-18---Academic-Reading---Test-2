@@ -888,11 +888,40 @@
     const closeResultsBtn = document.getElementById('closeResultsBtn');
     const homeLink = document.getElementById('homeLink');
 
-    function isFullscreenApiSupported(){ const el=document.documentElement; return !!(document.fullscreenEnabled && el && typeof el.requestFullscreen==='function'); }
-    function isFullscreenActive(){ return !!document.fullscreenElement; }
+    function fullscreenElement(){ return document.fullscreenElement || document.webkitFullscreenElement || document.msFullscreenElement || null; }
+    function fullscreenEnabled(){ return Boolean(document.fullscreenEnabled || document.webkitFullscreenEnabled || document.msFullscreenEnabled); }
+    function isFullscreenApiSupported(){
+      const el=document.documentElement;
+      if(!el) return false;
+      return Boolean(
+        fullscreenEnabled() ||
+        typeof el.requestFullscreen==='function' ||
+        typeof el.webkitRequestFullscreen==='function' ||
+        typeof el.msRequestFullscreen==='function'
+      );
+    }
+    function isFullscreenActive(){ return !!fullscreenElement(); }
     function updateFullscreenSupportNote(show){ if(fullscreenSupportNote) fullscreenSupportNote.style.display = show ? 'block' : 'none'; }
-    async function requestAppFullscreen(){ try{ if(!isFullscreenApiSupported()) return false; await document.documentElement.requestFullscreen(); return isFullscreenActive(); } catch(_) { return false; } }
-    async function exitAppFullscreen(){ try{ if(isFullscreenActive() && typeof document.exitFullscreen==='function') await document.exitFullscreen(); } catch(_) {} }
+    async function requestAppFullscreen(){
+      try{
+        if(!isFullscreenApiSupported()) return false;
+        const el=document.documentElement;
+        const request = el.requestFullscreen || el.webkitRequestFullscreen || el.msRequestFullscreen;
+        if(typeof request!=='function') return false;
+        const result = request.call(el);
+        if(result && typeof result.then==='function') await result;
+        return isFullscreenActive();
+      } catch(_) { return false; }
+    }
+    async function exitAppFullscreen(){
+      try{
+        if(!isFullscreenActive()) return;
+        const exit = document.exitFullscreen || document.webkitExitFullscreen || document.msExitFullscreen;
+        if(typeof exit!=='function') return;
+        const result = exit.call(document);
+        if(result && typeof result.then==='function') await result;
+      } catch(_) {}
+    }
     function showFullscreenLockOverlay(){ if(fullscreenLockOverlay) fullscreenLockOverlay.style.display='flex'; }
     function hideFullscreenLockOverlay(){ if(fullscreenLockOverlay) fullscreenLockOverlay.style.display='none'; }
     function updateFullscreenButton(){
@@ -1005,6 +1034,8 @@
     homeLink.addEventListener('click',(e)=>{ e.preventDefault(); if(window.confirm('Do you want to leave this test and return to the home page? Any unsaved progress will be lost.')) window.location.href='../../../index.html'; });
     window.addEventListener('beforeunload',(e)=>{ if(submitted) return; e.preventDefault(); e.returnValue='Are you sure you want to leave? Your progress will be lost.'; return e.returnValue; });
     document.addEventListener('fullscreenchange', handleFullscreenChange);
+    document.addEventListener('webkitfullscreenchange', handleFullscreenChange);
+    document.addEventListener('MSFullscreenChange', handleFullscreenChange);
     restoreThemePreference(); updateThemeButtons(); updateFontButtons();
     updateFullscreenButton();
   </script>
