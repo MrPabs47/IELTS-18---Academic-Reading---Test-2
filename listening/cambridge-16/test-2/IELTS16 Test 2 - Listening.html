@@ -18,18 +18,23 @@
       --incorrect: #b71c1c;
       --shadow-soft: 0 2px 10px rgba(0,0,0,0.08);
       --font-size-base: 15px;
-      --footer-h: 84px;
+      --footer-h: 72px;
       --header-h: 66px;
     }
     * { box-sizing: border-box; }
-    html, body { overflow-x: hidden; }
+    html, body {
+      overflow-x: hidden;
+      overflow-y: auto;
+      height: auto;
+    }
     body {
       margin: 0;
       font-family: Arial, Helvetica, system-ui, -apple-system, "Segoe UI", sans-serif;
       font-size: var(--font-size-base);
       background: var(--bg);
       color: var(--text);
-      overscroll-behavior: none;
+      overscroll-behavior-x: none;
+      overscroll-behavior-y: auto;
     }
     body.font-large { --font-size-base: 17px; }
     body.font-xlarge { --font-size-base: 19px; }
@@ -316,6 +321,14 @@
       background: var(--bg);
       min-height: calc(100vh - var(--header-h) - var(--footer-h) - 20px);
     }
+    .main,
+    .page,
+    .content-shell,
+    .section-panel,
+    .drag-layout,
+    .drag-bank {
+      overflow-y: visible;
+    }
     .audio-bar {
       display: none;
       padding: 10px 12px;
@@ -535,28 +548,36 @@
       grid-template-columns: repeat(4, minmax(0, 1fr));
       min-width: 0;
     }
+    .footer-main[data-active-section="1"] { grid-template-columns: 1.9fr 0.7fr 0.7fr 0.7fr; }
+    .footer-main[data-active-section="2"] { grid-template-columns: 0.7fr 1.9fr 0.7fr 0.7fr; }
+    .footer-main[data-active-section="3"] { grid-template-columns: 0.7fr 0.7fr 1.9fr 0.7fr; }
+    .footer-main[data-active-section="4"] { grid-template-columns: 0.7fr 0.7fr 0.7fr 1.9fr; }
     .part-group {
       border-right: 1px solid var(--border);
       display: flex;
       flex-direction: column;
-      justify-content: flex-start;
-      padding: 8px 10px 9px;
+      justify-content: center;
+      padding: 6px 10px 5px;
       min-width: 0;
       cursor: pointer;
+      gap: 4px;
     }
     .part-group:last-child { border-right: none; }
     .part-group:hover { background: rgba(0,0,0,0.03); }
-    .part-progress { height: 4px; background: #d8dde5; border-radius: 999px; overflow: hidden; margin-bottom: 7px; }
+    .part-progress { height: 3px; background: #d8dde5; border-radius: 999px; overflow: hidden; margin-bottom: 3px; }
     .part-progress-fill { height: 100%; width: 0; background: var(--correct); }
     .part-top {
       display: flex;
-      justify-content: center;
+      justify-content: flex-start;
       align-items: center;
-      gap: 8px;
+      gap: 7px;
       font-weight: 700;
-      min-height: 22px;
+      min-height: 24px;
       white-space: nowrap;
+      min-width: 0;
+      overflow: hidden;
     }
+    .part-top .part-label { flex-shrink: 0; }
     .part-top .count { color: var(--text-soft); font-weight: 400; }
     .part-top .tick {
       display: none;
@@ -567,31 +588,31 @@
     .part-group.complete .tick { display: inline; }
     .question-nav-row {
       display: none;
-      flex-wrap: nowrap;
-      overflow-x: auto;
-      gap: 5px;
-      padding-top: 6px;
-      justify-content: center;
-      scroll-behavior: smooth;
+      align-items: center;
+      gap: 4px;
+      margin-left: 2px;
+      white-space: nowrap;
+      min-width: 0;
     }
-    .part-group.active .question-nav-row { display: flex; }
+    .part-group.active .question-nav-row { display: inline-flex; }
     .qnav {
-      min-width: 30px;
-      padding: 4px 7px;
-      border-radius: 8px;
+      min-width: 24px;
+      padding: 2px 5px;
+      border-radius: 6px;
       text-align: center;
       border: 1px solid var(--border);
       background: var(--panel);
       cursor: pointer;
-      font-size: 0.9rem;
+      font-size: 0.82rem;
       font-weight: 700;
+      line-height: 1.2;
       flex-shrink: 0;
       color: var(--text);
     }
     .qnav.current { border-color: var(--accent); background: var(--accent-soft); }
     .qnav.answered { border-color: var(--correct); background: rgba(67,160,71,0.18); }
     .submit-corner {
-      width: 72px;
+      width: 64px;
       border-left: 1px solid var(--border);
       display: flex;
       align-items: center;
@@ -599,13 +620,13 @@
       background: var(--bg-secondary);
     }
     .submit-corner button {
-      width: 52px;
-      height: 52px;
+      width: 44px;
+      height: 44px;
       border: none;
       background: transparent;
       color: var(--text-soft);
       cursor: pointer;
-      font-size: 1.8rem;
+      font-size: 1.55rem;
       font-weight: 900;
     }
     @media (max-width: 1180px) {
@@ -623,7 +644,7 @@
     @media (max-width: 980px) {
       .footer-main { grid-template-columns: 1fr 1fr; }
       .footer-bar { height: auto; min-height: var(--footer-h); }
-      .main { padding-bottom: 190px; }
+      .main { padding-bottom: 170px; }
     }
     @media (max-width: 760px) {
       .info-strip { gap: 8px; }
@@ -631,7 +652,7 @@
       .drag-slot, .drag-clear { grid-column: 2 / 3; }
       .drag-clear { width: 80px; }
       .footer-main { grid-template-columns: 1fr; }
-      .main { padding-bottom: 330px; }
+      .main { padding-bottom: 300px; }
       .top-right { width: 100%; justify-content: space-between; }
     }
   </style>
@@ -821,13 +842,24 @@
     function isAnswered(q){ if(q===19||q===20) return getTwoAnswerSelection().length >= (q===19?1:2); return String(getUserAnswer(q)).trim().length>0; }
     function playCurrentSectionAudio(){ updateAudioStatusLabel(); const p=sectionAudio.play(); if(p && typeof p.catch === 'function') p.catch(()=>{}); }
     function updateSectionAudio(){ const shouldShow = mode==='study' || submitted; audioBar.classList.toggle('visible', shouldShow); const sectionForAudio = shouldShow ? activeSection : playbackSection; const src = audioSources[sectionForAudio] || ''; if(sectionAudioSource.getAttribute('src') !== src){ sectionAudio.pause(); sectionAudioSource.setAttribute('src', src); sectionAudio.load(); } if(mode==='test' && !submitted && sectionAudio.paused){ playCurrentSectionAudio(); } }
-    function buildFooter(){ footerMain.innerHTML=''; Object.entries(sectionRanges).forEach(([sec,range])=>{ const part=document.createElement('div'); part.className='part-group'; part.dataset.section=sec; part.innerHTML=`<div class="part-progress"><div class="part-progress-fill" id="progress-${sec}"></div></div><div class="part-top"><span>${range.label}</span><span class="tick" id="tick-${sec}">✓</span><span class="count" id="count-${sec}">0 of ${range.to-range.from+1}</span></div><div class="question-nav-row" id="nav-${sec}"></div>`; part.addEventListener('click',(event)=>{ if(event.target.closest('.qnav')) return; switchSection(Number(sec)); }); footerMain.appendChild(part); const navRow=part.querySelector(`#nav-${sec}`); for(let q=range.from;q<=range.to;q+=1){ const btn=document.createElement('button'); btn.type='button'; btn.className='qnav'; btn.dataset.q=q; btn.textContent=q; btn.addEventListener('click',()=>jumpToQuestion(q)); navRow.appendChild(btn);} }); updateFooterState(); }
-    function updateFooterState(){ Object.entries(sectionRanges).forEach(([sec,range])=>{ const total=range.to-range.from+1; let answered=0; for(let q=range.from;q<=range.to;q+=1){ if(isAnswered(q)) answered+=1; const btn=footerMain.querySelector(`.qnav[data-q="${q}"]`); if(btn){ btn.classList.toggle('answered', isAnswered(q)); btn.classList.toggle('current', q===currentQuestion); } } const countEl=document.getElementById(`count-${sec}`); if(countEl) countEl.textContent=`${answered} of ${total}`; const progressEl=document.getElementById(`progress-${sec}`); if(progressEl) progressEl.style.width=`${(answered/total)*100}%`; const tickEl=document.getElementById(`tick-${sec}`); if(tickEl) tickEl.style.display = answered===total ? 'inline' : 'none'; const groupEl=footerMain.querySelector(`.part-group[data-section="${sec}"]`); if(groupEl){ groupEl.classList.toggle('active', Number(sec)===activeSection); groupEl.classList.toggle('complete', answered===total); } }); }
+    function buildFooter(){ footerMain.innerHTML=''; Object.entries(sectionRanges).forEach(([sec,range])=>{ const part=document.createElement('div'); part.className='part-group'; part.dataset.section=sec; part.innerHTML=`<div class="part-progress"><div class="part-progress-fill" id="progress-${sec}"></div></div><div class="part-top"><span class="part-label">${range.label}</span><span class="count" id="count-${sec}">0 of ${range.to-range.from+1}</span><span class="tick" id="tick-${sec}">✓</span><div class="question-nav-row" id="nav-${sec}"></div></div>`; part.addEventListener('click',(event)=>{ if(event.target.closest('.qnav')) return; switchSection(Number(sec)); }); footerMain.appendChild(part); const navRow=part.querySelector(`#nav-${sec}`); for(let q=range.from;q<=range.to;q+=1){ const btn=document.createElement('button'); btn.type='button'; btn.className='qnav'; btn.dataset.q=q; btn.textContent=q; btn.addEventListener('click',()=>jumpToQuestion(q)); navRow.appendChild(btn);} }); updateFooterState(); }
+    function updateFooterState(){ Object.entries(sectionRanges).forEach(([sec,range])=>{ const total=range.to-range.from+1; let answered=0; for(let q=range.from;q<=range.to;q+=1){ if(isAnswered(q)) answered+=1; const btn=footerMain.querySelector(`.qnav[data-q="${q}"]`); if(btn){ btn.classList.toggle('answered', isAnswered(q)); btn.classList.toggle('current', q===currentQuestion); } } const countEl=document.getElementById(`count-${sec}`); if(countEl) countEl.textContent=`${answered} of ${total}`; const progressEl=document.getElementById(`progress-${sec}`); if(progressEl) progressEl.style.width=`${(answered/total)*100}%`; const tickEl=document.getElementById(`tick-${sec}`); if(tickEl) tickEl.style.display = answered===total ? 'inline' : 'none'; const groupEl=footerMain.querySelector(`.part-group[data-section="${sec}"]`); if(groupEl){ groupEl.classList.toggle('active', Number(sec)===activeSection); groupEl.classList.toggle('complete', answered===total); } }); footerMain.dataset.activeSection=String(activeSection); }
     function highlightCurrentQuestion(q){ document.querySelectorAll('.question-block').forEach((block)=>block.classList.remove('current')); const group=groupedQuestionMap[q]; let block=document.querySelector(`.question-block[data-q="${q}"]`); if(!block && group) block=document.querySelector(`.question-block[data-qgroup="${group}"]`); if(block) block.classList.add('current'); }
     function switchSection(section){ activeSection=section; document.querySelectorAll('.section-panel').forEach((panel)=>panel.classList.toggle('active', Number(panel.dataset.section)===section)); const range=sectionRanges[section]; if(currentQuestion<range.from || currentQuestion>range.to) currentQuestion=range.from; updateSectionAudio(); updateFooterState(); highlightCurrentQuestion(currentQuestion); prevSectionBtn.disabled = section===1; nextSectionBtn.disabled = section===4; }
     function jumpToQuestion(q){ const section=getSectionForQuestion(q); switchSection(section); currentQuestion=q; updateFooterState(); highlightCurrentQuestion(q); const group=groupedQuestionMap[q]; let selector=`.question-block[data-q="${q}"]`; if(group) selector=`.question-block[data-qgroup="${group}"]`; const block=document.querySelector(selector); if(block) block.scrollIntoView({behavior:'smooth', block:'start'}); }
     function bindInputs(){ document.querySelectorAll('input[type="text"], select, input[type="radio"], input[type="checkbox"]').forEach((el)=>{ el.addEventListener('change', onAnswerChange); if(el.type==='text') el.addEventListener('input', onAnswerChange); }); document.querySelectorAll('input[name="q19_20"]').forEach((el)=>{ el.addEventListener('change', ()=>{ const checked=getTwoAnswerSelection(); if(checked.length>2) el.checked=false; document.getElementById('twoAnswerWarning').textContent=''; onAnswerChange(); }); }); }
     function onAnswerChange(evt){ if(evt && evt.target && evt.target.name){ const name=evt.target.name; if(name==='q19_20') currentQuestion=19; else if(name.startsWith('q')){ const n=parseInt(name.replace(/\D/g,''),10); if(!isNaN(n)) currentQuestion=n; } } updateFooterState(); highlightCurrentQuestion(currentQuestion); }
+    function setupWheelFallback(){
+      document.addEventListener('wheel',(event)=>{
+        if(event.defaultPrevented || event.ctrlKey || Math.abs(event.deltaY) < 1) return;
+        if(modeScreen.style.display !== 'none' || resultsOverlay.style.display !== 'none' || optionsOverlay.style.display !== 'none') return;
+        const target = event.target instanceof Element ? event.target : null;
+        if(!target || !target.closest('.main')) return;
+        if(target.closest('.question-nav-row')) return;
+        window.scrollBy({ top: event.deltaY, left: 0, behavior: 'auto' });
+        event.preventDefault();
+      }, { passive: false });
+    }
     function showCorrectAnswer(id,text){ const el=document.getElementById(id); if(!el) return; el.style.display='block'; el.textContent=`Correct answer: ${text}`; }
     function markBlock(q,correctState){ const group=groupedQuestionMap[q]; let block=document.querySelector(`.question-block[data-q="${q}"]`); if(!block && group) block=document.querySelector(`.question-block[data-qgroup="${group}"]`); if(!block) return; if(correctState===true){ block.classList.add('correct'); block.classList.remove('incorrect'); } else if(correctState===false){ block.classList.add('incorrect'); block.classList.remove('correct'); } }
     function evaluateAll(){ let totalCorrect=0; for(let q=1;q<=40;q+=1){ const answered=isAnswered(q); const correct=answered ? isCorrect(q) : false; if(correct) totalCorrect+=1; if(answered) markBlock(q, correct); } showCorrectAnswer('ca-1-10','1 frame, 2 195, 3 payment, 4 Grandparents, 5 colour / color, 6 hand, 7 background, 8 focus, 9 ten days / 10 days, 10 plastic'); showCorrectAnswer('ca-16-18','16 D, 17 A, 18 B'); showCorrectAnswer('ca-19-20','19 B, 20 C'); showCorrectAnswer('ca-25-30','25 history, 26 paper, 27 humans / people, 28 stress, 29 graph, 30 evaluate'); showCorrectAnswer('ca-31-40','31 creativity, 32 therapy, 33 fitness, 34 balance, 35 brain, 36 motivation, 37 isolation, 38 calories, 39 obesity, 40 habit'); for(let q=11;q<=15;q+=1) showCorrectAnswer(`ca-${q}`, displayAnswers[q]); for(let q=21;q<=24;q+=1) showCorrectAnswer(`ca-${q}`, displayAnswers[q]); return totalCorrect; }
@@ -840,6 +872,7 @@
     function clearDragAssignment(questionNumber){ dragAssignments[questionNumber]=''; const select=document.querySelector(`select[name="q${questionNumber}"]`); if(select){ select.value=''; select.dispatchEvent(new Event('change',{bubbles:true})); } renderDragAssignments(); }
     function renderDragAssignments(){ document.querySelectorAll('.drag-slot').forEach((slot)=>{ const q=Number(slot.dataset.q); const val=dragAssignments[q]; slot.textContent = val || 'Drop here'; slot.classList.toggle('filled', Boolean(val)); }); document.querySelectorAll('#dragBank16to18 .drag-choice').forEach((choice)=>{ const used=[16,17,18].some((q)=>dragAssignments[q]===choice.dataset.value); choice.classList.toggle('used', used); }); }
 
+    setupWheelFallback();
     modeButtons.forEach((btn)=>{ btn.addEventListener('click',()=>{ const selected=btn.dataset.mode; if(selected==='test'){ testStartScreen.style.display='block'; studentNameInput.focus(); return; } studentName=''; startApp('study'); }); });
     startTestBtn.addEventListener('click',()=>{ const value=studentNameInput.value.trim(); if(!value){ alert('Please enter your name before starting test mode.'); studentNameInput.focus(); return; } studentName=value; startApp('test'); });
     optionsBtn.addEventListener('click',()=>openOptions(true));
