@@ -6,33 +6,49 @@
   <title>IELTS Pabs Practice Hub</title>
   <style>
     :root {
-      --bg: #f5f6fb;
+      --bg: #f3f5fb;
       --panel: #ffffff;
       --border: #e6e8ef;
       --text: #141824;
       --text-soft: #687386;
-      --red: #f03535;
-      --red-soft: #fff4f4;
-      --shadow: 0 12px 28px rgba(15, 23, 42, 0.08);
+      --accent-academic: #2359d4;
+      --accent-academic-soft: #eef3ff;
+      --accent-gt: #0b8f63;
+      --accent-gt-soft: #ebfaf4;
+      --accent-listening: #d54a2d;
+      --accent-listening-soft: #fff1ec;
+      --shadow: 0 14px 32px rgba(15, 23, 42, 0.08);
     }
     * { box-sizing: border-box; }
     body {
       margin: 0;
       font-family: Arial, Helvetica, sans-serif;
-      background: linear-gradient(180deg, #f8f9fd 0%, var(--bg) 220px);
+      background: linear-gradient(180deg, #f8faff 0%, var(--bg) 240px);
       color: var(--text);
     }
-    .page { max-width: 1280px; margin: 0 auto; padding: 28px 18px 42px; }
+    .page { max-width: 1320px; margin: 0 auto; padding: 28px 18px 42px; }
     .hero {
-      background: var(--panel);
+      background: radial-gradient(circle at top right, rgba(35,89,212,0.09), transparent 30%), var(--panel);
       border: 1px solid var(--border);
-      border-radius: 24px;
+      border-radius: 28px;
       box-shadow: var(--shadow);
-      padding: 24px;
+      padding: 28px;
       margin-bottom: 20px;
     }
-    .hero h1 { margin: 0 0 10px; font-size: clamp(2rem, 4vw, 2.7rem); }
-    .hero p { margin: 0; color: var(--text-soft); line-height: 1.6; max-width: 760px; }
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      border-radius: 999px;
+      background: #f0f3fb;
+      color: var(--text-soft);
+      padding: 7px 12px;
+      font-size: .9rem;
+      font-weight: 700;
+      margin-bottom: 12px;
+    }
+    .hero h1 { margin: 0 0 10px; font-size: clamp(2rem, 4vw, 3rem); }
+    .hero p { margin: 0; color: var(--text-soft); line-height: 1.6; max-width: 820px; }
     .board {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
@@ -45,41 +61,82 @@
       box-shadow: var(--shadow);
       padding: 20px 18px 24px;
     }
-    .column h2 {
-      margin: 0 0 18px;
-      text-align: center;
-      color: var(--red);
-      font-size: 1.7rem;
+    .column-header {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 18px;
     }
+    .column-icon {
+      width: 42px;
+      height: 42px;
+      border-radius: 14px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 800;
+      font-size: 1rem;
+      flex-shrink: 0;
+    }
+    .column h2 { margin: 0; font-size: 1.55rem; }
+    .column p { margin: 6px 0 0; color: var(--text-soft); font-size: .95rem; }
+    .academic .column-icon { background: var(--accent-academic-soft); color: var(--accent-academic); }
+    .general .column-icon { background: var(--accent-gt-soft); color: var(--accent-gt); }
+    .listening .column-icon { background: var(--accent-listening-soft); color: var(--accent-listening); }
     .slot {
       display: flex;
       align-items: center;
-      justify-content: center;
-      min-height: 84px;
-      border: 5px solid var(--red);
-      border-radius: 4px;
+      justify-content: space-between;
+      gap: 12px;
+      min-height: 86px;
+      border-radius: 18px;
       background: #fff;
       text-decoration: none;
-      color: var(--red);
+      color: var(--text);
       font-weight: 700;
-      font-size: 1.15rem;
-      margin-bottom: 36px;
-      padding: 10px 14px;
-      text-align: center;
-      transition: transform .15s ease, box-shadow .15s ease, background .15s ease;
+      font-size: 1.05rem;
+      margin-bottom: 14px;
+      padding: 14px 16px;
+      border: 2px solid transparent;
+      transition: transform .15s ease, box-shadow .15s ease, border-color .15s ease, background .15s ease;
     }
-    .slot:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 10px 20px rgba(240, 53, 53, 0.15);
-      background: var(--red-soft);
+    .slot small {
+      display: block;
+      color: var(--text-soft);
+      font-size: .86rem;
+      font-weight: 500;
+      margin-top: 4px;
     }
+    .slot strong { display: block; }
+    .slot-arrow {
+      width: 38px;
+      height: 38px;
+      border-radius: 12px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.2rem;
+      flex-shrink: 0;
+    }
+    .academic .slot { border-color: rgba(35,89,212,0.22); }
+    .academic .slot:hover { background: var(--accent-academic-soft); border-color: var(--accent-academic); box-shadow: 0 12px 22px rgba(35,89,212,0.13); transform: translateY(-2px); }
+    .academic .slot-arrow { background: var(--accent-academic-soft); color: var(--accent-academic); }
+    .general .slot { border-color: rgba(11,143,99,0.22); }
+    .general .slot:hover { background: var(--accent-gt-soft); border-color: var(--accent-gt); box-shadow: 0 12px 22px rgba(11,143,99,0.13); transform: translateY(-2px); }
+    .general .slot-arrow { background: var(--accent-gt-soft); color: var(--accent-gt); }
+    .listening .slot { border-color: rgba(213,74,45,0.22); }
+    .listening .slot:hover { background: var(--accent-listening-soft); border-color: var(--accent-listening); box-shadow: 0 12px 22px rgba(213,74,45,0.13); transform: translateY(-2px); }
+    .listening .slot-arrow { background: var(--accent-listening-soft); color: var(--accent-listening); }
     .slot.empty {
-      color: #b9b9c2;
-      border-style: dashed;
+      color: #a4acbb;
       background: #fafbff;
-      cursor: default;
+      border-style: dashed;
       pointer-events: none;
       box-shadow: none;
+    }
+    .slot.empty .slot-arrow {
+      background: #eef1f7;
+      color: #a4acbb;
     }
     .footnote {
       margin-top: 8px;
@@ -90,45 +147,63 @@
     }
     @media (max-width: 980px) {
       .board { grid-template-columns: 1fr; }
-      .column h2 { font-size: 1.45rem; }
-      .slot { margin-bottom: 18px; }
+      .column h2 { font-size: 1.35rem; }
     }
   </style>
 </head>
 <body>
   <div class="page">
     <section class="hero">
-      <h1>IELTS Pabs Practice Hub</h1>
-      <p>Choose your test type and open the practice test you want straight away. Reading and Listening are live here now, and Writing can be added later in the same layout.</p>
+      <div class="eyebrow">IELTS Pabs practice site</div>
+      <h1>Choose your test and start straight away</h1>
+      <p>Open Academic Reading, General Training Reading, or Listening from one place. The layout is designed so you can move quickly between tests, and more practice sections can be added here later, including Writing.</p>
     </section>
 
     <section class="board">
-      <div class="column">
-        <h2>Academic reading</h2>
-        <a class="slot" href="./academic/cambridge-16/test-2/IELTS16%20Test%202%20-%20Academic%20Reading.html">IELTS 16 Test 2</a>
-        <a class="slot empty" href="#" aria-disabled="true">IELTS 16 Test 3</a>
-        <a class="slot" href="./academic/cambridge-18/test-2/IELTS18%20Test%202%20-%20Academic%20Reading.html">IELTS 18 Test 2</a>
-        <a class="slot empty" href="#" aria-disabled="true">More Academic tests soon</a>
+      <div class="column academic">
+        <div class="column-header">
+          <div class="column-icon">AR</div>
+          <div>
+            <h2>Academic reading</h2>
+            <p>Official-style reading practice</p>
+          </div>
+        </div>
+        <a class="slot" href="./academic/cambridge-16/test-2/IELTS16%20Test%202%20-%20Academic%20Reading.html"><div><strong>IELTS 16 Test 2</strong><small>Academic Reading</small></div><span class="slot-arrow">→</span></a>
+        <a class="slot empty" href="#" aria-disabled="true"><div><strong>IELTS 16 Test 3</strong><small>Coming soon</small></div><span class="slot-arrow">•</span></a>
+        <a class="slot" href="./academic/cambridge-18/test-2/IELTS18%20Test%202%20-%20Academic%20Reading.html"><div><strong>IELTS 18 Test 2</strong><small>Academic Reading</small></div><span class="slot-arrow">→</span></a>
+        <a class="slot empty" href="#" aria-disabled="true"><div><strong>More Academic tests</strong><small>Ready for future additions</small></div><span class="slot-arrow">•</span></a>
       </div>
 
-      <div class="column">
-        <h2>General Training reading</h2>
-        <a class="slot" href="./general-training/cambridge-19/test-2/IELTS19%20Test%202%20-%20Reading%20-%20GT.html">IELTS 19 Test 2</a>
-        <a class="slot" href="./general-training/cambridge-19/test-3/IELTS19%20Test%203%20-%20Reading%20-%20GT.html">IELTS 19 Test 3</a>
-        <a class="slot empty" href="#" aria-disabled="true">More GT tests soon</a>
-        <a class="slot empty" href="#" aria-disabled="true">Writing section later</a>
+      <div class="column general">
+        <div class="column-header">
+          <div class="column-icon">GT</div>
+          <div>
+            <h2>General Training reading</h2>
+            <p>General Training Reading practice</p>
+          </div>
+        </div>
+        <a class="slot" href="./general-training/cambridge-19/test-2/IELTS19%20Test%202%20-%20Reading%20-%20GT.html"><div><strong>IELTS 19 Test 2</strong><small>General Training Reading</small></div><span class="slot-arrow">→</span></a>
+        <a class="slot" href="./general-training/cambridge-19/test-3/IELTS19%20Test%203%20-%20Reading%20-%20GT.html"><div><strong>IELTS 19 Test 3</strong><small>General Training Reading</small></div><span class="slot-arrow">→</span></a>
+        <a class="slot empty" href="#" aria-disabled="true"><div><strong>More GT tests</strong><small>Ready for future additions</small></div><span class="slot-arrow">•</span></a>
+        <a class="slot empty" href="#" aria-disabled="true"><div><strong>Writing section later</strong><small>Planned in this same hub</small></div><span class="slot-arrow">•</span></a>
       </div>
 
-      <div class="column">
-        <h2>Listening</h2>
-        <a class="slot" href="./listening/cambridge-16/test-2/IELTS16%20Test%202%20-%20Listening.html">IELTS 16 Test 2</a>
-        <a class="slot empty" href="#" aria-disabled="true">IELTS 16 Test 3</a>
-        <a class="slot empty" href="#" aria-disabled="true">More Listening tests soon</a>
-        <a class="slot empty" href="#" aria-disabled="true">Writing will fit here later too</a>
+      <div class="column listening">
+        <div class="column-header">
+          <div class="column-icon">LS</div>
+          <div>
+            <h2>Listening</h2>
+            <p>Listening with built-in audio files</p>
+          </div>
+        </div>
+        <a class="slot" href="./listening/cambridge-16/test-2/IELTS16%20Test%202%20-%20Listening.html"><div><strong>IELTS 16 Test 2</strong><small>Listening</small></div><span class="slot-arrow">→</span></a>
+        <a class="slot empty" href="#" aria-disabled="true"><div><strong>IELTS 16 Test 3</strong><small>Coming soon</small></div><span class="slot-arrow">•</span></a>
+        <a class="slot empty" href="#" aria-disabled="true"><div><strong>More Listening tests</strong><small>Ready for future additions</small></div><span class="slot-arrow">•</span></a>
+        <a class="slot empty" href="#" aria-disabled="true"><div><strong>Writing will fit here later</strong><small>Extra categories can be added easily</small></div><span class="slot-arrow">•</span></a>
       </div>
     </section>
 
-    <p class="footnote">The Listening page uses your uploaded audio files and the Reading pages keep their current structure.</p>
+    <p class="footnote">Reading and Listening are live now. Writing can be added into the same hub structure later.</p>
   </div>
 </body>
 </html>
