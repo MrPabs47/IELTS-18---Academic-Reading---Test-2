@@ -22,14 +22,19 @@
       --header-h: 66px;
     }
     * { box-sizing: border-box; }
-    html, body { overflow-x: hidden; }
+    html, body {
+      overflow-x: hidden;
+      overflow-y: auto;
+      height: auto;
+    }
     body {
       margin: 0;
       font-family: Arial, Helvetica, system-ui, -apple-system, "Segoe UI", sans-serif;
       font-size: var(--font-size-base);
       background: var(--bg);
       color: var(--text);
-      overscroll-behavior: none;
+      overscroll-behavior-x: none;
+      overscroll-behavior-y: auto;
     }
     body.font-large { --font-size-base: 17px; }
     body.font-xlarge { --font-size-base: 19px; }
@@ -315,6 +320,14 @@
     .content-shell {
       background: var(--bg);
       min-height: calc(100vh - var(--header-h) - var(--footer-h) - 20px);
+    }
+    .main,
+    .page,
+    .content-shell,
+    .section-panel,
+    .drag-layout,
+    .drag-bank {
+      overflow-y: visible;
     }
     .audio-bar {
       display: none;
