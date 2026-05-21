@@ -188,6 +188,9 @@
       font-size: 1.4rem;
       letter-spacing: 0.08em;
     }
+    .home-link { cursor: pointer; transition: opacity .2s ease; }
+    .home-link:hover { opacity: 0.85; }
+
 
     .test-title {
       font-size: 0.95rem;
@@ -1161,7 +1164,7 @@
     <!-- Top bar -->
     <header class="top-bar">
       <div class="top-left">
-        <div class="logo">IELTS Pabs</div>
+        <div class="logo home-link" onclick="confirmGoHome()" title="Return to home">IELTS Pabs</div>
         <div class="test-title">
           IELTS 19 - Academic Reading Test 1
         </div>
@@ -2422,6 +2425,11 @@
       event.preventDefault();
       showShortcutToast("Find (CTRL + F) is disabled in Test mode.");
     }, true);
+
+    function confirmGoHome() {
+      const ok = window.confirm("Are you sure you want to leave this test and return to the home page? Your current answers may not be saved.");
+      if (ok) window.location.href = "../../../index.html";
+    }
 
     function confirmSubmit() {
       const ok = window.confirm("Are you sure you want to submit your test now? You will not be able to continue answering in Test mode.");
