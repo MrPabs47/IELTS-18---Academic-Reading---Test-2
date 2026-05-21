@@ -11,6 +11,7 @@
       --border: #e6e8ef;
       --text: #141824;
       --text-soft: #687386;
+      --muted: #a4acbb;
       --accent-academic: #2359d4;
       --accent-academic-soft: #eef3ff;
       --accent-gt: #0b8f63;
@@ -26,7 +27,7 @@
       background: linear-gradient(180deg, #f8faff 0%, var(--bg) 240px);
       color: var(--text);
     }
-    .page { max-width: 1320px; margin: 0 auto; padding: 28px 18px 42px; }
+    .page { max-width: 1380px; margin: 0 auto; padding: 28px 18px 42px; }
     .hero {
       background: radial-gradient(circle at top right, rgba(35,89,212,0.09), transparent 30%), var(--panel);
       border: 1px solid var(--border);
@@ -48,11 +49,23 @@
       margin-bottom: 12px;
     }
     .hero h1 { margin: 0 0 10px; font-size: clamp(2rem, 4vw, 3rem); }
-    .hero p { margin: 0; color: var(--text-soft); line-height: 1.6; max-width: 820px; }
+    .hero p { margin: 0; color: var(--text-soft); line-height: 1.6; max-width: 860px; }
+    .status-legend {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin-top: 14px;
+      color: var(--text-soft);
+      font-size: .92rem;
+    }
+    .legend-item { display: inline-flex; align-items: center; gap: 6px; }
+    .dot { width: 10px; height: 10px; border-radius: 999px; background: #2ca66f; }
+    .dot.soon { background: #c9d1dd; }
     .board {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
       gap: 22px;
+      align-items: start;
     }
     .column {
       background: var(--panel);
@@ -78,44 +91,69 @@
       font-size: 1rem;
       flex-shrink: 0;
     }
-    .column h2 { margin: 0; font-size: 1.55rem; }
+    .column h2 { margin: 0; font-size: 1.45rem; }
     .column p { margin: 6px 0 0; color: var(--text-soft); font-size: .95rem; }
     .academic .column-icon { background: var(--accent-academic-soft); color: var(--accent-academic); }
     .general .column-icon { background: var(--accent-gt-soft); color: var(--accent-gt); }
     .listening .column-icon { background: var(--accent-listening-soft); color: var(--accent-listening); }
+    .book-group {
+      border-top: 1px solid var(--border);
+      padding-top: 14px;
+      margin-top: 14px;
+    }
+    .book-title {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      margin-bottom: 10px;
+      color: var(--text-soft);
+      font-weight: 800;
+      letter-spacing: .02em;
+      font-size: .95rem;
+    }
+    .book-title span:last-child {
+      font-weight: 600;
+      font-size: .8rem;
+      color: var(--muted);
+    }
+    .slots-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 10px;
+    }
     .slot {
       display: flex;
       align-items: center;
       justify-content: space-between;
-      gap: 12px;
-      min-height: 86px;
-      border-radius: 18px;
+      gap: 10px;
+      min-height: 64px;
+      border-radius: 16px;
       background: #fff;
       text-decoration: none;
       color: var(--text);
       font-weight: 700;
-      font-size: 1.05rem;
-      margin-bottom: 14px;
-      padding: 14px 16px;
+      font-size: .98rem;
+      padding: 11px 12px;
       border: 2px solid transparent;
       transition: transform .15s ease, box-shadow .15s ease, border-color .15s ease, background .15s ease;
     }
     .slot small {
       display: block;
       color: var(--text-soft);
-      font-size: .86rem;
+      font-size: .78rem;
       font-weight: 500;
-      margin-top: 4px;
+      margin-top: 3px;
     }
     .slot strong { display: block; }
     .slot-arrow {
-      width: 38px;
-      height: 38px;
-      border-radius: 12px;
+      width: 30px;
+      height: 30px;
+      border-radius: 10px;
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      font-size: 1.2rem;
+      font-size: 1rem;
       flex-shrink: 0;
     }
     .academic .slot { border-color: rgba(35,89,212,0.22); }
@@ -128,7 +166,7 @@
     .listening .slot:hover { background: var(--accent-listening-soft); border-color: var(--accent-listening); box-shadow: 0 12px 22px rgba(213,74,45,0.13); transform: translateY(-2px); }
     .listening .slot-arrow { background: var(--accent-listening-soft); color: var(--accent-listening); }
     .slot.empty {
-      color: #a4acbb;
+      color: var(--muted);
       background: #fafbff;
       border-style: dashed;
       pointer-events: none;
@@ -136,18 +174,27 @@
     }
     .slot.empty .slot-arrow {
       background: #eef1f7;
-      color: #a4acbb;
+      color: var(--muted);
     }
     .footnote {
-      margin-top: 8px;
+      margin-top: 18px;
       text-align: center;
       color: var(--text-soft);
       font-size: .96rem;
       line-height: 1.6;
     }
-    @media (max-width: 980px) {
+    @media (max-width: 1120px) {
       .board { grid-template-columns: 1fr; }
       .column h2 { font-size: 1.35rem; }
+      .slots-grid { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+    }
+    @media (max-width: 760px) {
+      .slots-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .hero { padding: 22px; }
+    }
+    @media (max-width: 460px) {
+      .slots-grid { grid-template-columns: 1fr; }
+      .slot { min-height: 58px; }
     }
   </style>
 </head>
@@ -156,7 +203,11 @@
     <section class="hero">
       <div class="eyebrow">IELTS Pabs practice site</div>
       <h1>Choose your test and start straight away</h1>
-      <p>Open Academic Reading, General Training Reading, or Listening from one place. The layout is designed so you can move quickly between tests, and more practice sections can be added here later, including Writing.</p>
+      <p>Open Academic Reading, General Training Reading, or Listening from one place. All planned Cambridge IELTS 16 to 19 test slots are visible here, and new tests will become clickable as they are added.</p>
+      <div class="status-legend" aria-label="Test status legend">
+        <span class="legend-item"><span class="dot"></span> Available now</span>
+        <span class="legend-item"><span class="dot soon"></span> Coming soon</span>
+      </div>
     </section>
 
     <section class="board">
@@ -165,13 +216,49 @@
           <div class="column-icon">AR</div>
           <div>
             <h2>Academic reading</h2>
-            <p>Official-style reading practice</p>
+            <p>Academic Reading practice</p>
           </div>
         </div>
-        <a class="slot" href="./academic/cambridge-16/test-2/IELTS16%20Test%202%20-%20Academic%20Reading.html"><div><strong>IELTS 16 Test 2</strong><small>Academic Reading</small></div><span class="slot-arrow">→</span></a>
-        <a class="slot empty" href="#" aria-disabled="true"><div><strong>IELTS 16 Test 3</strong><small>Coming soon</small></div><span class="slot-arrow">•</span></a>
-        <a class="slot" href="./academic/cambridge-18/test-2/IELTS18%20Test%202%20-%20Academic%20Reading.html"><div><strong>IELTS 18 Test 2</strong><small>Academic Reading</small></div><span class="slot-arrow">→</span></a>
-        <a class="slot empty" href="#" aria-disabled="true"><div><strong>More Academic tests</strong><small>Ready for future additions</small></div><span class="slot-arrow">•</span></a>
+
+        <div class="book-group">
+          <div class="book-title"><span>IELTS 16</span><span>Academic</span></div>
+          <div class="slots-grid">
+            <a class="slot empty" href="#" aria-disabled="true"><div><strong>Test 1</strong><small>Coming soon</small></div><span class="slot-arrow">•</span></a>
+            <a class="slot" href="./academic/cambridge-16/test-2/IELTS16%20Test%202%20-%20Academic%20Reading.html"><div><strong>Test 2</strong><small>Available</small></div><span class="slot-arrow">→</span></a>
+            <a class="slot empty" href="#" aria-disabled="true"><div><strong>Test 3</strong><small>Coming soon</small></div><span class="slot-arrow">•</span></a>
+            <a class="slot empty" href="#" aria-disabled="true"><div><strong>Test 4</strong><small>Coming soon</small></div><span class="slot-arrow">•</span></a>
+          </div>
+        </div>
+
+        <div class="book-group">
+          <div class="book-title"><span>IELTS 17</span><span>Academic</span></div>
+          <div class="slots-grid">
+            <a class="slot empty" href="#" aria-disabled="true"><div><strong>Test 1</strong><small>Coming soon</small></div><span class="slot-arrow">•</span></a>
+            <a class="slot empty" href="#" aria-disabled="true"><div><strong>Test 2</strong><small>Coming soon</small></div><span class="slot-arrow">•</span></a>
+            <a class="slot empty" href="#" aria-disabled="true"><div><strong>Test 3</strong><small>Coming soon</small></div><span class="slot-arrow">•</span></a>
+            <a class="slot empty" href="#" aria-disabled="true"><div><strong>Test 4</strong><small>Coming soon</small></div><span class="slot-arrow">•</span></a>
+          </div>
+        </div>
+
+        <div class="book-group">
+          <div class="book-title"><span>IELTS 18</span><span>Academic</span></div>
+          <div class="slots-grid">
+            <a class="slot empty" href="#" aria-disabled="true"><div><strong>Test 1</strong><small>Coming soon</small></div><span class="slot-arrow">•</span></a>
+            <a class="slot" href="./academic/cambridge-18/test-2/IELTS18%20Test%202%20-%20Academic%20Reading.html"><div><strong>Test 2</strong><small>Available</small></div><span class="slot-arrow">→</span></a>
+            <a class="slot empty" href="#" aria-disabled="true"><div><strong>Test 3</strong><small>Coming soon</small></div><span class="slot-arrow">•</span></a>
+            <a class="slot empty" href="#" aria-disabled="true"><div><strong>Test 4</strong><small>Coming soon</small></div><span class="slot-arrow">•</span></a>
+          </div>
+        </div>
+
+        <div class="book-group">
+          <div class="book-title"><span>IELTS 19</span><span>Academic</span></div>
+          <div class="slots-grid">
+            <a class="slot empty" href="#" aria-disabled="true"><div><strong>Test 1</strong><small>Coming soon</small></div><span class="slot-arrow">•</span></a>
+            <a class="slot empty" href="#" aria-disabled="true"><div><strong>Test 2</strong><small>Coming soon</small></div><span class="slot-arrow">•</span></a>
+            <a class="slot empty" href="#" aria-disabled="true"><div><strong>Test 3</strong><small>Coming soon</small></div><span class="slot-arrow">•</span></a>
+            <a class="slot empty" href="#" aria-disabled="true"><div><strong>Test 4</strong><small>Coming soon</small></div><span class="slot-arrow">•</span></a>
+          </div>
+        </div>
       </div>
 
       <div class="column general">
@@ -182,10 +269,46 @@
             <p>General Training Reading practice</p>
           </div>
         </div>
-        <a class="slot" href="./general-training/cambridge-19/test-2/IELTS19%20Test%202%20-%20Reading%20-%20GT.html"><div><strong>IELTS 19 Test 2</strong><small>General Training Reading</small></div><span class="slot-arrow">→</span></a>
-        <a class="slot" href="./general-training/cambridge-19/test-3/IELTS19%20Test%203%20-%20Reading%20-%20GT.html"><div><strong>IELTS 19 Test 3</strong><small>General Training Reading</small></div><span class="slot-arrow">→</span></a>
-        <a class="slot empty" href="#" aria-disabled="true"><div><strong>More GT tests</strong><small>Ready for future additions</small></div><span class="slot-arrow">•</span></a>
-        <a class="slot empty" href="#" aria-disabled="true"><div><strong>Writing section later</strong><small>Planned in this same hub</small></div><span class="slot-arrow">•</span></a>
+
+        <div class="book-group">
+          <div class="book-title"><span>IELTS 16</span><span>GT</span></div>
+          <div class="slots-grid">
+            <a class="slot empty" href="#" aria-disabled="true"><div><strong>Test 1</strong><small>Coming soon</small></div><span class="slot-arrow">•</span></a>
+            <a class="slot empty" href="#" aria-disabled="true"><div><strong>Test 2</strong><small>Coming soon</small></div><span class="slot-arrow">•</span></a>
+            <a class="slot empty" href="#" aria-disabled="true"><div><strong>Test 3</strong><small>Coming soon</small></div><span class="slot-arrow">•</span></a>
+            <a class="slot empty" href="#" aria-disabled="true"><div><strong>Test 4</strong><small>Coming soon</small></div><span class="slot-arrow">•</span></a>
+          </div>
+        </div>
+
+        <div class="book-group">
+          <div class="book-title"><span>IELTS 17</span><span>GT</span></div>
+          <div class="slots-grid">
+            <a class="slot empty" href="#" aria-disabled="true"><div><strong>Test 1</strong><small>Coming soon</small></div><span class="slot-arrow">•</span></a>
+            <a class="slot empty" href="#" aria-disabled="true"><div><strong>Test 2</strong><small>Coming soon</small></div><span class="slot-arrow">•</span></a>
+            <a class="slot empty" href="#" aria-disabled="true"><div><strong>Test 3</strong><small>Coming soon</small></div><span class="slot-arrow">•</span></a>
+            <a class="slot empty" href="#" aria-disabled="true"><div><strong>Test 4</strong><small>Coming soon</small></div><span class="slot-arrow">•</span></a>
+          </div>
+        </div>
+
+        <div class="book-group">
+          <div class="book-title"><span>IELTS 18</span><span>GT</span></div>
+          <div class="slots-grid">
+            <a class="slot empty" href="#" aria-disabled="true"><div><strong>Test 1</strong><small>Coming soon</small></div><span class="slot-arrow">•</span></a>
+            <a class="slot empty" href="#" aria-disabled="true"><div><strong>Test 2</strong><small>Coming soon</small></div><span class="slot-arrow">•</span></a>
+            <a class="slot empty" href="#" aria-disabled="true"><div><strong>Test 3</strong><small>Coming soon</small></div><span class="slot-arrow">•</span></a>
+            <a class="slot empty" href="#" aria-disabled="true"><div><strong>Test 4</strong><small>Coming soon</small></div><span class="slot-arrow">•</span></a>
+          </div>
+        </div>
+
+        <div class="book-group">
+          <div class="book-title"><span>IELTS 19</span><span>GT</span></div>
+          <div class="slots-grid">
+            <a class="slot empty" href="#" aria-disabled="true"><div><strong>Test 1</strong><small>Coming soon</small></div><span class="slot-arrow">•</span></a>
+            <a class="slot" href="./general-training/cambridge-19/test-2/IELTS19%20Test%202%20-%20Reading%20-%20GT.html"><div><strong>Test 2</strong><small>Available</small></div><span class="slot-arrow">→</span></a>
+            <a class="slot" href="./general-training/cambridge-19/test-3/IELTS19%20Test%203%20-%20Reading%20-%20GT.html"><div><strong>Test 3</strong><small>Available</small></div><span class="slot-arrow">→</span></a>
+            <a class="slot empty" href="#" aria-disabled="true"><div><strong>Test 4</strong><small>Coming soon</small></div><span class="slot-arrow">•</span></a>
+          </div>
+        </div>
       </div>
 
       <div class="column listening">
@@ -196,14 +319,50 @@
             <p>Listening with built-in audio files</p>
           </div>
         </div>
-        <a class="slot" href="./listening/cambridge-16/test-1/IELTS16%20Test%201%20-%20Listening.html"><div><strong>IELTS 16 Test 1</strong><small>Listening</small></div><span class="slot-arrow">→</span></a>
-        <a class="slot" href="./listening/cambridge-16/test-2/IELTS16%20Test%202%20-%20Listening.html"><div><strong>IELTS 16 Test 2</strong><small>Listening</small></div><span class="slot-arrow">→</span></a>
-        <a class="slot empty" href="#" aria-disabled="true"><div><strong>More Listening tests</strong><small>Ready for future additions</small></div><span class="slot-arrow">•</span></a>
-        <a class="slot empty" href="#" aria-disabled="true"><div><strong>Writing will fit here later</strong><small>Extra categories can be added easily</small></div><span class="slot-arrow">•</span></a>
+
+        <div class="book-group">
+          <div class="book-title"><span>IELTS 16</span><span>Listening</span></div>
+          <div class="slots-grid">
+            <a class="slot" href="./listening/cambridge-16/test-1/IELTS16%20Test%201%20-%20Listening.html"><div><strong>Test 1</strong><small>Available</small></div><span class="slot-arrow">→</span></a>
+            <a class="slot" href="./listening/cambridge-16/test-2/IELTS16%20Test%202%20-%20Listening.html"><div><strong>Test 2</strong><small>Available</small></div><span class="slot-arrow">→</span></a>
+            <a class="slot empty" href="#" aria-disabled="true"><div><strong>Test 3</strong><small>Coming soon</small></div><span class="slot-arrow">•</span></a>
+            <a class="slot empty" href="#" aria-disabled="true"><div><strong>Test 4</strong><small>Coming soon</small></div><span class="slot-arrow">•</span></a>
+          </div>
+        </div>
+
+        <div class="book-group">
+          <div class="book-title"><span>IELTS 17</span><span>Listening</span></div>
+          <div class="slots-grid">
+            <a class="slot empty" href="#" aria-disabled="true"><div><strong>Test 1</strong><small>Coming soon</small></div><span class="slot-arrow">•</span></a>
+            <a class="slot empty" href="#" aria-disabled="true"><div><strong>Test 2</strong><small>Coming soon</small></div><span class="slot-arrow">•</span></a>
+            <a class="slot empty" href="#" aria-disabled="true"><div><strong>Test 3</strong><small>Coming soon</small></div><span class="slot-arrow">•</span></a>
+            <a class="slot empty" href="#" aria-disabled="true"><div><strong>Test 4</strong><small>Coming soon</small></div><span class="slot-arrow">•</span></a>
+          </div>
+        </div>
+
+        <div class="book-group">
+          <div class="book-title"><span>IELTS 18</span><span>Listening</span></div>
+          <div class="slots-grid">
+            <a class="slot empty" href="#" aria-disabled="true"><div><strong>Test 1</strong><small>Coming soon</small></div><span class="slot-arrow">•</span></a>
+            <a class="slot empty" href="#" aria-disabled="true"><div><strong>Test 2</strong><small>Coming soon</small></div><span class="slot-arrow">•</span></a>
+            <a class="slot empty" href="#" aria-disabled="true"><div><strong>Test 3</strong><small>Coming soon</small></div><span class="slot-arrow">•</span></a>
+            <a class="slot empty" href="#" aria-disabled="true"><div><strong>Test 4</strong><small>Coming soon</small></div><span class="slot-arrow">•</span></a>
+          </div>
+        </div>
+
+        <div class="book-group">
+          <div class="book-title"><span>IELTS 19</span><span>Listening</span></div>
+          <div class="slots-grid">
+            <a class="slot empty" href="#" aria-disabled="true"><div><strong>Test 1</strong><small>Coming soon</small></div><span class="slot-arrow">•</span></a>
+            <a class="slot empty" href="#" aria-disabled="true"><div><strong>Test 2</strong><small>Coming soon</small></div><span class="slot-arrow">•</span></a>
+            <a class="slot empty" href="#" aria-disabled="true"><div><strong>Test 3</strong><small>Coming soon</small></div><span class="slot-arrow">•</span></a>
+            <a class="slot empty" href="#" aria-disabled="true"><div><strong>Test 4</strong><small>Coming soon</small></div><span class="slot-arrow">•</span></a>
+          </div>
+        </div>
       </div>
     </section>
 
-    <p class="footnote">Reading and Listening are live now. Writing can be added into the same hub structure later.</p>
+    <p class="footnote">Available tests are clickable. Coming soon tests are already organised in the hub and can be activated as each HTML page is created.</p>
   </div>
 </body>
 </html>
