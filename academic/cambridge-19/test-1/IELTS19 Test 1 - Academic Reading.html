@@ -188,6 +188,46 @@
       font-size: 1.4rem;
       letter-spacing: 0.08em;
     }
+
+    /* IELTS Pabs animated logo */
+    .logo.home-link,
+    .logo-link .logo {
+      transition: color 0.2s ease, opacity 0.2s ease;
+    }
+
+    .logo.home-link:hover,
+    .home-link:hover,
+    .logo-link:hover .logo {
+      color: #e31837;
+      opacity: 1;
+    }
+
+    .logo-char {
+      display: inline-block;
+      opacity: 0;
+      transform: translateY(8px);
+      filter: blur(4px);
+      animation: logoReveal 0.45s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+      animation-delay: calc(var(--logo-char-index) * 28ms);
+      will-change: transform, opacity, filter;
+    }
+
+    @keyframes logoReveal {
+      to {
+        opacity: 1;
+        transform: translateY(0);
+        filter: blur(0);
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .logo-char {
+        opacity: 1;
+        transform: none;
+        filter: none;
+        animation: none;
+      }
+    }
     .home-link { cursor: pointer; transition: color 0.2s ease, opacity 0.2s ease; }
     .home-link:hover { color: #e31837; opacity: 1; }
     .passage-main-title { font-weight: 700; font-size: 1.2rem; margin: 0 0 8px; }
@@ -2450,6 +2490,31 @@
       showShortcutToast("Find (CTRL + F) is disabled in Test mode.");
     }, true);
 
+
+    // IELTS Pabs animated logo
+    function initAnimatedLogo() {
+      const logoNodes = document.querySelectorAll('.logo.home-link, .logo-link .logo');
+      if (!logoNodes.length) return;
+      const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      logoNodes.forEach((logoNode) => {
+        const rawText = (logoNode.textContent || '').trim();
+        if (rawText !== 'IELTS Pabs') return;
+        logoNode.setAttribute('aria-label', 'IELTS Pabs');
+        if (reducedMotion) return;
+        const fragment = document.createDocumentFragment();
+        Array.from(rawText).forEach((char, index) => {
+          const span = document.createElement('span');
+          span.className = 'logo-char';
+          span.setAttribute('aria-hidden', 'true');
+          span.style.setProperty('--logo-char-index', String(index));
+          span.textContent = char === ' ' ? '\u00A0' : char;
+          fragment.appendChild(span);
+        });
+        logoNode.textContent = '';
+        logoNode.appendChild(fragment);
+      });
+    }
+
     function confirmGoHome() {
       const ok = window.confirm("Are you sure you want to leave this test and return to the home page? Your current answers may not be saved.");
       if (ok) window.location.href = "../../../index.html";
@@ -2880,6 +2945,7 @@
     updateThemeButtons();
     updateFontButtons();
     ensureModeWiring();
+    initAnimatedLogo();
   </script>
 </body>
 </html>
