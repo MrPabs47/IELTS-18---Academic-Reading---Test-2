@@ -1989,11 +1989,28 @@
     /***********************
      * INPUT & NAV HANDLING
      ***********************/
+
+    function enforceChooseTwoLimit(groupName) {
+      const boxes = document.querySelectorAll("input[type='checkbox'][name='" + groupName + "']");
+      boxes.forEach((box) => {
+        box.addEventListener("change", () => {
+          const checked = Array.from(boxes).filter((b) => b.checked);
+          if (checked.length > 2) {
+            box.checked = false;
+            return;
+          }
+          onAnswerChange({ target: box });
+        });
+      });
+    }
+
     function initQuestionInputs() {
       const qPane = document.getElementById("questionContent");
       if (!qPane) return;
 
       stampInlineInputNumbers();
+      enforceChooseTwoLimit("q20_21");
+      enforceChooseTwoLimit("q22_23");
 
       // Listen to changes on all inputs/selects/radios
       qPane
@@ -2024,6 +2041,12 @@
     }
 
     function isAnswered(qNum) {
+      if (qNum === 20 || qNum === 21) {
+        return document.querySelectorAll("input[type='checkbox'][name='q20_21']:checked").length > (qNum - 20);
+      }
+      if (qNum === 22 || qNum === 23) {
+        return document.querySelectorAll("input[type='checkbox'][name='q22_23']:checked").length > (qNum - 22);
+      }
       const name = "q" + qNum;
       const radios = document.querySelectorAll(
         "input[type='radio'][name='" + name + "']"
@@ -2270,6 +2293,12 @@
     };
 
     function getUserAnswer(qNum) {
+      if (qNum === 20 || qNum === 21) {
+        return Array.from(document.querySelectorAll("input[type='checkbox'][name='q20_21']:checked")).map((c) => c.value).join(",");
+      }
+      if (qNum === 22 || qNum === 23) {
+        return Array.from(document.querySelectorAll("input[type='checkbox'][name='q22_23']:checked")).map((c) => c.value).join(",");
+      }
       const name = "q" + qNum;
       const radios = document.querySelectorAll(
         "input[type='radio'][name='" + name + "']"
@@ -2296,9 +2325,15 @@
         if (!user) {
           isCorrect = false;
         } else if (Array.isArray(key)) {
-          isCorrect = key.some(
-            (k) => user.toLowerCase() === String(k).toLowerCase()
-          );
+          if (q === 20 || q === 21) {
+            const picked = user ? user.split(",").map((x) => x.trim()).filter(Boolean).sort().join(",") : "";
+            isCorrect = picked === "B,D";
+          } else if (q === 22 || q === 23) {
+            const picked = user ? user.split(",").map((x) => x.trim()).filter(Boolean).sort().join(",") : "";
+            isCorrect = picked === "C,E";
+          } else {
+            isCorrect = key.some((k) => user.toLowerCase() === String(k).toLowerCase());
+          }
         } else if (typeof key === "string") {
           if (/^(TRUE|FALSE|NOT GIVEN)$/.test(key)) {
             isCorrect = user.toUpperCase() === key;
