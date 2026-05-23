@@ -218,15 +218,23 @@
 
     .logo-char {
       display: inline-block;
-      opacity: 0;
-      transform: translateY(8px);
-      filter: blur(4px);
-      animation: logoReveal 0.45s cubic-bezier(0.22, 1, 0.36, 1) forwards;
-      animation-delay: calc(var(--logo-char-index) * 28ms);
+      opacity: 1;
+      transform: none;
+      filter: none;
       will-change: transform, opacity, filter;
     }
 
+    .logo.is-animating .logo-char {
+      animation: logoReveal 0.45s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+      animation-delay: calc(var(--logo-char-index) * 200ms);
+    }
+
     @keyframes logoReveal {
+      from {
+        opacity: 0;
+        transform: translateY(8px);
+        filter: blur(4px);
+      }
       to {
         opacity: 1;
         transform: translateY(0);
@@ -1097,7 +1105,6 @@
         const rawText = (logoNode.textContent || '').trim();
         if (rawText !== 'IELTS Pabs') return;
         logoNode.setAttribute('aria-label', 'IELTS Pabs');
-        if (reducedMotion) return;
         const fragment = document.createDocumentFragment();
         Array.from(rawText).forEach((char, index) => {
           const span = document.createElement('span');
@@ -1109,10 +1116,18 @@
         });
         logoNode.textContent = '';
         logoNode.appendChild(fragment);
+        if (reducedMotion) return;
+        logoNode.addEventListener('mouseenter', () => {
+          logoNode.classList.remove('is-animating');
+          void logoNode.offsetWidth;
+          logoNode.classList.add('is-animating');
+        });
+        logoNode.addEventListener('mouseleave', () => logoNode.classList.remove('is-animating'));
       });
     }
 
     initAnimatedLogo();
+
   </script>
 </body>
 </html>
