@@ -59,6 +59,8 @@ Complete the notes below.
 Layout:
 - Use note-style formatting.
 - Keep headings and subheadings from the source.
+- If the source note block is bordered, recreate a bordered note box in HTML.
+- Main heading and subheadings inside the note box must not be bulleted.
 - Use bullet points where the notes naturally list points.
 - Put the question number inside the answer box.
 - Do not show an extra visible number before the sentence.
@@ -78,9 +80,10 @@ Choose ONE WORD ONLY / NO MORE THAN TWO WORDS from the passage.
 
 Layout:
 - Use a bordered summary box if the original task is a summary paragraph.
+- If the source summary has a title, center that title at the top of the bordered box.
 - Use inline answer boxes.
 - Put the question number inside the answer box.
-- Do not create separate question rows if the summary should read as one paragraph.
+- Keep the summary as connected paragraph-style text; do not split into visually disconnected rows unless the source is actually row-based.
 - Use bullet points only if the source summary is in note form.
 
 ## Summary completion with options
@@ -133,9 +136,18 @@ Layout:
 Use for tasks that give a list of people or experts.
 
 Layout:
+- If the source has a “List of People/Experts” bank, render that list in a separate bordered box.
+- Keep the numbered matching statements separate and normally numbered.
 - Show the full list of people clearly.
 - Use dropdowns.
 - Dropdowns should show both letter and name.
+
+## Answer alternatives from Answers.txt
+
+When Answers.txt indicates alternatives such as habitat(s):
+
+- answerKey must accept both forms, e.g. `10: ["habitat", "habitats"]`
+- correctAnswerText must display both forms clearly, e.g. `habitat / habitats`
 
 ## Matching sentence endings
 
@@ -197,3 +209,4 @@ Before finishing any new Reading test:
 12. Check sentence-completion questions keep normal visible question numbers.
 13. Check the IELTS Pabs logo still has red hover, hover blur animation, and confirmation home link.
 14. Check the hub link opens the correct new test.
+15. During formatting cleanup, quickly check HTML nesting around `#questionPane`, `#questionContent`, `#selectionToolbar`, and bottom navigation; remove only clearly misplaced closing tags.

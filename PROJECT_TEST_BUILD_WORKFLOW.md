@@ -58,13 +58,19 @@ This staged workflow is preferred when Codex starts copying old master content i
 
 - TRUE/FALSE/NOT GIVEN and YES/NO/NOT GIVEN must be normal numbered statements with radio buttons and no bullets.
 - Note-completion tasks can use bullet points, headings, and numbers inside answer boxes.
+- If the source note-completion block is inside a bordered box, recreate that bordered box in HTML.
+- In note-completion blocks, headings/subheadings must not be bulleted; only actual note items should use bullet points.
 - Summary-completion tasks that appear as a paragraph should use a bordered summary box.
+- If the source summary has a title (e.g., "Mining the sea floor", "Contemporary hunter-gatherer societies"), center that title at the top of the bordered summary box.
+- Keep summary-completion text visually connected as paragraph-style content; do not split into disconnected rows unless the source is truly row-based.
 - Summary-completion tasks with a word/phrase bank should have a separate bordered options box below the summary.
 - Matching experts or people should use dropdowns showing both letter and name.
+- When the source includes a "List of People/Experts" bank, render it in a separate bordered box and keep the numbered statements as normal numbered items.
 - Matching sentence endings should use dropdowns showing both letter and full ending phrase.
 - Multiple-choice choose TWO should use checkboxes with a maximum of two selections and either-order scoring.
 - Sentence completion normally keeps the visible number before the sentence, but if the answer box already shows the question number and the task is visually note-like, bullet-style lines with the number inside the box are acceptable.
 - Non-answer note lines should be plain note lines, not question-blocks with duplicated data-q values.
+- If Answers.txt indicates alternatives such as habitat(s), answerKey should accept both forms via array (e.g., `["habitat","habitats"]`) and correctAnswerText should display both clearly (`habitat / habitats`).
 
 ## Forbidden Reading pattern
 
@@ -141,3 +147,5 @@ All test pages should keep the same logo behaviour:
 10. Bottom navigation counts are correct.
 11. The IELTS Pabs logo behaviour is preserved.
 12. The hub link opens the correct file.
+13. For formatting cleanup stage, verify HTML nesting around `#questionPane`, `#questionContent`, `#selectionToolbar`, and bottom nav is valid (fix only clearly wrong closing tags).
+14. For staged workflow discipline, hub activation should ideally touch only `index.html`, while formatting cleanup should ideally touch only the target test HTML file.
