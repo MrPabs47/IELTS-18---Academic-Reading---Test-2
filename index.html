@@ -27,6 +27,29 @@
       background: linear-gradient(180deg, #f8faff 0%, var(--bg) 240px);
       color: var(--text);
     }
+    .site-header {
+      position: sticky;
+      top: 0;
+      z-index: 20;
+      background: rgba(248, 250, 255, 0.92);
+      backdrop-filter: blur(6px);
+      border-bottom: 1px solid rgba(230, 232, 239, 0.8);
+    }
+    .site-header-inner {
+      max-width: 1380px;
+      margin: 0 auto;
+      padding: 14px 18px;
+    }
+    .logo {
+      display: inline-flex;
+      text-decoration: none;
+      color: var(--text);
+      font-size: 1.1rem;
+      font-weight: 800;
+      letter-spacing: .01em;
+      transition: color .2s ease;
+    }
+    .logo:hover { color: #e31837; }
     .page { max-width: 1380px; margin: 0 auto; padding: 28px 18px 42px; }
     .hero {
       background: radial-gradient(circle at top right, rgba(35,89,212,0.09), transparent 30%), var(--panel);
@@ -49,6 +72,31 @@
       margin-bottom: 12px;
     }
     .hero h1 { margin: 0 0 10px; font-size: clamp(2rem, 4vw, 3rem); }
+    .hero-title-animated { line-height: 1.2; }
+    .hero-char {
+      display: inline-block;
+      opacity: 0;
+      transform: translateY(14px);
+      filter: blur(6px);
+      animation: heroReveal .55s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+      animation-delay: calc(var(--char-index) * 35ms);
+      will-change: transform, opacity, filter;
+    }
+    @keyframes heroReveal {
+      to {
+        opacity: 1;
+        transform: translateY(0);
+        filter: blur(0);
+      }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      .hero-char {
+        opacity: 1;
+        transform: none;
+        filter: none;
+        animation: none;
+      }
+    }
     .hero p { margin: 0; color: var(--text-soft); line-height: 1.6; max-width: 860px; }
     .status-legend {
       display: flex;
@@ -199,10 +247,15 @@
   </style>
 </head>
 <body>
+  <header class="site-header" aria-label="Site header">
+    <div class="site-header-inner">
+      <a class="logo" href="./index.html" aria-label="IELTS Pabs home">IELTS Pabs</a>
+    </div>
+  </header>
   <div class="page">
     <section class="hero">
       <div class="eyebrow">IELTS Pabs practice site</div>
-      <h1>Choose your test and start straight away</h1>
+      <h1 class="hero-title-animated" id="heroTitle" aria-label="Choose your test and start straight away">Choose your test and start straight away</h1>
       <p>Open Academic Reading, General Training Reading, or Listening from one place. All planned Cambridge IELTS 19 to 16 test slots are visible here, and new tests will become clickable as they are added.</p>
       <div class="status-legend" aria-label="Test status legend">
         <span class="legend-item"><span class="dot"></span> Available now</span>
@@ -297,7 +350,26 @@
       });
     }
 
+    function animateHeroTitle() {
+      const heroTitle = document.getElementById('heroTitle');
+      if (!heroTitle) return;
+      const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      if (reducedMotion) return;
+      const text = heroTitle.textContent || '';
+      const fragment = document.createDocumentFragment();
+      Array.from(text).forEach((char, index) => {
+        const span = document.createElement('span');
+        span.className = 'hero-char';
+        span.style.setProperty('--char-index', index);
+        span.textContent = char === ' ' ? '\u00A0' : char;
+        fragment.appendChild(span);
+      });
+      heroTitle.textContent = '';
+      heroTitle.appendChild(fragment);
+    }
+
     renderHub();
+    animateHeroTitle();
   </script>
 </body>
 </html>

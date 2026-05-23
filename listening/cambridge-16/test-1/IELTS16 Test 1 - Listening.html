@@ -202,6 +202,54 @@
       letter-spacing: 0.06em;
       white-space: nowrap;
     }
+
+    /* IELTS Pabs animated logo */
+    .logo.home-link,
+    .logo-link .logo {
+      transition: color 0.2s ease, opacity 0.2s ease;
+    }
+
+    .logo.home-link:hover,
+    .home-link:hover,
+    .logo-link:hover .logo {
+      color: #e31837;
+      opacity: 1;
+    }
+
+    .logo-char {
+      display: inline-block;
+      opacity: 1;
+      transform: none;
+      filter: none;
+      will-change: transform, opacity, filter;
+    }
+
+    .logo.is-animating .logo-char {
+      animation: logoReveal 0.45s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+      animation-delay: calc(var(--logo-char-index) * 200ms);
+    }
+
+    @keyframes logoReveal {
+      from {
+        opacity: 0;
+        transform: translateY(8px);
+        filter: blur(4px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+        filter: blur(0);
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .logo-char {
+        opacity: 1;
+        transform: none;
+        filter: none;
+        animation: none;
+      }
+    }
     .info-strip {
       display: flex;
       align-items: center;
@@ -789,7 +837,7 @@
   <div id="app">
     <header class="top-bar">
       <div class="top-left">
-        <a class="logo-link" href="#" id="homeLink"><div class="logo">IELTS Pabs</div></a>
+        <a class="logo-link" href="#" id="homeLink"><div class="logo home-link">IELTS Pabs</div></a>
         <div class="info-strip">
           <span class="info-pill" id="candidateLine">Candidate:</span>
           <span class="info-pill"><strong>IELTS 16 - Listening Test 1</strong></span>
@@ -1046,13 +1094,46 @@
     document.getElementById('font-normal').addEventListener('click',()=>setFontSize('normal'));
     document.getElementById('font-large').addEventListener('click',()=>setFontSize('large'));
     document.getElementById('font-xlarge').addEventListener('click',()=>setFontSize('xlarge'));
-    homeLink.addEventListener('click',(e)=>{ e.preventDefault(); if(window.confirm('Do you want to leave this test and return to the home page? Any unsaved progress will be lost.')) window.location.href='../../../index.html'; });
+    homeLink.addEventListener('click',(e)=>{ e.preventDefault(); if(window.confirm('Are you sure you want to leave this test and return to the home page? Your current answers may not be saved.')) window.location.href='../../../index.html'; });
     window.addEventListener('beforeunload',(e)=>{ if(submitted) return; e.preventDefault(); e.returnValue='Are you sure you want to leave? Your progress will be lost.'; return e.returnValue; });
     document.addEventListener('fullscreenchange', handleFullscreenChange);
     document.addEventListener('webkitfullscreenchange', handleFullscreenChange);
     document.addEventListener('MSFullscreenChange', handleFullscreenChange);
     restoreThemePreference(); updateThemeButtons(); updateFontButtons();
     updateFullscreenButton();
+
+    // IELTS Pabs animated logo
+    function initAnimatedLogo() {
+      const logoNodes = document.querySelectorAll('.logo.home-link, .logo-link .logo');
+      if (!logoNodes.length) return;
+      const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      logoNodes.forEach((logoNode) => {
+        const rawText = (logoNode.textContent || '').trim();
+        if (rawText !== 'IELTS Pabs') return;
+        logoNode.setAttribute('aria-label', 'IELTS Pabs');
+        const fragment = document.createDocumentFragment();
+        Array.from(rawText).forEach((char, index) => {
+          const span = document.createElement('span');
+          span.className = 'logo-char';
+          span.setAttribute('aria-hidden', 'true');
+          span.style.setProperty('--logo-char-index', String(index));
+          span.textContent = char === ' ' ? '\u00A0' : char;
+          fragment.appendChild(span);
+        });
+        logoNode.textContent = '';
+        logoNode.appendChild(fragment);
+        if (reducedMotion) return;
+        logoNode.addEventListener('mouseenter', () => {
+          logoNode.classList.remove('is-animating');
+          void logoNode.offsetWidth;
+          logoNode.classList.add('is-animating');
+        });
+        logoNode.addEventListener('mouseleave', () => logoNode.classList.remove('is-animating'));
+      });
+    }
+
+    initAnimatedLogo();
+
   </script>
 </body>
 </html>
