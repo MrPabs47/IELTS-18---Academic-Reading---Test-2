@@ -1061,6 +1061,15 @@
     
     .summary-box { border:1px solid var(--line); border-radius:10px; padding:14px; margin:10px 0; background:var(--bg-secondary);} 
     .summary-box-title { text-align:center; font-weight:700; margin-bottom:8px; }
+    .notes-box { border:1px solid var(--border); border-radius:4px; padding:14px 16px; margin:10px 0 14px; background:var(--bg); }
+    .notes-box-title { text-align:center; font-weight:700; font-size:1.05rem; margin:0 0 10px; }
+    .notes-subheading { font-weight:700; margin:10px 0 6px; }
+    .notes-box .question-text.note-bullet::before { content: "• "; margin-right: 8px; color: var(--text-soft); }
+    .notes-box .notes-subheading::before,
+    .notes-box .notes-box-title::before { content: none; }
+    .people-box { border:1px solid var(--border); border-radius:4px; padding:12px 14px; margin:8px 0 14px; }
+    .people-box-title { text-align:center; font-weight:700; margin-bottom:8px; }
+    .people-list-line { margin:4px 0; }
     .summary-gap { display:inline-flex; align-items:center; gap:6px; margin:0 2px; }
     .summary-gap select { min-width:150px; }
     .summary-options-box { border:1px solid var(--line); border-radius:10px; padding:12px; margin:10px 0 14px; }
@@ -1381,20 +1390,22 @@
               <div class="question-block" data-q="6"><div class="question-text"><span class="question-number-label">6.</span> The data used in the study was taken from the work of amateur butterfly watchers.</div><div class="options-row"><label><input type="radio" name="q6" value="TRUE" /> TRUE</label><label><input type="radio" name="q6" value="FALSE" /> FALSE</label><label><input type="radio" name="q6" value="NOT GIVEN" /> NOT GIVEN</label></div><div class="correct-answer-text" id="ca-6"></div></div>
 
               <div class="instruction-block"><p><strong>Questions 7–13</strong></p><p>Complete the notes below.</p><p>Choose <strong>ONE WORD ONLY</strong> from the passage for each answer.</p><p>Write your answers in boxes 7–13 on your answer sheet.</p></div>
-              <div class="question-text note-bullet"><strong>Butterflies in the UK</strong></div>
-              <div class="question-text note-bullet"><strong>The Small Blue</strong></div>
+              <div class="notes-box">
+              <div class="notes-box-title">Butterflies in the UK</div>
+              <div class="notes-subheading">The Small Blue</div>
               <div class="question-block" data-q="7"><div class="question-text note-bullet">lives in large <span class="inline-input" data-q="7"><input type="text" name="q7" /></span></div><div class="correct-answer-text" id="ca-7"></div></div>
               <div class="question-block" data-q="8"><div class="question-text note-bullet">first appears at the start of <span class="inline-input" data-q="8"><input type="text" name="q8" /></span></div><div class="correct-answer-text" id="ca-8"></div></div>
               <div class="question-text note-bullet">completes more than one reproductive cycle per year</div>
-              <div class="question-text note-bullet"><strong>The High Brown Fritillary</strong></div>
+              <div class="notes-subheading">The High Brown Fritillary</div>
               <div class="question-text note-bullet">has one reproductive cycle</div>
               <div class="question-block" data-q="9"><div class="question-text note-bullet">is considered to be more <span class="inline-input" data-q="9"><input type="text" name="q9" /></span> than other species</div><div class="correct-answer-text" id="ca-9"></div></div>
               <div class="question-block" data-q="10"><div class="question-text note-bullet">its caterpillars occupy a limited range of <span class="inline-input" data-q="10"><input type="text" name="q10" /></span></div><div class="correct-answer-text" id="ca-10"></div></div>
-              <div class="question-text note-bullet"><strong>The Silver-studded Blue</strong></div>
+              <div class="notes-subheading">The Silver-studded Blue</div>
               <div class="question-block" data-q="11"><div class="question-text note-bullet">is already able to reproduce twice a year in warm areas of <span class="inline-input" data-q="11"><input type="text" name="q11" /></span></div><div class="correct-answer-text" id="ca-11"></div></div>
-              <div class="question-text note-bullet"><strong>The White Admiral</strong></div>
+              <div class="notes-subheading">The White Admiral</div>
               <div class="question-block" data-q="12"><div class="question-text note-bullet">is found in <span class="inline-input" data-q="12"><input type="text" name="q12" /></span> areas of England</div><div class="correct-answer-text" id="ca-12"></div></div>
               <div class="question-block" data-q="13"><div class="question-text note-bullet">both climate change and the <span class="inline-input" data-q="13"><input type="text" name="q13" /></span> of the caterpillar are possible reasons for decline</div><div class="correct-answer-text" id="ca-13"></div></div>
+              </div>
             </div>
             <div data-section="2" style="display:none;">
               <div class="instruction-block"><p><strong>Questions 14–17</strong></p><p>Reading Passage 2 has six paragraphs, A–F.</p><p>Which paragraph contains the following information?</p><p>Write the correct letter, A–F, in boxes 14–17 on your answer sheet.</p></div>
@@ -1403,7 +1414,8 @@
               <div class="question-block" data-q="16"><div class="question-text"><span class="question-number-label">16.</span> how a particular underwater habitat, where minerals and organisms co-exist, is formed <select name="q16"><option value="">Select…</option><option value="A">A</option><option value="B">B</option><option value="C">C</option><option value="D">D</option><option value="E">E</option><option value="F">F</option></select></div><div class="correct-answer-text" id="ca-16"></div></div>
               <div class="question-block" data-q="17"><div class="question-text"><span class="question-number-label">17.</span> reference to the fact that the countries of the world have yet to agree on rules for the exploration of the seabed <select name="q17"><option value="">Select…</option><option value="A">A</option><option value="B">B</option><option value="C">C</option><option value="D">D</option><option value="E">E</option><option value="F">F</option></select></div><div class="correct-answer-text" id="ca-17"></div></div>
 
-              <div class="instruction-block"><p><strong>Questions 18–23</strong></p><p>Look at the following statements (Questions 18–23) and the list of people below.</p><p>Match each statement with the correct person or people, A–E.</p><p>Write the correct letter, A–E, in boxes 18–23 on your answer sheet.</p><p>NB You may use any letter more than once.</p><p><strong>List of People</strong></p><p>A Professor Mat Upton<br>B Julie Hunter, Julian Aguon and Pradeep Singh<br>C Dr Jon Copley<br>D Mike Johnston<br>E Verena Tunnicliffe</p></div>
+              <div class="instruction-block"><p><strong>Questions 18–23</strong></p><p>Look at the following statements (Questions 18–23) and the list of people below.</p><p>Match each statement with the correct person or people, A–E.</p><p>Write the correct letter, A–E, in boxes 18–23 on your answer sheet.</p><p>NB You may use any letter more than once.</p></div>
+              <div class="people-box"><div class="people-box-title">List of People</div><div class="people-list-line">A &nbsp; Professor Mat Upton</div><div class="people-list-line">B &nbsp; Julie Hunter, Julian Aguon and Pradeep Singh</div><div class="people-list-line">C &nbsp; Dr Jon Copley</div><div class="people-list-line">D &nbsp; Mike Johnston</div><div class="people-list-line">E &nbsp; Verena Tunnicliffe</div></div>
               <div class="question-block" data-q="18"><div class="question-text"><span class="question-number-label">18.</span> A move away from the exploration of heavily mined reserves on land is a good idea. <select name="q18"><option value="">Select…</option><option value="A">A Professor Mat Upton</option><option value="B">B Julie Hunter, Julian Aguon and Pradeep Singh</option><option value="C">C Dr Jon Copley</option><option value="D">D Mike Johnston</option><option value="E">E Verena Tunnicliffe</option></select></div><div class="correct-answer-text" id="ca-18"></div></div>
               <div class="question-block" data-q="19"><div class="question-text"><span class="question-number-label">19.</span> The negative effects of undersea exploration on local areas and their inhabitants are being ignored. <select name="q19"><option value="">Select…</option><option value="A">A Professor Mat Upton</option><option value="B">B Julie Hunter, Julian Aguon and Pradeep Singh</option><option value="C">C Dr Jon Copley</option><option value="D">D Mike Johnston</option><option value="E">E Verena Tunnicliffe</option></select></div><div class="correct-answer-text" id="ca-19"></div></div>
               <div class="question-block" data-q="20"><div class="question-text"><span class="question-number-label">20.</span> There are more worthwhile things to extract from the sea than minerals. <select name="q20"><option value="">Select…</option><option value="A">A Professor Mat Upton</option><option value="B">B Julie Hunter, Julian Aguon and Pradeep Singh</option><option value="C">C Dr Jon Copley</option><option value="D">D Mike Johnston</option><option value="E">E Verena Tunnicliffe</option></select></div><div class="correct-answer-text" id="ca-20"></div></div>
@@ -1412,10 +1424,11 @@
               <div class="question-block" data-q="23"><div class="question-text"><span class="question-number-label">23.</span> There is one marine life habitat where experts agree mining should not take place. <select name="q23"><option value="">Select…</option><option value="A">A Professor Mat Upton</option><option value="B">B Julie Hunter, Julian Aguon and Pradeep Singh</option><option value="C">C Dr Jon Copley</option><option value="D">D Mike Johnston</option><option value="E">E Verena Tunnicliffe</option></select></div><div class="correct-answer-text" id="ca-23"></div></div>
 
               <div class="instruction-block"><p><strong>Questions 24–26</strong></p><p>Complete the summary below.</p><p>Choose <strong>ONE WORD ONLY</strong> from the passage for each answer.</p><p>Write your answers in boxes 24–26 on your answer sheet.</p></div>
-              <div class="question-text">Mining the sea floor</div>
+              <div class="summary-box"><div class="summary-box-title">Mining the sea floor</div>
               <div class="question-block" data-q="24"><div class="question-text">Mining corporations believe that the mineral resources lying under the sea may be superior to those found in the earth. They also say that these can be removed without producing much <span class="inline-input" data-q="24"><input type="text" name="q24" /></span>.</div><div class="correct-answer-text" id="ca-24"></div></div>
-              <div class="question-block" data-q="25"><div class="question-text">The extraction is often done by adapting the <span class="inline-input" data-q="25"><input type="text" name="q25" /></span> that has already been used to work on land.</div><div class="correct-answer-text" id="ca-25"></div></div>
-              <div class="question-block" data-q="26"><div class="question-text">The method of excavation involves removing the seawater from the slurry that is brought up to ships and returning it to the seabed. However, concerned groups strongly believe that <span class="inline-input" data-q="26"><input type="text" name="q26" /></span> is necessary due to the possible number of unidentified consequences.</div><div class="correct-answer-text" id="ca-26"></div></div>
+              <div class="question-block" data-q="25"><div class="question-text">The extraction is often done by adapting the <span class="inline-input" data-q="25"><input type="text" name="q25" /></span> that has already been used to work on land. The method of excavation involves removing the seawater from the slurry that is brought up to ships and returning it to the seabed.</div><div class="correct-answer-text" id="ca-25"></div></div>
+              <div class="question-block" data-q="26"><div class="question-text">However, concerned groups strongly believe that <span class="inline-input" data-q="26"><input type="text" name="q26" /></span> is necessary due to the possible number of unidentified consequences.</div><div class="correct-answer-text" id="ca-26"></div></div>
+              </div>
             </div>
             <div data-section="3" style="display:none;">
               <div class="instruction-block"><p><strong>Questions 27–30</strong></p><p>Choose the correct letter, A, B, C or D.</p></div>
@@ -1425,12 +1438,13 @@
               <div class="question-block" data-q="30"><div class="question-text"><span class="question-number-label">30.</span> The writer refers to Bruce Knauft’s work as support for the idea that</div><div class="options-row"><label><input type="radio" name="q30" value="A"/> A selfishness is a relatively recent development in human societies.</label><label><input type="radio" name="q30" value="B"/> B only people in isolated communities can live in an unselfish manner.</label><label><input type="radio" name="q30" value="C"/> C very few lifestyles have survived unchanged since prehistoric times.</label><label><input type="radio" name="q30" value="D"/> D hunter-gatherer cultures worldwide are declining in number.</label></div><div class="correct-answer-text" id="ca-30"></div></div>
 
               <div class="instruction-block"><p><strong>Questions 31–35</strong></p><p>Complete the summary below.</p><p>Choose <strong>ONE WORD ONLY</strong> from the passage for each answer.</p><p>Write your answers in boxes 31–35 on your answer sheet.</p></div>
-              <div class="question-text">Contemporary hunter-gatherer societies</div>
+              <div class="summary-box"><div class="summary-box-title">Contemporary hunter-gatherer societies</div>
               <div class="question-block" data-q="31"><div class="question-text">Bruce Knauft’s research shows that contemporary hunter-gatherer societies tend to exhibit a high level of <span class="inline-input" data-q="31"><input type="text" name="q31" /></span> in all areas of life.</div><div class="correct-answer-text" id="ca-31"></div></div>
               <div class="question-block" data-q="32"><div class="question-text">In these cultures, distributing resources fairly among all members is a moral obligation. These societies also employ strategies to prevent differences in <span class="inline-input" data-q="32"><input type="text" name="q32" /></span> occurring:</div><div class="correct-answer-text" id="ca-32"></div></div>
-              <div class="question-block" data-q="33"><div class="question-text">for example, the !Kung follow a custom whereby the credit for one person’s success at <span class="inline-input" data-q="33"><input type="text" name="q33" /></span> is given to another member of the group.</div><div class="correct-answer-text" id="ca-33"></div></div>
-              <div class="question-block" data-q="34"><div class="question-text">Individuals who behave in a <span class="inline-input" data-q="34"><input type="text" name="q34" /></span> manner are punished by being excluded from the group,</div><div class="correct-answer-text" id="ca-34"></div></div>
-              <div class="question-block" data-q="35"><div class="question-text">and women have a considerable amount of <span class="inline-input" data-q="35"><input type="text" name="q35" /></span> in choices regarding work and marriage.</div><div class="correct-answer-text" id="ca-35"></div></div>
+              <div class="question-block" data-q="33"><div class="question-text">for example, the !Kung follow a custom whereby the credit for one person’s success at <span class="inline-input" data-q="33"><input type="text" name="q33" /></span> is given to another member of the group. Individuals who behave in a</div><div class="correct-answer-text" id="ca-33"></div></div>
+              <div class="question-block" data-q="34"><div class="question-text"><span class="inline-input" data-q="34"><input type="text" name="q34" /></span> manner are punished by being excluded from the group, and women have a considerable amount of</div><div class="correct-answer-text" id="ca-34"></div></div>
+              <div class="question-block" data-q="35"><div class="question-text"><span class="inline-input" data-q="35"><input type="text" name="q35" /></span> in choices regarding work and marriage.</div><div class="correct-answer-text" id="ca-35"></div></div>
+              </div>
 
               <div class="instruction-block"><p><strong>Questions 36–40</strong></p><p>Do the following statements agree with the views of the writer in Reading Passage 3?</p><p>In boxes 36–40 on your answer sheet, write</p><p><strong>YES</strong> if the statement agrees with the views of the writer<br><strong>NO</strong> if the statement contradicts the views of the writer<br><strong>NOT GIVEN</strong> if it is impossible to say what the writer thinks about this</p></div>
               <div class="question-block" data-q="36"><div class="question-text"><span class="question-number-label">36.</span> Some anthropologists are mistaken about the point when the number of societies such as the !Kung began to decline.</div><div class="options-row"><label><input type="radio" name="q36" value="YES"/> YES</label><label><input type="radio" name="q36" value="NO"/> NO</label><label><input type="radio" name="q36" value="NOT GIVEN"/> NOT GIVEN</label></div><div class="correct-answer-text" id="ca-36"></div></div>
@@ -1439,9 +1453,6 @@
               <div class="question-block" data-q="39"><div class="question-text"><span class="question-number-label">39.</span> Negative traits are more apparent in some modern cultures than in others.</div><div class="options-row"><label><input type="radio" name="q39" value="YES"/> YES</label><label><input type="radio" name="q39" value="NO"/> NO</label><label><input type="radio" name="q39" value="NOT GIVEN"/> NOT GIVEN</label></div><div class="correct-answer-text" id="ca-39"></div></div>
               <div class="question-block" data-q="40"><div class="question-text"><span class="question-number-label">40.</span> Animal research has failed to reveal a link between changes in the environment and the emergence of aggressive tendencies.</div><div class="options-row"><label><input type="radio" name="q40" value="YES"/> YES</label><label><input type="radio" name="q40" value="NO"/> NO</label><label><input type="radio" name="q40" value="NOT GIVEN"/> NOT GIVEN</label></div><div class="correct-answer-text" id="ca-40"></div></div>
             </div>
-          </div>
-        </div>
-
           </div>
         </div>
 
