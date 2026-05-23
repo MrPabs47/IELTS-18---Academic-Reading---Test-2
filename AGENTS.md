@@ -65,6 +65,12 @@ Before creating or modifying any Listening test, read and follow:
 8. Non-answer note lines must not be given duplicate data-q values or feedback IDs.
 9. Never use “Accept both changes” in a merge conflict unless the duplicated sections have been checked manually.
 10. If a generated file becomes contaminated by old test content, prefer a staged repair: passages only, then questions/answers only, then hub only.
+11. If Answers.txt contains alternatives like habitat(s), store accepted answers as an array in answerKey (e.g., `10: ["habitat", "habitats"]`) and show both forms in correctAnswerText (e.g., `habitat / habitats`).
+12. If a note-completion or summary-completion task is shown in a bordered box in the source, recreate that bordered box in HTML with matching visual structure.
+13. In note-completion boxes, headings/subheadings should not be bullet points; only actual note lines should use bullets.
+14. In matching people/experts tasks, keep numbered statements separate and add a clearly bordered “List of People/Experts” option bank when shown in source.
+15. During formatting cleanup, quickly validate HTML nesting around `#questionPane`, `#questionContent`, `#selectionToolbar`, and bottom navigation, removing only clearly misplaced closing tags.
+16. Stage discipline: hub activation should ideally edit only `index.html`; formatting cleanup should ideally edit only the relevant test HTML file. If a hub activation PR touches a test HTML file, re-check that test for accidental content/format overwrites.
 
 ## IELTS Pabs logo behaviour
 
