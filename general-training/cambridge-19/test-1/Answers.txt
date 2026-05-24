@@ -1,0 +1,43 @@
+1 FALSE
+2 FALSE
+3 NG
+4 TRUE
+5 FALSE
+6 NG
+7 NG
+8 B
+9 A
+10 C
+
+11 E
+12 A 
+13 E
+14 C
+15 trust
+16 goals
+17 strategy
+18 solutions
+19 pride
+20 risk
+
+21 future
+22 temptations
+23 completion
+24 reference
+25 disruption
+26 failings
+27 skills
+28 vi
+29 iii
+30 viii
+
+31 i
+32 v
+33 dated
+34 society
+35 history
+36 identity
+37 concepts
+38 B
+39 A
+40 D
