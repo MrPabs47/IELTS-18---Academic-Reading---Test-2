@@ -1,0 +1,43 @@
+1 C
+2 E
+3 F
+4 C
+5 B
+6 FALSE
+7 TRUE
+8 TRUE
+9 FALSE
+10 NOT GIVEN
+
+11 TRUE
+12 NOT GIVEN
+13 FALSE
+14 NOT GIVEN
+15 FALSE
+16 TRUE
+17 FALSE
+18 TRUE
+19 FALSE
+20 NOT GIVEN
+
+21 NOT GIVEN
+22 TRUE
+23 TRUE
+24 FALSE
+25 20 / twenty weeks
+26 (airline) vouchers
+27 (the) scholarship holder
+28 maize
+29 Africa
+30 butterflies
+
+31 A
+32 G
+33 D
+34 F
+35 E
+36 B
+37 A
+38 B
+39 C
+40 B
