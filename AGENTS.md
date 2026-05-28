@@ -29,16 +29,18 @@ Before creating or modifying any Listening test, read and follow:
 
 ## Required workflow for new Reading tests
 
-1. Use the latest stable Reading test as the shell.
-2. Classify Questions 1-40 by question type before editing the HTML.
-3. Replace passages first, using the exact full text from Passage 1.txt, Passage 2.txt, and Passage 3.txt.
-4. Replace questions and answer keys separately if the test is complex.
-5. Do not summarise, shorten, paraphrase, or invent passage/question wording.
-6. Do not copy old passage bodies, old question blocks, old answers, or old answer keys from the master shell.
-7. Confirm old master titles and old master question phrases are gone.
-8. Confirm there is only one answerKey object and only one correctAnswerText object.
-9. Confirm every question has a matching feedback ID from ca-1 to ca-40.
-10. Update index.html only after the test itself is correct.
+1. Use the latest stable Reading test of the same module as the shell: Academic for Academic Reading, GT for General Training Reading. Never use an Academic shell for a GT Reading test.
+2. Preserve the candidate/name start-screen behaviour from the stable shell. Test Mode should require the student name if stable tests do this; Study Mode may skip the name field if that is how the shell works.
+3. Classify Questions 1-40 by question type before editing the HTML.
+4. Build in staged prompts rather than one massive pass: shell only, passages only, questions and answers only, formatting cleanup only, hub activation only, then documentation update only if new issues were found.
+5. Replace passages first, using the exact full text from Passage 1.txt, Passage 2.txt, and Passage 3.txt.
+6. Replace questions and answer keys separately if the test is complex.
+7. Do not summarise, shorten, paraphrase, or invent passage/question wording.
+8. Do not copy old passage bodies, old question blocks, old answers, or old answer keys from the master shell. If old shell content appears, repair in smaller sections, such as Section 1 only, Section 2 only, then Section 3 only.
+9. Confirm old master titles and old master question phrases are gone. Do not trust the PR title or description; inspect the actual changed files and actual HTML.
+10. Confirm there is only one answerKey object and only one correctAnswerText object.
+11. Confirm every question has a matching feedback ID from ca-1 to ca-40.
+12. Update index.html only after the test itself is correct.
 
 ## Required workflow for new Listening tests
 
@@ -71,6 +73,18 @@ Before creating or modifying any Listening test, read and follow:
 14. In matching people/experts tasks, keep numbered statements separate and add a clearly bordered “List of People/Experts” option bank when shown in source.
 15. During formatting cleanup, quickly validate HTML nesting around `#questionPane`, `#questionContent`, `#selectionToolbar`, and bottom navigation, removing only clearly misplaced closing tags.
 16. Stage discipline: hub activation should ideally edit only `index.html`; formatting cleanup should ideally edit only the relevant test HTML file. If a hub activation PR touches a test HTML file, re-check that test for accidental content/format overwrites.
+17. GT Reading sections have different organisation: Section 1 may contain two or more short texts, Section 2 may contain two workplace/practical texts, and Section 3 is usually one longer text. Clearly separate multiple GT texts with headings, spacing, and divider styling so texts such as `Gobridge Tramlink FAQs` / `Adorable Knitwear` or `How to Become a Great Leader` / `Resigning from a Job in a Professional Manner` do not visually merge.
+18. Passage panes should focus on passage titles and passage text. Do not repeat redundant `Questions...` or `Read the text...` instructions when the fixed pane header and question pane already provide them, especially before Section 3 paragraph A.
+19. If matching tasks use labelled reviews/texts/sections in the passage pane, make the passage labels interactive when useful, with hover/focus affordance and dropdown or keyboard backup, rather than forcing only a repeated option bank.
+20. Sentence completion is not summary completion: use separate vertical sentence items with one visible number, an inline input at the blank, no fake underscores plus separate input, and no duplicated number inside the input.
+21. Summary completion should stay connected paragraph-style, normally in a bordered summary box when the source shows one, with a centred or emphasised title and feedback areas that do not disrupt the paragraph before submission.
+22. Note completion should look like notes with headings, indentation, aligned bullet-style lines, and bordered note boxes when the source shows one; avoid absolute-positioned bullets that misalign vertically.
+23. Recreate bordered option-bank boxes for `List of People`, `List of Headings`, `List of Experts`, or similar source banks, while keeping numbered matching statements separate.
+24. TRUE/FALSE/NOT GIVEN, YES/NO/NOT GIVEN, and multiple-choice options should use the cleaner stable stacked clickable row/card layout, with exact scoring values such as `TRUE`, `FALSE`, `NOT GIVEN`, `YES`, and `NO`; normalise `NG` in Answers.txt to `NOT GIVEN`.
+25. Text inputs, inline inputs, and dropdowns should inherit the page font family and use a font size consistent with surrounding question text.
+26. Bottom navigation part chips and counts must stay on one line using nowrap/inline-flex spacing and horizontal overflow where needed.
+27. The IELTS Pabs logo/home link should use `cursor: pointer;` and `user-select: none;` so it does not show a text insertion cursor.
+28. During hub activation verification, confirm the correct key and path are in the correct category, for example IELTS 19 GT Reading Test 1 uses key `19-1` under General Training Reading.
 
 ## IELTS Pabs logo behaviour
 
