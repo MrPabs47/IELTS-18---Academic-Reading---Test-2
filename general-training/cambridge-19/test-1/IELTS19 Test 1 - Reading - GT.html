@@ -482,6 +482,55 @@
       margin-bottom: 4px;
     }
 
+    .option-bank,
+    .note-completion-box,
+    .summary-completion-box {
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      background: var(--bg-secondary);
+      padding: 12px 14px;
+      margin: 12px 0 14px;
+    }
+
+    .option-bank-title,
+    .box-title {
+      font-weight: 700;
+      margin-bottom: 8px;
+    }
+
+    .box-title {
+      text-align: center;
+    }
+
+    .option-bank p,
+    .note-completion-box p,
+    .summary-completion-box p {
+      margin: 6px 0;
+      line-height: 1.5;
+    }
+
+    .note-completion-box .question-block {
+      margin: 6px 0;
+      padding: 4px 6px;
+    }
+
+    .inline-question {
+      display: inline;
+      margin: 0;
+      padding: 0 2px;
+      border-radius: 4px;
+    }
+
+    .inline-question.current-question {
+      outline: 2px solid var(--accent);
+      background: var(--accent-soft);
+    }
+
+    .inline-feedback {
+      display: block;
+      margin: 4px 0;
+    }
+
     .options-row {
       margin-top: 8px;
       display: flex;
@@ -1235,7 +1284,14 @@
               <p>For which review are the following statements true?</p>
               <p>Write the correct letter, A–E, in boxes 8–14 on your answer sheet.</p>
               <p><strong>NB</strong> You may use any letter more than once.</p>
-              <p>A Mary-Anne</p><p>B Davina</p><p>C Naga</p><p>D Libby</p><p>E Laura</p>
+              <div class="option-bank" aria-label="Customer review option bank">
+                <div class="option-bank-title">Customer reviews</div>
+                <p><strong>A</strong> Mary-Anne</p>
+                <p><strong>B</strong> Davina</p>
+                <p><strong>C</strong> Naga</p>
+                <p><strong>D</strong> Libby</p>
+                <p><strong>E</strong> Laura</p>
+              </div>
 
               <div class="drag-bank" aria-label="Drag answers for questions 8 to 14"><div class="drag-item" draggable="true" data-value="A">A</div><div class="drag-item" draggable="true" data-value="B">B</div><div class="drag-item" draggable="true" data-value="C">C</div><div class="drag-item" draggable="true" data-value="D">D</div><div class="drag-item" draggable="true" data-value="E">E</div><div class="drag-hint">Drag a letter into each answer box, or click a letter then click a box.</div></div>
 
@@ -1297,48 +1353,58 @@
           <p>Choose <strong>ONE WORD ONLY</strong> from the text for each answer.</p>
           <p>Write your answers in boxes 22-27 on your answer sheet.</p>
 
-          <p><strong>The best way to resign</strong></p>
-          <p>Avoid all <span class="inline-input" data-q="22"><input type="text" name="q22"></span> to resign in an angry way. Instead, follow this procedure:</p>
-          <p>Arrange a meeting with the boss to:</p>
-          <p>mention any projects which are underway and give ideas for their <span class="inline-input" data-q="23"><input type="text" name="q23"></span>.</p>
-          <p>discuss how much notice you need to give before you go.</p>
-          <p>request information on the type of <span class="inline-input" data-q="24"><input type="text" name="q24"></span> you will receive.</p>
-          <p>Steps you can take before you leave:</p>
-          <p>Work to cause as little <span class="inline-input" data-q="25"><input type="text" name="q25"></span> as possible to the organisation.</p>
-          <p>Make sure your successor has adequate guidance on the organisation’s systems.</p>
-          <p>In the resignation letter:</p>
-          <p>avoid mentioning any <span class="inline-input" data-q="26"><input type="text" name="q26"></span> in the organisation.</p>
-          <p>show appreciation for aspects of the job, e.g., the chance to improve your <span class="inline-input" data-q="27"><input type="text" name="q27"></span>.</p>
-          <div class="correct-answer-text" id="ca-22"></div>
-          <div class="correct-answer-text" id="ca-23"></div>
-          <div class="correct-answer-text" id="ca-24"></div>
-          <div class="correct-answer-text" id="ca-25"></div>
-          <div class="correct-answer-text" id="ca-26"></div>
-          <div class="correct-answer-text" id="ca-27"></div>
+          <div class="note-completion-box">
+            <div class="box-title">The best way to resign</div>
+            <div class="question-block" data-q="22">
+              <p>Avoid all <span class="inline-input" data-q="22"><input type="text" name="q22"></span> to resign in an angry way. Instead, follow this procedure:</p>
+              <div class="correct-answer-text" id="ca-22"></div>
+            </div>
+            <p>Arrange a meeting with the boss to:</p>
+            <div class="question-block" data-q="23">
+              <p>mention any projects which are underway and give ideas for their <span class="inline-input" data-q="23"><input type="text" name="q23"></span>.</p>
+              <div class="correct-answer-text" id="ca-23"></div>
+            </div>
+            <p>discuss how much notice you need to give before you go.</p>
+            <div class="question-block" data-q="24">
+              <p>request information on the type of <span class="inline-input" data-q="24"><input type="text" name="q24"></span> you will receive.</p>
+              <div class="correct-answer-text" id="ca-24"></div>
+            </div>
+            <p>Steps you can take before you leave:</p>
+            <div class="question-block" data-q="25">
+              <p>Work to cause as little <span class="inline-input" data-q="25"><input type="text" name="q25"></span> as possible to the organisation.</p>
+              <div class="correct-answer-text" id="ca-25"></div>
+            </div>
+            <p>Make sure your successor has adequate guidance on the organisation’s systems.</p>
+            <p>In the resignation letter:</p>
+            <div class="question-block" data-q="26">
+              <p>avoid mentioning any <span class="inline-input" data-q="26"><input type="text" name="q26"></span> in the organisation.</p>
+              <div class="correct-answer-text" id="ca-26"></div>
+            </div>
+            <div class="question-block" data-q="27">
+              <p>show appreciation for aspects of the job, e.g., the chance to improve your <span class="inline-input" data-q="27"><input type="text" name="q27"></span>.</p>
+              <div class="correct-answer-text" id="ca-27"></div>
+            </div>
+          </div>
 
         </div>
-      `
-      );
 
-      // SECTION 3 QUESTIONS (28–40)
-      qContent.insertAdjacentHTML(
-        "beforeend",
-        `
         <div data-section="3" style="display:none;">
           <p><strong>SECTION 3 Questions 28-40</strong></p>
           <p>Read the text and answer Questions 28-40.</p>
 
           <p><strong>Questions 28-32</strong></p>
           <p>The text has five sections, A-E. Choose the correct heading for each section from the list of headings below. Write the correct number, i-viii, in boxes 28-32 on your answer sheet.</p>
-          <p><strong>List of Headings</strong></p>
-          <p>i Why emojis may have a short life</p>
-          <p>ii Ways in which new emojis are designed and made available</p>
-          <p>iii How words and emojis both fulfil new needs in our society</p>
-          <p>iv How emojis are regarded in different ways by different cultures</p>
-          <p>v The use of emojis in different fields and what this means for us</p>
-          <p>vi The rapid spread of a new way of interacting</p>
-          <p>vii How and where emojis were first invented</p>
-          <p>viii The value of emojis for making feelings clear</p>
+          <div class="option-bank" aria-label="List of headings">
+            <div class="option-bank-title">List of Headings</div>
+            <p><strong>i</strong> Why emojis may have a short life</p>
+            <p><strong>ii</strong> Ways in which new emojis are designed and made available</p>
+            <p><strong>iii</strong> How words and emojis both fulfil new needs in our society</p>
+            <p><strong>iv</strong> How emojis are regarded in different ways by different cultures</p>
+            <p><strong>v</strong> The use of emojis in different fields and what this means for us</p>
+            <p><strong>vi</strong> The rapid spread of a new way of interacting</p>
+            <p><strong>vii</strong> How and where emojis were first invented</p>
+            <p><strong>viii</strong> The value of emojis for making feelings clear</p>
+          </div>
 
           <div class="question-block" data-q="28"><div class="question-text"><span class="question-number-label">28.</span> Section A</div><select name="q28"><option value="">Select…</option><option value="i">i</option><option value="ii">ii</option><option value="iii">iii</option><option value="iv">iv</option><option value="v">v</option><option value="vi">vi</option><option value="vii">vii</option><option value="viii">viii</option></select><div class="correct-answer-text" id="ca-28"></div></div>
           <div class="question-block" data-q="29"><div class="question-text"><span class="question-number-label">29.</span> Section B</div><select name="q29"><option value="">Select…</option><option value="i">i</option><option value="ii">ii</option><option value="iii">iii</option><option value="iv">iv</option><option value="v">v</option><option value="vi">vi</option><option value="vii">vii</option><option value="viii">viii</option></select><div class="correct-answer-text" id="ca-29"></div></div>
@@ -1348,13 +1414,10 @@
 
           <p><strong>Questions 33-37</strong></p>
           <p>Complete the summary below. Choose ONE WORD ONLY from the text for each answer. Write your answers in boxes 33-37 on your answer sheet.</p>
-          <p><strong>The importance of the ‘face with tears of joy’</strong></p>
-          <p>It is probable that before long, an emoji such as the ‘face with tears of joy’ will seem <span class="inline-input" data-q="33"><input type="text" name="q33"></span>. This is of interest as it tells us about developments in <span class="inline-input" data-q="34"><input type="text" name="q34"></span>, providing an effective way to focus on both the <span class="inline-input" data-q="35"><input type="text" name="q35"></span> and the future of human communication. Changes in language reflect changes in people’s relationships. They reflect the ways in which the <span class="inline-input" data-q="36"><input type="text" name="q36"></span> of groups and generations changes over time, and they allow new <span class="inline-input" data-q="37"><input type="text" name="q37"></span> to be included. However, emojis are interesting as they are a system that expresses these ideas in a completely new way.</p>
-          <div class="correct-answer-text" id="ca-33"></div>
-          <div class="correct-answer-text" id="ca-34"></div>
-          <div class="correct-answer-text" id="ca-35"></div>
-          <div class="correct-answer-text" id="ca-36"></div>
-          <div class="correct-answer-text" id="ca-37"></div>
+          <div class="summary-completion-box">
+            <div class="box-title">The importance of the ‘face with tears of joy’</div>
+            <p>It is probable that before long, an emoji such as the ‘face with tears of joy’ will seem <span class="question-block inline-question" data-q="33"><span class="inline-input" data-q="33"><input type="text" name="q33"></span><span class="correct-answer-text inline-feedback" id="ca-33"></span></span>. This is of interest as it tells us about developments in <span class="question-block inline-question" data-q="34"><span class="inline-input" data-q="34"><input type="text" name="q34"></span><span class="correct-answer-text inline-feedback" id="ca-34"></span></span>, providing an effective way to focus on both the <span class="question-block inline-question" data-q="35"><span class="inline-input" data-q="35"><input type="text" name="q35"></span><span class="correct-answer-text inline-feedback" id="ca-35"></span></span> and the future of human communication. Changes in language reflect changes in people’s relationships. They reflect the ways in which the <span class="question-block inline-question" data-q="36"><span class="inline-input" data-q="36"><input type="text" name="q36"></span><span class="correct-answer-text inline-feedback" id="ca-36"></span></span> of groups and generations changes over time, and they allow new <span class="question-block inline-question" data-q="37"><span class="inline-input" data-q="37"><input type="text" name="q37"></span><span class="correct-answer-text inline-feedback" id="ca-37"></span></span> to be included. However, emojis are interesting as they are a system that expresses these ideas in a completely new way.</p>
+          </div>
 
           <p><strong>Questions 38-40</strong></p>
           <p>Choose the correct letter, A, B, C or D. Write the correct letter in boxes 38-40 on your answer sheet.</p>
@@ -1387,8 +1450,272 @@
           </div>
 
         </div>
-      `
-      );
+          </div>
+        </div>
+      </div>
+
+      <!-- selection toolbar -->
+      <div id="selectionToolbar">
+        <button onclick="toggleHighlightSelection()">Highlight</button>
+        <button onclick="makeNoteForSelection()">Make note</button>
+      </div>
+    </div>
+
+    <!-- Bottom nav -->
+    <footer class="bottom-nav">
+      <div class="bottom-row bottom-row-v2">
+        <div class="bottom-left">
+          <div class="part-summary-row">
+            <div class="part-chip active" data-section-chip="1" onclick="switchSection(1)">
+              Part 1 <span class="count" id="part1Count">0 of 14</span>
+            </div>
+            <div class="part-chip unopened" data-section-chip="2" onclick="switchSection(2)">
+              Part 2 <span class="count" id="part2Count">0 of 13</span>
+            </div>
+            <div class="part-chip unopened" data-section-chip="3" onclick="switchSection(3)">
+              Part 3 <span class="count" id="part3Count">0 of 13</span>
+            </div>
+          </div>
+
+          <div id="questionNumbers"></div>
+        </div>
+
+        <div class="section-arrows">
+          <button class="arrow-btn" onclick="prevSection()" title="Previous part">←</button>
+          <button class="arrow-btn" onclick="nextSection()" title="Next part">→</button>
+          <button class="check-btn" onclick="submitTest()" title="Submit test and check answers">✔ Check answers</button>
+        </div>
+      </div>
+    </footer>
+  </div>
+
+  <!-- Results overlay -->
+  <div id="resultsOverlay">
+    <div id="resultsPanel">
+      <h2>Your IELTS 19 GT Reading Test 1 result</h2>
+      <p id="scoreLine"></p>
+      <p id="bandLine"></p>
+      <p id="descriptorLine"></p>
+      <button style="margin-top:10px;" onclick="closeResults()">Close</button>
+    </div>
+  </div>
+
+  <script>
+    /***************
+     * GLOBAL STATE
+     ***************/
+    let mode = "test";
+    let activeSection = 1;
+    let currentQuestion = 1;
+    let timerSeconds = 60 * 60;
+    let timerId = null;
+    let testSubmitted = false;
+    const visitedSections = new Set();
+
+    const AVAILABLE_THEMES = [
+      "black-on-white",
+      "white-on-black",
+      "yellow-on-black",
+    ];
+    const DEFAULT_THEME = "black-on-white";
+    const STORAGE_KEYS = {
+      theme: "ielts-reading-theme",
+    };
+
+    function restoreThemePreference() {
+      const saved = localStorage.getItem(STORAGE_KEYS.theme);
+      const theme = AVAILABLE_THEMES.includes(saved) ? saved : DEFAULT_THEME;
+      document.body.setAttribute("data-theme", theme);
+    }
+
+    function setTheme(theme) {
+      if (!AVAILABLE_THEMES.includes(theme)) return;
+      document.body.setAttribute("data-theme", theme);
+      localStorage.setItem(STORAGE_KEYS.theme, theme);
+      updateThemeButtons();
+    }
+
+    function updateThemeButtons() {
+      const theme = document.body.getAttribute("data-theme") || DEFAULT_THEME;
+      const map = {
+        "black-on-white": "theme-black-white",
+        "white-on-black": "theme-white-black",
+        "yellow-on-black": "theme-yellow-black",
+      };
+      AVAILABLE_THEMES.forEach((t) => {
+        const id = map[t];
+        const btn = document.getElementById(id);
+        if (!btn) return;
+        if (t === theme) btn.classList.add("active");
+        else btn.classList.remove("active");
+      });
+    }
+
+    function setFontSize(size) {
+      document.body.classList.remove("font-large", "font-xlarge");
+      if (size === "large") document.body.classList.add("font-large");
+      if (size === "xlarge") document.body.classList.add("font-xlarge");
+      updateFontButtons();
+    }
+
+    function updateFontButtons() {
+      const sizeClass = document.body.classList.contains("font-xlarge")
+        ? "xlarge"
+        : document.body.classList.contains("font-large")
+        ? "large"
+        : "normal";
+      ["normal", "large", "xlarge"].forEach((s) => {
+        const btn = document.getElementById("font-" + s);
+        if (!btn) return;
+        if (s === sizeClass) btn.classList.add("active");
+        else btn.classList.remove("active");
+      });
+    }
+
+    const sectionRanges = {
+      1: { from: 1, to: 14 },
+      2: { from: 15, to: 27 },
+      3: { from: 28, to: 40 }
+    };
+
+    const answerKey = {
+      1: "FALSE", 2: "FALSE", 3: "NOT GIVEN", 4: "TRUE", 5: "FALSE", 6: "NOT GIVEN", 7: "NOT GIVEN",
+      8: "B", 9: "A", 10: "C", 11: "E", 12: "A", 13: "E", 14: "C",
+      15: "trust", 16: "goals", 17: "strategy", 18: "solutions", 19: "pride", 20: "risk", 21: "future",
+      22: "temptations", 23: "completion", 24: "reference", 25: "disruption", 26: "failings", 27: "skills",
+      28: "vi", 29: "iii", 30: "viii", 31: "i", 32: "v",
+      33: "dated", 34: "society", 35: "history", 36: "identity", 37: "concepts",
+      38: "B", 39: "A", 40: "D"
+    };
+
+    const correctAnswerText = {
+      1: "FALSE", 2: "FALSE", 3: "NOT GIVEN", 4: "TRUE", 5: "FALSE", 6: "NOT GIVEN", 7: "NOT GIVEN",
+      8: "B", 9: "A", 10: "C", 11: "E", 12: "A", 13: "E", 14: "C",
+      15: "trust", 16: "goals", 17: "strategy", 18: "solutions", 19: "pride", 20: "risk", 21: "future",
+      22: "temptations", 23: "completion", 24: "reference", 25: "disruption", 26: "failings", 27: "skills",
+      28: "vi", 29: "iii", 30: "viii", 31: "i", 32: "v",
+      33: "dated", 34: "society", 35: "history", 36: "identity", 37: "concepts",
+      38: "B", 39: "A", 40: "D"
+    };
+
+    restoreThemePreference();
+
+    function startTest(selectedMode) {
+      mode = selectedMode;
+      const timerContainer = document.getElementById("timerContainer");
+
+      visitedSections.clear();
+      visitedSections.add(1);
+      activeSection = 1;
+      currentQuestion = 1;
+      timerSeconds = 60 * 60;
+
+      if (timerId) {
+        clearInterval(timerId);
+        timerId = null;
+      }
+
+      if (mode === "test") {
+        if (timerContainer) {
+          timerContainer.style.display = "block";
+          timerContainer.setAttribute("aria-hidden", "false");
+        }
+        startTimer();
+      } else if (timerContainer) {
+        timerContainer.style.display = "none";
+        timerContainer.setAttribute("aria-hidden", "true");
+      }
+
+      document.getElementById("modeScreen").style.display = "none";
+      document.getElementById("app").style.display = "block";
+      initQuestionInputs();
+      setupDragMatch();
+      buildQuestionNav();
+      setupSelectionListeners();
+      setupDividerDrag();
+      updateThemeButtons();
+      updateFontButtons();
+      window.addEventListener("beforeunload", (e) => {
+        if (!testSubmitted) {
+          e.preventDefault();
+          e.returnValue = "Are you sure you want to leave? All progress will be lost.";
+          return e.returnValue;
+        }
+      }, { capture: true });
+    }
+
+    window.startTest = startTest;
+
+    function wireModeButtons() {
+      const buttons = document.querySelectorAll(".mode-btn[data-mode]");
+      const modeScreen = document.getElementById("modeScreen");
+      const activate = (btn) => {
+        const selected = btn.getAttribute("data-mode") || btn.dataset.mode || "test";
+        startTest(selected);
+      };
+      buttons.forEach((btn) => {
+        btn.addEventListener("click", () => activate(btn));
+        btn.addEventListener("keydown", (event) => {
+          if (event.key === "Enter" || event.key === " ") {
+            event.preventDefault();
+            activate(btn);
+          }
+        });
+      });
+      if (modeScreen && !modeScreen.dataset.wired) {
+        modeScreen.addEventListener("click", (event) => {
+          const btn = event.target.closest(".mode-btn[data-mode]");
+          if (!btn) return;
+          event.preventDefault();
+          activate(btn);
+        });
+        modeScreen.dataset.wired = "true";
+      }
+    }
+
+    function ensureModeWiring() {
+      if (document.readyState === "loading") {
+        document.addEventListener("DOMContentLoaded", wireModeButtons, { once: true });
+      } else {
+        wireModeButtons();
+      }
+    }
+
+    function startTimer() {
+      if (mode !== "test") return;
+      const display = document.getElementById("timerDisplay");
+      if (!display) return;
+      display.classList.remove("timer-warning");
+      display.textContent = "60:00";
+      timerId = setInterval(() => {
+        timerSeconds--;
+        if (timerSeconds < 0) {
+          clearInterval(timerId);
+          if (!testSubmitted) {
+            alert("Time is up! The test will be submitted.");
+            submitTest();
+          }
+          return;
+        }
+        const m = Math.floor(timerSeconds / 60).toString().padStart(2, "0");
+        const sec = (timerSeconds % 60).toString().padStart(2, "0");
+        display.textContent = `${m}:${sec}`;
+        if (timerSeconds <= 180) display.classList.add("timer-warning");
+      }, 1000);
+    }
+
+    function toggleOptions(show) {
+      const overlay = document.getElementById("optionsOverlay");
+      if (overlay) overlay.style.display = show ? "flex" : "none";
+    }
+
+    const optionsButton = document.getElementById("optionsBtn");
+    if (optionsButton) {
+      optionsButton.addEventListener("click", () => toggleOptions(true));
+    }
+
+    function buildRemainingQuestions() {
+      // Sections 1–3 are present in the static HTML for this standalone test.
     }
 
     function stampInlineInputNumbers() {
