@@ -195,6 +195,11 @@
       transition: color 0.2s ease, opacity 0.2s ease;
     }
 
+    .logo.home-link {
+      cursor: pointer;
+      user-select: none;
+    }
+
     .logo.home-link:hover,
     .home-link:hover,
     .logo-link:hover .logo {
@@ -538,6 +543,26 @@
       padding: 4px 6px;
     }
 
+    .note-heading {
+      font-weight: 700;
+      margin-top: 12px;
+    }
+
+    .note-line,
+    .note-line-static {
+      position: relative;
+      padding-left: 18px;
+    }
+
+    .note-line::before,
+    .note-line-static::before {
+      content: "•";
+      position: absolute;
+      left: 4px;
+      top: 0.25em;
+      color: var(--text-soft);
+    }
+
     .inline-question {
       display: inline;
       margin: 0;
@@ -562,7 +587,9 @@
     }
 
     .options-row label {
-      display: block;
+      display: flex;
+      align-items: center;
+      gap: 8px;
       padding: 6px 8px;
       border-radius: 8px;
       margin: 0;
@@ -635,6 +662,18 @@
       padding-left: 46px;
       min-height: 34px;
       line-height: 1.35;
+    }
+
+    .inline-input.no-number {
+      min-width: 130px;
+    }
+
+    .inline-input.no-number::before {
+      content: none;
+    }
+
+    .inline-input.no-number input {
+      padding-left: 10px;
     }
 
     .passage-match-source {
@@ -1315,13 +1354,13 @@
               <p><strong>FALSE</strong> if the statement contradicts the information</p>
               <p><strong>NOT GIVEN</strong> if there is no information on this</p>
 
-              <div class="question-block" data-q="1"><div class="question-text"><span class="question-number-label">1.</span> The city buses start operating later than the trams.</div><div class="choice-group"><label><input type="radio" name="q1" value="TRUE"> TRUE</label><label><input type="radio" name="q1" value="FALSE"> FALSE</label><label><input type="radio" name="q1" value="NOT GIVEN"> NOT GIVEN</label></div><div class="correct-answer-text" id="ca-1"></div></div>
-              <div class="question-block" data-q="2"><div class="question-text"><span class="question-number-label">2.</span> You can get a tram from the airport to the city centre up to midnight.</div><div class="choice-group"><label><input type="radio" name="q2" value="TRUE"> TRUE</label><label><input type="radio" name="q2" value="FALSE"> FALSE</label><label><input type="radio" name="q2" value="NOT GIVEN"> NOT GIVEN</label></div><div class="correct-answer-text" id="ca-2"></div></div>
-              <div class="question-block" data-q="3"><div class="question-text"><span class="question-number-label">3.</span> The 207 bus service stops at the main railway station.</div><div class="choice-group"><label><input type="radio" name="q3" value="TRUE"> TRUE</label><label><input type="radio" name="q3" value="FALSE"> FALSE</label><label><input type="radio" name="q3" value="NOT GIVEN"> NOT GIVEN</label></div><div class="correct-answer-text" id="ca-3"></div></div>
-              <div class="question-block" data-q="4"><div class="question-text"><span class="question-number-label">4.</span> The cost of a tram ticket varies depending on your journey.</div><div class="choice-group"><label><input type="radio" name="q4" value="TRUE"> TRUE</label><label><input type="radio" name="q4" value="FALSE"> FALSE</label><label><input type="radio" name="q4" value="NOT GIVEN"> NOT GIVEN</label></div><div class="correct-answer-text" id="ca-4"></div></div>
-              <div class="question-block" data-q="5"><div class="question-text"><span class="question-number-label">5.</span> Bicycles are allowed on the trams between 7.30 am and 10 am.</div><div class="choice-group"><label><input type="radio" name="q5" value="TRUE"> TRUE</label><label><input type="radio" name="q5" value="FALSE"> FALSE</label><label><input type="radio" name="q5" value="NOT GIVEN"> NOT GIVEN</label></div><div class="correct-answer-text" id="ca-5"></div></div>
-              <div class="question-block" data-q="6"><div class="question-text"><span class="question-number-label">6.</span> Additional trams run during the Gobridge festival period.</div><div class="choice-group"><label><input type="radio" name="q6" value="TRUE"> TRUE</label><label><input type="radio" name="q6" value="FALSE"> FALSE</label><label><input type="radio" name="q6" value="NOT GIVEN"> NOT GIVEN</label></div><div class="correct-answer-text" id="ca-6"></div></div>
-              <div class="question-block" data-q="7"><div class="question-text"><span class="question-number-label">7.</span> Cyclists may be asked to leave the tram if they block the exit.</div><div class="choice-group"><label><input type="radio" name="q7" value="TRUE"> TRUE</label><label><input type="radio" name="q7" value="FALSE"> FALSE</label><label><input type="radio" name="q7" value="NOT GIVEN"> NOT GIVEN</label></div><div class="correct-answer-text" id="ca-7"></div></div>
+              <div class="question-block" data-q="1"><div class="question-text"><span class="question-number-label">1.</span> The city buses start operating later than the trams.</div><div class="options-row"><label><input type="radio" name="q1" value="TRUE"> TRUE</label><label><input type="radio" name="q1" value="FALSE"> FALSE</label><label><input type="radio" name="q1" value="NOT GIVEN"> NOT GIVEN</label></div><div class="correct-answer-text" id="ca-1"></div></div>
+              <div class="question-block" data-q="2"><div class="question-text"><span class="question-number-label">2.</span> You can get a tram from the airport to the city centre up to midnight.</div><div class="options-row"><label><input type="radio" name="q2" value="TRUE"> TRUE</label><label><input type="radio" name="q2" value="FALSE"> FALSE</label><label><input type="radio" name="q2" value="NOT GIVEN"> NOT GIVEN</label></div><div class="correct-answer-text" id="ca-2"></div></div>
+              <div class="question-block" data-q="3"><div class="question-text"><span class="question-number-label">3.</span> The 207 bus service stops at the main railway station.</div><div class="options-row"><label><input type="radio" name="q3" value="TRUE"> TRUE</label><label><input type="radio" name="q3" value="FALSE"> FALSE</label><label><input type="radio" name="q3" value="NOT GIVEN"> NOT GIVEN</label></div><div class="correct-answer-text" id="ca-3"></div></div>
+              <div class="question-block" data-q="4"><div class="question-text"><span class="question-number-label">4.</span> The cost of a tram ticket varies depending on your journey.</div><div class="options-row"><label><input type="radio" name="q4" value="TRUE"> TRUE</label><label><input type="radio" name="q4" value="FALSE"> FALSE</label><label><input type="radio" name="q4" value="NOT GIVEN"> NOT GIVEN</label></div><div class="correct-answer-text" id="ca-4"></div></div>
+              <div class="question-block" data-q="5"><div class="question-text"><span class="question-number-label">5.</span> Bicycles are allowed on the trams between 7.30 am and 10 am.</div><div class="options-row"><label><input type="radio" name="q5" value="TRUE"> TRUE</label><label><input type="radio" name="q5" value="FALSE"> FALSE</label><label><input type="radio" name="q5" value="NOT GIVEN"> NOT GIVEN</label></div><div class="correct-answer-text" id="ca-5"></div></div>
+              <div class="question-block" data-q="6"><div class="question-text"><span class="question-number-label">6.</span> Additional trams run during the Gobridge festival period.</div><div class="options-row"><label><input type="radio" name="q6" value="TRUE"> TRUE</label><label><input type="radio" name="q6" value="FALSE"> FALSE</label><label><input type="radio" name="q6" value="NOT GIVEN"> NOT GIVEN</label></div><div class="correct-answer-text" id="ca-6"></div></div>
+              <div class="question-block" data-q="7"><div class="question-text"><span class="question-number-label">7.</span> Cyclists may be asked to leave the tram if they block the exit.</div><div class="options-row"><label><input type="radio" name="q7" value="TRUE"> TRUE</label><label><input type="radio" name="q7" value="FALSE"> FALSE</label><label><input type="radio" name="q7" value="NOT GIVEN"> NOT GIVEN</label></div><div class="correct-answer-text" id="ca-7"></div></div>
 
               <p><strong>Section 1 : Passage 2</strong></p>
               <p><strong>Questions 8–14</strong></p>
@@ -1349,31 +1388,31 @@
           <p>Write your answers in boxes 15-21 on your answer sheet.</p>
 
           <div class="question-block" data-q="15">
-            <div class="question-text"><span class="question-number-label">15.</span> Initially, a leader needs to focus on gaining the <span class="inline-input" data-q="15"><input type="text" name="q15" autocomplete="off" /></span> of the staff.</div>
+            <div class="question-text"><span class="question-number-label">15.</span> Initially, a leader needs to focus on gaining the <span class="inline-input no-number" data-q="15"><input type="text" name="q15" autocomplete="off" /></span> of the staff.</div>
             <div class="correct-answer-text" id="ca-15"></div>
           </div>
           <div class="question-block" data-q="16">
-            <div class="question-text"><span class="question-number-label">16.</span> A leader should decide on <span class="inline-input" data-q="16"><input type="text" name="q16" autocomplete="off" /></span> that their staff are happy to fulfil.</div>
+            <div class="question-text"><span class="question-number-label">16.</span> A leader should decide on <span class="inline-input no-number" data-q="16"><input type="text" name="q16" autocomplete="off" /></span> that their staff are happy to fulfil.</div>
             <div class="correct-answer-text" id="ca-16"></div>
           </div>
           <div class="question-block" data-q="17">
-            <div class="question-text"><span class="question-number-label">17.</span> Leaders should involve their staff in the process of producing a different <span class="inline-input" data-q="17"><input type="text" name="q17" autocomplete="off" /></span>.</div>
+            <div class="question-text"><span class="question-number-label">17.</span> Leaders should involve their staff in the process of producing a different <span class="inline-input no-number" data-q="17"><input type="text" name="q17" autocomplete="off" /></span>.</div>
             <div class="correct-answer-text" id="ca-17"></div>
           </div>
           <div class="question-block" data-q="18">
-            <div class="question-text"><span class="question-number-label">18.</span> If tricky issues arise, leaders should give staff the space to find <span class="inline-input" data-q="18"><input type="text" name="q18" autocomplete="off" /></span> to them.</div>
+            <div class="question-text"><span class="question-number-label">18.</span> If tricky issues arise, leaders should give staff the space to find <span class="inline-input no-number" data-q="18"><input type="text" name="q18" autocomplete="off" /></span> to them.</div>
             <div class="correct-answer-text" id="ca-18"></div>
           </div>
           <div class="question-block" data-q="19">
-            <div class="question-text"><span class="question-number-label">19.</span> Leaders need to encourage their staff to feel <span class="inline-input" data-q="19"><input type="text" name="q19" autocomplete="off" /></span> in the past achievements of the company.</div>
+            <div class="question-text"><span class="question-number-label">19.</span> Leaders need to encourage their staff to feel <span class="inline-input no-number" data-q="19"><input type="text" name="q19" autocomplete="off" /></span> in the past achievements of the company.</div>
             <div class="correct-answer-text" id="ca-19"></div>
           </div>
           <div class="question-block" data-q="20">
-            <div class="question-text"><span class="question-number-label">20.</span> It is important for leaders to agree to a certain degree of <span class="inline-input" data-q="20"><input type="text" name="q20" autocomplete="off" /></span> when necessary.</div>
+            <div class="question-text"><span class="question-number-label">20.</span> It is important for leaders to agree to a certain degree of <span class="inline-input no-number" data-q="20"><input type="text" name="q20" autocomplete="off" /></span> when necessary.</div>
             <div class="correct-answer-text" id="ca-20"></div>
           </div>
           <div class="question-block" data-q="21">
-            <div class="question-text"><span class="question-number-label">21.</span> If leaders find the <span class="inline-input" data-q="21"><input type="text" name="q21" autocomplete="off" /></span> of the company exciting, their staff will be more motivated to work hard.</div>
+            <div class="question-text"><span class="question-number-label">21.</span> If leaders find the <span class="inline-input no-number" data-q="21"><input type="text" name="q21" autocomplete="off" /></span> of the company exciting, their staff will be more motivated to work hard.</div>
             <div class="correct-answer-text" id="ca-21"></div>
           </div>
 
@@ -1384,32 +1423,32 @@
 
           <div class="note-completion-box">
             <div class="box-title">The best way to resign</div>
-            <div class="question-block" data-q="22">
+            <div class="question-block note-line" data-q="22">
               <p>Avoid all <span class="inline-input" data-q="22"><input type="text" name="q22"></span> to resign in an angry way. Instead, follow this procedure:</p>
               <div class="correct-answer-text" id="ca-22"></div>
             </div>
-            <p>Arrange a meeting with the boss to:</p>
-            <div class="question-block" data-q="23">
+            <p class="note-heading">Arrange a meeting with the boss to:</p>
+            <div class="question-block note-line" data-q="23">
               <p>mention any projects which are underway and give ideas for their <span class="inline-input" data-q="23"><input type="text" name="q23"></span>.</p>
               <div class="correct-answer-text" id="ca-23"></div>
             </div>
-            <p>discuss how much notice you need to give before you go.</p>
-            <div class="question-block" data-q="24">
+            <p class="note-line-static">discuss how much notice you need to give before you go.</p>
+            <div class="question-block note-line" data-q="24">
               <p>request information on the type of <span class="inline-input" data-q="24"><input type="text" name="q24"></span> you will receive.</p>
               <div class="correct-answer-text" id="ca-24"></div>
             </div>
-            <p>Steps you can take before you leave:</p>
-            <div class="question-block" data-q="25">
+            <p class="note-heading">Steps you can take before you leave:</p>
+            <div class="question-block note-line" data-q="25">
               <p>Work to cause as little <span class="inline-input" data-q="25"><input type="text" name="q25"></span> as possible to the organisation.</p>
               <div class="correct-answer-text" id="ca-25"></div>
             </div>
-            <p>Make sure your successor has adequate guidance on the organisation’s systems.</p>
-            <p>In the resignation letter:</p>
-            <div class="question-block" data-q="26">
+            <p class="note-line-static">Make sure your successor has adequate guidance on the organisation’s systems.</p>
+            <p class="note-heading">In the resignation letter:</p>
+            <div class="question-block note-line" data-q="26">
               <p>avoid mentioning any <span class="inline-input" data-q="26"><input type="text" name="q26"></span> in the organisation.</p>
               <div class="correct-answer-text" id="ca-26"></div>
             </div>
-            <div class="question-block" data-q="27">
+            <div class="question-block note-line" data-q="27">
               <p>show appreciation for aspects of the job, e.g., the chance to improve your <span class="inline-input" data-q="27"><input type="text" name="q27"></span>.</p>
               <div class="correct-answer-text" id="ca-27"></div>
             </div>
@@ -1460,28 +1499,34 @@
 
           <div class="question-block" data-q="38">
             <div class="question-text"><span class="question-number-label">38.</span> What does the writer say about ‘Words of the Year’?</div>
-            <label><input type="radio" name="q38" value="A" /> A They include increasing numbers of emojis.</label><br />
-            <label><input type="radio" name="q38" value="B" /> B They are soon forgotten by the public.</label><br />
-            <label><input type="radio" name="q38" value="C" /> C They are required to have social significance.</label><br />
-            <label><input type="radio" name="q38" value="D" /> D They are invented by the writers of dictionaries.</label>
+            <div class="options-row">
+              <label><input type="radio" name="q38" value="A" /> A They include increasing numbers of emojis.</label>
+              <label><input type="radio" name="q38" value="B" /> B They are soon forgotten by the public.</label>
+              <label><input type="radio" name="q38" value="C" /> C They are required to have social significance.</label>
+              <label><input type="radio" name="q38" value="D" /> D They are invented by the writers of dictionaries.</label>
+            </div>
             <div class="correct-answer-text" id="ca-38"></div>
           </div>
 
           <div class="question-block" data-q="39">
             <div class="question-text"><span class="question-number-label">39.</span> The writer says that the usefulness of emojis is limited because</div>
-            <label><input type="radio" name="q39" value="A" /> A they are constantly being changed.</label><br />
-            <label><input type="radio" name="q39" value="B" /> B they may not be correctly interpreted.</label><br />
-            <label><input type="radio" name="q39" value="C" /> C they are difficult for some people to update.</label><br />
-            <label><input type="radio" name="q39" value="D" /> D they are linked to specific operating systems.</label>
+            <div class="options-row">
+              <label><input type="radio" name="q39" value="A" /> A they are constantly being changed.</label>
+              <label><input type="radio" name="q39" value="B" /> B they may not be correctly interpreted.</label>
+              <label><input type="radio" name="q39" value="C" /> C they are difficult for some people to update.</label>
+              <label><input type="radio" name="q39" value="D" /> D they are linked to specific operating systems.</label>
+            </div>
             <div class="correct-answer-text" id="ca-39"></div>
           </div>
 
           <div class="question-block" data-q="40">
             <div class="question-text"><span class="question-number-label">40.</span> What would be the best subtitle for this text?</div>
-            <label><input type="radio" name="q40" value="A" /> A Will emojis take over from words one day?</label><br />
-            <label><input type="radio" name="q40" value="B" /> B How can emojis be made more meaningful?</label><br />
-            <label><input type="radio" name="q40" value="C" /> C Are emojis used too much in our society today?</label><br />
-            <label><input type="radio" name="q40" value="D" /> D What do emojis tell us about the world we live in?</label>
+            <div class="options-row">
+              <label><input type="radio" name="q40" value="A" /> A Will emojis take over from words one day?</label>
+              <label><input type="radio" name="q40" value="B" /> B How can emojis be made more meaningful?</label>
+              <label><input type="radio" name="q40" value="C" /> C Are emojis used too much in our society today?</label>
+              <label><input type="radio" name="q40" value="D" /> D What do emojis tell us about the world we live in?</label>
+            </div>
             <div class="correct-answer-text" id="ca-40"></div>
           </div>
 
