@@ -4,8 +4,8 @@ This project uses static HTML test pages. All new Reading tests must follow the 
 
 ## General rules
 
-1. Use the latest stable Reading test as the shell.
-2. Replace content only.
+1. Use the latest stable Reading test of the same module as the shell: Academic for Academic Reading and General Training for GT Reading. Never use an Academic shell for a GT Reading test.
+2. Replace content only. Preserve the stable shell's candidate/name start-screen behaviour; Test Mode must keep required name entry if the stable shell has it, and Study Mode may skip it only if the stable shell does.
 3. Do not summarise, shorten, paraphrase, or invent passage or question wording.
 4. Use the exact full text from Passage 1.txt, Passage 2.txt, Passage 3.txt, Questions.txt, and Answers.txt.
 5. Before editing HTML, classify Questions 1–40 by question type.
@@ -19,7 +19,24 @@ This project uses static HTML test pages. All new Reading tests must follow the 
 9. There must be only one correctAnswerText object.
 10. Do not create JavaScript that automatically changes question numbers into bullet points.
 11. Bullet points must be based on the actual question type and layout, not the question number range.
-12. Keep the IELTS Pabs logo behaviour: red hover, hover-triggered blur animation, and confirmation home link.
+12. Keep the IELTS Pabs logo behaviour: red hover, hover-triggered blur animation, confirmation home link, pointer cursor on hover, and no text insertion cursor. Recommended CSS: `.logo.home-link { cursor: pointer; user-select: none; }`.
+13. Build Reading tests in staged prompts: shell only, passages only, questions and answers only, formatting cleanup only, hub activation only, then documentation update only if new issues were found. If old shell content appears, repair in smaller sections. Always inspect actual changed files and actual HTML, not only the PR title or description.
+14. GT Reading is organised differently: Section 1 may contain two or more short texts, Section 2 may contain two workplace/practical texts, and Section 3 is usually one longer text.
+
+
+## Passage pane rules for Reading
+
+- Passage panes should focus on the passage title and passage text.
+- Do not repeat redundant `Questions...` or `Read the text...` lines if the fixed pane header and question pane already provide that instruction.
+- Section 3 should start cleanly with the passage title and paragraph A when the source is paragraph-labelled.
+- If a GT section contains two separate texts, clearly separate them with headings, spacing, and divider styling so they do not visually merge. For example, GT Test 1 Section 1 needed clear separation between `Gobridge Tramlink FAQs` and `Adorable Knitwear`, and Section 2 needed clear separation between `How to Become a Great Leader` and `Resigning from a Job in a Professional Manner`.
+
+## Shared form control and navigation rules
+
+- Text inputs, inline inputs, and dropdowns should inherit the page font family and use a font size consistent with the surrounding question text.
+- Inline inputs should not look oversized or force awkward line breaks unless the screen is narrow.
+- Bottom navigation part chips and counts must stay on one line. Use `white-space: nowrap`, `inline-flex`, suitable spacing, and horizontal overflow for question buttons if needed.
+- The bottom navigation must not wrap labels such as `Part 1` and `2 of 14` onto separate lines.
 
 ## TRUE / FALSE / NOT GIVEN
 
@@ -29,10 +46,9 @@ Do the following statements agree with the information given in Reading Passage 
 Layout:
 - Normal question blocks.
 - Visible question number before each statement.
-- Radio buttons:
-  TRUE
-  FALSE
-  NOT GIVEN
+- Radio buttons in the cleaner stable layout: options stacked vertically, each option in a clear clickable row/card, comfortable spacing, and the radio button aligned with the label text.
+- Values must remain exactly: `TRUE`, `FALSE`, `NOT GIVEN`.
+- If Answers.txt uses `NG`, normalise answerKey and correctAnswerText to `NOT GIVEN`.
 - No bullet points.
 - Do not put the question number inside an answer box.
 
@@ -44,10 +60,9 @@ Do the following statements agree with the views or claims of the writer?
 Layout:
 - Normal question blocks.
 - Visible question number before each statement.
-- Radio buttons:
-  YES
-  NO
-  NOT GIVEN
+- Radio buttons in the cleaner stable layout: options stacked vertically, each option in a clear clickable row/card, comfortable spacing, and the radio button aligned with the label text.
+- Values must remain exactly: `YES`, `NO`, `NOT GIVEN`.
+- If Answers.txt uses `NG`, normalise answerKey and correctAnswerText to `NOT GIVEN`.
 - No bullet points.
 - Do not put the question number inside an answer box.
 
@@ -57,14 +72,15 @@ Use for tasks that say:
 Complete the notes below.
 
 Layout:
-- Use note-style formatting.
+- Use note-style formatting, not a normal paragraph.
 - Keep headings and subheadings from the source.
 - If the source note block is bordered, recreate a bordered note box in HTML.
 - Main heading and subheadings inside the note box must not be bulleted.
-- Use bullet points where the notes naturally list points.
-- Put the question number inside the answer box.
-- Do not show an extra visible number before the sentence.
+- Use headings, indentation, and bullet-style lines where appropriate.
+- Bullet points should sit on the same line as the note text, not float on a separate line. Avoid absolute-positioned bullets if they cause vertical misalignment; flex-row bullet layout is safer.
+- Question numbers may appear inside or beside the input for note-completion, but do not duplicate the number in a confusing way.
 - Use inline input boxes with data-q.
+- Example lesson: GT Test 1 Q22-27 `The best way to resign` needed note-style headings, bullet lines, and aligned bullets.
 
 Example:
 • Excavations of rock shelters inside [8 answer box] near the village of Kelo revealed...
@@ -79,12 +95,12 @@ Complete the summary below.
 Choose ONE WORD ONLY / NO MORE THAN TWO WORDS from the passage.
 
 Layout:
-- Use a bordered summary box if the original task is a summary paragraph.
-- If the source summary has a title, center that title at the top of the bordered box.
+- Use a bordered summary box if the original task shows the summary inside a bordered box or as a summary paragraph.
+- If the source summary has a title, center or clearly emphasise that title at the top of the bordered box.
 - Use inline answer boxes.
 - Put the question number inside the answer box.
-- Keep the summary as connected paragraph-style text; do not split into visually disconnected rows unless the source is actually row-based.
-- Use bullet points only if the source summary is in note form.
+- Keep the summary as connected paragraph-style text; do not split into visually disconnected rows unless the source is actually row-based. Feedback areas must exist but should not disrupt paragraph flow before submission.
+- Use bullet points only if the source summary is in note form. Example lessons: Academic Test 4 `Mining the sea floor` and `Contemporary hunter-gatherer societies` needed bordered summary boxes; GT Test 1 `The importance of the ‘face with tears of joy’` needed a cleaner connected summary box.
 
 ## Summary completion with options
 
@@ -105,11 +121,13 @@ Use for tasks that say:
 Complete the sentences below.
 
 Layout:
-- Normal numbered question blocks.
-- Visible question number before each sentence.
-- Inline answer box at the blank.
+- Use a vertical list of separate sentence items.
+- Each sentence should have one clear visible question number at the start of the sentence.
+- The answer input should sit naturally inside the blank position.
+- Do not leave fake underscores plus a separate input below the sentence.
+- Do not duplicate the question number inside the input if the sentence already starts with the question number.
 - Do not use bullet points unless the original task is clearly note-form.
-- For sentence completion, the number usually stays before the sentence, not inside the box.
+- Example lesson: GT Test 1 Q15-21 should look like `15. Initially, a leader needs to focus on gaining the [input] of the staff.`
 
 ## Matching information to paragraphs
 
@@ -127,20 +145,31 @@ Layout:
 Use for tasks where students choose headings for paragraphs.
 
 Layout:
-- Show the list of headings clearly.
+- Show the list of headings clearly, in a bordered option-bank box if the source presents it that way.
 - Use dropdowns for each paragraph.
-- Dropdowns should show both Roman numeral and heading text.
+- Dropdowns should show both Roman numeral and heading text. Example lesson: GT Test 1 Q28-32 needed the `List of Headings` clearly formatted.
 
 ## Matching people / experts / researchers
 
 Use for tasks that give a list of people or experts.
 
 Layout:
-- If the source has a “List of People/Experts” bank, render that list in a separate bordered box.
+- If the source has a `List of People`, `List of Experts`, or similar bank, render that list in a separate bordered box.
 - Keep the numbered matching statements separate and normally numbered.
 - Show the full list of people clearly.
 - Use dropdowns.
-- Dropdowns should show both letter and name.
+- Dropdowns should show both letter and name. Example lesson: Academic Test 4 Q18-23 needed the `List of People` in a bordered box.
+
+## Matching tasks using passage labels
+
+Use when the original task asks students to match information to labelled reviews, texts, or sections shown in the passage pane.
+
+Layout:
+- Make passage labels interactive when useful, so students can drag or click/select labels directly from the passage pane.
+- On hover/focus, interactive passage labels should show a dashed/outlined rectangle or similar affordance.
+- Keep dropdown or keyboard accessibility as a backup.
+- Do not force students to rely only on a repeated option bank if the original task naturally uses labels in the passage.
+- Example lesson: for GT Test 1 Q8-14, labels `A Mary-Anne`, `B Davina`, `C Naga`, `D Libby`, and `E Laura` should be draggable/click-selectable from the passage pane.
 
 ## Answer alternatives from Answers.txt
 
@@ -169,8 +198,9 @@ Layout:
 - Normal question block.
 - Visible question number.
 - Full question text.
-- Radio buttons.
+- Radio buttons in clear clickable row/card styling, not plain labels separated only by line breaks.
 - Show the full option text.
+- Add comfortable spacing between multiple-choice questions.
 
 ## Multiple choice, choose TWO
 
@@ -178,7 +208,7 @@ Use for tasks that say:
 Choose TWO letters.
 
 Layout:
-- Checkbox-style options.
+- Checkbox-style options in clear clickable row/card styling, not plain labels separated only by line breaks.
 - Students can select a maximum of two options.
 - If two options are already selected and the student clicks a third, prevent the third selection.
 - Students can untick and change their answers.
@@ -210,3 +240,6 @@ Before finishing any new Reading test:
 13. Check the IELTS Pabs logo still has red hover, hover blur animation, and confirmation home link.
 14. Check the hub link opens the correct new test.
 15. During formatting cleanup, quickly check HTML nesting around `#questionPane`, `#questionContent`, `#selectionToolbar`, and bottom navigation; remove only clearly misplaced closing tags.
+16. Do not create duplicate sections, duplicate answerKey or correctAnswerText objects, or duplicate ca-1 to ca-40 IDs.
+17. Hub activation should ideally change only index.html. Formatting cleanup should ideally change only the relevant test HTML file. If hub activation also touches a test HTML file, inspect it afterwards to ensure it did not overwrite formatting or content.
+18. Confirm the correct key and path exist in the correct hub category; for IELTS 19 GT Reading Test 1, key `19-1` belongs under General Training Reading.
