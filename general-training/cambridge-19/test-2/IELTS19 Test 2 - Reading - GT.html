@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>IELTS Pabs Reading Test 2 – General Training – IELTS 19</title>
+  <title>IELTS Pabs Reading Test 2 – General Training – Cambridge 19</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <style>
     :root {
@@ -235,6 +235,11 @@
         filter: none;
         animation: none;
       }
+    }
+
+    .home-link {
+      cursor: pointer;
+      user-select: none;
     }
 
     .test-title {
@@ -520,9 +525,47 @@
     }
 
     .passage-divider {
-      margin: 24px 0 20px;
-      border-top: 1px solid var(--border);
-      padding-top: 18px;
+      margin: 32px 0 22px;
+      border-top: 2px solid var(--border);
+      padding-top: 22px;
+    }
+
+    .passage-divider h2 {
+      margin-top: 0;
+    }
+
+    .question-group-heading {
+      margin: 16px 0 10px;
+      padding: 8px 10px;
+      border-left: 4px solid var(--accent);
+      border-radius: 8px;
+      background: var(--accent-soft);
+      font-weight: 600;
+    }
+
+    .summary-box {
+      margin: 12px 0 14px;
+      padding: 14px 16px;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      background: var(--bg-secondary);
+      line-height: 1.65;
+    }
+
+    .summary-feedbacks {
+      margin-top: 8px;
+    }
+
+    .inline-question {
+      display: inline;
+      margin: 0 2px;
+      padding: 1px 2px;
+      border-radius: 6px;
+    }
+
+    .inline-question.current-question {
+      outline: 2px solid var(--accent);
+      background: var(--accent-soft);
     }
 
     .instruction-block {
@@ -585,7 +628,9 @@
     }
 
     .options-row label {
-      display: block;
+      display: flex;
+      align-items: center;
+      gap: 8px;
       padding: 6px 8px;
       border-radius: 8px;
       margin: 0;
@@ -599,7 +644,9 @@
       padding: 6px 8px;
       border-radius: 6px;
       border: 1px solid var(--border);
-      font-size: 0.95rem;
+      font-family: inherit;
+      font-size: 1em;
+      line-height: 1.35;
       width: 100%;
       max-width: 260px;
       background: var(--bg);
@@ -628,8 +675,8 @@
       position: relative;
       display: inline-block;
       vertical-align: middle;
-      min-width: 85px;
-      max-width: 170px;
+      min-width: 110px;
+      max-width: 220px;
     }
 
     .inline-input::before {
@@ -654,8 +701,20 @@
     .inline-input input {
       width: 100%;
       padding-left: 46px;
-      height: 34px;
-      line-height: 34px;
+      min-height: 34px;
+      line-height: 1.35;
+    }
+
+    .inline-input.no-number {
+      min-width: 130px;
+    }
+
+    .inline-input.no-number::before {
+      content: none;
+    }
+
+    .inline-input.no-number input {
+      padding-left: 10px;
     }
 
     .drag-bank {
@@ -688,6 +747,25 @@
       outline: 2px solid var(--accent);
       outline-offset: 1px;
     }
+
+    .passage-match-source {
+      display: inline-block;
+      padding: 4px 8px;
+      border: 1px dashed transparent;
+      border-radius: 8px;
+      cursor: grab;
+      transition: background 0.15s, border-color 0.15s, color 0.15s;
+    }
+
+    .passage-match-source:hover,
+    .passage-match-source:focus,
+    .passage-match-source.selected {
+      border-color: var(--accent);
+      background: var(--accent-soft);
+      color: var(--accent);
+      outline: none;
+    }
+
 
     .drag-hint {
       color: var(--text-soft);
@@ -744,25 +822,6 @@
       width: 100%;
     }
 
-    /* Bottom navigation */
-    .bottom-nav {
-      position: fixed;
-      bottom: 0;
-      left: 0;
-      right: 0;
-      background: var(--bg-secondary);
-      border-top: 1px solid var(--border);
-      display: flex;
-      align-items: center;
-      padding: 4px 10px;
-      font-size: 0.92rem;
-      z-index: 900;
-    }
-
-    .bottom-row {
-      width: 100%;
-    }
-
     .bottom-row-v2 {
       display: flex;
       align-items: center;
@@ -781,7 +840,9 @@
     .part-summary-row {
       display: flex;
       gap: 8px;
-      min-width: 320px;
+      min-width: max-content;
+      flex: 0 0 auto;
+      white-space: nowrap;
     }
 
     #questionNumbers {
@@ -803,12 +864,13 @@
       cursor: pointer;
       display: inline-flex;
       align-items: center;
-      gap: 6px;
+      gap: 8px;
       font-size: 0.94rem;
       justify-content: center;
       transition: background 0.1s, border-color 0.1s, color 0.1s;
       text-align: center;
-      width: 100%;
+      width: auto;
+      flex: 0 0 auto;
       min-height: 44px;
       white-space: nowrap;
     }
@@ -1130,25 +1192,6 @@
       box-shadow: 0 1px 4px rgba(0,0,0,0.2);
     }
 
-    .question-text.gap-fill {
-      display: block;
-      line-height: 1.35;
-    }
-
-    .gap-bullet {
-      display: inline-block;
-      font-size: 1.2rem;
-      line-height: 1;
-      margin-right: 8px;
-      vertical-align: top;
-    }
-
-    .gap-answer-tail {
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      white-space: nowrap;
-    }
 
     .drop-zone-row {
       display: flex;
@@ -1164,6 +1207,7 @@
       border-radius: 6px;
       padding: 4px 8px;
       cursor: pointer;
+      font-family: inherit;
       font-size: 0.82rem;
     }
   </style>
@@ -1310,16 +1354,15 @@
             <!-- Section 1 passages -->
             <div class="passage-section" data-section="1">
               <h2>Local campsites</h2>
+              <p><strong class="passage-match-source" draggable="true" data-value="A" tabindex="0" role="button" aria-label="Use campsite A, Prettycoat Farm, as an answer">A Prettycoat Farm</strong> This well-known campsite in the wild near Browbourne is a winner with campers who are looking for time out from their fast-paced jobs in the capital. Despite its limited facilities, the site, with its large tent pitches, is an ideal base for exploring the area and driving to the rock museum, the craft workshops or Gaydon Castle. Just follow the signs.</p>
 
-              <p><strong>A Prettycoat Farm</strong> This well-known campsite in the wild near Browbourne is a winner with campers who are looking for time out from their fast-paced jobs in the capital. Despite its limited facilities, the site, with its large tent pitches, is an ideal base for exploring the area and driving to the rock museum, the craft workshops or Gaydon Castle. Just follow the signs.</p>
+              <p><strong class="passage-match-source" draggable="true" data-value="B" tabindex="0" role="button" aria-label="Use campsite B, Newgammon Wild, as an answer">B Newgammon Wild</strong> This campsite looks like it’s going to be a winner. It only opened last year, but already the website has some very positive reviews from the handful of campers who know about it so far. It offers splendid views over some of the country’s most attractive beaches, which can be accessed by steep, narrow cliff steps. You need a good level of fitness for these, and don’t forget to leave some energy for the return trip at the end of the day.</p>
 
-              <p><strong>B Newgammon Wild</strong> This campsite looks like it’s going to be a winner. It only opened last year, but already the website has some very positive reviews from the handful of campers who know about it so far. It offers splendid views over some of the country’s most attractive beaches, which can be accessed by steep, narrow cliff steps. You need a good level of fitness for these, and don’t forget to leave some energy for the return trip at the end of the day.</p>
+              <p><strong class="passage-match-source" draggable="true" data-value="C" tabindex="0" role="button" aria-label="Use campsite C, Oakerly Estate, as an answer">C Oakerly Estate</strong> You won’t be disappointed when you reach Oakerly, despite the problems of getting there by car on such narrow roads. You’ll see quite a lot of motorhomes when you hit the clifftop, but there’s still plenty of room for tents on the spacious lawn that also offers a camp kitchen, restaurant and bar. Make sure you stay safe and pitch your tent within the white line around the cliff edge, though.</p>
 
-              <p><strong>C Oakerly Estate</strong> You won’t be disappointed when you reach Oakerly, despite the problems of getting there by car on such narrow roads. You’ll see quite a lot of motorhomes when you hit the clifftop, but there’s still plenty of room for tents on the spacious lawn that also offers a camp kitchen, restaurant and bar. Make sure you stay safe and pitch your tent within the white line around the cliff edge, though.</p>
+              <p><strong class="passage-match-source" draggable="true" data-value="D" tabindex="0" role="button" aria-label="Use campsite D, South Turnbull, as an answer">D South Turnbull</strong> The emphasis at this site is on back-to-basics camping. It’s advisable to come in a group as there are few facilities and you need to do all your own cooking. The area is rather exposed, and in periods of bad weather it can’t be reached at all so check on the website before you go.</p>
 
-              <p><strong>D South Turnbull</strong> The emphasis at this site is on back-to-basics camping. It’s advisable to come in a group as there are few facilities and you need to do all your own cooking. The area is rather exposed, and in periods of bad weather it can’t be reached at all so check on the website before you go.</p>
-
-              <p><strong>E Boxer Trepis</strong> The 20-metre high rockfaces that surround this site are especially attractive to rock climbers, who come here to camp from hundreds of miles away so that they can attempt the climb – and not always with success, according to the website! It’s not compulsory, of course, and there are plenty of other activities for campers to get involved in, such as birdwatching and bathing in the sea.</p>
+              <p><strong class="passage-match-source" draggable="true" data-value="E" tabindex="0" role="button" aria-label="Use campsite E, Boxer Trepis, as an answer">E Boxer Trepis</strong> The 20-metre high rockfaces that surround this site are especially attractive to rock climbers, who come here to camp from hundreds of miles away so that they can attempt the climb – and not always with success, according to the website! It’s not compulsory, of course, and there are plenty of other activities for campers to get involved in, such as birdwatching and bathing in the sea.</p>
 
               <div class="passage-divider">
               <h2>Durridge Heights (OH) Newsletter</h2>
@@ -1396,13 +1439,15 @@
                 <p class="instruction-note">NB You may use any letter more than once.</p>
               </div>
 
+              <p class="question-group-heading">Read “Local campsites” and answer Questions 1 to 7.</p>
+
               <!-- Q1–7 matching -->
               <div class="question-block" data-q="1">
                 <div class="question-text">
                   <span class="question-number-label">1.</span>
                   The site is impossible to get to at certain times.
                 </div>
-                <select name="q1">
+                <select class="sr-only" name="q1">
                   <option value="">Select…</option>
                   <option value="A">A. Prettycoat Farm</option>
                   <option value="B">B. Newgammon Wild</option>
@@ -1410,6 +1455,7 @@
                   <option value="D">D. South Turnbull</option>
                   <option value="E">E. Boxer Trepis</option>
                 </select>
+                <div class="drop-zone-row"><div class="drop-zone" data-for="q1" tabindex="0" role="button" aria-label="Answer box for question 1">Drop here</div><button type="button" class="clear-drop-btn" data-clear-for="q1">Clear</button></div>
                 <div class="correct-answer-text" id="ca-1"></div>
               </div>
 
@@ -1418,7 +1464,7 @@
                   <span class="question-number-label">2.</span>
                   It is in a convenient place for going by car to various tourist spots.
                 </div>
-                <select name="q2">
+                <select class="sr-only" name="q2">
                   <option value="">Select…</option>
                   <option value="A">A. Prettycoat Farm</option>
                   <option value="B">B. Newgammon Wild</option>
@@ -1426,6 +1472,7 @@
                   <option value="D">D. South Turnbull</option>
                   <option value="E">E. Boxer Trepis</option>
                 </select>
+                <div class="drop-zone-row"><div class="drop-zone" data-for="q2" tabindex="0" role="button" aria-label="Answer box for question 2">Drop here</div><button type="button" class="clear-drop-btn" data-clear-for="q2">Clear</button></div>
                 <div class="correct-answer-text" id="ca-2"></div>
               </div>
 
@@ -1434,7 +1481,7 @@
                   <span class="question-number-label">3.</span>
                   You should camp somewhere inside the marked zone.
                 </div>
-                <select name="q3">
+                <select class="sr-only" name="q3">
                   <option value="">Select…</option>
                   <option value="A">A. Prettycoat Farm</option>
                   <option value="B">B. Newgammon Wild</option>
@@ -1442,6 +1489,7 @@
                   <option value="D">D. South Turnbull</option>
                   <option value="E">E. Boxer Trepis</option>
                 </select>
+                <div class="drop-zone-row"><div class="drop-zone" data-for="q3" tabindex="0" role="button" aria-label="Answer box for question 3">Drop here</div><button type="button" class="clear-drop-btn" data-clear-for="q3">Clear</button></div>
                 <div class="correct-answer-text" id="ca-3"></div>
               </div>
 
@@ -1450,7 +1498,7 @@
                   <span class="question-number-label">4.</span>
                   Campers who enjoy a particular physical challenge come here.
                 </div>
-                <select name="q4">
+                <select class="sr-only" name="q4">
                   <option value="">Select…</option>
                   <option value="A">A. Prettycoat Farm</option>
                   <option value="B">B. Newgammon Wild</option>
@@ -1458,6 +1506,7 @@
                   <option value="D">D. South Turnbull</option>
                   <option value="E">E. Boxer Trepis</option>
                 </select>
+                <div class="drop-zone-row"><div class="drop-zone" data-for="q4" tabindex="0" role="button" aria-label="Answer box for question 4">Drop here</div><button type="button" class="clear-drop-btn" data-clear-for="q4">Clear</button></div>
                 <div class="correct-answer-text" id="ca-4"></div>
               </div>
 
@@ -1466,7 +1515,7 @@
                   <span class="question-number-label">5.</span>
                   The difficult journey to the site is worth the effort.
                 </div>
-                <select name="q5">
+                <select class="sr-only" name="q5">
                   <option value="">Select…</option>
                   <option value="A">A. Prettycoat Farm</option>
                   <option value="B">B. Newgammon Wild</option>
@@ -1474,6 +1523,7 @@
                   <option value="D">D. South Turnbull</option>
                   <option value="E">E. Boxer Trepis</option>
                 </select>
+                <div class="drop-zone-row"><div class="drop-zone" data-for="q5" tabindex="0" role="button" aria-label="Answer box for question 5">Drop here</div><button type="button" class="clear-drop-btn" data-clear-for="q5">Clear</button></div>
                 <div class="correct-answer-text" id="ca-5"></div>
               </div>
 
@@ -1482,7 +1532,7 @@
                   <span class="question-number-label">6.</span>
                   Few people have heard of this site.
                 </div>
-                <select name="q6">
+                <select class="sr-only" name="q6">
                   <option value="">Select…</option>
                   <option value="A">A. Prettycoat Farm</option>
                   <option value="B">B. Newgammon Wild</option>
@@ -1490,6 +1540,7 @@
                   <option value="D">D. South Turnbull</option>
                   <option value="E">E. Boxer Trepis</option>
                 </select>
+                <div class="drop-zone-row"><div class="drop-zone" data-for="q6" tabindex="0" role="button" aria-label="Answer box for question 6">Drop here</div><button type="button" class="clear-drop-btn" data-clear-for="q6">Clear</button></div>
                 <div class="correct-answer-text" id="ca-6"></div>
               </div>
 
@@ -1498,7 +1549,7 @@
                   <span class="question-number-label">7.</span>
                   Some physical effort is needed to enjoy nearby coastal areas.
                 </div>
-                <select name="q7">
+                <select class="sr-only" name="q7">
                   <option value="">Select…</option>
                   <option value="A">A. Prettycoat Farm</option>
                   <option value="B">B. Newgammon Wild</option>
@@ -1506,8 +1557,11 @@
                   <option value="D">D. South Turnbull</option>
                   <option value="E">E. Boxer Trepis</option>
                 </select>
+                <div class="drop-zone-row"><div class="drop-zone" data-for="q7" tabindex="0" role="button" aria-label="Answer box for question 7">Drop here</div><button type="button" class="clear-drop-btn" data-clear-for="q7">Clear</button></div>
                 <div class="correct-answer-text" id="ca-7"></div>
               </div>
+
+              <p class="question-group-heading">Read “Durridge Heights (OH) Newsletter” and answer Questions 8 to 14.</p>
 
               <p><strong>Questions 8–14</strong></p>
               <p>Do the following statements agree with the information given in the text?</p>
@@ -2216,6 +2270,7 @@
         `
         <div data-section="2" style="display:none;">
           <p><strong>SECTION 2</strong></p>
+          <p class="question-group-heading">Read “A day in the life of a care worker” and answer Questions 15 to 20.</p>
           <p><strong>Questions 15–20</strong></p>
           <p>Complete the flowchart below.</p>
           <p>Choose <strong>ONE WORD ONLY</strong> from the text for each answer.</p>
@@ -2227,7 +2282,7 @@
             <div class="question-text">
               <span class="question-number-label">15.</span>
               It’s an early start for the first client. You may have to help the client get up and dressed if they have a
-              <span class="inline-input"><input type="text" name="q15" /></span>
+              <span class="inline-input no-number"><input type="text" name="q15" /></span>
               that makes this challenging.
             </div>
             <div class="correct-answer-text" id="ca-15"></div>
@@ -2237,7 +2292,7 @@
             <div class="question-text">
               <span class="question-number-label">16.</span>
               The next task may be cooking breakfast and it’s nice to have some
-              <span class="inline-input"><input type="text" name="q16" /></span>
+              <span class="inline-input no-number"><input type="text" name="q16" /></span>
               at this time.
             </div>
             <div class="correct-answer-text" id="ca-16"></div>
@@ -2247,7 +2302,7 @@
             <div class="question-text">
               <span class="question-number-label">17.</span>
               It may be a good idea to do some housework after this, such as
-              <span class="inline-input"><input type="text" name="q17" /></span>
+              <span class="inline-input no-number"><input type="text" name="q17" /></span>
               and washing up.
             </div>
             <div class="correct-answer-text" id="ca-17"></div>
@@ -2257,7 +2312,7 @@
             <div class="question-text">
               <span class="question-number-label">18.</span>
               You may then visit a second client and help them get a
-              <span class="inline-input"><input type="text" name="q18" /></span>
+              <span class="inline-input no-number"><input type="text" name="q18" /></span>
               lunch ready.
             </div>
             <div class="correct-answer-text" id="ca-18"></div>
@@ -2267,7 +2322,7 @@
             <div class="question-text">
               <span class="question-number-label">19.</span>
               Lunch may be followed by some
-              <span class="inline-input"><input type="text" name="q19" /></span>.
+              <span class="inline-input no-number"><input type="text" name="q19" /></span>.
             </div>
             <div class="correct-answer-text" id="ca-19"></div>
           </div>
@@ -2276,10 +2331,12 @@
             <div class="question-text">
               <span class="question-number-label">20.</span>
               Afterwards, a third client may need help with an activity that involves going out of their home, such as doing their
-              <span class="inline-input"><input type="text" name="q20" /></span>.
+              <span class="inline-input no-number"><input type="text" name="q20" /></span>.
             </div>
             <div class="correct-answer-text" id="ca-20"></div>
           </div>
+
+          <p class="question-group-heading">Read “How to find a good balance between your work and your personal life” and answer Questions 21 to 27.</p>
 
           <p><strong>Questions 21–27</strong></p>
           <p>Complete the sentences below.</p>
@@ -2291,7 +2348,7 @@
             <div class="question-text">
               <span class="question-number-label">21.</span>
               People who cut down the hours they work gain most from feeling better physically and experiencing an increased sense of
-              <span class="inline-input"><input type="text" name="q21" /></span>.
+              <span class="inline-input no-number"><input type="text" name="q21" /></span>.
             </div>
             <div class="correct-answer-text" id="ca-21"></div>
           </div>
@@ -2300,7 +2357,7 @@
             <div class="question-text">
               <span class="question-number-label">22.</span>
               It is important that those who work at desks avoid
-              <span class="inline-input"><input type="text" name="q22" /></span>
+              <span class="inline-input no-number"><input type="text" name="q22" /></span>
               by checking their chair, work surface and screen are in the best position.
             </div>
             <div class="correct-answer-text" id="ca-22"></div>
@@ -2310,7 +2367,7 @@
             <div class="question-text">
               <span class="question-number-label">23.</span>
               Having targets to work towards is useful but they should be
-              <span class="inline-input"><input type="text" name="q23" /></span>.
+              <span class="inline-input no-number"><input type="text" name="q23" /></span>.
             </div>
             <div class="correct-answer-text" id="ca-23"></div>
           </div>
@@ -2319,7 +2376,7 @@
             <div class="question-text">
               <span class="question-number-label">24.</span>
               When there are many different tasks to do, the ability to
-              <span class="inline-input"><input type="text" name="q24" /></span>
+              <span class="inline-input no-number"><input type="text" name="q24" /></span>
               them is vital.
             </div>
             <div class="correct-answer-text" id="ca-24"></div>
@@ -2329,7 +2386,7 @@
             <div class="question-text">
               <span class="question-number-label">25.</span>
               People who give up all treats in their personal time may find their
-              <span class="inline-input"><input type="text" name="q25" /></span>
+              <span class="inline-input no-number"><input type="text" name="q25" /></span>
               decreases.
             </div>
             <div class="correct-answer-text" id="ca-25"></div>
@@ -2339,7 +2396,7 @@
             <div class="question-text">
               <span class="question-number-label">26.</span>
               It is wise to use the full amount of
-              <span class="inline-input"><input type="text" name="q26" /></span>
+              <span class="inline-input no-number"><input type="text" name="q26" /></span>
               allowance every year.
             </div>
             <div class="correct-answer-text" id="ca-26"></div>
@@ -2349,7 +2406,7 @@
             <div class="question-text">
               <span class="question-number-label">27.</span>
               Making time to do things with close companions, relatives or
-              <span class="inline-input"><input type="text" name="q27" /></span>
+              <span class="inline-input no-number"><input type="text" name="q27" /></span>
               is a great way to relax.
             </div>
             <div class="correct-answer-text" id="ca-27"></div>
@@ -2505,44 +2562,24 @@
           <p><strong>Questions 36–39</strong></p>
           <p>Complete the summary below. Choose <strong>ONE WORD ONLY</strong> from the text for each answer. Write your answers in boxes 36–39.</p>
 
-          <div class="question-block" data-q="36">
-            <div class="question-text">
-              <span class="question-number-label">36.</span>
+          <div class="summary-box">
+            <p>
               ‘Henry’ was used in Leeds from 2009 in the fight against childhood obesity. The programme focuses on situations such as mealtimes and bedtimes, and it encourages parents to set firm
-              <span class="inline-input"><input type="text" name="q36" /></span>
-              during these periods.
-            </div>
-            <div class="correct-answer-text" id="ca-36"></div>
-          </div>
-
-          <div class="question-block" data-q="37">
-            <div class="question-text">
-              <span class="question-number-label">37.</span>
-              According to Kim Roberts, ‘Henry’ aims to help people become more
-              <span class="inline-input"><input type="text" name="q37" /></span>
-              as parents.
-            </div>
-            <div class="correct-answer-text" id="ca-37"></div>
-          </div>
-
-          <div class="question-block" data-q="38">
-            <div class="question-text">
-              <span class="question-number-label">38.</span>
-              In this way, they do not instruct children to do things, nor give them total freedom of choice as in a
-              <span class="inline-input"><input type="text" name="q38" /></span>
-              parenting style.
-            </div>
-            <div class="correct-answer-text" id="ca-38"></div>
-          </div>
-
-          <div class="question-block" data-q="39">
-            <div class="question-text">
-              <span class="question-number-label">39.</span>
-              Instead, they allow children to make some decisions for themselves. This might be a choice of vegetable at the dinner table or a decision about where a
-              <span class="inline-input"><input type="text" name="q39" /></span>
+              <span class="question-block inline-question" data-q="36"><span class="inline-input" data-q="36"><input type="text" name="q36" /></span></span>
+              during these periods. According to Kim Roberts, ‘Henry’ aims to help people become more
+              <span class="question-block inline-question" data-q="37"><span class="inline-input" data-q="37"><input type="text" name="q37" /></span></span>
+              as parents. In this way, they do not instruct children to do things, nor give them total freedom of choice as in a
+              <span class="question-block inline-question" data-q="38"><span class="inline-input" data-q="38"><input type="text" name="q38" /></span></span>
+              parenting style. Instead, they allow children to make some decisions for themselves. This might be a choice of vegetable at the dinner table or a decision about where a
+              <span class="question-block inline-question" data-q="39"><span class="inline-input" data-q="39"><input type="text" name="q39" /></span></span>
               should be enjoyed in the evening.
+            </p>
+            <div class="summary-feedbacks">
+              <div class="correct-answer-text" id="ca-36"></div>
+              <div class="correct-answer-text" id="ca-37"></div>
+              <div class="correct-answer-text" id="ca-38"></div>
+              <div class="correct-answer-text" id="ca-39"></div>
             </div>
-            <div class="correct-answer-text" id="ca-39"></div>
           </div>
 
           <p><strong>Question 40</strong></p>
@@ -2581,8 +2618,14 @@
       if (dragMatchReady) return;
       dragMatchReady = true;
       let picked = "";
-      const nameByLetter = { A: "Susan Jebb", B: "Kim Roberts", C: "Janice Burberry", D: "Seema Kennedy" };
-      document.querySelectorAll(".drag-item").forEach((item) => {
+      const labelByLetter = {
+        A: "Susan Jebb",
+        B: "Kim Roberts",
+        C: "Janice Burberry",
+        D: "Seema Kennedy",
+        E: "E. Boxer Trepis",
+      };
+      document.querySelectorAll(".drag-item, .passage-match-source").forEach((item) => {
         item.addEventListener("dragstart", (e) => {
           e.dataTransfer.setData("text/plain", item.dataset.value);
           e.dataTransfer.effectAllowed = "copy";
@@ -2590,7 +2633,7 @@
         item.addEventListener("click", () => {
           const isAlreadySelected = item.classList.contains("selected");
           document
-            .querySelectorAll(".drag-item")
+            .querySelectorAll(".drag-item, .passage-match-source")
             .forEach((i) => i.classList.remove("selected"));
           if (isAlreadySelected) {
             picked = "";
@@ -2599,17 +2642,26 @@
           item.classList.add("selected");
           picked = item.dataset.value;
         });
+        item.addEventListener("keydown", (event) => {
+          if (event.key === "Enter" || event.key === " ") {
+            event.preventDefault();
+            item.click();
+          }
+        });
       });
 
       function apply(zone, val) {
-        if (!/^[ABCD]$/.test(val)) return;
         const qName = zone.dataset.for;
         const sel = document.querySelector('select[name="' + qName + '"]');
         if (sel) {
+          const allowedOption = Array.from(sel.options).find((o) => o.value === val);
+          if (!allowedOption) return;
           sel.value = val;
           sel.dispatchEvent(new Event("change", { bubbles: true }));
+          zone.textContent = allowedOption.textContent && allowedOption.textContent !== val ? allowedOption.textContent : (labelByLetter[val] || val);
+        } else {
+          zone.textContent = labelByLetter[val] || val;
         }
-        zone.textContent = nameByLetter[val] || val;
         zone.classList.add("filled");
       }
 
@@ -2652,7 +2704,7 @@
         });
         zone.addEventListener("keydown", (e) => {
           if (e.key === "Backspace" || e.key === "Delete") clear(zone);
-          if (/^[abcdABCD]$/.test(e.key)) apply(zone, e.key.toUpperCase());
+          if (/^[abcdeABCDE]$/.test(e.key)) apply(zone, e.key.toUpperCase());
         });
         zone.addEventListener("dblclick", () => clear(zone));
       });
@@ -2689,44 +2741,9 @@
       });
     }
 
-    function convertGapFillNumbersToBullets() {
-      document.querySelectorAll(".question-block[data-q]").forEach((block) => {
-        const qNum = parseInt(block.getAttribute("data-q"), 10);
-        if (!((qNum >= 15 && qNum <= 27) || (qNum >= 36 && qNum <= 39))) return;
-        const label = block.querySelector(".question-number-label");
-        const text = block.querySelector(".question-text");
-        if (!text) return;
-        if (label) label.remove();
-        text.classList.add("gap-fill");
-
-        if (!text.querySelector(".gap-bullet")) {
-          const bullet = document.createElement("span");
-          bullet.className = "gap-bullet";
-          bullet.setAttribute("aria-hidden", "true");
-          bullet.textContent = "•";
-          text.prepend(bullet);
-        }
-
-        const inputWrap = text.querySelector(".inline-input");
-        if (!inputWrap || text.querySelector(".gap-answer-tail")) return;
-
-        const tail = document.createElement("span");
-        tail.className = "gap-answer-tail";
-        inputWrap.after(tail);
-        tail.appendChild(inputWrap);
-
-        let node = tail.nextSibling;
-        while (node) {
-          const next = node.nextSibling;
-          tail.appendChild(node);
-          node = next;
-        }
-      });
-    }
-// Build all questions immediately after DOM loads (script is at the end)
+    // Build all questions immediately after DOM loads (script is at the end)
     buildRemainingQuestions();
     stampInlineInputNumbers();
-    convertGapFillNumbersToBullets();
     setupDragMatch();
     enableRadioToggleOff();
 
@@ -2738,7 +2755,6 @@
       if (!qPane) return;
 
       stampInlineInputNumbers();
-      convertGapFillNumbersToBullets();
 
       // Listen to changes on all inputs/selects/radios
       qPane
