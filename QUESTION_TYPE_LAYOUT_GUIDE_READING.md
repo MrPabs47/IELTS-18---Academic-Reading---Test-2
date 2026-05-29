@@ -4,8 +4,8 @@ This project uses static HTML test pages. All new Reading tests must follow the 
 
 ## General rules
 
-1. Use the latest stable Reading test of the same module as the shell: Academic for Academic Reading and General Training for GT Reading. Never use an Academic shell for a GT Reading test.
-2. Replace content only. Preserve the stable shell's candidate/name start-screen behaviour; Test Mode must keep required name entry if the stable shell has it, and Study Mode may skip it only if the stable shell does.
+1. Use the latest stable Reading test of the same module as the shell: Academic for Academic Reading and General Training for GT Reading. Never use an Academic shell for a GT Reading test. The current stable GT shell should preserve the candidate/name start screen, timer, split panes, bottom navigation, question highlighting, drag/drop matching, summary and note formatting, and option-card layouts.
+2. Replace content only. Preserve the stable shell's candidate/name start-screen behaviour. Every new Reading test must keep the name input; Test Mode must require the student name before starting, and Study Mode may start without requiring a name if the stable shell does.
 3. Do not summarise, shorten, paraphrase, or invent passage or question wording.
 4. Use the exact full text from Passage 1.txt, Passage 2.txt, Passage 3.txt, Questions.txt, and Answers.txt.
 5. Before editing HTML, classify Questions 1–40 by question type.
@@ -21,7 +21,7 @@ This project uses static HTML test pages. All new Reading tests must follow the 
 11. Bullet points must be based on the actual question type and layout, not the question number range.
 12. Keep the IELTS Pabs logo behaviour: red hover, hover-triggered blur animation, confirmation home link, pointer cursor on hover, and no text insertion cursor. Recommended CSS: `.logo.home-link { cursor: pointer; user-select: none; }`.
 13. Build Reading tests in staged prompts: shell only, passages only, questions and answers only, formatting cleanup only, hub activation only, then documentation update only if new issues were found. If old shell content appears, repair in smaller sections. Always inspect actual changed files and actual HTML, not only the PR title or description.
-14. GT Reading is organised differently: Section 1 may contain two or more short texts, Section 2 may contain two workplace/practical texts, and Section 3 is usually one longer text.
+14. GT Reading is organised differently: Section 1 may contain two or more short texts, Section 2 may contain two workplace/practical texts, and Section 3 is usually one longer text. Build GT Reading tests in stages only: shell only, passages only, questions and answers by section if needed, formatting cleanup only, hub activation only, and documentation update only if new problems were found. Do not build a full GT test in one massive pass.
 
 
 ## Passage pane rules for Reading
@@ -29,14 +29,15 @@ This project uses static HTML test pages. All new Reading tests must follow the 
 - Passage panes should focus on the passage title and passage text.
 - Do not repeat redundant `Questions...` or `Read the text...` lines if the fixed pane header and question pane already provide that instruction.
 - Section 3 should start cleanly with the passage title and paragraph A when the source is paragraph-labelled.
-- If a GT section contains two separate texts, clearly separate them with headings, spacing, and divider styling so they do not visually merge. For example, GT Test 1 Section 1 needed clear separation between `Gobridge Tramlink FAQs` and `Adorable Knitwear`, and Section 2 needed clear separation between `How to Become a Great Leader` and `Resigning from a Job in a Professional Manner`.
+- If a GT section contains two separate texts, clearly separate them in the passage pane with headings, spacing, and divider styling so they do not visually merge. For example, GT Test 1 Section 1 needed clear separation between `Gobridge Tramlink FAQs` and `Adorable Knitwear`, and Section 2 needed clear separation between `How to Become a Great Leader` and `Resigning from a Job in a Professional Manner`.
 
 ## Shared form control and navigation rules
 
 - Text inputs, inline inputs, and dropdowns should inherit the page font family and use a font size consistent with the surrounding question text.
 - Inline inputs should not look oversized or force awkward line breaks unless the screen is narrow.
 - Bottom navigation part chips and counts must stay on one line. Use `white-space: nowrap`, `inline-flex`, suitable spacing, and horizontal overflow for question buttons if needed.
-- The bottom navigation must not wrap labels such as `Part 1` and `2 of 14` onto separate lines.
+- When a GT section has two texts, the question pane must clearly say which questions belong to which text. Add the heading style `Read “Text title” and answer Questions X to Y.` before each question group linked to a separate GT text.
+- The bottom navigation must not wrap labels such as `Part 1` and `0 of 14` onto separate lines. Use `inline-flex`, `white-space: nowrap`, `width: auto`, `flex: 0 0 auto`, and `min-width: max-content` where needed. Question numbers may scroll horizontally if needed.
 
 ## TRUE / FALSE / NOT GIVEN
 
@@ -47,7 +48,7 @@ Layout:
 - Normal question blocks.
 - Visible question number before each statement.
 - Radio buttons in the cleaner stable layout: options stacked vertically, each option in a clear clickable row/card, comfortable spacing, and the radio button aligned with the label text.
-- Values must remain exactly: `TRUE`, `FALSE`, `NOT GIVEN`.
+- Values must remain exactly: `TRUE`, `FALSE`, `NOT GIVEN`. Do not use `NG` as a radio value.
 - If Answers.txt uses `NG`, normalise answerKey and correctAnswerText to `NOT GIVEN`.
 - No bullet points.
 - Do not put the question number inside an answer box.
@@ -61,7 +62,7 @@ Layout:
 - Normal question blocks.
 - Visible question number before each statement.
 - Radio buttons in the cleaner stable layout: options stacked vertically, each option in a clear clickable row/card, comfortable spacing, and the radio button aligned with the label text.
-- Values must remain exactly: `YES`, `NO`, `NOT GIVEN`.
+- Values must remain exactly: `YES`, `NO`, `NOT GIVEN`. Do not use `NG` as a radio value.
 - If Answers.txt uses `NG`, normalise answerKey and correctAnswerText to `NOT GIVEN`.
 - No bullet points.
 - Do not put the question number inside an answer box.
@@ -171,6 +172,13 @@ Layout:
 - Do not force students to rely only on a repeated option bank if the original task naturally uses labels in the passage.
 - Example lesson: for GT Test 1 Q8-14, labels `A Mary-Anne`, `B Davina`, `C Naga`, `D Libby`, and `E Laura` should be draggable/click-selectable from the passage pane.
 
+
+## Current question highlighting
+
+There must be only one active question highlighted at a time. Highlighting must update when the user clicks a bottom question number, clicks inside a question block, focuses an input, clicks a radio option, focuses a dropdown, or clicks/focuses a drop zone.
+
+Do not rely only on `change` or `input` events. Use a helper such as `setCurrentQuestionFromElement(event.target)` and attach it to `#questionContent` with both `focusin` and `click`. Do not scroll when the user simply clicks inside a question; only bottom question navigation should scroll.
+
 ## Answer alternatives from Answers.txt
 
 When Answers.txt indicates alternatives such as habitat(s):
@@ -198,7 +206,7 @@ Layout:
 - Normal question block.
 - Visible question number.
 - Full question text.
-- Radio buttons in clear clickable row/card styling, not plain labels separated only by line breaks.
+- Radio buttons in clear clickable row/card styling, not plain labels separated only by line breaks or `<br>` tags.
 - Show the full option text.
 - Add comfortable spacing between multiple-choice questions.
 
@@ -208,7 +216,7 @@ Use for tasks that say:
 Choose TWO letters.
 
 Layout:
-- Checkbox-style options in clear clickable row/card styling, not plain labels separated only by line breaks.
+- Checkbox-style options in clear clickable row/card styling, not plain labels separated only by line breaks or `<br>` tags.
 - Students can select a maximum of two options.
 - If two options are already selected and the student clicks a third, prevent the third selection.
 - Students can untick and change their answers.
@@ -221,6 +229,11 @@ Do not use or call functions like:
 convertGapFillNumbersToBullets()
 
 Bullet points must be added directly only to the specific note-completion or summary items that need them.
+
+
+## Codex restricted-file verification
+
+When a prompt restricts edits to specific files, run `git diff --name-only` before finishing. If any file outside the allowed list changed, revert those extra files before committing. Include the exact `git diff --name-only` output in the final report; do not rely on summaries that claim only one file changed.
 
 ## Final Reading verification checklist
 
@@ -243,3 +256,4 @@ Before finishing any new Reading test:
 16. Do not create duplicate sections, duplicate answerKey or correctAnswerText objects, or duplicate ca-1 to ca-40 IDs.
 17. Hub activation should ideally change only index.html. Formatting cleanup should ideally change only the relevant test HTML file. If hub activation also touches a test HTML file, inspect it afterwards to ensure it did not overwrite formatting or content.
 18. Confirm the correct key and path exist in the correct hub category; for IELTS 19 GT Reading Test 1, key `19-1` belongs under General Training Reading.
+19. After every merge, inspect the actual changed files, browser title, visible header, candidate/name screen, question groups, answerKey, correctAnswerText, ca-1 to ca-40, and index.html only during hub activation. Do not trust PR titles or summaries.

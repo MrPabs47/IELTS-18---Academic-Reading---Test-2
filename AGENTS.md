@@ -32,7 +32,7 @@ Before creating or modifying any Listening test, read and follow:
 1. Use the latest stable Reading test of the same module as the shell: Academic for Academic Reading, GT for General Training Reading. Never use an Academic shell for a GT Reading test.
 2. Preserve the candidate/name start-screen behaviour from the stable shell. Test Mode should require the student name if stable tests do this; Study Mode may skip the name field if that is how the shell works.
 3. Classify Questions 1-40 by question type before editing the HTML.
-4. Build in staged prompts rather than one massive pass: shell only, passages only, questions and answers only, formatting cleanup only, hub activation only, then documentation update only if new issues were found.
+4. Build Reading tests in staged prompts rather than one massive pass. For GT Reading this staged workflow is required: shell only, passages only, questions and answers by section if needed, formatting cleanup only, hub activation only, then documentation update only if new problems were found.
 5. Replace passages first, using the exact full text from Passage 1.txt, Passage 2.txt, and Passage 3.txt.
 6. Replace questions and answer keys separately if the test is complex.
 7. Do not summarise, shorten, paraphrase, or invent passage/question wording.
@@ -41,6 +41,8 @@ Before creating or modifying any Listening test, read and follow:
 10. Confirm there is only one answerKey object and only one correctAnswerText object.
 11. Confirm every question has a matching feedback ID from ca-1 to ca-40.
 12. Update index.html only after the test itself is correct.
+13. For a new GT Reading test, use the latest stable GT Reading shell, never an Academic shell. The current stable GT shell should preserve the candidate/name start screen, timer, split panes, bottom navigation, question highlighting, drag/drop matching, summary and note formatting, and option-card layouts.
+14. Every new Reading test must preserve the candidate/name start screen. Test Mode must require the student name before starting; Study Mode may start without requiring a name if that is how the stable shell works. Do not accidentally remove the name input when copying a shell.
 
 ## Required workflow for new Listening tests
 
@@ -85,6 +87,24 @@ Before creating or modifying any Listening test, read and follow:
 26. Bottom navigation part chips and counts must stay on one line using nowrap/inline-flex spacing and horizontal overflow where needed.
 27. The IELTS Pabs logo/home link should use `cursor: pointer;` and `user-select: none;` so it does not show a text insertion cursor.
 28. During hub activation verification, confirm the correct key and path are in the correct category, for example IELTS 19 GT Reading Test 1 uses key `19-1` under General Training Reading.
+29. When a GT section has two texts, the question pane must clearly say which questions belong to each text, using the style: `Read “Text title” and answer Questions X to Y.` Add this before each question group linked to a separate GT text.
+30. Current-question highlighting must allow only one active question at a time and update when the user clicks a bottom question number, clicks inside a question block, focuses an input, clicks a radio option, focuses a dropdown, or clicks/focuses a drop zone. Prefer a helper such as `setCurrentQuestionFromElement(event.target)` attached to `#questionContent` with `focusin` and `click`. Do not scroll when users simply click inside a question; only bottom question navigation should scroll.
+31. Bottom navigation part chips and counts must stay on one line using `inline-flex`, `white-space: nowrap`, `width: auto`, `flex: 0 0 auto`, and `min-width: max-content` where needed. Question numbers may scroll horizontally, but never allow `Part 1` and `0 of 14` to split onto two lines.
+
+
+## Codex file discipline
+
+When a prompt restricts the allowed files, follow this verification before finishing:
+
+1. Run `git diff --name-only`.
+2. If any file outside the allowed file list changed, revert those extra files before committing.
+3. Include the exact `git diff --name-only` output in the final report.
+
+Do not rely on Codex summaries that say only one file changed. Always inspect the actual changed file list after merge.
+
+## PR verification rule
+
+After every merge, inspect the actual changed files, browser title, visible header, candidate/name screen, question groups, answerKey, correctAnswerText, ca-1 to ca-40, and index.html only during hub activation. Do not trust PR titles or summaries.
 
 ## IELTS Pabs logo behaviour
 
