@@ -479,6 +479,25 @@
       line-height: 1.45;
     }
 
+    .passage-divider {
+      margin: 32px 0 22px;
+      border-top: 2px solid var(--border);
+      padding-top: 22px;
+    }
+
+    .passage-divider h2 {
+      margin-top: 0;
+    }
+
+    .question-group-heading {
+      margin: 16px 0 10px;
+      padding: 8px 10px;
+      border-left: 4px solid var(--accent);
+      border-radius: 8px;
+      background: var(--accent-soft);
+      font-weight: 600;
+    }
+
     .question-block {
       margin-bottom: 10px;
       padding: 6px 8px;
@@ -1293,7 +1312,8 @@
               <p><strong class="passage-match-source" draggable="true" data-value="F" tabindex="0" role="button" aria-label="Use review F, Café Soloist, as an answer">F Café Soloist</strong></p>
               <p>After a considerable search, we eventually found Café Soloist tucked away behind an organic grocery store. There was nothing outside to indicate that it was there, which would have been helpful! Once inside, we were presented with a menu that had more coffee options than we had ever seen before. Twenty minutes and a lot of discussion later, we finally decided what we wanted. We could then sit back and enjoy the happy chatter and welcoming atmosphere around us.</p>
 
-              <h2>Frog Valley development</h2>
+              <div class="passage-divider">
+                <h2>Frog Valley development</h2>
               <h3>Creating a better area to meet the needs of the local community</h3>
 
               <p>The proposal to develop the part of our city known as Frog Valley has now been passed to the local council for consideration and approval. In case you missed earlier newspaper reports, here briefly are some of the changes and improvements that are being planned for the site.</p>
@@ -1307,6 +1327,7 @@
               <p>For many years now, local businesspeople have been asking for better business premises, and this is now a priority for Frog Valley. Twenty thousand square metres of space will be used to house anything from small startups to large existing local businesses. It will be built to the south-east of the site, with dedicated car parking for office workers, either within each office area or in a single car park.</p>
 
               <p>At our public consultation meeting, some residents asked if it would be possible to include services such as dentistry and various types of medical testing facilities within the health centre. This would mean adding to the existing building and there are no plans to do this at present. However, it will be possible to see a doctor at weekends and in the evenings, which is a welcome development.</p>
+              </div>
             </div>
 
             <!-- Section 2 passages -->
@@ -1339,7 +1360,8 @@
 
               <p>Minor accidents and injuries can usually be attended to on the premises, in the Health Centre on the third floor. These services are free. Headache pills and other analgesics are available at standard pharmacy prices.</p>
 
-              <h2>Percil Memorial Training Scholarships</h2>
+              <div class="passage-divider">
+                <h2>Percil Memorial Training Scholarships</h2>
               <p>(3 offered per year)</p>
 
               <p>Percil Training Institute offers a number of scholarships for people from overseas who plan to live in Australia and need re-training. These scholarships are available for full-time study only and are not offered for courses of less than 20 weeks’ duration.</p>
@@ -1355,6 +1377,7 @@
               <p>Personal removal expenses for scholarship holders are not paid. If the scholarship holder is married at the time of applying for the scholarship, some travel and removal costs may be paid for the husband or wife. Travel costs or support for dependent children are at the scholarship holder’s expense.</p>
 
               <p>Scholars are eligible for assistance with accommodation within the Sydney metropolitan area, although married accommodation is unavailable on the Percil Institute campus. Since demand for accommodation on the campus is always high, scholarship applicants are advised to apply at least ten weeks before intending to come into residence.</p>
+              </div>
             </div>
 
             <!-- Section 3 passages -->
@@ -1394,6 +1417,7 @@
           <div class="pane-content" id="questionContent">
             <!-- Section 1 questions -->
             <div data-section="1">
+              <p class="question-group-heading">Read “Customer reviews of cafés in the town of Artingly” and answer Questions 1 to 5.</p>
               <p><strong>SECTION 1 Questions 1–5</strong></p>
               <p>Look at the six reviews of cafés in the town of Artingly, A–F.</p>
               <p>For which café are the following statements true?</p>
@@ -1407,6 +1431,7 @@
               <div class="question-block" data-q="4"><div class="question-text"><span class="question-number-label">4.</span> It has a strong local customer base.</div><select class="sr-only" name="q4"><option value="">Select…</option><option value="A">A</option><option value="B">B</option><option value="C">C</option><option value="D">D</option><option value="E">E</option><option value="F">F</option></select><div class="drop-zone" data-for="q4" tabindex="0" role="button" aria-label="Answer box for question 4">Drop here</div><div class="correct-answer-text" id="ca-4"></div></div>
               <div class="question-block" data-q="5"><div class="question-text"><span class="question-number-label">5.</span> It deserves the public praise it has received.</div><select class="sr-only" name="q5"><option value="">Select…</option><option value="A">A</option><option value="B">B</option><option value="C">C</option><option value="D">D</option><option value="E">E</option><option value="F">F</option></select><div class="drop-zone" data-for="q5" tabindex="0" role="button" aria-label="Answer box for question 5">Drop here</div><div class="correct-answer-text" id="ca-5"></div></div>
 
+              <p class="question-group-heading">Read “Frog Valley development” and answer Questions 6 to 14.</p>
               <p><strong>Questions 6–14</strong></p>
               <p>Do the following statements agree with the information given in the text?</p>
               <p>In boxes 6–14 on your answer sheet, write</p>
@@ -1428,6 +1453,7 @@
         <div data-section="2" style="display:none;">
           <p><strong>SECTION 2 Questions 15 to 27</strong></p>
 
+          <p class="question-group-heading">Read “Percil Training Institute” and answer Questions 15 to 24.</p>
           <p><strong>Questions 15–24</strong></p>
           <p>Do the following statements agree with the information given in the text?</p>
           <p>In boxes 15–24 on your answer sheet, write</p>
@@ -1446,6 +1472,7 @@
           <div class="question-block" data-q="23"><div class="question-text"><span class="question-number-label">23.</span> Guests may use the swimming pool.</div><div class="options-row"><label><input type="radio" name="q23" value="TRUE"> TRUE</label><label><input type="radio" name="q23" value="FALSE"> FALSE</label><label><input type="radio" name="q23" value="NOT GIVEN"> NOT GIVEN</label></div><div class="correct-answer-text" id="ca-23"></div></div>
           <div class="question-block" data-q="24"><div class="question-text"><span class="question-number-label">24.</span> Students are unable to enter the institute after 8.30 pm.</div><div class="options-row"><label><input type="radio" name="q24" value="TRUE"> TRUE</label><label><input type="radio" name="q24" value="FALSE"> FALSE</label><label><input type="radio" name="q24" value="NOT GIVEN"> NOT GIVEN</label></div><div class="correct-answer-text" id="ca-24"></div></div>
 
+          <p class="question-group-heading">Read “Percil Memorial Training Scholarships” and answer Questions 25 to 27.</p>
           <p><strong>Questions 25–27</strong></p>
           <p>Answer the questions below.</p>
           <p>Choose <strong>NO MORE THAN THREE WORDS AND/OR A NUMBER</strong> from the text for each answer.</p>
@@ -1991,10 +2018,29 @@
           }
         });
 
+
+      qPane.addEventListener("focusin", (event) => {
+        setCurrentQuestionFromElement(event.target);
+      });
+      qPane.addEventListener("click", (event) => {
+        setCurrentQuestionFromElement(event.target);
+      });
+
       // Start on section 1, question 1
       switchSection(1);
       highlightCurrentQuestion(1);
       updateCounts();
+      buildQuestionNav();
+    }
+
+
+    function setCurrentQuestionFromElement(el) {
+      const block = el.closest(".question-block[data-q]");
+      if (!block) return;
+      const q = parseInt(block.dataset.q, 10);
+      if (Number.isNaN(q)) return;
+      currentQuestion = q;
+      highlightCurrentQuestion(q);
       buildQuestionNav();
     }
 
