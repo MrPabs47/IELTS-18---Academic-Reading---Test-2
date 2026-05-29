@@ -2766,10 +2766,29 @@
           }
         });
 
+
+      qPane.addEventListener("focusin", (event) => {
+        setCurrentQuestionFromElement(event.target);
+      });
+      qPane.addEventListener("click", (event) => {
+        setCurrentQuestionFromElement(event.target);
+      });
+
       // Start on section 1, question 1
       switchSection(1);
       highlightCurrentQuestion(1);
       updateCounts();
+      buildQuestionNav();
+    }
+
+
+    function setCurrentQuestionFromElement(el) {
+      const block = el.closest(".question-block[data-q]");
+      if (!block) return;
+      const q = parseInt(block.dataset.q, 10);
+      if (Number.isNaN(q)) return;
+      currentQuestion = q;
+      highlightCurrentQuestion(q);
       buildQuestionNav();
     }
 

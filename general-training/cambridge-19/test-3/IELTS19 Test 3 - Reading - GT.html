@@ -450,6 +450,25 @@
       line-height: 1.45;
     }
 
+    .passage-divider {
+      margin: 32px 0 22px;
+      border-top: 2px solid var(--border);
+      padding-top: 22px;
+    }
+
+    .passage-divider h2 {
+      margin-top: 0;
+    }
+
+    .question-group-heading {
+      margin: 16px 0 10px;
+      padding: 8px 10px;
+      border-left: 4px solid var(--accent);
+      border-radius: 8px;
+      background: var(--accent-soft);
+      font-weight: 600;
+    }
+
     .question-block {
       margin-bottom: 10px;
       padding: 6px 8px;
@@ -666,7 +685,9 @@
     .part-summary-row {
       display: flex;
       gap: 8px;
-      min-width: 320px;
+      min-width: max-content;
+      flex: 0 0 auto;
+      white-space: nowrap;
     }
 
     #questionNumbers {
@@ -693,12 +714,15 @@
       justify-content: center;
       transition: background 0.1s, border-color 0.1s, color 0.1s;
       text-align: center;
-      width: 100%;
+      width: auto;
+      flex: 0 0 auto;
+      white-space: nowrap;
     }
 
     .part-chip span.count {
       color: var(--text-soft);
       font-size: 0.85rem;
+      white-space: nowrap;
     }
 
     .part-chip.active {
@@ -1113,7 +1137,8 @@
 
               <p><strong>E Uplands</strong> Uplands could have been a delightful film: it has a charming story, witty dialogue, and is visually breathtaking. But the two lead actors are at their best in thrillers, not films like this one. James Petherick, who plays the hero, fails to gain the sympathy of the audience, who should be moved by the ups and downs in his life.</p>
 
-              <h2>Sports events in New Zealand</h2>
+              <div class="passage-divider">
+                <h2>Sports events in New Zealand</h2>
 
               <p><strong>A McLeans Island Run</strong> This unique running and cycling event winds its way through the Canterbury countryside and finishes in Orana Park, where your spectators will include lions, tigers, gorillas and giraffes. Whether you’re a first-timer or a seasoned professional, there’s a distance to suit you. Choose from the short, the sprint or the standard distance. You can race to help other people too. If you get some friends or workmates to take part, you’ll be in with a chance to win $25,000 to put towards a good cause of your choice.</p>
 
@@ -1122,6 +1147,7 @@
               <p><strong>C Race Drive Experience</strong> If you have ever wanted to experience the extreme thrill of driving a 6000cc race car, then this is definitely for you! You start off your Race Drive Experience by meeting the skilled team of racing drivers at the Motorsport Park Raceway, before being fully kitted out with one of our race suits and safety helmet. Then you are strapped into the passenger seat of one of our racing cars and taken on a demo drive, covering racing lines, braking points and race driving tricks. Finally you take the driver’s seat and can undertake your own high-speed laps of the circuit.</p>
 
               <p><strong>D Banks Peninsular Walking Festival</strong> The Banks Peninsula Walking Festival offers guided walks all over the Banks Peninsula. The guides, all volunteers, are local people who love to share their passion for this special place with those from the wider community. Participants are guaranteed an enjoyable experience as they relax, get to know new people and absorb the stories and atmosphere of this fantastic land.</p>
+              </div>
             </div>
 
             <!-- Section 2 passages -->
@@ -1142,7 +1168,8 @@
 
               <p>Redundancy enables you to move your career forward in line with your own personal agenda. Although it can be traumatic, many people find that redundancy is actually the incentive they need to take their career in the direction they actually want to go. So think about what you really want, and go for it.</p>
 
-              <h2>Palvin’s Restaurant</h2>
+              <div class="passage-divider">
+                <h2>Palvin’s Restaurant</h2>
               <h3>Instructions to new kitchen staff</h3>
 
               <p>Dress standards at our restaurants are extremely important whichever area you work in. The following information will help ensure that you have a professional appearance every day as you carry out your foodservice duties.</p>
@@ -1154,6 +1181,7 @@
               <p>Uniforms should not be worn outside work. You should wear your normal clothes to and from work but make sure they’re respectable. For example, hoodies and other similar tops are not acceptable in the kitchens; if it’s cold, wear a jacket. When you arrive at work, you can use the changing facilities located next to the lockers to put on your uniform. You can wear your own shoes in the kitchens as long as they’re sturdy and enclosed. We strongly recommend rubber soles so that they do not slip on the floor.</p>
 
               <p>If you incur any injuries that require crutches while you’re working for the company, you cannot then take on any tasks that involve standing up. However, if such a situation should occur, we will make every effort to place you in an appropriate area where you can sit down to work so you will not need to take time off. Employees who have smaller injuries, such as hand cuts, need to check with their manager whether they can come to work: you may have to take time off to avoid infection.</p>
+              </div>
             </div>
 
             <!-- Section 3 passages -->
@@ -1189,6 +1217,7 @@
             <div data-section="1">
               <p><strong>SECTION 1 Questions 1 to 14</strong></p>
 
+              <p class="question-group-heading">Read “Film reviews” and answer Questions 1 to 8.</p>
               <p>Read the text and answer Questions 1 to 8.</p>
               <p>Look at the five film reviews, A to E.</p>
               <p>For which film review are the following statements true?</p>
@@ -1290,6 +1319,7 @@
                 <div class="correct-answer-text" id="ca-8"></div>
               </div>
 
+              <p class="question-group-heading">Read “Sports events in New Zealand” and answer Questions 9 to 14.</p>
               <p>Read the text and answer Questions 9 to 14.</p>
               <p>Look at the four advertisements for sports events, A to D.</p>
               <p>For which event are the following statements true?</p>
@@ -1734,6 +1764,7 @@
         <div data-section="2" style="display:none;">
           <p><strong>SECTION 2 Questions 15 to 27</strong></p>
 
+          <p class="question-group-heading">Read “What to do if you are made redundant” and answer Questions 15 to 21.</p>
           <p>Read the text and answer Questions 15 to 21.</p>
           <p><strong>Complete the notes below.</strong></p>
           <p>Choose <strong>ONE WORD ONLY</strong> from the text for each answer.</p>
@@ -1780,6 +1811,7 @@
             <div class="correct-answer-text" id="ca-21"></div>
           </div>
 
+          <p class="question-group-heading">Read “Palvin’s Restaurant” and answer Questions 22 to 27.</p>
           <p>Read the text and answer Questions 22 to 27.</p>
           <p><strong>Complete the sentences below.</strong></p>
           <p>Choose <strong>NO MORE THAN TWO WORDS</strong> from the text for each answer.</p>
@@ -2093,10 +2125,29 @@
           }
         });
 
+
+      qPane.addEventListener("focusin", (event) => {
+        setCurrentQuestionFromElement(event.target);
+      });
+      qPane.addEventListener("click", (event) => {
+        setCurrentQuestionFromElement(event.target);
+      });
+
       // Start on section 1, question 1
       switchSection(1);
       highlightCurrentQuestion(1);
       updateCounts();
+      buildQuestionNav();
+    }
+
+
+    function setCurrentQuestionFromElement(el) {
+      const block = el.closest(".question-block[data-q]");
+      if (!block) return;
+      const q = parseInt(block.dataset.q, 10);
+      if (Number.isNaN(q)) return;
+      currentQuestion = q;
+      highlightCurrentQuestion(q);
       buildQuestionNav();
     }
 
