@@ -139,6 +139,24 @@
       transform: translateY(-1px);
     }
 
+    #testStartScreen {
+      display: none;
+      margin-top: 14px;
+      padding-top: 14px;
+      border-top: 1px solid var(--border);
+    }
+
+    #testStartScreen label {
+      display: block;
+      font-weight: 600;
+      margin-bottom: 8px;
+    }
+
+    #studentNameInput {
+      max-width: 100%;
+      margin-bottom: 10px;
+    }
+
     #app {
       display: none;
     }
@@ -509,13 +527,41 @@
     }
 
     .options-row label {
-      display: block;
+      display: flex;
+      align-items: center;
+      gap: 8px;
       padding: 6px 8px;
       border-radius: 8px;
       margin: 0;
       cursor: pointer;
       background: var(--bg-secondary);
       border: 1px solid var(--border);
+    }
+
+    .summary-box {
+      margin: 12px 0 14px;
+      padding: 14px 16px;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      background: var(--bg-secondary);
+      line-height: 1.65;
+    }
+
+    .summary-box-title {
+      text-align: center;
+      font-weight: 700;
+      margin-bottom: 10px;
+    }
+
+    .summary-feedbacks {
+      margin-top: 8px;
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    .summary-box .inline-input {
+      margin: 0 2px;
     }
 
     select,
@@ -580,6 +626,18 @@
       padding-left: 46px;
       height: 34px;
       line-height: 34px;
+    }
+
+    .inline-input.no-number {
+      min-width: 130px;
+    }
+
+    .inline-input.no-number::before {
+      content: none;
+    }
+
+    .inline-input.no-number input {
+      padding-left: 10px;
     }
 
     .drag-bank {
@@ -1014,7 +1072,6 @@
           class="mode-btn"
           data-mode="test"
           type="button"
-          onclick="window.startTest && window.startTest('test')"
         >
           Test mode (exam conditions)
         </button>
@@ -1022,7 +1079,6 @@
           class="mode-btn secondary"
           data-mode="study"
           type="button"
-          onclick="window.startTest && window.startTest('study')"
         >
           Study mode (show feedback)
         </button>
@@ -1030,6 +1086,12 @@
       <p style="font-size:0.8rem;margin-top:10px;color:var(--text-soft);">
         In both modes you can highlight text and make notes. In Test mode you submit once at the end. In Study mode you can check and change your answers as many times as you like.
       </p>
+
+      <div id="testStartScreen">
+        <label for="studentNameInput">Your name (for test mode results)</label>
+        <input type="text" id="studentNameInput" placeholder="Enter your full name" maxlength="80" />
+        <button class="mode-btn" type="button" onclick="window.beginTimedTest && window.beginTimedTest()">Start the test now</button>
+      </div>
     </div>
   </div>
 
@@ -1458,6 +1520,7 @@
     let timerSeconds = 60 * 60;
     let timerId = null;
     let testSubmitted = false;
+    let studentName = "";
     const visitedSections = new Set();
 
     const AVAILABLE_THEMES = [
@@ -1618,6 +1681,21 @@
 
     restoreThemePreference();
 
+    function beginTimedTest() {
+      const input = document.getElementById("studentNameInput");
+      studentName = input ? input.value.trim() : "";
+      if (!studentName) {
+        alert("Please enter your name before starting test mode.");
+        if (input) input.focus();
+        return;
+      }
+      const startScreen = document.getElementById("testStartScreen");
+      if (startScreen) startScreen.style.display = "none";
+      const modeScreen = document.getElementById("modeScreen");
+      if (modeScreen) modeScreen.style.display = "none";
+      startTest("test");
+    }
+
     function startTest(selectedMode) {
       mode = selectedMode;
       const timerContainer = document.getElementById("timerContainer");
@@ -1665,6 +1743,7 @@
 
     // Expose for inline handlers and any future fallback uses.
     window.startTest = startTest;
+    window.beginTimedTest = beginTimedTest;
 
     function wireModeButtons() {
       const buttons = document.querySelectorAll(".mode-btn[data-mode]");
@@ -1672,11 +1751,24 @@
 
       const activate = (btn) => {
         const selected = btn.getAttribute("data-mode") || btn.dataset.mode || "test";
+        if (selected === "test") {
+          const startScreen = document.getElementById("testStartScreen");
+          if (startScreen) startScreen.style.display = "block";
+          const input = document.getElementById("studentNameInput");
+          if (input) input.focus();
+          return;
+        }
+        const startScreen = document.getElementById("testStartScreen");
+        if (startScreen) startScreen.style.display = "none";
+        studentName = "";
         startTest(selected);
       };
 
       buttons.forEach((btn) => {
-        btn.addEventListener("click", () => activate(btn));
+        btn.addEventListener("click", (event) => {
+          event.stopPropagation();
+          activate(btn);
+        });
         btn.addEventListener("keydown", (event) => {
           if (event.key === "Enter" || event.key === " ") {
             event.preventDefault();
@@ -1693,6 +1785,17 @@
           activate(btn);
         });
         modeScreen.dataset.wired = "true";
+      }
+
+      const input = document.getElementById("studentNameInput");
+      if (input && !input.dataset.wired) {
+        input.addEventListener("keydown", (event) => {
+          if (event.key === "Enter") {
+            event.preventDefault();
+            beginTimedTest();
+          }
+        });
+        input.dataset.wired = "true";
       }
     }
 
@@ -1770,44 +1873,37 @@
           <p>Choose <strong>ONE WORD ONLY</strong> from the text for each answer.</p>
 
           <div class="question-block" data-q="15">
-            <div class="question-text"><span class="question-number-label">15.</span> Start by considering what needs to be done and make a ______ to work through.</div>
-            <input type="text" name="q15" autocomplete="off" />
+            <div class="question-text"><span class="question-number-label">15.</span> Start by considering what needs to be done and make a <span class="inline-input no-number" data-q="15"><input type="text" name="q15" autocomplete="off" /></span> to work through.</div>
             <div class="correct-answer-text" id="ca-15"></div>
           </div>
 
           <div class="question-block" data-q="16">
-            <div class="question-text"><span class="question-number-label">16.</span> You want to receive a positive ______ from them for a future post.</div>
-            <input type="text" name="q16" autocomplete="off" />
+            <div class="question-text"><span class="question-number-label">16.</span> You want to receive a positive <span class="inline-input no-number" data-q="16"><input type="text" name="q16" autocomplete="off" /></span> from them for a future post.</div>
             <div class="correct-answer-text" id="ca-16"></div>
           </div>
 
           <div class="question-block" data-q="17">
-            <div class="question-text"><span class="question-number-label">17.</span> You might get some ______ projects from them in the future.</div>
-            <input type="text" name="q17" autocomplete="off" />
+            <div class="question-text"><span class="question-number-label">17.</span> You might get some <span class="inline-input no-number" data-q="17"><input type="text" name="q17" autocomplete="off" /></span> projects from them in the future.</div>
             <div class="correct-answer-text" id="ca-17"></div>
           </div>
 
           <div class="question-block" data-q="18">
-            <div class="question-text"><span class="question-number-label">18.</span> Find an organisation that specialises in ______ to help you look for another job.</div>
-            <input type="text" name="q18" autocomplete="off" />
+            <div class="question-text"><span class="question-number-label">18.</span> Find an organisation that specialises in <span class="inline-input no-number" data-q="18"><input type="text" name="q18" autocomplete="off" /></span> to help you look for another job.</div>
             <div class="correct-answer-text" id="ca-18"></div>
           </div>
 
           <div class="question-block" data-q="19">
-            <div class="question-text"><span class="question-number-label">19.</span> Invest time in doing serious ______ concerning the current requirements in your sector.</div>
-            <input type="text" name="q19" autocomplete="off" />
+            <div class="question-text"><span class="question-number-label">19.</span> Invest time in doing serious <span class="inline-input no-number" data-q="19"><input type="text" name="q19" autocomplete="off" /></span> concerning the current requirements in your sector.</div>
             <div class="correct-answer-text" id="ca-19"></div>
           </div>
 
           <div class="question-block" data-q="20">
-            <div class="question-text"><span class="question-number-label">20.</span> Consider if your work and training records contain ______ that might prevent you finding work.</div>
-            <input type="text" name="q20" autocomplete="off" />
+            <div class="question-text"><span class="question-number-label">20.</span> Consider if your work and training records contain <span class="inline-input no-number" data-q="20"><input type="text" name="q20" autocomplete="off" /></span> that might prevent you finding work.</div>
             <div class="correct-answer-text" id="ca-20"></div>
           </div>
 
           <div class="question-block" data-q="21">
-            <div class="question-text"><span class="question-number-label">21.</span> Look on redundancy as a useful ______ to advance, rather than the end of your career.</div>
-            <input type="text" name="q21" autocomplete="off" />
+            <div class="question-text"><span class="question-number-label">21.</span> Look on redundancy as a useful <span class="inline-input no-number" data-q="21"><input type="text" name="q21" autocomplete="off" /></span> to advance, rather than the end of your career.</div>
             <div class="correct-answer-text" id="ca-21"></div>
           </div>
 
@@ -1817,38 +1913,32 @@
           <p>Choose <strong>NO MORE THAN TWO WORDS</strong> from the text for each answer.</p>
 
           <div class="question-block" data-q="22">
-            <div class="question-text"><span class="question-number-label">22.</span> New staff must record their own body ______ before arriving at work.</div>
-            <input type="text" name="q22" autocomplete="off" />
+            <div class="question-text"><span class="question-number-label">22.</span> New staff must record their own body <span class="inline-input no-number" data-q="22"><input type="text" name="q22" autocomplete="off" /></span> before arriving at work.</div>
             <div class="correct-answer-text" id="ca-22"></div>
           </div>
 
           <div class="question-block" data-q="23">
-            <div class="question-text"><span class="question-number-label">23.</span> You should use your ______ to ensure that your uniform is never dirty.</div>
-            <input type="text" name="q23" autocomplete="off" />
+            <div class="question-text"><span class="question-number-label">23.</span> You should use your <span class="inline-input no-number" data-q="23"><input type="text" name="q23" autocomplete="off" /></span> to ensure that your uniform is never dirty.</div>
             <div class="correct-answer-text" id="ca-23"></div>
           </div>
 
           <div class="question-block" data-q="24">
-            <div class="question-text"><span class="question-number-label">24.</span> Clothes worn to travel to work must be ______.</div>
-            <input type="text" name="q24" autocomplete="off" />
+            <div class="question-text"><span class="question-number-label">24.</span> Clothes worn to travel to work must be <span class="inline-input no-number" data-q="24"><input type="text" name="q24" autocomplete="off" /></span>.</div>
             <div class="correct-answer-text" id="ca-24"></div>
           </div>
 
           <div class="question-block" data-q="25">
-            <div class="question-text"><span class="question-number-label">25.</span> Casual wear, such as ______, should not be worn in the kitchen area.</div>
-            <input type="text" name="q25" autocomplete="off" />
+            <div class="question-text"><span class="question-number-label">25.</span> Casual wear, such as <span class="inline-input no-number" data-q="25"><input type="text" name="q25" autocomplete="off" /></span>, should not be worn in the kitchen area.</div>
             <div class="correct-answer-text" id="ca-25"></div>
           </div>
 
           <div class="question-block" data-q="26">
-            <div class="question-text"><span class="question-number-label">26.</span> Staff using ______ may still come to work.</div>
-            <input type="text" name="q26" autocomplete="off" />
+            <div class="question-text"><span class="question-number-label">26.</span> Staff using <span class="inline-input no-number" data-q="26"><input type="text" name="q26" autocomplete="off" /></span> may still come to work.</div>
             <div class="correct-answer-text" id="ca-26"></div>
           </div>
 
           <div class="question-block" data-q="27">
-            <div class="question-text"><span class="question-number-label">27.</span> Please contact the manager before arriving at the kitchens if you have any ______ or other similar injuries.</div>
-            <input type="text" name="q27" autocomplete="off" />
+            <div class="question-text"><span class="question-number-label">27.</span> Please contact the manager before arriving at the kitchens if you have any <span class="inline-input no-number" data-q="27"><input type="text" name="q27" autocomplete="off" /></span> or other similar injuries.</div>
             <div class="correct-answer-text" id="ca-27"></div>
           </div>
         </div>
@@ -1869,46 +1959,56 @@
 
           <div class="question-block" data-q="28">
             <div class="question-text"><span class="question-number-label">28.</span> In Paragraph A, what does the writer say about the archaeology team’s work?</div>
-            <label><input type="radio" name="q28" value="A" /> A It confirmed what they had assumed when they started it.</label><br />
-            <label><input type="radio" name="q28" value="B" /> B It was hard to persuade other historians about their findings.</label><br />
-            <label><input type="radio" name="q28" value="C" /> C It could reveal the importance of various women in history.</label><br />
-            <label><input type="radio" name="q28" value="D" /> D It could help identify the number of books written in the Middle Ages.</label>
+            <div class="options-row">
+              <label><input type="radio" name="q28" value="A" /> A It confirmed what they had assumed when they started it.</label>
+              <label><input type="radio" name="q28" value="B" /> B It was hard to persuade other historians about their findings.</label>
+              <label><input type="radio" name="q28" value="C" /> C It could reveal the importance of various women in history.</label>
+              <label><input type="radio" name="q28" value="D" /> D It could help identify the number of books written in the Middle Ages.</label>
+            </div>
             <div class="correct-answer-text" id="ca-28"></div>
           </div>
 
           <div class="question-block" data-q="29">
             <div class="question-text"><span class="question-number-label">29.</span> What point does the writer make about dental tartar in Paragraph C?</div>
-            <label><input type="radio" name="q29" value="A" /> A Archaeologists could make more use of it than they do at present.</label><br />
-            <label><input type="radio" name="q29" value="B" /> B Some particles are more easily trapped in it than others.</label><br />
-            <label><input type="radio" name="q29" value="C" /> C The environment can cause it to break down.</label><br />
-            <label><input type="radio" name="q29" value="D" /> D Changes in people’s diet have influenced its composition.</label>
+            <div class="options-row">
+              <label><input type="radio" name="q29" value="A" /> A Archaeologists could make more use of it than they do at present.</label>
+              <label><input type="radio" name="q29" value="B" /> B Some particles are more easily trapped in it than others.</label>
+              <label><input type="radio" name="q29" value="C" /> C The environment can cause it to break down.</label>
+              <label><input type="radio" name="q29" value="D" /> D Changes in people’s diet have influenced its composition.</label>
+            </div>
             <div class="correct-answer-text" id="ca-29"></div>
           </div>
 
           <div class="question-block" data-q="30">
             <div class="question-text"><span class="question-number-label">30.</span> What did the skeleton of B78 suggest about her?</div>
-            <label><input type="radio" name="q30" value="A" /> A She had not been very old when she died.</label><br />
-            <label><input type="radio" name="q30" value="B" /> B Her life had not been very physically demanding.</label><br />
-            <label><input type="radio" name="q30" value="C" /> C Her teeth had more tartar than most skeletons of that age.</label><br />
-            <label><input type="radio" name="q30" value="D" /> D She had been given a grander burial than other women of her time.</label>
+            <div class="options-row">
+              <label><input type="radio" name="q30" value="A" /> A She had not been very old when she died.</label>
+              <label><input type="radio" name="q30" value="B" /> B Her life had not been very physically demanding.</label>
+              <label><input type="radio" name="q30" value="C" /> C Her teeth had more tartar than most skeletons of that age.</label>
+              <label><input type="radio" name="q30" value="D" /> D She had been given a grander burial than other women of her time.</label>
+            </div>
             <div class="correct-answer-text" id="ca-30"></div>
           </div>
 
           <div class="question-block" data-q="31">
             <div class="question-text"><span class="question-number-label">31.</span> What is the writer doing in Paragraph F?</div>
-            <label><input type="radio" name="q31" value="A" /> A supporting the team’s view that the blue pigment was imported</label><br />
-            <label><input type="radio" name="q31" value="B" /> B explaining why artists in Europe liked to use the blue pigment</label><br />
-            <label><input type="radio" name="q31" value="C" /> C comparing artistic designs using the blue pigment in different parts of the world</label><br />
-            <label><input type="radio" name="q31" value="D" /> D criticising arguments put forward by other scientists about the blue pigment</label>
+            <div class="options-row">
+              <label><input type="radio" name="q31" value="A" /> A supporting the team’s view that the blue pigment was imported</label>
+              <label><input type="radio" name="q31" value="B" /> B explaining why artists in Europe liked to use the blue pigment</label>
+              <label><input type="radio" name="q31" value="C" /> C comparing artistic designs using the blue pigment in different parts of the world</label>
+              <label><input type="radio" name="q31" value="D" /> D criticising arguments put forward by other scientists about the blue pigment</label>
+            </div>
             <div class="correct-answer-text" id="ca-31"></div>
           </div>
 
           <div class="question-block" data-q="32">
             <div class="question-text"><span class="question-number-label">32.</span> What problem does the writer highlight about medieval artists in Paragraph G?</div>
-            <label><input type="radio" name="q32" value="A" /> A the poor facilities available to females in the profession</label><br />
-            <label><input type="radio" name="q32" value="B" /> B the small number of projects available to them</label><br />
-            <label><input type="radio" name="q32" value="C" /> C the difficulties locating their skeletal remains for study</label><br />
-            <label><input type="radio" name="q32" value="D" /> D the lack of evidence for their contribution to books</label>
+            <div class="options-row">
+              <label><input type="radio" name="q32" value="A" /> A the poor facilities available to females in the profession</label>
+              <label><input type="radio" name="q32" value="B" /> B the small number of projects available to them</label>
+              <label><input type="radio" name="q32" value="C" /> C the difficulties locating their skeletal remains for study</label>
+              <label><input type="radio" name="q32" value="D" /> D the lack of evidence for their contribution to books</label>
+            </div>
             <div class="correct-answer-text" id="ca-32"></div>
           </div>
 
@@ -1976,32 +2076,16 @@
           <p><strong>Complete the summary below.</strong></p>
           <p>Choose <strong>ONE WORD ONLY</strong> from the text for each answer.</p>
 
-          <p><strong>Lapis lazuli</strong></p>
-          <p>A blue pigment used to create artworks in Europe in the Middle Ages was derived from a stone called lapis lazuli. In medieval times, even <span class="blank">37</span> ______ was not as valuable. Lapis lazuli could only be found in Afghanistan and a lot of <span class="blank">38</span> ______ was needed to make the pigment from the stone.</p>
-          <p>The procedure used to do this appeared much later in the manuals used by European artists and this suggests that the product came to their countries as an imported powder. Artists often had to make a <span class="blank">39</span> ______ on their brushes using their mouths, which then enabled them to produce the fine features needed for <span class="blank">40</span> ______ and books.</p>
-
-          <div class="question-block" data-q="37">
-            <div class="question-text"><span class="question-number-label">37.</span></div>
-            <input type="text" name="q37" autocomplete="off" />
-            <div class="correct-answer-text" id="ca-37"></div>
-          </div>
-
-          <div class="question-block" data-q="38">
-            <div class="question-text"><span class="question-number-label">38.</span></div>
-            <input type="text" name="q38" autocomplete="off" />
-            <div class="correct-answer-text" id="ca-38"></div>
-          </div>
-
-          <div class="question-block" data-q="39">
-            <div class="question-text"><span class="question-number-label">39.</span></div>
-            <input type="text" name="q39" autocomplete="off" />
-            <div class="correct-answer-text" id="ca-39"></div>
-          </div>
-
-          <div class="question-block" data-q="40">
-            <div class="question-text"><span class="question-number-label">40.</span></div>
-            <input type="text" name="q40" autocomplete="off" />
-            <div class="correct-answer-text" id="ca-40"></div>
+          <div class="summary-box">
+            <div class="summary-box-title">Lapis lazuli</div>
+            <p>A blue pigment used to create artworks in Europe in the Middle Ages was derived from a stone called lapis lazuli. In medieval times, even <span class="question-block inline-question" data-q="37"><span class="inline-input" data-q="37"><input type="text" name="q37" autocomplete="off" /></span></span> was not as valuable. Lapis lazuli could only be found in Afghanistan and a lot of <span class="question-block inline-question" data-q="38"><span class="inline-input" data-q="38"><input type="text" name="q38" autocomplete="off" /></span></span> was needed to make the pigment from the stone.</p>
+            <p>The procedure used to do this appeared much later in the manuals used by European artists and this suggests that the product came to their countries as an imported powder. Artists often had to make a <span class="question-block inline-question" data-q="39"><span class="inline-input" data-q="39"><input type="text" name="q39" autocomplete="off" /></span></span> on their brushes using their mouths, which then enabled them to produce the fine features needed for <span class="question-block inline-question" data-q="40"><span class="inline-input" data-q="40"><input type="text" name="q40" autocomplete="off" /></span></span> and books.</p>
+            <div class="summary-feedbacks">
+              <div class="correct-answer-text" id="ca-37"></div>
+              <div class="correct-answer-text" id="ca-38"></div>
+              <div class="correct-answer-text" id="ca-39"></div>
+              <div class="correct-answer-text" id="ca-40"></div>
+            </div>
           </div>
         </div>
       `
