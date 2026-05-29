@@ -584,6 +584,25 @@
 
     .summary-feedbacks {
       margin-top: 8px;
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    .summary-completion-box .inline-input {
+      margin: 0 2px;
+    }
+
+    .question-block > select {
+      margin-top: 6px;
+    }
+
+    .short-answer-input {
+      margin-top: 8px;
+    }
+
+    .short-answer-input .inline-input.no-number {
+      max-width: 260px;
     }
 
     .options-row {
@@ -1434,17 +1453,17 @@
 
           <div class="question-block" data-q="25">
             <div class="question-text"><span class="question-number-label">25.</span> To obtain a scholarship, what is the minimum course length?</div>
-            <span class="inline-input no-number" data-q="25"><input type="text" name="q25" autocomplete="off" /></span>
+            <div class="short-answer-input"><span class="inline-input no-number" data-q="25"><input type="text" name="q25" autocomplete="off" /></span></div>
             <div class="correct-answer-text" id="ca-25"></div>
           </div>
           <div class="question-block" data-q="26">
             <div class="question-text"><span class="question-number-label">26.</span> What do scholarship winners receive towards their airfares if they live over 2,500 km from Sydney?</div>
-            <span class="inline-input no-number" data-q="26"><input type="text" name="q26" autocomplete="off" /></span>
+            <div class="short-answer-input"><span class="inline-input no-number" data-q="26"><input type="text" name="q26" autocomplete="off" /></span></div>
             <div class="correct-answer-text" id="ca-26"></div>
           </div>
           <div class="question-block" data-q="27">
             <div class="question-text"><span class="question-number-label">27.</span> Who pays for dependent children to travel?</div>
-            <span class="inline-input no-number" data-q="27"><input type="text" name="q27" autocomplete="off" /></span>
+            <div class="short-answer-input"><span class="inline-input no-number" data-q="27"><input type="text" name="q27" autocomplete="off" /></span></div>
             <div class="correct-answer-text" id="ca-27"></div>
           </div>
 
