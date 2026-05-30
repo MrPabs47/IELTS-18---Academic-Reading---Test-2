@@ -790,8 +790,11 @@
       border-radius: 8px;
       border: 1px dashed var(--border);
       background: var(--bg);
+      font-family: inherit;
+      font-size: 1em;
       font-weight: 800;
       margin-top: 6px;
+      cursor: pointer;
     }
 
     .drop-zone.filled {
@@ -878,6 +881,7 @@
       transition: background 0.1s, border-color 0.1s, color 0.1s;
       text-align: center;
       width: auto;
+      min-width: max-content;
       flex: 0 0 auto;
       white-space: nowrap;
     }
@@ -1748,7 +1752,6 @@
         </div>
           </div>
         </div>
-      </div>
 
       <!-- selection toolbar -->
       <div id="selectionToolbar">
