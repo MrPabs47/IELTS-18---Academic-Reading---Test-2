@@ -2301,6 +2301,33 @@
       },
     };
 
+    function getBandDescriptor(band) {
+      if (bandDescriptors[band]) return bandDescriptors[band];
+
+      const lower = Math.floor(band);
+      const upper = Math.ceil(band);
+      const lowerDesc = bandDescriptors[lower];
+      const upperDesc = bandDescriptors[upper];
+
+      if (lowerDesc && upperDesc) {
+        return {
+          level: "Between " + lowerDesc.level + " and " + upperDesc.level,
+          description:
+            "This half band sits between Band " +
+            lower +
+            " (" +
+            lowerDesc.level +
+            ") and Band " +
+            upper +
+            " (" +
+            upperDesc.level +
+            ").",
+        };
+      }
+
+      return bandDescriptors[0];
+    }
+
     function getUserAnswer(qNum) {
       const name = "q" + qNum;
       const radios = document.querySelectorAll(
@@ -2373,26 +2400,40 @@
     function computeBandScore(correct) {
       /*
        * IELTS General Training Reading raw score to band conversion
-       * (integer bands). These sample counts are useful for a quick
-       * sense-check during maintenance:
-       * - 15 correct ⇒ Band 4
-       * - 23 correct ⇒ Band 5
-       * - 30 correct ⇒ Band 6
-       * - 35 correct ⇒ Band 7
-       * - 40 correct ⇒ Band 9
+       * 40 = 9
+       * 39 = 8.5
+       * 37-38 = 8
+       * 36 = 7.5
+       * 34-35 = 7
+       * 32-33 = 6.5
+       * 30-31 = 6
+       * 27-29 = 5.5
+       * 23-26 = 5
+       * 19-22 = 4.5
+       * 15-18 = 4
+       * 12-14 = 3.5
+       * 9-11 = 3
+       * 6-8 = 2.5
        */
 
-      if (correct === 0) return 0;
       if (correct === 40) return 9;
+      if (correct === 39) return 8.5;
       if (correct >= 37) return 8;
+      if (correct >= 36) return 7.5;
       if (correct >= 34) return 7;
+      if (correct >= 32) return 6.5;
       if (correct >= 30) return 6;
+      if (correct >= 27) return 5.5;
       if (correct >= 23) return 5;
+      if (correct >= 19) return 4.5;
       if (correct >= 15) return 4;
-      if (correct >= 10) return 3;
-      if (correct >= 5) return 2;
+      if (correct >= 12) return 3.5;
+      if (correct >= 9) return 3;
+      if (correct >= 6) return 2.5;
+      if (correct === 0) return 0;
       return 1;
     }
+
 
     function submitTest() {
       const correctCount = evaluateQuestions();
@@ -2407,7 +2448,7 @@
       buildQuestionNav();
 
       const band = computeBandScore(correctCount);
-      const desc = bandDescriptors[band] || bandDescriptors[0];
+      const desc = getBandDescriptor(band);
 
       const studentLine = document.getElementById("studentLine");
       const scoreLine = document.getElementById("scoreLine");
