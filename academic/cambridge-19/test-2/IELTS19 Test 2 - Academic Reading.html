@@ -2413,6 +2413,33 @@
       },
     };
 
+    function getBandDescriptor(band) {
+      if (bandDescriptors[band]) return bandDescriptors[band];
+
+      const lower = Math.floor(band);
+      const upper = Math.ceil(band);
+      const lowerDesc = bandDescriptors[lower];
+      const upperDesc = bandDescriptors[upper];
+
+      if (lowerDesc && upperDesc) {
+        return {
+          level: "Between " + lowerDesc.level + " and " + upperDesc.level,
+          description:
+            "This half band sits between Band " +
+            lower +
+            " (" +
+            lowerDesc.level +
+            ") and Band " +
+            upper +
+            " (" +
+            upperDesc.level +
+            ").",
+        };
+      }
+
+      return bandDescriptors[0];
+    }
+
     function getUserAnswer(qNum) {
       if (qNum === 23 || qNum === 24) {
         return Array.from(document.querySelectorAll("input[type='checkbox'][name='q23_24']:checked")).map((c) => c.value).join(",");
@@ -2523,8 +2550,10 @@
       if (correct >= 8) return 3.5;
       if (correct >= 6) return 3;
       if (correct >= 4) return 2.5;
-      return 0;
+      if (correct === 0) return 0;
+      return 1;
     }
+
 
 
     function formatDuration(totalSeconds) {
@@ -2641,7 +2670,7 @@
       buildQuestionNav();
 
       const band = computeBandScore(correctCount);
-      const desc = bandDescriptors[band] || bandDescriptors[Math.floor(band)] || bandDescriptors[0];
+      const desc = getBandDescriptor(band);
 
       const studentLine = document.getElementById("studentLine");
       const fullScreenExitLine = document.getElementById("fullScreenExitLine");
