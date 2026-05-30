@@ -1245,7 +1245,7 @@
         <button class="options-close" onclick="toggleOptions(false)">✕</button>
         <h2>Options</h2>
 
-        <button class="submit-button" onclick="submitTest()">
+        <button class="submit-button" onclick="handlePrimarySubmit()">
           ✔ Submit test &amp; check answers
         </button>
 
@@ -1757,7 +1757,7 @@
         <div class="section-arrows">
           <button class="arrow-btn" onclick="prevSection()" title="Previous part">←</button>
           <button class="arrow-btn" onclick="nextSection()" title="Next part">→</button>
-          <button class="check-btn" onclick="submitTest()" title="Submit test and check answers">✔ Check answers</button>
+          <button class="check-btn" onclick="handlePrimarySubmit()" title="Submit test and check answers">✔ Check answers</button>
         </div>
       </div>
     </footer>
@@ -2612,6 +2612,21 @@
       if (correct >= 6) return 2.5;
       if (correct === 0) return 0;
       return 1;
+    }
+
+
+    function confirmSubmit() {
+      const ok = window.confirm("Are you sure you want to submit your test now? You will not be able to continue answering in Test mode.");
+      if (!ok) return;
+      submitTest();
+    }
+
+    function handlePrimarySubmit() {
+      if (mode === "test" && !testSubmitted) {
+        confirmSubmit();
+        return;
+      }
+      submitTest();
     }
 
 
