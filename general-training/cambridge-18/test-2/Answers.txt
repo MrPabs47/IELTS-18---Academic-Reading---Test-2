@@ -1,0 +1,81 @@
+1 D
+
+2 A
+
+3 E
+
+4 B
+
+5 D
+
+6 F
+
+7 C
+
+8 A
+
+9 TRUE
+
+
+10 FALSE
+
+
+11 TRUE
+
+12 NOT GIVEN
+
+13 FALSE
+
+14 NOT GIVEN
+
+15 absenteeism
+
+16 soda
+
+17 fruit
+
+18 fridge
+
+19 bikes
+
+20 showers
+
+21 surveys
+
+22 aprons
+
+23 board
+
+24 money
+
+25 appliances
+
+26 Labels
+
+27 storeroom
+
+28 E
+
+29 C
+
+30 A
+
+31 E
+
+32 D
+
+33 A
+
+34 C
+
+35 C
+
+36 fabric
+
+37 instructions
+
+38 geometric
+
+39 newspaper
+
+40 knitwear
