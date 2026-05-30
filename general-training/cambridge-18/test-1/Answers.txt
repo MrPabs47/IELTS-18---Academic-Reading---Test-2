@@ -1,0 +1,81 @@
+1 TRUE
+
+2 FALSE
+
+3 FALSE
+
+4 TRUE
+
+5 FALSE
+
+6 NOT GIVEN
+
+7 TRUE
+
+8 A
+
+9 F
+
+10 B
+
+ 
+
+11 C
+
+12 F
+
+13 E
+
+14 B
+
+15 (CE)mark
+
+16 tests
+
+17 engineer
+
+18 control measures
+
+19 (lifting) crew
+
+20 barriers
+
+21 banksman
+
+22 injuries
+
+23 win
+
+24 expectations
+
+25 solution
+
+26 policy
+
+27 recommendation
+
+28 vii
+
+29 i
+
+30 vi
+
+31 iii
+
+32 viii
+
+33 ii
+
+34 sticks
+
+35 infertile
+
+36 Poland
+
+37 loyalty
+
+38 D
+
+39 C
+
+40 A
