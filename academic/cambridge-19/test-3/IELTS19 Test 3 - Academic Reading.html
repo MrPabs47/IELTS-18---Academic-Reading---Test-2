@@ -2382,6 +2382,46 @@
     function getBandDescriptor(band) {
       if (bandDescriptors[band]) return bandDescriptors[band];
 
+      const halfBandDescriptors = {
+        8.5: {
+          level: "Very good user developing towards Expert user",
+          description:
+            "This result is stronger than a typical Band 8, but it has not yet reached Band 9. It suggests very strong reading ability, with only occasional difficulty in highly complex or detailed texts.",
+        },
+        7.5: {
+          level: "Good user developing towards Very good user",
+          description:
+            "This result is stronger than a typical Band 7, but it has not yet reached Band 8. It suggests strong reading ability, with occasional difficulty in complex passages, detail, or inference.",
+        },
+        6.5: {
+          level: "Competent user developing towards Good user",
+          description:
+            "This result is stronger than a typical Band 6, but it has not yet reached Band 7. It suggests generally effective reading ability, though detail, paraphrasing, and complex ideas may still cause some problems.",
+        },
+        5.5: {
+          level: "Modest user developing towards Competent user",
+          description:
+            "This result is stronger than a typical Band 5, but it has not yet reached Band 6. It suggests you can understand the general meaning of many reading texts, but details, synonyms, and longer passages may still be difficult.",
+        },
+        4.5: {
+          level: "Limited user developing towards Modest user",
+          description:
+            "This result is stronger than a typical Band 4, but it has not yet reached Band 5. It suggests you can understand some familiar reading tasks, but you may still have frequent problems with detail, paraphrasing, and unfamiliar vocabulary.",
+        },
+        3.5: {
+          level: "Extremely limited user developing towards Limited user",
+          description:
+            "This result is stronger than a typical Band 3, but it has not yet reached Band 4. It suggests you may understand basic information in familiar contexts, but many reading tasks are still difficult.",
+        },
+        2.5: {
+          level: "Intermittent user developing towards Extremely limited user",
+          description:
+            "This result is stronger than a typical Band 2, but it has not yet reached Band 3. It suggests only basic or isolated information is understood at this stage.",
+        },
+      };
+
+      if (halfBandDescriptors[band]) return halfBandDescriptors[band];
+
       const lower = Math.floor(band);
       const upper = Math.ceil(band);
       const lowerDesc = bandDescriptors[lower];
