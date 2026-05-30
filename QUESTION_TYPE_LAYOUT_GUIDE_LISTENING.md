@@ -169,6 +169,42 @@ Layout:
 - Text input answer box.
 - Follow the word limit exactly.
 
+## Submit confirmation behaviour
+
+All visible primary submit/check buttons in Listening tests must call a submit wrapper such as `handlePrimarySubmit()`, not `submitTest()` directly. `submitTest()` may remain the internal scoring/results function.
+
+Required behaviour:
+
+1. In Test mode, clicking any primary submit/check button must show one confirmation message before final submission.
+2. The confirmation message should warn that the student will not be able to continue answering in Test mode.
+3. If the user cancels, the test must remain active, audio behaviour should continue as before, and no answers should be checked.
+4. If the user confirms, `submitTest()` should run.
+5. In Study mode, `handlePrimarySubmit()` may check answers directly without confirmation.
+6. There must not be duplicate confirmation messages.
+7. All visible submit/check buttons must use the wrapper, including the options menu submit button, bottom navigation check/submit button, and any other primary submit/check button.
+
+Recommended implementation pattern:
+
+```js
+function confirmSubmit() {
+  const ok = window.confirm("Are you sure you want to submit your test now? You will not be able to continue answering in Test mode.");
+  if (!ok) return;
+  submitTest();
+}
+
+function handlePrimarySubmit() {
+  if (mode === "test" && !testSubmitted) {
+    confirmSubmit();
+    return;
+  }
+  submitTest();
+}
+```
+
+Required button pattern: `onclick="handlePrimarySubmit()"`
+
+Forbidden pattern for primary submit/check buttons: `onclick="submitTest()"`
+
 ## Answer key rules
 
 - Use Answers.txt as the source of truth.
@@ -196,5 +232,11 @@ Before finishing any new Listening test:
 13. Check every ca-1 to ca-40 exists.
 14. Check choose-two questions are limited to two selections.
 15. Check map/diagram tasks show the visual and questions clearly.
-16. Check the IELTS Pabs logo still has red hover, hover blur animation, and confirmation home link.
-17. Check the hub link opens the correct new test.
+16. Confirm Test mode asks for confirmation before submitting.
+17. Confirm cancelling keeps the test active and no answers are checked.
+18. Confirm confirming submits and shows results.
+19. Confirm Study mode still checks answers normally.
+20. Confirm no primary submit/check button calls `submitTest()` directly.
+21. Confirm all primary submit/check buttons call `handlePrimarySubmit()` or the current approved wrapper.
+22. Check the IELTS Pabs logo still has red hover, hover blur animation, and confirmation home link.
+23. Check the hub link opens the correct new test.
