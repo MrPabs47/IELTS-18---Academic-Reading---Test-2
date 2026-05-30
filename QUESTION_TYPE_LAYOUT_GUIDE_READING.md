@@ -223,6 +223,42 @@ Layout:
 - Score answers in either order.
 - Count one selected option as one answered question and two selected options as two answered questions.
 
+## Submit confirmation behaviour
+
+All visible primary submit/check buttons in Reading tests must call a submit wrapper such as `handlePrimarySubmit()`, not `submitTest()` directly. `submitTest()` may remain the internal scoring/results function.
+
+Required behaviour:
+
+1. In Test mode, clicking any primary submit/check button must show one confirmation message before final submission.
+2. The confirmation message should warn that the student will not be able to continue answering in Test mode.
+3. If the user cancels, the test must remain active and no answers should be checked.
+4. If the user confirms, `submitTest()` should run.
+5. In Study mode, `handlePrimarySubmit()` may check answers directly without confirmation.
+6. There must not be duplicate confirmation messages.
+7. All visible submit/check buttons must use the wrapper, including the options menu submit button, bottom navigation check/submit button, and any other primary submit/check button.
+
+Recommended implementation pattern:
+
+```js
+function confirmSubmit() {
+  const ok = window.confirm("Are you sure you want to submit your test now? You will not be able to continue answering in Test mode.");
+  if (!ok) return;
+  submitTest();
+}
+
+function handlePrimarySubmit() {
+  if (mode === "test" && !testSubmitted) {
+    confirmSubmit();
+    return;
+  }
+  submitTest();
+}
+```
+
+Required button pattern: `onclick="handlePrimarySubmit()"`
+
+Forbidden pattern for primary submit/check buttons: `onclick="submitTest()"`
+
 ## Forbidden pattern
 
 Do not use or call functions like:
@@ -250,10 +286,16 @@ Before finishing any new Reading test:
 10. Check note-completion questions have bullets only when appropriate.
 11. Check answer boxes have numbers inside only for note/summary style tasks.
 12. Check sentence-completion questions keep normal visible question numbers.
-13. Check the IELTS Pabs logo still has red hover, hover blur animation, and confirmation home link.
-14. Check the hub link opens the correct new test.
-15. During formatting cleanup, quickly check HTML nesting around `#questionPane`, `#questionContent`, `#selectionToolbar`, and bottom navigation; remove only clearly misplaced closing tags.
-16. Do not create duplicate sections, duplicate answerKey or correctAnswerText objects, or duplicate ca-1 to ca-40 IDs.
-17. Hub activation should ideally change only index.html. Formatting cleanup should ideally change only the relevant test HTML file. If hub activation also touches a test HTML file, inspect it afterwards to ensure it did not overwrite formatting or content.
-18. Confirm the correct key and path exist in the correct hub category; for IELTS 19 GT Reading Test 1, key `19-1` belongs under General Training Reading.
-19. After every merge, inspect the actual changed files, browser title, visible header, candidate/name screen, question groups, answerKey, correctAnswerText, ca-1 to ca-40, and index.html only during hub activation. Do not trust PR titles or summaries.
+13. Confirm Test mode asks for confirmation before submitting.
+14. Confirm cancelling keeps the test active and no answers are checked.
+15. Confirm confirming submits and shows results.
+16. Confirm Study mode still checks answers normally.
+17. Confirm no primary submit/check button calls `submitTest()` directly.
+18. Confirm all primary submit/check buttons call `handlePrimarySubmit()` or the current approved wrapper.
+19. Check the IELTS Pabs logo still has red hover, hover blur animation, and confirmation home link.
+20. Check the hub link opens the correct new test.
+21. During formatting cleanup, quickly check HTML nesting around `#questionPane`, `#questionContent`, `#selectionToolbar`, and bottom navigation; remove only clearly misplaced closing tags.
+22. Do not create duplicate sections, duplicate answerKey or correctAnswerText objects, or duplicate ca-1 to ca-40 IDs.
+23. Hub activation should ideally change only index.html. Formatting cleanup should ideally change only the relevant test HTML file. If hub activation also touches a test HTML file, inspect it afterwards to ensure it did not overwrite formatting or content.
+24. Confirm the correct key and path exist in the correct hub category; for IELTS 19 GT Reading Test 1, key `19-1` belongs under General Training Reading.
+25. After every merge, inspect the actual changed files, browser title, visible header, candidate/name screen, question groups, answerKey, correctAnswerText, ca-1 to ca-40, and index.html only during hub activation. Do not trust PR titles or summaries.

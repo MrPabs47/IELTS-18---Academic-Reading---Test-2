@@ -92,6 +92,42 @@ Before creating or modifying any Listening test, read and follow:
 31. Bottom navigation part chips and counts must stay on one line using `inline-flex`, `white-space: nowrap`, `width: auto`, `flex: 0 0 auto`, and `min-width: max-content` where needed. Question numbers may scroll horizontally, but never allow `Part 1` and `0 of 14` to split onto two lines.
 
 
+## Submit confirmation behaviour
+
+All visible primary submit/check buttons in Reading, Listening, and future tests must call an approved submit wrapper such as `handlePrimarySubmit()`, not `submitTest()` directly. `submitTest()` may still exist as the internal scoring/results function, but primary buttons must route through the wrapper so Test mode can confirm before final submission.
+
+Required behaviour:
+
+1. In Test mode, clicking any primary submit/check button must show one confirmation message before final submission.
+2. The confirmation message should warn that the student will not be able to continue answering in Test mode.
+3. If the user cancels, the test must remain active and no answers should be checked.
+4. If the user confirms, `submitTest()` should run.
+5. In Study mode, the wrapper may check answers directly without confirmation.
+6. There must not be duplicate confirmation messages.
+7. All visible submit/check buttons must use the wrapper, including the options menu submit button, the bottom navigation check/submit button, and any other primary submit/check button.
+
+Recommended implementation pattern:
+
+```js
+function confirmSubmit() {
+  const ok = window.confirm("Are you sure you want to submit your test now? You will not be able to continue answering in Test mode.");
+  if (!ok) return;
+  submitTest();
+}
+
+function handlePrimarySubmit() {
+  if (mode === "test" && !testSubmitted) {
+    confirmSubmit();
+    return;
+  }
+  submitTest();
+}
+```
+
+Required button pattern: `onclick="handlePrimarySubmit()"`
+
+Forbidden pattern for primary submit/check buttons: `onclick="submitTest()"`
+
 ## Codex file discipline
 
 When a prompt restricts the allowed files, follow this verification before finishing:

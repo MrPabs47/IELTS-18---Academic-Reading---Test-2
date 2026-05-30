@@ -126,6 +126,45 @@ Use this order for new Listening tests:
 - For matching questions, show both letter and full option text in dropdowns.
 - For tables and flow charts, preserve the original visual logic rather than turning everything into separate rows.
 
+## Submit confirmation standard
+
+All IELTS Pabs tests must route visible primary submit/check buttons through a submit wrapper such as `handlePrimarySubmit()`. Do not wire primary buttons directly to `submitTest()`. `submitTest()` can remain the internal scoring and results function, but the visible button click path must go through the wrapper.
+
+Required behaviour:
+
+1. In Test mode, clicking any primary submit/check button shows one confirmation message before final submission.
+2. The confirmation message warns that the student will not be able to continue answering in Test mode.
+3. If the user cancels, the test remains active and no answers are checked.
+4. If the user confirms, `submitTest()` runs.
+5. In Study mode, `handlePrimarySubmit()` may check answers directly without confirmation.
+6. There must not be duplicate confirmation messages.
+7. All visible submit/check buttons use the wrapper, including:
+   - Options menu submit button
+   - Bottom navigation check/submit button
+   - Any other primary submit/check button in Reading or Listening tests
+
+Recommended implementation pattern:
+
+```js
+function confirmSubmit() {
+  const ok = window.confirm("Are you sure you want to submit your test now? You will not be able to continue answering in Test mode.");
+  if (!ok) return;
+  submitTest();
+}
+
+function handlePrimarySubmit() {
+  if (mode === "test" && !testSubmitted) {
+    confirmSubmit();
+    return;
+  }
+  submitTest();
+}
+```
+
+Required button pattern: `onclick="handlePrimarySubmit()"`
+
+Forbidden pattern for primary submit/check buttons: `onclick="submitTest()"`
+
 ## IELTS Pabs logo standard
 
 All test pages should keep the same logo behaviour:
@@ -167,10 +206,16 @@ Do not rely on summaries that claim only one file changed; inspect the actual ch
 8. ca-1 to ca-40 all exist.
 9. Section switching works.
 10. Bottom navigation counts are correct.
-11. The IELTS Pabs logo behaviour is preserved.
-12. The hub link opens the correct file.
-13. For formatting cleanup stage, verify HTML nesting around `#questionPane`, `#questionContent`, `#selectionToolbar`, and bottom nav is valid (fix only clearly wrong closing tags).
-14. For staged workflow discipline, hub activation should ideally touch only `index.html`, while formatting cleanup should ideally touch only the target test HTML file. If hub activation touches a test HTML file, inspect it afterwards to confirm formatting and content were not overwritten.
-15. Confirm the correct hub key and path exist in the correct category; for IELTS 19 GT Reading Test 1, the key is `19-1` under General Training Reading.
-16. Do not create duplicate sections, duplicate answerKey or correctAnswerText objects, or duplicate ca-1 to ca-40 IDs.
-17. After every merge, inspect the actual changed files, browser title, visible header, candidate/name screen, question groups, answerKey, correctAnswerText, ca-1 to ca-40, and `index.html` only during hub activation. Do not trust PR titles or summaries.
+11. Test mode asks for confirmation before submitting.
+12. Cancelling the submit confirmation keeps the test active and does not check answers.
+13. Confirming the submit confirmation submits and shows results.
+14. Study mode still checks answers normally.
+15. No primary submit/check button calls `submitTest()` directly.
+16. All primary submit/check buttons call `handlePrimarySubmit()` or the current approved wrapper.
+17. The IELTS Pabs logo behaviour is preserved.
+18. The hub link opens the correct file.
+19. For formatting cleanup stage, verify HTML nesting around `#questionPane`, `#questionContent`, `#selectionToolbar`, and bottom nav is valid (fix only clearly wrong closing tags).
+20. For staged workflow discipline, hub activation should ideally touch only `index.html`, while formatting cleanup should ideally touch only the target test HTML file. If hub activation touches a test HTML file, inspect it afterwards to confirm formatting and content were not overwritten.
+21. Confirm the correct hub key and path exist in the correct category; for IELTS 19 GT Reading Test 1, the key is `19-1` under General Training Reading.
+22. Do not create duplicate sections, duplicate answerKey or correctAnswerText objects, or duplicate ca-1 to ca-40 IDs.
+23. After every merge, inspect the actual changed files, browser title, visible header, candidate/name screen, question groups, answerKey, correctAnswerText, ca-1 to ca-40, and `index.html` only during hub activation. Do not trust PR titles or summaries.
