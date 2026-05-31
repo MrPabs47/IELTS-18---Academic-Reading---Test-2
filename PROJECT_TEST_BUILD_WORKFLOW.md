@@ -266,3 +266,32 @@ Do not rely on summaries that claim only one file changed; inspect the actual ch
 30. Confirm submit confirmation still works with full-screen enforcement.
 31. Confirm `#fullscreenLockOverlay` is hidden by default.
 32. Confirm `#fullscreenLockPanel` is styled and readable.
+
+## Problem-prevention checklist for all future test builds
+
+This checklist applies project-wide to Cambridge 17, 18, 19, and future IELTS Pabs Reading and Listening builds.
+
+1. Before every stage, verify that the expected source files and master shell exist.
+2. If expected files are missing, stop and report **WRONG OR STALE CODEX ENVIRONMENT**.
+3. Do not run `git clone` during normal staged work.
+4. Do not require `git remote -v` during normal staged work.
+5. Do only the requested stage.
+6. Never convert a staged content task into a full-test rebuild.
+7. Never activate a test in the hub before the dedicated hub activation stage.
+8. Hub activation stages should normally edit only `index.html`.
+9. Content stages should normally edit only the target test HTML file.
+10. Source files must be read-only.
+11. Previous tests must not be edited.
+12. PR titles and PR descriptions are not enough for verification.
+13. Always verify the actual changed files using `git diff --name-only`.
+14. PR bodies must describe only the files actually changed.
+15. If a PR body says more than the real diff shows, the real diff is the source of truth.
+16. Visual layout changes require preview or screenshot review before merging.
+17. Diagram overlays are risky. Prefer a stable image plus a clean answer panel unless the overlay has been visually confirmed.
+18. If Codex stays on environment setup or completing task for an unusually long time, stop and run a small diagnostic instead of waiting indefinitely.
+19. For new GT Reading tests, use the latest verified stable GT Reading shell, never an Academic shell.
+20. Preserve the candidate/name start screen, Study mode, Test mode, full-screen enforcement, submit confirmation through `handlePrimarySubmit()`, GT scoring, active highlighting, and one-line bottom navigation.
+21. Visible submit/check buttons must not call `submitTest()` directly.
+22. Do not change real test wording unless adapting paper-based instructions for computer-based use.
+23. `.txt` source files are preferred. `.md` source files are acceptable only when the prompt explicitly says they are expected.
+24. If source content is incomplete or unclear, stop and report what is missing instead of inventing content.
