@@ -305,6 +305,52 @@
       color: var(--accent);
     }
 
+    #fullscreenBtn.is-active {
+      color: var(--accent);
+    }
+
+    #fullscreenBtn:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
+
+    .icon-button.with-label {
+      gap: 6px;
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      padding: 6px 10px;
+      font-size: 0.86rem;
+      line-height: 1;
+    }
+
+    #fullscreenSupportNote {
+      display: none;
+      margin-top: 8px;
+      font-size: 0.82rem;
+      color: var(--text-soft);
+    }
+
+    #fullscreenLockOverlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.72);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 2100;
+      pointer-events: all;
+    }
+
+    #fullscreenLockPanel {
+      width: min(520px, 92vw);
+      background: var(--bg);
+      color: var(--text);
+      border-radius: 12px;
+      padding: 20px 22px;
+      box-shadow: var(--shadow-soft);
+      text-align: center;
+    }
+
     /* Options overlay */
     #optionsOverlay {
       position: fixed;
@@ -1223,6 +1269,7 @@
         <label for="studentNameInput">Your name (for test mode results)</label>
         <input type="text" id="studentNameInput" placeholder="Enter your full name" maxlength="80" />
         <button class="mode-btn" type="button" onclick="window.beginTimedTest && window.beginTimedTest()">Start the test now</button>
+        <p id="fullscreenSupportNote">Full screen enforcement is limited on this device.</p>
       </div>
     </div>
   </div>
@@ -1255,6 +1302,18 @@
               <path d="M9 17a3 3 0 0 0 6 0" />
             </svg>
           </span>
+          <button id="fullscreenBtn" class="icon-button with-label" title="Enter full screen" aria-label="Enter full screen" onclick="toggleFullscreen()">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <polyline points="8 3 3 3 3 8"></polyline>
+              <line x1="3" y1="3" x2="9" y2="9"></line>
+              <polyline points="16 21 21 21 21 16"></polyline>
+              <line x1="15" y1="15" x2="21" y2="21"></line>
+              <polyline points="21 8 21 3 16 3"></polyline>
+              <line x1="15" y1="9" x2="21" y2="3"></line>
+              <polyline points="3 16 3 21 8 21"></polyline>
+              <line x1="3" y1="21" x2="9" y2="15"></line>
+            </svg><span id="fullscreenBtnLabel">Full screen</span>
+          </button>
           <button id="optionsBtn" class="icon-button" title="Options menu" aria-label="Options menu">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
               <line x1="4" y1="7" x2="20" y2="7" />
@@ -1272,7 +1331,7 @@
         <button class="options-close" onclick="toggleOptions(false)">✕</button>
         <h2>Options</h2>
 
-        <button class="submit-button" onclick="submitTest()">
+        <button class="submit-button" onclick="handlePrimarySubmit()">
           ✔ Submit test &amp; check answers
         </button>
 
@@ -1644,10 +1703,19 @@
         <div class="section-arrows">
           <button class="arrow-btn" onclick="prevSection()" title="Previous part">←</button>
           <button class="arrow-btn" onclick="nextSection()" title="Next part">→</button>
-          <button class="check-btn" onclick="submitTest()" title="Submit test and check answers">✔ Check answers</button>
+          <button class="check-btn" onclick="handlePrimarySubmit()" title="Submit test and check answers">✔ Check answers</button>
         </div>
       </div>
     </footer>
+  </div>
+
+
+  <div id="fullscreenLockOverlay" role="dialog" aria-modal="true" aria-live="assertive">
+    <div id="fullscreenLockPanel">
+      <h2>Test paused</h2>
+      <p>You have left full screen. Return to full screen to continue your test.</p>
+      <button class="mode-btn" type="button" onclick="returnToFullscreenAndResume()">Return to full screen</button>
+    </div>
   </div>
 
   <!-- Results overlay -->
@@ -1655,6 +1723,9 @@
     <div id="resultsPanel">
       <h2>Your IELTS 19 GT Reading Test 4 result</h2>
       <p id="studentLine"></p>
+      <p id="fullScreenExitLine"></p>
+      <p id="focusViolationLine"></p>
+      <p id="totalTimeLine"></p>
       <p id="scoreLine"></p>
       <p id="bandLine"></p>
       <p id="descriptorLine"></p>
@@ -1672,7 +1743,14 @@
     let timerSeconds = 60 * 60;
     let timerId = null;
     let testSubmitted = false;
+    let pendingMode = null;
     let studentName = "";
+    let isTestRunning = false;
+    let isTimerPaused = false;
+    let fullscreenSupported = false;
+    let fullScreenEnforcementEnabled = false;
+    let fullScreenExits = 0;
+    let focusViolations = 0;
     const visitedSections = new Set();
 
     const AVAILABLE_THEMES = [
@@ -1763,7 +1841,7 @@
 
     restoreThemePreference();
 
-    function beginTimedTest() {
+    async function beginTimedTest() {
       const input = document.getElementById("studentNameInput");
       studentName = input ? input.value.trim() : "";
       if (!studentName) {
@@ -1771,11 +1849,34 @@
         if (input) input.focus();
         return;
       }
+
+      fullScreenExits = 0;
+      focusViolations = 0;
+      fullScreenEnforcementEnabled = false;
+      fullscreenSupported = isFullscreenApiSupported();
+      updateFullscreenSupportNote(false);
+
+      if (fullscreenSupported) {
+        const entered = await requestAppFullscreen();
+        if (entered) {
+          fullScreenEnforcementEnabled = true;
+        } else {
+          updateFullscreenSupportNote(true);
+        }
+      } else {
+        updateFullscreenSupportNote(true);
+      }
+
+      const modeScreen = document.getElementById("modeScreen");
       const startScreen = document.getElementById("testStartScreen");
       if (startScreen) startScreen.style.display = "none";
-      const modeScreen = document.getElementById("modeScreen");
       if (modeScreen) modeScreen.style.display = "none";
       startTest("test");
+
+      isTestRunning = true;
+      isTimerPaused = false;
+      startTimer();
+      updateFullscreenButton();
     }
 
     function startTest(selectedMode) {
@@ -1786,8 +1887,6 @@
       visitedSections.add(1);
       activeSection = 1;
       currentQuestion = 1;
-      timerSeconds = 60 * 60;
-
       if (timerId) {
         clearInterval(timerId);
         timerId = null;
@@ -1798,10 +1897,15 @@
           timerContainer.style.display = "block";
           timerContainer.setAttribute("aria-hidden", "false");
         }
-        startTimer();
-      } else if (timerContainer) {
-        timerContainer.style.display = "none";
-        timerContainer.setAttribute("aria-hidden", "true");
+        timerSeconds = 60 * 60;
+      } else {
+        if (timerContainer) {
+          timerContainer.style.display = "none";
+          timerContainer.setAttribute("aria-hidden", "true");
+        }
+        isTestRunning = false;
+        isTimerPaused = false;
+        fullScreenEnforcementEnabled = false;
       }
 
       const modeScreen = document.getElementById("modeScreen");
@@ -1825,6 +1929,10 @@
 
     window.startTest = startTest;
     window.beginTimedTest = beginTimedTest;
+    window.toggleFullscreen = toggleFullscreen;
+    window.returnToFullscreenAndResume = returnToFullscreenAndResume;
+    window.confirmSubmit = confirmSubmit;
+    window.handlePrimarySubmit = handlePrimarySubmit;
 
     function wireModeButtons() {
       const buttons = document.querySelectorAll(".mode-btn[data-mode]");
@@ -1832,6 +1940,8 @@
       const activate = (btn) => {
         const selected = btn.getAttribute("data-mode") || btn.dataset.mode || "test";
         if (selected === "test") {
+          pendingMode = "test";
+          updateFullscreenSupportNote(!isFullscreenApiSupported());
           const startScreen = document.getElementById("testStartScreen");
           if (startScreen) startScreen.style.display = "block";
           const input = document.getElementById("studentNameInput");
@@ -1887,25 +1997,35 @@
 
     function startTimer() {
       if (mode !== "test") return;
+      if (timerId) {
+        clearInterval(timerId);
+        timerId = null;
+      }
       const display = document.getElementById("timerDisplay");
       if (!display) return;
       display.classList.remove("timer-warning");
-      display.textContent = "60:00";
+      display.textContent = formatDuration(timerSeconds);
+
       timerId = setInterval(() => {
         timerSeconds--;
-        if (timerSeconds < 0) {
-          clearInterval(timerId);
-          if (!testSubmitted) {
-            alert("Time is up! The test will be submitted.");
-            submitTest();
-          }
-          return;
-        }
-        const m = Math.floor(timerSeconds / 60).toString().padStart(2, "0");
-        const sec = (timerSeconds % 60).toString().padStart(2, "0");
-        display.textContent = `${m}:${sec}`;
+        display.textContent = formatDuration(timerSeconds);
         if (timerSeconds <= 180) display.classList.add("timer-warning");
       }, 1000);
+    }
+
+    function pauseTimer() {
+      if (timerId) {
+        clearInterval(timerId);
+        timerId = null;
+      }
+      isTimerPaused = true;
+    }
+
+    function resumeTimer() {
+      if (!isTestRunning || mode !== "test") return;
+      if (!isTimerPaused) return;
+      isTimerPaused = false;
+      startTimer();
     }
 
     function toggleOptions(show) {
@@ -1917,6 +2037,137 @@
     if (optionsButton) {
       optionsButton.addEventListener("click", () => toggleOptions(true));
     }
+
+
+    function isFullscreenApiSupported() {
+      const el = document.documentElement;
+      return !!(document.fullscreenEnabled && el && typeof el.requestFullscreen === "function");
+    }
+
+    function isFullscreenActive() {
+      return !!document.fullscreenElement;
+    }
+
+    function updateFullscreenSupportNote(show) {
+      const note = document.getElementById("fullscreenSupportNote");
+      if (!note) return;
+      note.style.display = show ? "block" : "none";
+    }
+
+    async function requestAppFullscreen() {
+      try {
+        if (!isFullscreenApiSupported()) return false;
+        await document.documentElement.requestFullscreen();
+        return isFullscreenActive();
+      } catch (err) {
+        return false;
+      }
+    }
+
+    async function exitAppFullscreen() {
+      try {
+        if (isFullscreenActive() && typeof document.exitFullscreen === "function") {
+          await document.exitFullscreen();
+        }
+      } catch (err) {
+        // silent by design
+      }
+    }
+
+    function showFullscreenLockOverlay() {
+      const overlay = document.getElementById("fullscreenLockOverlay");
+      if (overlay) overlay.style.display = "flex";
+      document.body.style.overflow = "hidden";
+    }
+
+    function hideFullscreenLockOverlay() {
+      const overlay = document.getElementById("fullscreenLockOverlay");
+      if (overlay) overlay.style.display = "none";
+      document.body.style.overflow = "";
+    }
+
+    function updateFullscreenButton() {
+      const btn = document.getElementById("fullscreenBtn");
+      const label = document.getElementById("fullscreenBtnLabel");
+      if (!btn || !label) return;
+
+      const isFullscreen = isFullscreenActive();
+      const locked = mode === "test" && isTestRunning && !testSubmitted && fullScreenEnforcementEnabled;
+
+      btn.classList.toggle("is-active", isFullscreen);
+      btn.disabled = false;
+
+      if (locked && isFullscreen) {
+        label.textContent = "Full screen locked";
+        btn.setAttribute("title", "Full screen locked");
+        btn.setAttribute("aria-label", "Full screen locked");
+        btn.disabled = true;
+        return;
+      }
+
+      if (isFullscreen) {
+        label.textContent = "Exit full screen";
+        btn.setAttribute("title", "Exit full screen");
+        btn.setAttribute("aria-label", "Exit full screen");
+      } else {
+        label.textContent = "Full screen";
+        btn.setAttribute("title", "Enter full screen");
+        btn.setAttribute("aria-label", "Enter full screen");
+      }
+    }
+
+    async function toggleFullscreen() {
+      const locked = mode === "test" && isTestRunning && !testSubmitted && fullScreenEnforcementEnabled;
+      if (locked && isFullscreenActive()) {
+        updateFullscreenButton();
+        return;
+      }
+
+      if (!isFullscreenActive()) {
+        await requestAppFullscreen();
+      } else {
+        await exitAppFullscreen();
+      }
+      updateFullscreenButton();
+    }
+
+    async function returnToFullscreenAndResume() {
+      const ok = await requestAppFullscreen();
+      if (ok) {
+        hideFullscreenLockOverlay();
+        resumeTimer();
+      }
+      updateFullscreenButton();
+    }
+
+    function handleFullscreenChange() {
+      const runningLockedTest = mode === "test" && isTestRunning && !testSubmitted && fullScreenEnforcementEnabled;
+      if (runningLockedTest) {
+        if (!isFullscreenActive()) {
+          fullScreenExits += 1;
+          pauseTimer();
+          showFullscreenLockOverlay();
+        } else {
+          hideFullscreenLockOverlay();
+          resumeTimer();
+        }
+      }
+      updateFullscreenButton();
+    }
+
+    document.addEventListener("fullscreenchange", handleFullscreenChange);
+
+    document.addEventListener("visibilitychange", () => {
+      if (mode === "test" && isTestRunning && !testSubmitted && document.hidden) {
+        focusViolations += 1;
+      }
+    });
+
+    window.addEventListener("blur", () => {
+      if (mode === "test" && isTestRunning && !testSubmitted) {
+        focusViolations += 1;
+      }
+    });
 
     function buildRemainingQuestions() {
       // Sections 1–3 are present in the static HTML for this standalone test.
@@ -2502,6 +2753,27 @@
     }
 
 
+    function formatDuration(totalSeconds) {
+      const safeSeconds = Math.max(0, totalSeconds);
+      const minutes = Math.floor(safeSeconds / 60).toString().padStart(2, "0");
+      const seconds = (safeSeconds % 60).toString().padStart(2, "0");
+      return `${minutes}:${seconds}`;
+    }
+
+    function handlePrimarySubmit() {
+      if (mode === "test" && isTestRunning && !testSubmitted) {
+        confirmSubmit();
+        return;
+      }
+      submitTest();
+    }
+
+    function confirmSubmit() {
+      const ok = window.confirm("Are you sure you want to submit your test now? You will not be able to continue answering in Test mode.");
+      if (!ok) return;
+      submitTest();
+    }
+
     function submitTest() {
       const correctCount = evaluateQuestions();
 
@@ -2518,6 +2790,9 @@
       const desc = getBandDescriptor(band);
 
       const studentLine = document.getElementById("studentLine");
+      const fullScreenExitLine = document.getElementById("fullScreenExitLine");
+      const focusViolationLine = document.getElementById("focusViolationLine");
+      const totalTimeLine = document.getElementById("totalTimeLine");
       const scoreLine = document.getElementById("scoreLine");
       const bandLine = document.getElementById("bandLine");
       const descriptorLine = document.getElementById("descriptorLine");
@@ -2525,6 +2800,16 @@
 
       if (studentLine) {
         studentLine.textContent = studentName ? "Student: " + studentName : "Student: Not provided";
+      }
+      if (fullScreenExitLine) {
+        fullScreenExitLine.textContent = "Full screen exits: " + fullScreenExits;
+      }
+      if (focusViolationLine) {
+        focusViolationLine.textContent = "Tab switches / focus losses: " + focusViolations;
+      }
+      if (totalTimeLine) {
+        const elapsedSeconds = 60 * 60 - timerSeconds;
+        totalTimeLine.textContent = "Total time when submitted: " + formatDuration(elapsedSeconds);
       }
       if (scoreLine)
         scoreLine.textContent =
@@ -2541,10 +2826,14 @@
 
       if (mode === "test") {
         testSubmitted = true;
+        isTestRunning = false;
+        isTimerPaused = false;
+        hideFullscreenLockOverlay();
         if (timerId) {
           clearInterval(timerId);
           timerId = null;
         }
+        exitAppFullscreen();
         // Disable further changes in test mode
         document
           .querySelectorAll("#questionContent select, #questionContent input")
@@ -2557,6 +2846,14 @@
 
     function closeResults() {
       const overlay = document.getElementById("resultsOverlay");
+      const studentLine = document.getElementById("studentLine");
+      const fullScreenExitLine = document.getElementById("fullScreenExitLine");
+      const focusViolationLine = document.getElementById("focusViolationLine");
+      const totalTimeLine = document.getElementById("totalTimeLine");
+      if (studentLine) studentLine.textContent = "";
+      if (fullScreenExitLine) fullScreenExitLine.textContent = "";
+      if (focusViolationLine) focusViolationLine.textContent = "";
+      if (totalTimeLine) totalTimeLine.textContent = "";
       if (overlay) overlay.style.display = "none";
     }
 
