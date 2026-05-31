@@ -1,0 +1,79 @@
+1 C
+
+2 G
+
+3 D
+
+4 F
+
+5 A
+
+6 FALSE
+
+7 TRUE
+
+8 FALSE
+
+9 NOT GIVEN
+
+10 TRUE
+
+11 eye-catching landmark
+
+12 cemetery
+
+13 (unique) (Chinese) architecture
+
+14 (self-booking) computer terminals /terminals for self-booking
+
+15 personality
+
+16 dull
+
+17 qualities
+
+18 viewpoints
+
+19 colleague
+
+20 cliches / cliches
+
+21 stationery
+
+22 photos
+
+23 locations
+
+24 labels
+
+25 requirement
+
+26 focus
+
+27 tasks
+
+28 iv
+
+29 vi
+
+30 iii
+
+31 i
+
+32 viii
+
+33 explosion
+
+34 shaft
+
+35 sparks
+
+36 manpower
+
+37 A
+
+38 B
+
+39 D
+
+40 D
