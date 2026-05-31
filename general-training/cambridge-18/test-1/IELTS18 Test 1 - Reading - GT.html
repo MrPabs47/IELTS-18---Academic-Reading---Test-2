@@ -1362,14 +1362,6 @@
       </div>
     </div>
 
-    <div id="fullscreenLockOverlay" role="dialog" aria-modal="true" aria-labelledby="fullscreenLockTitle">
-      <div id="fullscreenLockPanel">
-        <h2 id="fullscreenLockTitle">Test paused</h2>
-        <p>You have left full screen. Return to full screen to continue your test.</p>
-        <button class="mode-btn" type="button" onclick="returnToFullscreenAndResume()">Return to full screen</button>
-      </div>
-    </div>
-
     <!-- Main content area -->
     <div class="main-area">
       <div class="main-inner">
@@ -1850,6 +1842,15 @@
         </div>
       </div>
     </footer>
+  </div>
+
+
+  <div id="fullscreenLockOverlay" role="dialog" aria-modal="true" aria-live="assertive">
+    <div id="fullscreenLockPanel">
+      <h2>Test paused</h2>
+      <p>You have left full screen. Return to full screen to continue your test.</p>
+      <button class="mode-btn" type="button" onclick="returnToFullscreenAndResume()">Return to full screen</button>
+    </div>
   </div>
 
   <!-- Results overlay -->
