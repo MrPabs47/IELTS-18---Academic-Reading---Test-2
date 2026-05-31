@@ -756,6 +756,62 @@
       padding-left: 10px;
     }
 
+    .diagram-overlay-scroll {
+      margin: 16px 0;
+      overflow-x: auto;
+    }
+
+    .diagram-overlay-wrapper {
+      position: relative;
+      width: 100%;
+      min-width: 700px;
+    }
+
+    .diagram-overlay-img {
+      display: block;
+      width: 100%;
+      height: auto;
+    }
+
+    .diagram-answer {
+      position: absolute;
+      width: 21%;
+      margin: 0;
+      padding: 0;
+    }
+
+    .diagram-answer-38 {
+      left: 12%;
+      top: 21.5%;
+    }
+
+    .diagram-answer-39 {
+      left: 47%;
+      top: 22.5%;
+    }
+
+    .diagram-answer-40 {
+      left: 49.5%;
+      top: 86.5%;
+    }
+
+    .diagram-answer .inline-input,
+    .diagram-answer input {
+      width: 100%;
+      max-width: none;
+      box-sizing: border-box;
+    }
+
+    .diagram-answer input {
+      min-height: 30px;
+      padding: 4px 8px;
+      background: var(--bg);
+    }
+
+    .diagram-feedbacks {
+      margin-top: 8px;
+    }
+
     .passage-match-source {
       display: inline-block;
       padding: 4px 8px;
@@ -1810,18 +1866,23 @@
           <p>Label the diagram below.</p>
           <p>Choose <strong>NO MORE THAN TWO WORDS</strong> from the text for each answer.</p>
           <p>Write your answers in boxes 38 to 40 on your answer sheet.</p>
-          <img src="roman-road-diagram.png" alt="Diagram of Roman road construction for questions 38 to 40" style="display:block;max-width:100%;height:auto;margin:16px auto;" />
-
-          <div class="question-block" data-q="38">
-            <div class="question-text"><span class="question-number-label">38.</span> <span class="inline-input no-number" data-q="38"><input type="text" name="q38" autocomplete="off" /></span></div>
+          <div class="diagram-overlay-scroll">
+            <div class="diagram-overlay-wrapper">
+              <img class="diagram-overlay-img" src="roman-road-diagram.png" alt="Diagram of Roman road construction for questions 38 to 40" />
+              <div class="question-block diagram-answer diagram-answer-38" data-q="38">
+                <span class="inline-input no-number" data-q="38"><input type="text" name="q38" aria-label="Question 38" autocomplete="off" /></span>
+              </div>
+              <div class="question-block diagram-answer diagram-answer-39" data-q="39">
+                <span class="inline-input no-number" data-q="39"><input type="text" name="q39" aria-label="Question 39" autocomplete="off" /></span>
+              </div>
+              <div class="question-block diagram-answer diagram-answer-40" data-q="40">
+                <span class="inline-input no-number" data-q="40"><input type="text" name="q40" aria-label="Question 40" autocomplete="off" /></span>
+              </div>
+            </div>
+          </div>
+          <div class="diagram-feedbacks" aria-live="polite">
             <div class="correct-answer-text" id="ca-38"></div>
-          </div>
-          <div class="question-block" data-q="39">
-            <div class="question-text"><span class="question-number-label">39.</span> <span class="inline-input no-number" data-q="39"><input type="text" name="q39" autocomplete="off" /></span></div>
             <div class="correct-answer-text" id="ca-39"></div>
-          </div>
-          <div class="question-block" data-q="40">
-            <div class="question-text"><span class="question-number-label">40.</span> <span class="inline-input no-number" data-q="40"><input type="text" name="q40" autocomplete="off" /></span></div>
             <div class="correct-answer-text" id="ca-40"></div>
           </div>
 
