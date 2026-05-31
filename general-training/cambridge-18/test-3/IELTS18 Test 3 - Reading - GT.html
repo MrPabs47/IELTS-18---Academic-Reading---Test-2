@@ -582,41 +582,49 @@
       line-height: 1.5;
     }
 
+    .note-completion-box {
+      padding: 14px 16px;
+    }
+
+    .note-completion-box .box-title {
+      margin-bottom: 12px;
+    }
+
     .note-completion-box .question-block {
-      margin: 2px 0;
-      padding: 2px 4px;
+      margin: 3px 0;
+      padding: 2px 0;
     }
 
     .note-heading {
       font-weight: 700;
-      margin: 14px 0 5px;
+      line-height: 1.4;
+      margin: 16px 0 8px;
     }
 
     .note-line,
     .note-line-static {
       display: flex;
       align-items: flex-start;
-      gap: 6px;
-      padding-left: 8px;
+      gap: 8px;
+      padding-left: 10px;
+      margin: 5px 0;
+      line-height: 1.5;
     }
 
     .note-line::before,
     .note-line-static::before {
-      content: "•";
+      content: "";
       flex: 0 0 auto;
-      font-size: 0.78em;
-      line-height: 1.9;
-      color: var(--text-soft);
+      width: 4px;
+      height: 4px;
+      margin-top: 0.68em;
+      border-radius: 50%;
+      background: var(--text-soft);
     }
 
-    .note-line p,
-    .note-line-static {
-      margin-top: 0;
-      margin-bottom: 0;
-    }
-
-    .note-line-static {
-      margin: 2px 0;
+    .note-line p {
+      margin: 0;
+      line-height: 1.5;
     }
 
     .note-completion-box .inline-input {
