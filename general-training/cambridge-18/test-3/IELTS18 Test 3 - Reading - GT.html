@@ -582,41 +582,49 @@
       line-height: 1.5;
     }
 
+    .note-completion-box {
+      padding: 14px 16px;
+    }
+
+    .note-completion-box .box-title {
+      margin-bottom: 12px;
+    }
+
     .note-completion-box .question-block {
-      margin: 2px 0;
-      padding: 2px 4px;
+      margin: 3px 0;
+      padding: 2px 0;
     }
 
     .note-heading {
       font-weight: 700;
-      margin: 14px 0 5px;
+      line-height: 1.4;
+      margin: 16px 0 8px;
     }
 
     .note-line,
     .note-line-static {
       display: flex;
       align-items: flex-start;
-      gap: 6px;
-      padding-left: 8px;
+      gap: 8px;
+      padding-left: 10px;
+      margin: 5px 0;
+      line-height: 1.5;
     }
 
     .note-line::before,
     .note-line-static::before {
-      content: "•";
+      content: "";
       flex: 0 0 auto;
-      font-size: 0.78em;
-      line-height: 1.9;
-      color: var(--text-soft);
+      width: 4px;
+      height: 4px;
+      margin-top: 0.68em;
+      border-radius: 50%;
+      background: var(--text-soft);
     }
 
-    .note-line p,
-    .note-line-static {
-      margin-top: 0;
-      margin-bottom: 0;
-    }
-
-    .note-line-static {
-      margin: 2px 0;
+    .note-line p {
+      margin: 0;
+      line-height: 1.5;
     }
 
     .note-completion-box .inline-input {
@@ -754,6 +762,26 @@
 
     .inline-input.no-number input {
       padding-left: 10px;
+    }
+
+    .diagram-image {
+      display: block;
+      width: 100%;
+      max-width: 100%;
+      height: auto;
+      margin: 16px auto;
+    }
+
+    .diagram-answer-panel {
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      background: var(--bg-secondary);
+      padding: 10px 12px;
+      margin: 12px 0 16px;
+    }
+
+    .diagram-answer-panel .question-block:last-child {
+      margin-bottom: 0;
     }
 
     .passage-match-source {
@@ -1810,19 +1838,20 @@
           <p>Label the diagram below.</p>
           <p>Choose <strong>NO MORE THAN TWO WORDS</strong> from the text for each answer.</p>
           <p>Write your answers in boxes 38 to 40 on your answer sheet.</p>
-          <img src="roman-road-diagram.png" alt="Diagram of Roman road construction for questions 38 to 40" style="display:block;max-width:100%;height:auto;margin:16px auto;" />
-
-          <div class="question-block" data-q="38">
-            <div class="question-text"><span class="question-number-label">38.</span> <span class="inline-input no-number" data-q="38"><input type="text" name="q38" autocomplete="off" /></span></div>
-            <div class="correct-answer-text" id="ca-38"></div>
-          </div>
-          <div class="question-block" data-q="39">
-            <div class="question-text"><span class="question-number-label">39.</span> <span class="inline-input no-number" data-q="39"><input type="text" name="q39" autocomplete="off" /></span></div>
-            <div class="correct-answer-text" id="ca-39"></div>
-          </div>
-          <div class="question-block" data-q="40">
-            <div class="question-text"><span class="question-number-label">40.</span> <span class="inline-input no-number" data-q="40"><input type="text" name="q40" autocomplete="off" /></span></div>
-            <div class="correct-answer-text" id="ca-40"></div>
+          <img class="diagram-image" src="roman-road-diagram.png" alt="Diagram of Roman road construction for questions 38 to 40" />
+          <div class="diagram-answer-panel">
+            <div class="question-block" data-q="38">
+              <div class="question-text"><span class="question-number-label">38.</span> Nucleus made of <span class="inline-input no-number" data-q="38"><input type="text" name="q38" autocomplete="off" /></span></div>
+              <div class="correct-answer-text" id="ca-38"></div>
+            </div>
+            <div class="question-block" data-q="39">
+              <div class="question-text"><span class="question-number-label">39.</span> Stone slabs may be ridged to help <span class="inline-input no-number" data-q="39"><input type="text" name="q39" autocomplete="off" /></span> use the road.</div>
+              <div class="correct-answer-text" id="ca-39"></div>
+            </div>
+            <div class="question-block" data-q="40">
+              <div class="question-text"><span class="question-number-label">40.</span> Layer of materials such as <span class="inline-input no-number" data-q="40"><input type="text" name="q40" autocomplete="off" /></span></div>
+              <div class="correct-answer-text" id="ca-40"></div>
+            </div>
           </div>
 
         </div>
