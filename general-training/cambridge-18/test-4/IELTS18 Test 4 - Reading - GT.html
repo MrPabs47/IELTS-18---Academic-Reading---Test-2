@@ -1,0 +1,3457 @@
+<!DOCTYPE html>
+<html lang="en">
+<!-- Stage 1 shell only: passage, question, and answer content below is copied from IELTS 18 GT Reading Test 3 as a temporary placeholder. -->
+<head>
+  <meta charset="UTF-8" />
+  <title>IELTS 18 GT Reading Test 4 | IELTS Pabs</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <style>
+    :root {
+      --bg: #ffffff;
+      --bg-secondary: #f5f5f5;
+      --text: #111111;
+      --text-soft: #555555;
+      --accent: #0057b8;
+      --accent-soft: #e5f0ff;
+      --border: #dddddd;
+      --highlight: #ffcc66;
+      --note-underline: #ff9900;
+      --danger: #c62828;
+      --correct: #1b5e20;
+      --incorrect: #b71c1c;
+      --orange: #ff9800;
+      --part-bg: #f2f2f2;
+      --part-active-bg: #ffffff;
+      --shadow-soft: 0 2px 10px rgba(0,0,0,0.08);
+      --font-size-base: 15px;
+    }
+
+    /* Themes */
+    body[data-theme="white-on-black"] {
+      --bg: #000000;
+      --bg-secondary: #111111;
+      --text: #ffffff;
+      --text-soft: #dddddd;
+      --border: #333333;
+      --accent: #90caf9;
+      --accent-soft: #1a237e;
+      --highlight: #ffcc66;
+      --note-underline: #ffcc66;
+      --part-bg: #111111;
+      --part-active-bg: #000000;
+      --shadow-soft: 0 2px 10px rgba(0,0,0,0.6);
+    }
+
+    body[data-theme="yellow-on-black"] {
+      --bg: #000000;
+      --bg-secondary: #111111;
+      --text: #ffff66;
+      --text-soft: #fff59d;
+      --border: #333333;
+      --accent: #fff176;
+      --accent-soft: #424242;
+      --highlight: #ffeb3b;
+      --note-underline: #ffeb3b;
+      --part-bg: #111111;
+      --part-active-bg: #000000;
+      --shadow-soft: 0 2px 10px rgba(0,0,0,0.6);
+    }
+
+    body {
+      margin: 0;
+      font-family: Arial, Helvetica, system-ui, -apple-system, "Segoe UI", sans-serif;
+      font-size: var(--font-size-base);
+      background: var(--bg);
+      color: var(--text);
+      overscroll-behavior: none;
+    }
+
+    body.font-large {
+      --font-size-base: 18px;
+    }
+    body.font-xlarge {
+      --font-size-base: 20px;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    /* Mode overlay (test vs study) */
+    #modeScreen {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.6);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 2000;
+    }
+
+    #modeScreenInner {
+      background: var(--bg);
+      color: var(--text);
+      padding: 24px 28px;
+      border-radius: 12px;
+      max-width: 480px;
+      box-shadow: var(--shadow-soft);
+    }
+
+    #modeScreenInner h1 {
+      margin-top: 0;
+      margin-bottom: 8px;
+      font-size: 1.4rem;
+    }
+
+    #modeScreenInner p {
+      margin-top: 0;
+      margin-bottom: 12px;
+      color: var(--text-soft);
+    }
+
+    .mode-buttons {
+      display: flex;
+      gap: 12px;
+      margin-top: 8px;
+      flex-wrap: wrap;
+    }
+
+    .mode-btn {
+      flex: 1 1 140px;
+      padding: 10px 14px;
+      border-radius: 999px;
+      border: 1px solid var(--accent);
+      background: var(--accent-soft);
+      color: var(--accent);
+      font-weight: 600;
+      cursor: pointer;
+      text-align: center;
+      transition: background 0.15s, transform 0.05s;
+    }
+
+    .mode-btn.secondary {
+      background: transparent;
+      color: var(--accent);
+    }
+
+    .mode-btn:hover {
+      background: var(--accent);
+      color: #fff;
+      transform: translateY(-1px);
+    }
+
+    #testStartScreen {
+      display: none;
+      margin-top: 14px;
+      padding-top: 14px;
+      border-top: 1px solid var(--border);
+    }
+
+    #testStartScreen label {
+      display: block;
+      font-weight: 600;
+      margin-bottom: 8px;
+    }
+
+    #studentNameInput {
+      max-width: 100%;
+      margin-bottom: 10px;
+    }
+
+    #app {
+      display: none;
+    }
+
+    /* Top bar */
+    .top-bar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 56px;
+      background: var(--bg-secondary);
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 20px;
+      z-index: 1000;
+    }
+
+    .top-left {
+      display: flex;
+      align-items: baseline;
+      gap: 16px;
+    }
+
+    .logo {
+      font-weight: 800;
+      font-size: 1.4rem;
+      letter-spacing: 0.08em;
+    }
+
+    /* IELTS Pabs animated logo */
+    .logo.home-link,
+    .logo-link .logo {
+      transition: color 0.2s ease, opacity 0.2s ease;
+    }
+
+    .logo.home-link {
+      cursor: pointer;
+      user-select: none;
+    }
+
+    .logo.home-link:hover,
+    .home-link:hover,
+    .logo-link:hover .logo {
+      color: #e31837;
+      opacity: 1;
+    }
+
+    .logo-char {
+      display: inline-block;
+      opacity: 1;
+      transform: none;
+      filter: none;
+      will-change: transform, opacity, filter;
+    }
+
+    .logo.is-animating .logo-char {
+      animation: logoReveal 0.45s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+      animation-delay: calc(var(--logo-char-index) * 200ms);
+    }
+
+    @keyframes logoReveal {
+      from {
+        opacity: 0;
+        transform: translateY(8px);
+        filter: blur(4px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+        filter: blur(0);
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .logo-char {
+        opacity: 1;
+        transform: none;
+        filter: none;
+        animation: none;
+      }
+    }
+
+    .test-title {
+      font-size: 0.95rem;
+      color: var(--text-soft);
+    }
+
+    .top-right {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      font-size: 0.9rem;
+    }
+
+    #timerContainer {
+      display: none;
+    }
+
+    #timerDisplay {
+      font-weight: 600;
+    }
+
+    .timer-warning {
+      color: var(--danger);
+    }
+
+    .icon-group {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .icon {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 26px;
+      height: 26px;
+      color: var(--text-soft);
+    }
+
+    .icon svg,
+    .icon-button svg {
+      width: 22px;
+      height: 22px;
+      display: block;
+      stroke: currentColor;
+    }
+
+    .icon-button {
+      border: none;
+      background: none;
+      padding: 4px 8px;
+      cursor: pointer;
+      color: var(--text-soft);
+      font-size: 1.3rem;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .icon-button:hover {
+      color: var(--accent);
+    }
+
+    #fullscreenBtn.is-active {
+      color: var(--accent);
+    }
+
+    #fullscreenBtn:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
+
+    .icon-button.with-label {
+      gap: 6px;
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      padding: 6px 10px;
+      font-size: 0.86rem;
+      line-height: 1;
+    }
+
+    #fullscreenSupportNote {
+      display: none;
+      margin-top: 8px;
+      font-size: 0.82rem;
+      color: var(--text-soft);
+    }
+
+    /* Options overlay */
+    #optionsOverlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.55);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 1500;
+    }
+
+    #optionsPanel {
+      background: var(--bg);
+      color: var(--text);
+      width: min(520px, 95vw);
+      padding: 22px 26px;
+      border-radius: 12px;
+      box-shadow: var(--shadow-soft);
+      position: relative;
+    }
+
+    #optionsPanel h2 {
+      margin: 0 0 16px;
+      text-align: center;
+    }
+
+    .options-close {
+      position: absolute;
+      top: 8px;
+      right: 12px;
+      border: none;
+      background: none;
+      font-size: 1.4rem;
+      cursor: pointer;
+      color: var(--text-soft);
+    }
+
+    .options-section {
+      margin-top: 12px;
+      border-top: 1px solid var(--border);
+      padding-top: 10px;
+    }
+
+    .options-section h3 {
+      margin: 4px 0 8px;
+      font-size: 0.95rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--text-soft);
+    }
+
+    .options-list button {
+      width: 100%;
+      text-align: left;
+      padding: 8px 10px;
+      border-radius: 6px;
+      border: 1px solid transparent;
+      background: transparent;
+      color: var(--text);
+      cursor: pointer;
+      margin-bottom: 6px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 0.95rem;
+    }
+
+    .options-list button:hover {
+      border-color: var(--accent);
+      background: var(--accent-soft);
+    }
+
+    .options-list button.active {
+      border-color: var(--accent);
+      background: var(--accent-soft);
+      font-weight: 600;
+      color: var(--text);
+    }
+
+    .submit-button {
+      width: 100%;
+      padding: 10px 14px;
+      border-radius: 999px;
+      border: none;
+      background: #d32f2f;
+      color: #fff;
+      font-weight: 600;
+      cursor: pointer;
+      margin-bottom: 10px;
+      font-size: 1rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+
+    .submit-button:hover {
+      background: #b71c1c;
+    }
+
+    /* Main layout: fixed header + footer, scrollable middle */
+    .main-area {
+      position: fixed;
+      top: 56px;
+      bottom: 64px;
+      left: 0;
+      right: 0;
+      display: flex;
+      justify-content: center;
+      padding: 4px 6px;
+    }
+
+    .main-inner {
+      width: min(1800px, calc(100% - 6px));
+      display: flex;
+      border-radius: 12px;
+      background: var(--bg-secondary);
+      box-shadow: var(--shadow-soft);
+      overflow: hidden;
+      border: none;
+    }
+
+    .pane {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      background: var(--bg);
+    }
+
+    .pane-header {
+      padding: 10px 14px;
+      border-bottom: 1px solid var(--border);
+      background: var(--bg-secondary);
+      font-weight: 600;
+      font-size: 0.98rem;
+    }
+
+    .pane-header span {
+      font-weight: 400;
+      color: var(--text-soft);
+      margin-left: 6px;
+      font-size: 0.9rem;
+    }
+
+    .pane-content {
+      flex: 1;
+      padding: 14px 18px;
+      overflow-y: auto;
+      position: relative;
+    }
+
+    .passage-section h2 {
+      margin-top: 0;
+      margin-bottom: 8px;
+      font-size: 1.1rem;
+    }
+
+    .passage-section h2:not(:first-child) {
+      margin-top: 26px;
+      padding-top: 18px;
+      border-top: 2px solid var(--border);
+    }
+
+    .passage-section h3 {
+      margin-bottom: 6px;
+      margin-top: 18px;
+      font-size: 1rem;
+    }
+
+    .passage-section p {
+      margin: 4px 0;
+      line-height: 1.45;
+    }
+
+    .passage-divider {
+      margin: 32px 0 22px;
+      border-top: 2px solid var(--border);
+      padding-top: 22px;
+    }
+
+    .passage-divider h2 {
+      margin-top: 0;
+    }
+
+    .question-group-heading {
+      margin: 16px 0 10px;
+      padding: 8px 10px;
+      border-left: 4px solid var(--accent);
+      border-radius: 8px;
+      background: var(--accent-soft);
+      font-weight: 600;
+    }
+
+    .question-block {
+      margin-bottom: 10px;
+      padding: 6px 8px;
+      border-radius: 8px;
+      border: 1px solid transparent;
+      background: transparent;
+    }
+
+    .question-block.current-question {
+      border-color: var(--accent);
+      background: var(--accent-soft);
+    }
+
+    .question-block.correct {
+      border-color: var(--correct);
+      background: rgba(67,160,71,0.08);
+    }
+
+    .question-block.incorrect {
+      border-color: var(--incorrect);
+      background: rgba(229,57,53,0.06);
+    }
+
+    .question-number-label {
+      font-weight: 600;
+      margin-right: 6px;
+    }
+
+    .question-text {
+      margin-bottom: 4px;
+    }
+
+    .option-bank,
+    .note-completion-box,
+    .summary-completion-box {
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      background: var(--bg-secondary);
+      padding: 12px 14px;
+      margin: 12px 0 14px;
+    }
+
+    .option-bank-title,
+    .box-title {
+      font-weight: 700;
+      margin-bottom: 8px;
+    }
+
+    .box-title {
+      text-align: center;
+    }
+
+    .option-bank p,
+    .note-completion-box p,
+    .summary-completion-box p {
+      margin: 6px 0;
+      line-height: 1.5;
+    }
+
+    .note-completion-box {
+      padding: 14px 16px;
+    }
+
+    .note-completion-box .box-title {
+      margin-bottom: 12px;
+    }
+
+    .note-completion-box .question-block {
+      margin: 3px 0;
+      padding: 2px 0;
+    }
+
+    .note-heading {
+      font-weight: 700;
+      line-height: 1.4;
+      margin: 16px 0 8px;
+    }
+
+    .note-line,
+    .note-line-static {
+      display: flex;
+      align-items: flex-start;
+      gap: 8px;
+      padding-left: 10px;
+      margin: 5px 0;
+      line-height: 1.5;
+    }
+
+    .note-line::before,
+    .note-line-static::before {
+      content: "";
+      flex: 0 0 auto;
+      width: 4px;
+      height: 4px;
+      margin-top: 0.68em;
+      border-radius: 50%;
+      background: var(--text-soft);
+    }
+
+    .note-line p {
+      margin: 0;
+      line-height: 1.5;
+    }
+
+    .note-completion-box .inline-input {
+      margin: 1px 2px;
+      vertical-align: middle;
+    }
+
+    .inline-question {
+      display: inline;
+      margin: 0;
+      padding: 0 2px;
+      border-radius: 4px;
+    }
+
+    .inline-question.current-question {
+      outline: 2px solid var(--accent);
+      background: var(--accent-soft);
+    }
+
+    .summary-feedbacks {
+      margin-top: 8px;
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    .summary-completion-box .inline-input {
+      margin: 0 2px;
+    }
+
+    .question-block > select {
+      margin-top: 6px;
+    }
+
+    .short-answer-input {
+      margin-top: 8px;
+    }
+
+    .short-answer-input .inline-input.no-number {
+      max-width: 260px;
+    }
+
+    .options-row {
+      margin-top: 8px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .options-row label {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 8px;
+      border-radius: 8px;
+      margin: 0;
+      cursor: pointer;
+      background: var(--bg-secondary);
+      border: 1px solid var(--border);
+    }
+
+    select,
+    input[type="text"] {
+      padding: 6px 8px;
+      border-radius: 6px;
+      border: 1px solid var(--border);
+      font-family: inherit;
+      font-size: 1em;
+      line-height: 1.35;
+      width: 100%;
+      max-width: 260px;
+      background: var(--bg);
+      color: var(--text);
+    }
+
+    select option,
+    select optgroup {
+      background: var(--bg);
+      color: var(--text);
+    }
+
+    input::placeholder,
+    textarea::placeholder {
+      color: var(--text-soft);
+      opacity: 0.9;
+    }
+
+    select:focus,
+    input[type="text"]:focus {
+      outline: 2px solid var(--accent);
+      outline-offset: 1px;
+    }
+
+    .inline-input {
+      position: relative;
+      display: inline-block;
+      vertical-align: middle;
+      min-width: 110px;
+      max-width: 220px;
+    }
+
+    .inline-input::before {
+      content: attr(data-q);
+      position: absolute;
+      left: 1px;
+      top: 1px;
+      bottom: 1px;
+      width: 34px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: 0.85rem;
+      color: var(--text-soft);
+      background: var(--bg-secondary);
+      border-right: 1px solid var(--border);
+      border-radius: 5px 0 0 5px;
+      pointer-events: none;
+    }
+
+    .inline-input input {
+      width: 100%;
+      padding-left: 46px;
+      min-height: 34px;
+      line-height: 1.35;
+    }
+
+    .inline-input.no-number {
+      min-width: 130px;
+    }
+
+    .inline-input.no-number::before {
+      content: none;
+    }
+
+    .inline-input.no-number input {
+      padding-left: 10px;
+    }
+
+    .diagram-image {
+      display: block;
+      width: 100%;
+      max-width: 100%;
+      height: auto;
+      margin: 16px auto;
+    }
+
+    .diagram-answer-panel {
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      background: var(--bg-secondary);
+      padding: 10px 12px;
+      margin: 12px 0 16px;
+    }
+
+    .diagram-answer-panel .question-block:last-child {
+      margin-bottom: 0;
+    }
+
+    .passage-match-source {
+      display: inline-block;
+      padding: 4px 8px;
+      border: 1px dashed transparent;
+      border-radius: 8px;
+      cursor: grab;
+      transition: background 0.15s, border-color 0.15s, color 0.15s;
+    }
+
+    .passage-match-source:hover,
+    .passage-match-source:focus,
+    .passage-match-source.selected {
+      border-color: var(--accent);
+      background: var(--accent-soft);
+      color: var(--accent);
+      outline: none;
+    }
+
+    .matching-source-hint {
+      font-size: 0.9rem;
+      color: var(--text-soft);
+      margin: 10px 0 12px;
+    }
+
+    .drag-bank {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin: 10px 0 14px;
+      padding: 10px;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      background: var(--bg-secondary);
+    }
+
+    .drag-item {
+      width: 34px;
+      height: 34px;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 800;
+      border: 1px solid var(--border);
+      background: var(--bg);
+      cursor: grab;
+      user-select: none;
+    }
+
+    .drag-item.selected {
+      outline: 2px solid var(--accent);
+      outline-offset: 1px;
+    }
+
+    .drag-hint {
+      color: var(--text-soft);
+      font-size: 0.9rem;
+    }
+
+    .drop-zone {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 120px;
+      height: 34px;
+      border-radius: 8px;
+      border: 1px dashed var(--border);
+      background: var(--bg);
+      font-family: inherit;
+      font-size: 1em;
+      font-weight: 800;
+      margin-top: 6px;
+      cursor: pointer;
+    }
+
+    .drop-zone.filled {
+      border-style: solid;
+      border-color: var(--accent);
+      background: var(--accent-soft);
+    }
+
+    .drop-zone.over {
+      border-color: var(--accent);
+    }
+
+    .correct-answer-text {
+      margin-top: 4px;
+      font-size: 0.85rem;
+      color: var(--correct);
+      display: none;
+    }
+
+    /* Bottom navigation */
+    .bottom-nav {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background: var(--bg-secondary);
+      border-top: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      padding: 6px 10px;
+      font-size: 0.92rem;
+      z-index: 900;
+    }
+
+    .bottom-row {
+      width: 100%;
+    }
+
+    .bottom-row-v2 {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      width: 100%;
+    }
+
+    .bottom-left {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      flex: 1;
+      min-width: 0;
+    }
+
+    .part-summary-row {
+      display: flex;
+      gap: 8px;
+      min-width: max-content;
+      flex: 0 0 auto;
+      white-space: nowrap;
+    }
+
+    #questionNumbers {
+      display: flex;
+      flex: 1;
+      flex-wrap: nowrap;
+      overflow-x: auto;
+      gap: 5px;
+      padding: 1px 5px;
+      min-width: 0;
+      justify-content: flex-start;
+    }
+
+    .part-chip {
+      padding: 8px 12px;
+      border-radius: 999px;
+      background: var(--part-bg);
+      border: 1px solid transparent;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 0.94rem;
+      justify-content: center;
+      transition: background 0.1s, border-color 0.1s, color 0.1s;
+      text-align: center;
+      width: auto;
+      min-width: max-content;
+      flex: 0 0 auto;
+      white-space: nowrap;
+    }
+
+    .part-chip span.count {
+      color: var(--text-soft);
+      font-size: 0.85rem;
+      white-space: nowrap;
+    }
+
+    .part-chip.active {
+      background: var(--part-active-bg);
+      border-color: var(--accent);
+      font-weight: 600;
+    }
+
+    .part-chip.complete {
+      border-color: var(--correct);
+      color: var(--correct);
+    }
+
+    .part-chip.partial {
+      border-color: var(--orange);
+      color: var(--orange);
+    }
+
+    .part-chip.unopened {
+      color: var(--text-soft);
+      border-color: transparent;
+    }
+
+    #questionNumbers {
+      scroll-behavior: smooth;
+    }
+
+    .qnav {
+      min-width: 30px;
+      padding: 4px 7px;
+      border-radius: 8px;
+      text-align: center;
+      border: 1px solid var(--border);
+      background: var(--bg);
+      cursor: pointer;
+      font-size: 0.9rem;
+      font-weight: 700;
+      flex-shrink: 0;
+    }
+
+    .qnav.current {
+      border-color: var(--accent);
+      background: var(--accent-soft);
+      font-weight: 600;
+    }
+
+    .qnav.answered {
+      border-color: var(--correct);
+      background: rgba(67,160,71,0.12);
+    }
+
+    .qnav.unanswered {
+      opacity: 0.7;
+    }
+
+    .section-arrows {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .arrow-btn,
+    .check-btn {
+      border-radius: 6px;
+      border: none;
+      padding: 6px 10px;
+      cursor: pointer;
+      font-size: 0.9rem;
+      background: var(--bg-secondary);
+      border: 1px solid var(--border);
+      color: var(--text);
+    }
+
+    .arrow-btn:hover {
+      border-color: var(--accent);
+      background: var(--accent-soft);
+    }
+
+    .check-btn {
+      background: var(--accent);
+      color: #fff;
+      border-color: var(--accent);
+      font-weight: 600;
+    }
+
+    .check-btn:hover {
+      background: #00429b;
+    }
+
+    /* Highlight & notes toolbar */
+    #selectionToolbar {
+      position: absolute;
+      padding: 4px 6px;
+      background: #222;
+      color: #fff;
+      border-radius: 999px;
+      display: none;
+      z-index: 1200;
+      font-size: 0.8rem;
+      gap: 4px;
+    }
+
+    #selectionToolbar button {
+      border: none;
+      background: transparent;
+      color: inherit;
+      padding: 4px 8px;
+      border-radius: 999px;
+      cursor: pointer;
+      font-size: 0.8rem;
+    }
+
+    #selectionToolbar button:hover {
+      background: rgba(255,255,255,0.18);
+    }
+
+    .highlighted {
+      background: var(--highlight);
+    }
+
+    .note-anchor {
+      text-decoration: underline;
+      text-decoration-color: var(--note-underline);
+      text-decoration-style: solid;
+      text-decoration-thickness: 2px;
+      position: relative;
+      cursor: pointer;
+    }
+
+    .note-anchor .note-delete {
+      position: absolute;
+      top: -10px;
+      right: -10px;
+      width: 16px;
+      height: 16px;
+      border-radius: 50%;
+      border: none;
+      font-size: 0.7rem;
+      padding: 0;
+      line-height: 16px;
+      text-align: center;
+      background: var(--danger);
+      color: #fff;
+      display: none;
+      cursor: pointer;
+    }
+
+    .note-anchor:hover .note-delete {
+      display: inline-block;
+    }
+
+    .note-window {
+      position: absolute;
+      min-width: 200px;
+      min-height: 120px;
+      max-width: 340px;
+      background: var(--bg);
+      color: var(--text);
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      box-shadow: var(--shadow-soft);
+      z-index: 1300;
+      display: flex;
+      flex-direction: column;
+      resize: both;
+      overflow: hidden;
+    }
+
+    .note-header {
+      padding: 4px 8px;
+      border-bottom: 1px solid var(--border);
+      background: var(--bg-secondary);
+      cursor: move;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 0.8rem;
+    }
+
+    .note-body {
+      flex: 1;
+      padding: 6px;
+    }
+
+    .note-body textarea {
+      width: 100%;
+      height: 100%;
+      border: none;
+      outline: none;
+      background: transparent;
+      color: inherit;
+      resize: none;
+      font-size: 0.85rem;
+    }
+
+    .note-footer {
+      padding: 4px 6px;
+      text-align: right;
+      border-top: 1px solid var(--border);
+    }
+
+    .note-footer button {
+      border: none;
+      background: none;
+      color: var(--accent);
+      cursor: pointer;
+      font-size: 0.8rem;
+    }
+
+    /* Results overlay */
+    #resultsOverlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.6);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 1600;
+    }
+
+    #resultsPanel {
+      background: var(--bg);
+      color: var(--text);
+      padding: 22px 26px;
+      border-radius: 12px;
+      box-shadow: var(--shadow-soft);
+      max-width: 520px;
+      width: 95vw;
+    }
+
+    #resultsPanel h2 {
+      margin-top: 0;
+      margin-bottom: 10px;
+    }
+
+    #resultsPanel p {
+      margin: 6px 0;
+    }
+
+    #fullscreenLockOverlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.72);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 1700;
+    }
+
+    #fullscreenLockPanel {
+      background: var(--bg);
+      color: var(--text);
+      padding: 24px 28px;
+      border-radius: 12px;
+      box-shadow: var(--shadow-soft);
+      max-width: 520px;
+      width: 92vw;
+      text-align: center;
+    }
+
+    #fullscreenLockPanel h2 {
+      margin-top: 0;
+    }
+
+    #fullscreenLockPanel p {
+      margin: 10px 0 18px;
+    }
+
+    #shortcutToast {
+      position: fixed;
+      left: 50%;
+      bottom: 86px;
+      transform: translateX(-50%);
+      padding: 9px 14px;
+      border-radius: 999px;
+      border: 1px solid var(--border);
+      background: var(--bg-secondary);
+      color: var(--text);
+      font-size: 0.85rem;
+      box-shadow: var(--shadow-soft);
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.2s ease;
+      z-index: 1600;
+    }
+
+    #shortcutToast.visible {
+      opacity: 1;
+    }
+
+    /* Utility */
+    .sr-only {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      padding: 0;
+      margin: -1px;
+      overflow: hidden;
+      clip: rect(0,0,0,0);
+      white-space: nowrap;
+      border: 0;
+    }
+
+    @media (max-width: 900px) {
+      .main-inner {
+        flex-direction: column;
+      }
+      .divider {
+        display: none;
+      }
+    }
+
+    .divider {
+      width: 2px;
+      background: transparent;
+      cursor: col-resize;
+      position: relative;
+    }
+
+    .divider::after {
+      content: "↔";
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      font-size: 0.6rem;
+      color: var(--text-soft);
+      opacity: 0.25;
+    }
+  </style>
+</head>
+<body data-theme="black-on-white">
+  <!-- Mode selection -->
+  <div id="modeScreen">
+    <div id="modeScreenInner">
+      <h1>IELTS 18 General Training Reading Test 4</h1>
+      <p>Select how you want to use this test.</p>
+      <div class="mode-buttons">
+        <button
+          class="mode-btn"
+          data-mode="test"
+          type="button"
+        >
+          Test mode (exam conditions)
+        </button>
+        <button
+          class="mode-btn secondary"
+          data-mode="study"
+          type="button"
+        >
+          Study mode (show feedback)
+        </button>
+      </div>
+      <p style="font-size:0.8rem;margin-top:10px;color:var(--text-soft);">
+        In both modes you can highlight text and make notes. In Test mode you submit once at the end. In Study mode you can check and change your answers as many times as you like.
+      </p>
+
+      <div id="testStartScreen">
+        <label for="studentNameInput">Your name (for test mode results)</label>
+        <input type="text" id="studentNameInput" placeholder="Enter your full name" maxlength="80" />
+        <button class="mode-btn" type="button" onclick="window.beginTimedTest && window.beginTimedTest()">Start the test now</button>
+        <p id="fullscreenSupportNote">Full screen enforcement is limited on this device.</p>
+      </div>
+    </div>
+  </div>
+
+  <div id="app">
+    <!-- Top bar -->
+    <header class="top-bar">
+      <div class="top-left">
+        <div class="logo home-link" onclick="confirmGoHome()" title="Return to home">IELTS Pabs</div>
+        <div class="test-title">
+          Reading Test 4 – General Training – Cambridge 18
+        </div>
+      </div>
+      <div class="top-right">
+        <div id="timerContainer" role="status" aria-live="polite" aria-atomic="true" aria-hidden="true">Time left: <span id="timerDisplay">60:00</span></div>
+        <div class="icon-group">
+          <span class="icon" title="Connection status">
+            <span class="sr-only">Connection status</span>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M4.93 9.93a10.5 10.5 0 0 1 14.14 0" />
+              <path d="M7.76 12.76a6.5 6.5 0 0 1 8.48 0" />
+              <path d="M10.59 15.59a2.5 2.5 0 0 1 2.82 0" />
+              <path d="M12 18h.01" />
+            </svg>
+          </span>
+          <span class="icon" title="Notifications (mock)">
+            <span class="sr-only">Notifications</span>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M15 17h5l-1.4-1.4A2 2 0 0 1 18 14.17V11a6 6 0 1 0-12 0v3.17a2 2 0 0 1-.59 1.43L4 17h5" />
+              <path d="M9 17a3 3 0 0 0 6 0" />
+            </svg>
+          </span>
+          <button id="fullscreenBtn" class="icon-button with-label" title="Enter full screen" aria-label="Enter full screen" onclick="toggleFullscreen()">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <polyline points="8 3 3 3 3 8"></polyline>
+              <line x1="3" y1="3" x2="9" y2="9"></line>
+              <polyline points="16 21 21 21 21 16"></polyline>
+              <line x1="15" y1="15" x2="21" y2="21"></line>
+              <polyline points="21 8 21 3 16 3"></polyline>
+              <line x1="15" y1="9" x2="21" y2="3"></line>
+              <polyline points="3 16 3 21 8 21"></polyline>
+              <line x1="3" y1="21" x2="9" y2="15"></line>
+            </svg><span id="fullscreenBtnLabel">Full screen</span>
+          </button>
+          <button id="optionsBtn" class="icon-button" title="Options menu" aria-label="Options menu">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="4" y1="7" x2="20" y2="7" />
+              <line x1="4" y1="12" x2="20" y2="12" />
+              <line x1="4" y1="17" x2="16" y2="17" />
+            </svg>
+          </button>
+        </div>
+      </div>
+    </header>
+
+    <!-- Options overlay -->
+    <div id="optionsOverlay">
+      <div id="optionsPanel">
+        <button class="options-close" onclick="toggleOptions(false)">✕</button>
+        <h2>Options</h2>
+
+        <button class="submit-button" onclick="handlePrimarySubmit()">
+          ✔ Submit test &amp; check answers
+        </button>
+
+        <div class="options-section">
+          <h3>Contrast</h3>
+          <div class="options-list">
+            <button id="theme-black-white" onclick="setTheme('black-on-white')">
+              <span>Black on white</span><span>✓</span>
+            </button>
+            <button id="theme-white-black" onclick="setTheme('white-on-black')">
+              <span>White on black</span><span>✓</span>
+            </button>
+            <button id="theme-yellow-black" onclick="setTheme('yellow-on-black')">
+              <span>Yellow on black</span><span>✓</span>
+            </button>
+          </div>
+        </div>
+
+        <div class="options-section">
+          <h3>Text size</h3>
+          <div class="options-list">
+            <button id="font-normal" onclick="setFontSize('normal')">
+              <span>Normal</span><span>✓</span>
+            </button>
+            <button id="font-large" onclick="setFontSize('large')">
+              <span>Large</span><span>✓</span>
+            </button>
+            <button id="font-xlarge" onclick="setFontSize('xlarge')">
+              <span>Extra large</span><span>✓</span>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Main content area -->
+    <div class="main-area">
+      <div class="main-inner">
+        <!-- Passage pane -->
+        <div class="pane" id="passagePane">
+          <div class="pane-header" id="passageHeader">
+            Part 1 <span>Read the text and answer questions 1–14.</span>
+          </div>
+          <div class="pane-content" id="passageContent">
+            <!-- Section 1 passages -->
+            <div class="passage-section" data-section="1">
+              <h2>Manly Beaches</h2>
+
+              <p>Next time you visit Manly, 30 minutes by ferry from the centre of Australia’s biggest city, Sydney, try some of these less famous beaches</p>
+
+              <h3><strong class="passage-match-source" draggable="true" data-value="A" tabindex="0" role="button" aria-label="Use beach A, Fairy Bower, as an answer">A Fairy Bower</strong></h3>
+              <p>Located-in a marine protection area, the water is perfect for paddling, snorkelling or even scuba diving. There is a small gift shop for unusual souvenirs, and a kiosk that rents stand-up paddleboards. Buses do not stop nearby so a walk is necessary.</p>
+
+              <h3><strong class="passage-match-source" draggable="true" data-value="B" tabindex="0" role="button" aria-label="Use beach B, North Steyne, as an answer">B North Steyne</strong></h3>
+              <p>This popular beach is a little further from the ferry than the main beach and it always feels less crowded. North Steyne has professional lifeguards on duty, but the surf can be hazardous so check conditions if swimming with young ones. If you want to try surfing for the first time, Manly Surf School operates out of the surf club located on the beach. Please note that boards are reserved for students and are not available for rent.</p>
+
+              <h3><strong class="passage-match-source" draggable="true" data-value="C" tabindex="0" role="button" aria-label="Use beach C, Delwood, as an answer">C Delwood</strong></h3>
+              <p>Delwood’s secluded cove is a scenic walk from the ferry along the harbour walkway. There are no shops, so bring a picnic and have a peaceful swim off the rocks. You’ll probably have the beach to yourself.</p>
+
+              <h3><strong class="passage-match-source" draggable="true" data-value="D" tabindex="0" role="button" aria-label="Use beach D, Little Manly, as an answer">D Little Manly</strong></h3>
+              <p>This popular harbour beach has a net that encloses the swimming area. It is a good option for families as the protected area makes It easy to keep an eye on kids playing in the water. There is also a large playground, a public barbecue that anyone can use and toilet facilities, which make this a great spot for a family day out.</p>
+
+              <h3><strong class="passage-match-source" draggable="true" data-value="E" tabindex="0" role="button" aria-label="Use beach E, East Esplanade, as an answer">E East Esplanade</strong></h3>
+              <p>Located next to Manly Wharf, East Esplanade is a popular spot all day. There is no beach closer to the ferry or buses than this one. Kayakers meet for a paddle here as the sun rises, and daytrippers sit on the sand during the day. People get together on the grass after work, and bring drinks, snacks and music to watch the sun go down.</p>
+
+              <h3><strong class="passage-match-source" draggable="true" data-value="F" tabindex="0" role="button" aria-label="Use beach F, Shelly Beach, as an answer">F Shelly Beach</strong></h3>
+              <p>This is the best spot if you don’t like big waves. Rent a beach chair or head straight to the Boathouse Cafe, the perfect place for breakfast or lunch. Please note that Shelly Beach gets overly crowded at times, so avoid it on a sunny weekend afternoon.</p>
+
+              <div class="passage-divider">
+                <h2>Sydney Water: advice for customers paying a bill</h2>
+
+                <h3>About your bill</h3>
+
+                <p>Sydney Water services over live million people in greater Sydney, and if you own a property. you’ll get a bill from us. Generally, this is just for your water and wastewater services, but there could be other charges. We send most bills quarterly, after we’ve read the meter. If your property has no meter, we send the bill at the start of each quarter.</p>
+
+                <h3>When do we send the bill?</h3>
+
+                <p>If you‘d like monthly bills, simply ask us to read your meter monthly. It costs $32.52 a quarter to be billed this way and this additional fee will appear on the first bill each quarter. To arrange it, just call us on 13 20 92.</p>
+
+                <h3>What if you can’t pay the bill?</h3>
+
+                <p>We understand that it might be hard to pay your bill. lf you’re having difficulties, we have a range of Options to help. if you receive a pension, we may give you a reduction on your bill, but you must own and live in your home to qualify for this.</p>
+
+                <h3>How can you get your billing history?</h3>
+
+                <p>Register for eBill. When you register for Sydney Water’s online billing facility, eBill, you’ll be able to see your past bills at any time. Once you’re registered, you’ll stop getting paper bills and start getting electronic ones.</p>
+
+                <p>Still want paper bills? Simply cancel your registration after you have saved the electronic bills you need. Then you’ll go back to paper bills, but you won’t have access to the online bills after you cancel.</p>
+
+                <p>Contact us. Simply contact us and we’ll give you a statement that shows the amounts we charged you and the payments we received on your last five bills.</p>
+
+                <p>Need more history? If you need information that’s older than your last five bills, you need to pay $28.04 for a ‘billing record search statement’.</p>
+
+                <h3>How do you stop a charge on a bill?</h3>
+
+                <p>We’ll stop a fixed charge on your bill if a licensed plumber cuts off your water or wastewater service. Your plumber must apply for this disconnection and follow Sydney Water’s standard procedures.</p>
+              </div>
+            </div>
+
+            <!-- Section 2 passages -->
+            <div class="passage-section" data-section="2">
+              <h2>Company car parking policy</h2>
+
+              <p>DG Contracts recognises that many people working in the organisation require a vehicle for business purposes and aims to provide parking facilities for as many individuals as possible. However, car parking provision is limited. DG Contracts therefore actively encourages staff to reduce their carbon footprint by using public transport, walking or cycling, or by organising ways of sharing the use of cars.</p>
+
+              <p>The car parking policy aims to allocate parking on a fair and equitable basis with spaces being given first to those employees who claim above a certain mileage of travel for business purposes. individuals who are allocated a parking space will be issued with a parking permit and a number which corresponds to a car parking space. If there are any non-allocated car parking spaces, these can be utilised by employees on a first-come. first-served basis. In some cases, designated parking areas are required for company vehicles, which must be parked securely at night. However, employees may park in these areas in the daytime.</p>
+
+              <p>If any individual leaves the company prior to the expiry of their parking permit. this will be handed on to the member of staff who acts as their replacement. assuming that this person requires it. If any individual who has been issued a parking permit takes maternity leave or is signed off work for a lengthy period. their parking permit will be re- allocated to the staff member appointed as cover for this individual during their absence.</p>
+
+              <p>Employees who park their cars in a DG company car park do so at their own risk and must follow the rules laid down in the parking policy. If you have any complaints concerning any aspect of car parking at DG company car parks, please address them to the HR Manager.</p>
+
+              <div class="passage-divider">
+                <h2>Ensuring safety in the office</h2>
+
+                <p>It‘s fairly obvious that safety and health hazards can exist on worksites filled with heavy machinery and equipment. However, a surprising number of hazards can also be present in the office.</p>
+
+                <p>The most common types of injuries are slips, trips and falls. Boxes, files and other items piled in walkways can create a tripping hazard. Be certain that all materials are safely stored in their proper location to prevent build-up of clutter. Further, in addition to posing an electrical hazard. stretching wires across walkways creates a tripping hazard, so ensure they are properly secured and covered.</p>
+
+                <p>Standing on rolling office chairs is a significant fall hazard. Workers who need to reach something at an elevated height should use a stepladder. which must be fully opened and placed on level ground.</p>
+
+                <p>Workers can collide when making turns in the hallways and around blind corners. This can be prevented by installing mirrors in these places so workers can see who is coming. Floors may also present a hazard. Marble or tile can become very slippery, particularly when wet. The use of carpets can help to reduce falls and can be especially helpful at main doors, where workers are likely to be coming in with wet shoes.</p>
+
+                <p>Another type of injury comes from workers being struck by an object. Filing cabinets may be in danger of tipping over if drawers are left open, and filing cabinets and desks may also create a tripping hazard if they are not properly closed. High piles of materials and equipment can cause major injuries if they are knocked over. Heavy objects should always be stored close to the ground. and the load capacity of shelves should never be exceeded.</p>
+
+                <p>Because office workers spend most of their day seated at a desk, they are prone to strains and other injuries related to posture and repetitive movement. Desks, seating, monitor stands, etc. should all be adjustable in order to accommodate the widest possible range of employees. Typing from hard copy can lead to neck strain if a worker is forced to look down repeatedly to the desk at the document being copied and back to the computer screen. This can be prevented by providing holders, which help to prevent muscle imbalance by positioning the document at the same level as the screen. Another cause of neck injuries is incorrect placement of the computer mouse — this should always be kept beside the keyboard, and at the same level.</p>
+              </div>
+            </div>
+
+            <!-- Section 3 passage -->
+            <div class="passage-section" data-section="3">
+              <h2>Roman Roads</h2>
+
+              <p><strong class="passage-match-source" draggable="true" data-value="A" tabindex="0" role="button" aria-label="Use paragraph A as an answer">A</strong> The long straight roads built by the Romans have, in many cases, become just as famous in history as their greatest emperors and generals. Building upon more ancient routes and creating a huge number of new ones, Roman engineers were fearless in their plans to join one point to another in as straight a line as possible, whatever the difficulties in geography and the costs in manpower. Consequently, roads required bridges, tunnels, viaducts and many other architectural and engineering features to create a series of breathtaking but highly useful monuments, which spread from Europe to eastern parts of the Roman empire.</p>
+
+              <p><strong class="passage-match-source" draggable="true" data-value="B" tabindex="0" role="button" aria-label="Use paragraph B as an answer">B</strong> The Romans did not invent roads, but, as in so many other areas, they took an idea which went back as far as the Bronze Age and extended that concept, daring to squeeze from it the fullest possible potential. The first and most famous great Roman road was the Via Appia, or Appian Way. Constructed from 312 BCE, and covering 196 kilometres, it linked Rome to ancient Capua in Italy in as straight a line as possible and was appropriately known to the Romans as the Regina Viarum or ‘Queen of Roads’. Much like a modern highway, it bypassed small towns along the way, and it largely ignored geographical obstacles. The road would later be extended to 569 kilometres in length.</p>
+
+              <p><strong class="passage-match-source" draggable="true" data-value="C" tabindex="0" role="button" aria-label="Use paragraph C as an answer">C</strong> The network of public Roman roads covered over 120,000 kilometres. Besides permitting the rapid deployment of troops and, more importantly, the wheeled vehicles which supplied them with food and equipment, Roman roads allowed for an increase in trade and cultural exchange. Roads were also one of the ways Rome could demonstrate its authority. For this reason, many roads began and ended in a triumphal arch, and the imperial prestige associated with a road project was demonstrated in the fact that roads were very often named after the officials who funded them; for example, the Via Appia takes its name from the Roman magistrate Appius Claudius Caecus.</p>
+
+              <p><strong class="passage-match-source" draggable="true" data-value="D" tabindex="0" role="button" aria-label="Use paragraph D as an answer">D</strong> To achieve the objective of constructing the shortest routes possible between two points, all manner of engineering difficulties had to be overcome. Once extensive surveying had been carried out, to ensure the preposed route was actually straight and to determine what various engineering methods were needed, marshes had to be drained, forests cut through, creeks diverted, bedrock channelled, mountainsides cut into, rivers crossed with bridges, valleys traversed with viaducts and tunnels built through mountains. When all that was done, roads had to be levelled, reinforced with support walls or terracing and then, of course, maintained, which they were for over 800 years.</p>
+
+              <p><strong class="passage-match-source" draggable="true" data-value="E" tabindex="0" role="button" aria-label="Use paragraph E as an answer">E</strong> Major roads were around a standard 4.2 metres wide, which was enough space for two vehicles to pass each other. First a trench was dug in the earth, and a layer of large stones was used to form the foundation. This was followed by a substantial deposit of smaller broken materials — often crushed brick was used for this purpose, and on top of this, a layer of fine gravel was added. This upper section of the road was referred to as the nucleus and was then surfaced with blocks or slabs. Mountain roads might also have ridges running across the surface of the slabs, to give animals better grip, and have ruts cut into the stone to guide wheeled vehicles.</p>
+
+              <p>Roads were purposely inclined slightly from the centre down to the kerb to allow rainwater to run off along the sides. Many also had parallel ditches that collected the runoff and formed a drainage canal on each side of the road. A path of packed gravel for pedestrians typically ran along each side of the road, varying in width from 1 to 3 metres. Separating the path from the road were the kerb stones, which were regular upright slabs. Busier stretches of main W l roads had areas where vehicles could pull over, and some of these had services for travellers and their animals. Milestones were also set up at regular intervals along the road and these often recorded who was responsible for the upkeep of that stretch of the road and what repairs had been made.</p>
+
+              <p><strong class="passage-match-source" draggable="true" data-value="F" tabindex="0" role="button" aria-label="Use paragraph F as an answer">F</strong> Lasting symbols of the imagination of Roman engineers are the many arched bridges and viaducts still standing today that helped achieve the engineers’ straight-line goal. The Romans built to last, and the piers of bridges which crossed rivers, for example, were often built with a resistant prow-shape and used massive durable blocks of stone, while the upper parts might be built of of stone blocks strengthened with iron clamps. Perhaps the most impressive bridge was at Narni; 180 metres long, 8 metres wide and as high as 33 metres, it had 4 massive semicircular arches, one of which, stretching 32.1 metres, ranks as one of the longest block—arch spans in the ancient world. Recently hit by earthquakes, it is now having to undergo restoration work to repair the effects.</p>
+
+              <p>Such was the engineering and surveying skill of the Romans that many of their roads have provided the basis for hundreds of today’s routes across Europe and the Middle East. Many roads in Italy still use the original Roman name for certain stretches, and some bridges, such as at Tre Ponti in Venice, still carry road traffic today.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="divider" id="divider"></div>
+
+        <!-- Questions pane -->
+        <div class="pane" id="questionPane">
+          <div class="pane-header" id="questionHeader">
+            Questions 1–14
+          </div>
+          <div class="pane-content" id="questionContent">
+            <!-- Section 1 questions -->
+            <div data-section="1">
+              <p class="question-group-heading">Read “Manly Beaches” and answer Questions 1 to 7.</p>
+              <p><strong>Questions 1 to 7</strong></p>
+              <p>Look at the six beach descriptions, A to F.</p>
+              <p>For which beaches are the following statements true?</p>
+              <p>Write the correct letter, A to F, in boxes 1 to 7 on your answer sheet.</p>
+              <p><strong>NB</strong> You may use any letter more than once.</p>
+              <p class="matching-source-hint">Drag a beach label from the passage, or click a label and then click an answer box. You can also type A–F while focused on an answer box.</p>
+              <div class="question-block" data-q="1">
+                <div class="question-text"><span class="question-number-label">1.</span> You can buy food at this beach.</div>
+                <select class="sr-only" name="q1"><option value="">Select…</option><option value="A">A</option><option value="B">B</option><option value="C">C</option><option value="D">D</option><option value="E">E</option><option value="F">F</option></select>
+                <div class="drop-zone" data-for="q1" tabindex="0" role="button" aria-label="Answer box for question 1">Drop here</div>
+                <div class="correct-answer-text" id="ca-1"></div>
+              </div>
+              <div class="question-block" data-q="2">
+                <div class="question-text"><span class="question-number-label">2.</span> You can learn to do a sport at this beach.</div>
+                <select class="sr-only" name="q2"><option value="">Select…</option><option value="A">A</option><option value="B">B</option><option value="C">C</option><option value="D">D</option><option value="E">E</option><option value="F">F</option></select>
+                <div class="drop-zone" data-for="q2" tabindex="0" role="button" aria-label="Answer box for question 2">Drop here</div>
+                <div class="correct-answer-text" id="ca-2"></div>
+              </div>
+              <div class="question-block" data-q="3">
+                <div class="question-text"><span class="question-number-label">3.</span> This beach can be uncomfortably busy.</div>
+                <select class="sr-only" name="q3"><option value="">Select…</option><option value="A">A</option><option value="B">B</option><option value="C">C</option><option value="D">D</option><option value="E">E</option><option value="F">F</option></select>
+                <div class="drop-zone" data-for="q3" tabindex="0" role="button" aria-label="Answer box for question 3">Drop here</div>
+                <div class="correct-answer-text" id="ca-3"></div>
+              </div>
+              <div class="question-block" data-q="4">
+                <div class="question-text"><span class="question-number-label">4.</span> Adults can supervise their children without much difficulty at this beach.</div>
+                <select class="sr-only" name="q4"><option value="">Select…</option><option value="A">A</option><option value="B">B</option><option value="C">C</option><option value="D">D</option><option value="E">E</option><option value="F">F</option></select>
+                <div class="drop-zone" data-for="q4" tabindex="0" role="button" aria-label="Answer box for question 4">Drop here</div>
+                <div class="correct-answer-text" id="ca-4"></div>
+              </div>
+              <div class="question-block" data-q="5">
+                <div class="question-text"><span class="question-number-label">5.</span> This beach is nearest to public transport.</div>
+                <select class="sr-only" name="q5"><option value="">Select…</option><option value="A">A</option><option value="B">B</option><option value="C">C</option><option value="D">D</option><option value="E">E</option><option value="F">F</option></select>
+                <div class="drop-zone" data-for="q5" tabindex="0" role="button" aria-label="Answer box for question 5">Drop here</div>
+                <div class="correct-answer-text" id="ca-5"></div>
+              </div>
+              <div class="question-block" data-q="6">
+                <div class="question-text"><span class="question-number-label">6.</span> People are employed to supervise swimmers at this beach.</div>
+                <select class="sr-only" name="q6"><option value="">Select…</option><option value="A">A</option><option value="B">B</option><option value="C">C</option><option value="D">D</option><option value="E">E</option><option value="F">F</option></select>
+                <div class="drop-zone" data-for="q6" tabindex="0" role="button" aria-label="Answer box for question 6">Drop here</div>
+                <div class="correct-answer-text" id="ca-6"></div>
+              </div>
+              <div class="question-block" data-q="7">
+                <div class="question-text"><span class="question-number-label">7.</span> You can hire sports equipment at this beach.</div>
+                <select class="sr-only" name="q7"><option value="">Select…</option><option value="A">A</option><option value="B">B</option><option value="C">C</option><option value="D">D</option><option value="E">E</option><option value="F">F</option></select>
+                <div class="drop-zone" data-for="q7" tabindex="0" role="button" aria-label="Answer box for question 7">Drop here</div>
+                <div class="correct-answer-text" id="ca-7"></div>
+              </div>
+
+              <p class="question-group-heading">Read “Sydney Water: advice for customers paying a bill” and answer Questions 8 to 14.</p>
+              <p><strong>Questions 8 to 14</strong></p>
+              <p>Do the following statements agree with the information given in the text?</p>
+              <p>In boxes 8 to 14 on your answer sheet, write</p>
+              <p><strong>TRUE</strong> if the statement agrees with the information</p>
+              <p><strong>FALSE</strong> if the statement contradicts the information</p>
+              <p><strong>NOT GIVEN</strong> if there is no information on this</p>
+              <div class="question-block" data-q="8">
+                <div class="question-text"><span class="question-number-label">8.</span> All property owners receive Sydney Water bills.</div>
+                <div class="options-row">
+                  <label><input type="radio" name="q8" value="TRUE"> TRUE</label>
+                  <label><input type="radio" name="q8" value="FALSE"> FALSE</label>
+                  <label><input type="radio" name="q8" value="NOT GIVEN"> NOT GIVEN</label>
+                </div>
+                <div class="correct-answer-text" id="ca-8"></div>
+              </div>
+              <div class="question-block" data-q="9">
+                <div class="question-text"><span class="question-number-label">9.</span> Customers who don't have a water meter must pay an extra charge.</div>
+                <div class="options-row">
+                  <label><input type="radio" name="q9" value="TRUE"> TRUE</label>
+                  <label><input type="radio" name="q9" value="FALSE"> FALSE</label>
+                  <label><input type="radio" name="q9" value="NOT GIVEN"> NOT GIVEN</label>
+                </div>
+                <div class="correct-answer-text" id="ca-9"></div>
+              </div>
+              <div class="question-block" data-q="10">
+                <div class="question-text"><span class="question-number-label">10.</span> Customers who choose to receive a bill every month pay extra.</div>
+                <div class="options-row">
+                  <label><input type="radio" name="q10" value="TRUE"> TRUE</label>
+                  <label><input type="radio" name="q10" value="FALSE"> FALSE</label>
+                  <label><input type="radio" name="q10" value="NOT GIVEN"> NOT GIVEN</label>
+                </div>
+                <div class="correct-answer-text" id="ca-10"></div>
+              </div>
+              <div class="question-block" data-q="11">
+                <div class="question-text"><span class="question-number-label">11.</span> Pensioners who live in rented accommodation might get a discount.</div>
+                <div class="options-row">
+                  <label><input type="radio" name="q11" value="TRUE"> TRUE</label>
+                  <label><input type="radio" name="q11" value="FALSE"> FALSE</label>
+                  <label><input type="radio" name="q11" value="NOT GIVEN"> NOT GIVEN</label>
+                </div>
+                <div class="correct-answer-text" id="ca-11"></div>
+              </div>
+              <div class="question-block" data-q="12">
+                <div class="question-text"><span class="question-number-label">12.</span> Customers registered for eBill receive both paper and electronic bills.</div>
+                <div class="options-row">
+                  <label><input type="radio" name="q12" value="TRUE"> TRUE</label>
+                  <label><input type="radio" name="q12" value="FALSE"> FALSE</label>
+                  <label><input type="radio" name="q12" value="NOT GIVEN"> NOT GIVEN</label>
+                </div>
+                <div class="correct-answer-text" id="ca-12"></div>
+              </div>
+              <div class="question-block" data-q="13">
+                <div class="question-text"><span class="question-number-label">13.</span> Customers who request information from the period before their last five bills must pay a fee.</div>
+                <div class="options-row">
+                  <label><input type="radio" name="q13" value="TRUE"> TRUE</label>
+                  <label><input type="radio" name="q13" value="FALSE"> FALSE</label>
+                  <label><input type="radio" name="q13" value="NOT GIVEN"> NOT GIVEN</label>
+                </div>
+                <div class="correct-answer-text" id="ca-13"></div>
+              </div>
+              <div class="question-block" data-q="14">
+                <div class="question-text"><span class="question-number-label">14.</span> A fixed charge can be avoided when the water supply is disconnected by a licensed plumber.</div>
+                <div class="options-row">
+                  <label><input type="radio" name="q14" value="TRUE"> TRUE</label>
+                  <label><input type="radio" name="q14" value="FALSE"> FALSE</label>
+                  <label><input type="radio" name="q14" value="NOT GIVEN"> NOT GIVEN</label>
+                </div>
+                <div class="correct-answer-text" id="ca-14"></div>
+              </div>
+            </div>
+
+        <div data-section="2" style="display:none;">
+          <p><strong>SECTION 2 Questions 15 to 27</strong></p>
+
+          <p class="question-group-heading">Read “Company car parking policy” and answer Questions 15 to 20.</p>
+          <p><strong>Questions 15 to 20</strong></p>
+          <p>Complete the sentences below.</p>
+          <p>Choose <strong>ONE WORD ONLY</strong> from the text for each answer.</p>
+          <p>Write your answers in boxes 15 to 20 on your answer sheet.</p>
+
+          <div class="question-block" data-q="15">
+            <div class="question-text"><span class="question-number-label">15.</span> Parking is limited, so the use of alternative methods of transport and the <span class="inline-input no-number" data-q="15"><input type="text" name="q15" autocomplete="off" /></span> of cars is encouraged.</div>
+            <div class="correct-answer-text" id="ca-15"></div>
+          </div>
+          <div class="question-block" data-q="16">
+            <div class="question-text"><span class="question-number-label">16.</span> Staff with the highest <span class="inline-input no-number" data-q="16"><input type="text" name="q16" autocomplete="off" /></span> are given parking spaces first.</div>
+            <div class="correct-answer-text" id="ca-16"></div>
+          </div>
+          <div class="question-block" data-q="17">
+            <div class="question-text"><span class="question-number-label">17.</span> Some parking spaces are reserved for company vehicles during the <span class="inline-input no-number" data-q="17"><input type="text" name="q17" autocomplete="off" /></span> but may be used by staff at other times.</div>
+            <div class="correct-answer-text" id="ca-17"></div>
+          </div>
+          <div class="question-block" data-q="18">
+            <div class="question-text"><span class="question-number-label">18.</span> If an employee leaves the company permanently, their parking space will normally be given to their <span class="inline-input no-number" data-q="18"><input type="text" name="q18" autocomplete="off" /></span>.</div>
+            <div class="correct-answer-text" id="ca-18"></div>
+          </div>
+          <div class="question-block" data-q="19">
+            <div class="question-text"><span class="question-number-label">19.</span> If an employee takes extended leave, their parking space will be given to the person who provides <span class="inline-input no-number" data-q="19"><input type="text" name="q19" autocomplete="off" /></span> for the absent employee.</div>
+            <div class="correct-answer-text" id="ca-19"></div>
+          </div>
+          <div class="question-block" data-q="20">
+            <div class="question-text"><span class="question-number-label">20.</span> All <span class="inline-input no-number" data-q="20"><input type="text" name="q20" autocomplete="off" /></span> about car parking should be sent to the HR Manager.</div>
+            <div class="correct-answer-text" id="ca-20"></div>
+          </div>
+
+          <p class="question-group-heading">Read “Ensuring safety in the office” and answer Questions 21 to 27.</p>
+          <p><strong>Questions 21 to 27</strong></p>
+          <p>Complete the notes below.</p>
+          <p>Choose <strong>ONE WORD ONLY</strong> from the text for each answer.</p>
+          <p>Write your answers in boxes 21 to 27 on your answer sheet.</p>
+
+          <div class="note-completion-box" aria-label="Making sure offices are safe note completion">
+            <div class="box-title">Making sure offices are safe</div>
+
+            <div class="note-heading">To prevent slips, trips, falls and collisions, ensure that</div>
+            <div class="note-line-static">boxes, files, etc. are correctly stored</div>
+            <div class="question-block" data-q="21">
+              <div class="note-line"><p>items such as <span class="question-number-label">21.</span> <span class="inline-input no-number" data-q="21"><input type="text" name="q21" autocomplete="off" /></span> do not create a tripping hazard</p></div>
+              <div class="correct-answer-text" id="ca-21"></div>
+            </div>
+            <div class="question-block" data-q="22">
+              <div class="note-line"><p>workers do not use <span class="question-number-label">22.</span> <span class="inline-input no-number" data-q="22"><input type="text" name="q22" autocomplete="off" /></span> to reach high objects</p></div>
+              <div class="correct-answer-text" id="ca-22"></div>
+            </div>
+            <div class="question-block" data-q="23">
+              <div class="note-line"><p><span class="question-number-label">23.</span> <span class="inline-input no-number" data-q="23"><input type="text" name="q23" autocomplete="off" /></span> are fixed at corners</p></div>
+              <div class="correct-answer-text" id="ca-23"></div>
+            </div>
+            <div class="question-block" data-q="24">
+              <div class="note-line"><p>floors are covered by <span class="question-number-label">24.</span> <span class="inline-input no-number" data-q="24"><input type="text" name="q24" autocomplete="off" /></span>, especially at entrances</p></div>
+              <div class="correct-answer-text" id="ca-24"></div>
+            </div>
+
+            <div class="note-heading">To prevent injuries caused by objects, ensure that</div>
+            <div class="question-block" data-q="25">
+              <div class="note-line"><p><span class="question-number-label">25.</span> <span class="inline-input no-number" data-q="25"><input type="text" name="q25" autocomplete="off" /></span> in office furniture are kept closed</p></div>
+              <div class="correct-answer-text" id="ca-25"></div>
+            </div>
+            <div class="note-line-static">objects which are heavy are kept near the floor</div>
+
+            <div class="note-heading">To prevent injuries due to posture and repetitive movement, ensure that</div>
+            <div class="question-block" data-q="26">
+              <div class="note-line"><p>office furniture is <span class="question-number-label">26.</span> <span class="inline-input no-number" data-q="26"><input type="text" name="q26" autocomplete="off" /></span></p></div>
+              <div class="correct-answer-text" id="ca-26"></div>
+            </div>
+            <div class="question-block" data-q="27">
+              <div class="note-line"><p><span class="question-number-label">27.</span> <span class="inline-input no-number" data-q="27"><input type="text" name="q27" autocomplete="off" /></span> are provided for documents</p></div>
+              <div class="correct-answer-text" id="ca-27"></div>
+            </div>
+            <div class="note-line-static">the mouse is placed next to the computer keyboard</div>
+          </div>
+
+        </div>
+
+        <div data-section="3" style="display:none;">
+          <p><strong>SECTION 3 Questions 28 to 40</strong></p>
+
+          <p class="question-group-heading">Read “Roman Roads” and answer Questions 28 to 33.</p>
+          <p><strong>Questions 28 to 33</strong></p>
+          <p>Which section mentions the following?</p>
+          <p>Write the correct letter, A to F, in boxes 28 to 33 on your answer sheet.</p>
+          <p><strong>NB</strong> You may use any letter more than once.</p>
+          <p class="matching-source-hint">Drag a paragraph label from the passage, or click a label and then click an answer box. You can also type A–F while focused on an answer box.</p>
+          <div class="question-block" data-q="28">
+            <div class="question-text"><span class="question-number-label">28.</span> the various functions of Roman roads</div>
+            <select class="sr-only" name="q28"><option value="">Select…</option><option value="A">A</option><option value="B">B</option><option value="C">C</option><option value="D">D</option><option value="E">E</option><option value="F">F</option></select>
+            <div class="drop-zone" data-for="q28" tabindex="0" role="button" aria-label="Answer box for question 28">Drop here</div>
+            <div class="correct-answer-text" id="ca-28"></div>
+          </div>
+          <div class="question-block" data-q="29">
+            <div class="question-text"><span class="question-number-label">29.</span> reference to some current remains of Roman road building</div>
+            <select class="sr-only" name="q29"><option value="">Select…</option><option value="A">A</option><option value="B">B</option><option value="C">C</option><option value="D">D</option><option value="E">E</option><option value="F">F</option></select>
+            <div class="drop-zone" data-for="q29" tabindex="0" role="button" aria-label="Answer box for question 29">Drop here</div>
+            <div class="correct-answer-text" id="ca-29"></div>
+          </div>
+          <div class="question-block" data-q="30">
+            <div class="question-text"><span class="question-number-label">30.</span> a description of preparations for building a road</div>
+            <select class="sr-only" name="q30"><option value="">Select…</option><option value="A">A</option><option value="B">B</option><option value="C">C</option><option value="D">D</option><option value="E">E</option><option value="F">F</option></select>
+            <div class="drop-zone" data-for="q30" tabindex="0" role="button" aria-label="Answer box for question 30">Drop here</div>
+            <div class="correct-answer-text" id="ca-30"></div>
+          </div>
+          <div class="question-block" data-q="31">
+            <div class="question-text"><span class="question-number-label">31.</span> the period in history when road building began</div>
+            <select class="sr-only" name="q31"><option value="">Select…</option><option value="A">A</option><option value="B">B</option><option value="C">C</option><option value="D">D</option><option value="E">E</option><option value="F">F</option></select>
+            <div class="drop-zone" data-for="q31" tabindex="0" role="button" aria-label="Answer box for question 31">Drop here</div>
+            <div class="correct-answer-text" id="ca-31"></div>
+          </div>
+          <div class="question-block" data-q="32">
+            <div class="question-text"><span class="question-number-label">32.</span> the consequence of damage caused by a natural disaster</div>
+            <select class="sr-only" name="q32"><option value="">Select…</option><option value="A">A</option><option value="B">B</option><option value="C">C</option><option value="D">D</option><option value="E">E</option><option value="F">F</option></select>
+            <div class="drop-zone" data-for="q32" tabindex="0" role="button" aria-label="Answer box for question 32">Drop here</div>
+            <div class="correct-answer-text" id="ca-32"></div>
+          </div>
+          <div class="question-block" data-q="33">
+            <div class="question-text"><span class="question-number-label">33.</span> the total distance once crossed by Roman roads</div>
+            <select class="sr-only" name="q33"><option value="">Select…</option><option value="A">A</option><option value="B">B</option><option value="C">C</option><option value="D">D</option><option value="E">E</option><option value="F">F</option></select>
+            <div class="drop-zone" data-for="q33" tabindex="0" role="button" aria-label="Answer box for question 33">Drop here</div>
+            <div class="correct-answer-text" id="ca-33"></div>
+          </div>
+
+          <p><strong>Questions 34 to 37</strong></p>
+          <p>Choose the correct letter, A, B, C or D.</p>
+          <p>Write the correct letter in boxes 34 to 37 on your answer sheet.</p>
+
+          <div class="question-block" data-q="34">
+            <div class="question-text"><span class="question-number-label">34.</span> Which aspect of Roman road building does the writer mention in Section A?</div>
+            <div class="options-row">
+              <label><input type="radio" name="q34" value="A" /> A the strength and permanence of the roads</label>
+              <label><input type="radio" name="q34" value="B" /> B the magnificence and practicality of the roads</label>
+              <label><input type="radio" name="q34" value="C" /> C the number of people involved in building</label>
+              <label><input type="radio" name="q34" value="D" /> D the powerful people who financed the roads</label>
+            </div>
+            <div class="correct-answer-text" id="ca-34"></div>
+          </div>
+          <div class="question-block" data-q="35">
+            <div class="question-text"><span class="question-number-label">35.</span> The writer compares the Appian Way to a modern highway because</div>
+            <div class="options-row">
+              <label><input type="radio" name="q35" value="A" /> A it was lengthened over time.</label>
+              <label><input type="radio" name="q35" value="B" /> B it took a long time to construct.</label>
+              <label><input type="radio" name="q35" value="C" /> C it was used by a large number of travellers.</label>
+              <label><input type="radio" name="q35" value="D" /> D it was designed to avoid certain areas.</label>
+            </div>
+            <div class="correct-answer-text" id="ca-35"></div>
+          </div>
+          <div class="question-block" data-q="36">
+            <div class="question-text"><span class="question-number-label">36.</span> According to the writer, the purpose of the triumphal arches was to</div>
+            <div class="options-row">
+              <label><input type="radio" name="q36" value="A" /> A display the power of Rome.</label>
+              <label><input type="radio" name="q36" value="B" /> B celebrate the opening of a road.</label>
+              <label><input type="radio" name="q36" value="C" /> C show the name of important roads.</label>
+              <label><input type="radio" name="q36" value="D" /> D provide access for important officials.</label>
+            </div>
+            <div class="correct-answer-text" id="ca-36"></div>
+          </div>
+          <div class="question-block" data-q="37">
+            <div class="question-text"><span class="question-number-label">37.</span> What common use of a milestone is mentioned in Section E?</div>
+            <div class="options-row">
+              <label><input type="radio" name="q37" value="A" /> A indicating to travellers the total length of the road</label>
+              <label><input type="radio" name="q37" value="B" /> B highlighting areas of the road that needed repair</label>
+              <label><input type="radio" name="q37" value="C" /> C noting details regarding the maintenance of the road</label>
+              <label><input type="radio" name="q37" value="D" /> D marking rest places along the road for travellers and their animals</label>
+            </div>
+            <div class="correct-answer-text" id="ca-37"></div>
+          </div>
+
+          <p><strong>Questions 38 to 40</strong></p>
+          <p>Label the diagram below.</p>
+          <p>Choose <strong>NO MORE THAN TWO WORDS</strong> from the text for each answer.</p>
+          <p>Write your answers in boxes 38 to 40 on your answer sheet.</p>
+          <img class="diagram-image" src="roman-road-diagram.png" alt="Diagram of Roman road construction for questions 38 to 40" />
+          <div class="diagram-answer-panel">
+            <div class="question-block" data-q="38">
+              <div class="question-text"><span class="question-number-label">38.</span> Nucleus made of <span class="inline-input no-number" data-q="38"><input type="text" name="q38" autocomplete="off" /></span></div>
+              <div class="correct-answer-text" id="ca-38"></div>
+            </div>
+            <div class="question-block" data-q="39">
+              <div class="question-text"><span class="question-number-label">39.</span> Stone slabs may be ridged to help <span class="inline-input no-number" data-q="39"><input type="text" name="q39" autocomplete="off" /></span> use the road.</div>
+              <div class="correct-answer-text" id="ca-39"></div>
+            </div>
+            <div class="question-block" data-q="40">
+              <div class="question-text"><span class="question-number-label">40.</span> Layer of materials such as <span class="inline-input no-number" data-q="40"><input type="text" name="q40" autocomplete="off" /></span></div>
+              <div class="correct-answer-text" id="ca-40"></div>
+            </div>
+          </div>
+
+        </div>
+
+          </div>
+        </div>
+      </div>
+
+      <!-- selection toolbar -->
+      <div id="selectionToolbar">
+        <button onclick="toggleHighlightSelection()">Highlight</button>
+        <button onclick="makeNoteForSelection()">Make note</button>
+      </div>
+    </div>
+
+    <!-- Bottom nav -->
+    <footer class="bottom-nav">
+      <div class="bottom-row bottom-row-v2">
+        <div class="bottom-left">
+          <div class="part-summary-row">
+            <div class="part-chip active" data-section-chip="1" onclick="switchSection(1)">
+              Part 1 <span class="count" id="part1Count">0 of 14</span>
+            </div>
+            <div class="part-chip unopened" data-section-chip="2" onclick="switchSection(2)">
+              Part 2 <span class="count" id="part2Count">0 of 13</span>
+            </div>
+            <div class="part-chip unopened" data-section-chip="3" onclick="switchSection(3)">
+              Part 3 <span class="count" id="part3Count">0 of 13</span>
+            </div>
+          </div>
+
+          <div id="questionNumbers"></div>
+        </div>
+
+        <div class="section-arrows">
+          <button class="arrow-btn" onclick="prevSection()" title="Previous part">←</button>
+          <button class="arrow-btn" onclick="nextSection()" title="Next part">→</button>
+          <button class="check-btn" onclick="handlePrimarySubmit()" title="Submit test and check answers">✔ Check answers</button>
+        </div>
+      </div>
+    </footer>
+  </div>
+
+
+  <div id="fullscreenLockOverlay" role="dialog" aria-modal="true" aria-live="assertive">
+    <div id="fullscreenLockPanel">
+      <h2>Test paused</h2>
+      <p>You have left full screen. Return to full screen to continue your test.</p>
+      <button class="mode-btn" type="button" onclick="returnToFullscreenAndResume()">Return to full screen</button>
+    </div>
+  </div>
+
+  <!-- Results overlay -->
+  <div id="resultsOverlay">
+    <div id="resultsPanel">
+      <h2>Your IELTS 18 GT Reading Test 4 result</h2>
+      <p id="studentLine"></p>
+      <p id="fullScreenExitLine"></p>
+      <p id="focusViolationLine"></p>
+      <p id="totalTimeLine"></p>
+      <p id="scoreLine"></p>
+      <p id="bandLine"></p>
+      <p id="descriptorLine"></p>
+      <button style="margin-top:10px;" onclick="closeResults()">Close</button>
+    </div>
+  </div>
+
+  <div id="shortcutToast" role="status" aria-live="polite" aria-atomic="true"></div>
+
+  <script>
+    /***************
+     * GLOBAL STATE
+     ***************/
+    let mode = "test";
+    let activeSection = 1;
+    let currentQuestion = 1;
+    let timerSeconds = 60 * 60;
+    let timerId = null;
+    let testSubmitted = false;
+    let studentName = "";
+    let pendingMode = "test";
+    let isTestRunning = false;
+    let isTimerPaused = false;
+    let fullscreenSupported = false;
+    let fullScreenEnforcementEnabled = false;
+    let fullScreenExits = 0;
+    let focusViolations = 0;
+    let shortcutToastTimer = null;
+    const visitedSections = new Set();
+
+    const AVAILABLE_THEMES = [
+      "black-on-white",
+      "white-on-black",
+      "yellow-on-black",
+    ];
+    const DEFAULT_THEME = "black-on-white";
+    const STORAGE_KEYS = {
+      theme: "ielts-reading-theme",
+    };
+
+    function restoreThemePreference() {
+      const saved = localStorage.getItem(STORAGE_KEYS.theme);
+      const theme = AVAILABLE_THEMES.includes(saved) ? saved : DEFAULT_THEME;
+      document.body.setAttribute("data-theme", theme);
+    }
+
+    function setTheme(theme) {
+      if (!AVAILABLE_THEMES.includes(theme)) return;
+      document.body.setAttribute("data-theme", theme);
+      localStorage.setItem(STORAGE_KEYS.theme, theme);
+      updateThemeButtons();
+    }
+
+    function updateThemeButtons() {
+      const theme = document.body.getAttribute("data-theme") || DEFAULT_THEME;
+      const map = {
+        "black-on-white": "theme-black-white",
+        "white-on-black": "theme-white-black",
+        "yellow-on-black": "theme-yellow-black",
+      };
+      AVAILABLE_THEMES.forEach((t) => {
+        const id = map[t];
+        const btn = document.getElementById(id);
+        if (!btn) return;
+        if (t === theme) btn.classList.add("active");
+        else btn.classList.remove("active");
+      });
+    }
+
+    function setFontSize(size) {
+      document.body.classList.remove("font-large", "font-xlarge");
+      if (size === "large") document.body.classList.add("font-large");
+      if (size === "xlarge") document.body.classList.add("font-xlarge");
+      updateFontButtons();
+    }
+
+    function updateFontButtons() {
+      const sizeClass = document.body.classList.contains("font-xlarge")
+        ? "xlarge"
+        : document.body.classList.contains("font-large")
+        ? "large"
+        : "normal";
+      ["normal", "large", "xlarge"].forEach((s) => {
+        const btn = document.getElementById("font-" + s);
+        if (!btn) return;
+        if (s === sizeClass) btn.classList.add("active");
+        else btn.classList.remove("active");
+      });
+    }
+
+    const sectionRanges = {
+      1: { from: 1, to: 14 },
+      2: { from: 15, to: 27 },
+      3: { from: 28, to: 40 }
+    };
+
+    const answerKey = {
+      1: "F", 2: "B", 3: "F", 4: "D", 5: "E", 6: "B", 7: "A",
+      8: "TRUE", 9: "NOT GIVEN", 10: "TRUE", 11: "FALSE", 12: "FALSE", 13: "TRUE", 14: "TRUE",
+      15: "sharing", 16: "mileage", 17: "night", 18: "replacement", 19: "cover", 20: "complaints",
+      21: "wires", 22: "chairs", 23: "mirrors", 24: "carpets", 25: "drawers", 26: "adjustable", 27: "holders",
+      28: "C", 29: "F", 30: "D", 31: "B", 32: "F", 33: "C",
+      34: "B", 35: "D", 36: "A", 37: "C", 38: ["fine gravel", "gravel"], 39: "animals",
+      40: ["crushed brick", "brick"]
+    };
+
+    const correctAnswerText = {
+      1: "F", 2: "B", 3: "F", 4: "D", 5: "E", 6: "B", 7: "A",
+      8: "TRUE", 9: "NOT GIVEN", 10: "TRUE", 11: "FALSE", 12: "FALSE", 13: "TRUE", 14: "TRUE",
+      15: "sharing", 16: "mileage", 17: "night", 18: "replacement", 19: "cover", 20: "complaints",
+      21: "wires", 22: "chairs", 23: "mirrors", 24: "carpets", 25: "drawers", 26: "adjustable", 27: "holders",
+      28: "C", 29: "F", 30: "D", 31: "B", 32: "F", 33: "C",
+      34: "B", 35: "D", 36: "A", 37: "C", 38: "(fine) gravel", 39: "animals",
+      40: "(crushed) brick"
+    };
+
+    restoreThemePreference();
+
+    async function beginTimedTest() {
+      const input = document.getElementById("studentNameInput");
+      studentName = input ? input.value.trim() : "";
+      if (!studentName) {
+        alert("Please enter your name before starting test mode.");
+        if (input) input.focus();
+        return;
+      }
+
+      fullScreenExits = 0;
+      focusViolations = 0;
+      fullScreenEnforcementEnabled = false;
+      fullscreenSupported = isFullscreenApiSupported();
+      updateFullscreenSupportNote(false);
+
+      if (fullscreenSupported) {
+        const entered = await requestAppFullscreen();
+        if (entered) {
+          fullScreenEnforcementEnabled = true;
+        } else {
+          updateFullscreenSupportNote(true);
+        }
+      } else {
+        updateFullscreenSupportNote(true);
+      }
+
+      const startScreen = document.getElementById("testStartScreen");
+      if (startScreen) startScreen.style.display = "none";
+      const modeScreen = document.getElementById("modeScreen");
+      if (modeScreen) modeScreen.style.display = "none";
+      startTest("test");
+
+      isTestRunning = true;
+      isTimerPaused = false;
+      startTimer();
+      updateFullscreenButton();
+    }
+
+    function startTest(selectedMode) {
+      mode = selectedMode;
+      const timerContainer = document.getElementById("timerContainer");
+
+      visitedSections.clear();
+      visitedSections.add(1);
+      activeSection = 1;
+      currentQuestion = 1;
+      timerSeconds = 60 * 60;
+
+      if (timerId) {
+        clearInterval(timerId);
+        timerId = null;
+      }
+
+      if (mode === "test") {
+        if (timerContainer) {
+          timerContainer.style.display = "block";
+          timerContainer.setAttribute("aria-hidden", "false");
+        }
+      } else {
+        if (timerContainer) {
+          timerContainer.style.display = "none";
+          timerContainer.setAttribute("aria-hidden", "true");
+        }
+        isTestRunning = false;
+        isTimerPaused = false;
+        fullScreenEnforcementEnabled = false;
+        updateFullscreenSupportNote(false);
+      }
+
+      const modeScreen = document.getElementById("modeScreen");
+      if (modeScreen) modeScreen.style.display = "none";
+      document.getElementById("app").style.display = "block";
+      initQuestionInputs();
+      setupDragMatch();
+      buildQuestionNav();
+      setupSelectionListeners();
+      setupDividerDrag();
+      updateThemeButtons();
+      updateFontButtons();
+      updateFullscreenButton();
+      window.addEventListener("beforeunload", (e) => {
+        if (!testSubmitted) {
+          e.preventDefault();
+          e.returnValue = "Are you sure you want to leave? All progress will be lost.";
+          return e.returnValue;
+        }
+      }, { capture: true });
+    }
+
+    window.startTest = startTest;
+    window.beginTimedTest = beginTimedTest;
+    window.toggleFullscreen = toggleFullscreen;
+    window.returnToFullscreenAndResume = returnToFullscreenAndResume;
+    window.confirmSubmit = confirmSubmit;
+    window.handlePrimarySubmit = handlePrimarySubmit;
+
+    function wireModeButtons() {
+      const buttons = document.querySelectorAll(".mode-btn[data-mode]");
+      const modeScreen = document.getElementById("modeScreen");
+      const activate = (btn) => {
+        const selected = btn.getAttribute("data-mode") || btn.dataset.mode || "test";
+        if (selected === "test") {
+          pendingMode = "test";
+          updateFullscreenSupportNote(!isFullscreenApiSupported());
+          const startScreen = document.getElementById("testStartScreen");
+          if (startScreen) startScreen.style.display = "block";
+          const input = document.getElementById("studentNameInput");
+          if (input) input.focus();
+          return;
+        }
+        const startScreen = document.getElementById("testStartScreen");
+        if (startScreen) startScreen.style.display = "none";
+        updateFullscreenSupportNote(false);
+        studentName = "";
+        startTest(selected);
+      };
+      buttons.forEach((btn) => {
+        btn.addEventListener("click", (event) => {
+          event.stopPropagation();
+          activate(btn);
+        });
+        btn.addEventListener("keydown", (event) => {
+          if (event.key === "Enter" || event.key === " ") {
+            event.preventDefault();
+            activate(btn);
+          }
+        });
+      });
+      if (modeScreen && !modeScreen.dataset.wired) {
+        modeScreen.addEventListener("click", (event) => {
+          const btn = event.target.closest(".mode-btn[data-mode]");
+          if (!btn) return;
+          event.preventDefault();
+          activate(btn);
+        });
+        modeScreen.dataset.wired = "true";
+      }
+
+      const input = document.getElementById("studentNameInput");
+      if (input && !input.dataset.wired) {
+        input.addEventListener("keydown", (event) => {
+          if (event.key === "Enter") {
+            event.preventDefault();
+            beginTimedTest();
+          }
+        });
+        input.dataset.wired = "true";
+      }
+    }
+
+    function ensureModeWiring() {
+      if (document.readyState === "loading") {
+        document.addEventListener("DOMContentLoaded", wireModeButtons, { once: true });
+      } else {
+        wireModeButtons();
+      }
+    }
+
+    function formatDuration(totalSeconds) {
+      const sign = totalSeconds < 0 ? "+" : "";
+      const abs = Math.abs(totalSeconds);
+      const m = Math.floor(abs / 60).toString().padStart(2, "0");
+      const sec = (abs % 60).toString().padStart(2, "0");
+      return `${sign}${m}:${sec}`;
+    }
+
+    function startTimer() {
+      if (mode !== "test") return;
+      if (timerId) {
+        clearInterval(timerId);
+        timerId = null;
+      }
+      const display = document.getElementById("timerDisplay");
+      if (!display) return;
+      display.classList.remove("timer-warning");
+      display.textContent = formatDuration(timerSeconds);
+      timerId = setInterval(() => {
+        timerSeconds--;
+        display.textContent = formatDuration(timerSeconds);
+        if (timerSeconds < 0) {
+          clearInterval(timerId);
+          timerId = null;
+          if (!testSubmitted) {
+            alert("Time is up! The test will be submitted.");
+            submitTest();
+          }
+          return;
+        }
+        if (timerSeconds <= 180) display.classList.add("timer-warning");
+      }, 1000);
+    }
+
+    function pauseTimer() {
+      if (timerId) {
+        clearInterval(timerId);
+        timerId = null;
+      }
+      isTimerPaused = true;
+    }
+
+    function resumeTimer() {
+      if (!isTestRunning || mode !== "test") return;
+      if (!isTimerPaused) return;
+      isTimerPaused = false;
+      startTimer();
+    }
+
+    function isFullscreenApiSupported() {
+      const el = document.documentElement;
+      return !!(document.fullscreenEnabled && el && typeof el.requestFullscreen === "function");
+    }
+
+    function isFullscreenActive() {
+      return !!document.fullscreenElement;
+    }
+
+    function updateFullscreenSupportNote(show) {
+      const note = document.getElementById("fullscreenSupportNote");
+      if (!note) return;
+      note.style.display = show ? "block" : "none";
+    }
+
+    async function requestAppFullscreen() {
+      try {
+        if (!isFullscreenApiSupported()) return false;
+        await document.documentElement.requestFullscreen();
+        return isFullscreenActive();
+      } catch (err) {
+        return false;
+      }
+    }
+
+    async function exitAppFullscreen() {
+      try {
+        if (isFullscreenActive() && typeof document.exitFullscreen === "function") {
+          await document.exitFullscreen();
+        }
+      } catch (err) {
+        // silent by design
+      }
+    }
+
+    function showFullscreenLockOverlay() {
+      const overlay = document.getElementById("fullscreenLockOverlay");
+      if (overlay) overlay.style.display = "flex";
+      document.body.style.overflow = "hidden";
+    }
+
+    function hideFullscreenLockOverlay() {
+      const overlay = document.getElementById("fullscreenLockOverlay");
+      if (overlay) overlay.style.display = "none";
+      document.body.style.overflow = "";
+    }
+
+    function updateFullscreenButton() {
+      const btn = document.getElementById("fullscreenBtn");
+      const label = document.getElementById("fullscreenBtnLabel");
+      if (!btn || !label) return;
+
+      const isFullscreen = isFullscreenActive();
+      const locked = mode === "test" && isTestRunning && !testSubmitted && fullScreenEnforcementEnabled;
+
+      btn.classList.toggle("is-active", isFullscreen);
+      btn.disabled = false;
+
+      if (locked && isFullscreen) {
+        label.textContent = "Full screen locked";
+        btn.setAttribute("title", "Full screen locked");
+        btn.setAttribute("aria-label", "Full screen locked");
+        btn.disabled = true;
+        return;
+      }
+
+      if (isFullscreen) {
+        label.textContent = "Exit full screen";
+        btn.setAttribute("title", "Exit full screen");
+        btn.setAttribute("aria-label", "Exit full screen");
+      } else {
+        label.textContent = "Full screen";
+        btn.setAttribute("title", "Enter full screen");
+        btn.setAttribute("aria-label", "Enter full screen");
+      }
+    }
+
+    async function toggleFullscreen() {
+      const locked = mode === "test" && isTestRunning && !testSubmitted && fullScreenEnforcementEnabled;
+      if (locked && isFullscreenActive()) {
+        updateFullscreenButton();
+        return;
+      }
+
+      if (!isFullscreenActive()) {
+        await requestAppFullscreen();
+      } else {
+        await exitAppFullscreen();
+      }
+      updateFullscreenButton();
+    }
+
+    async function returnToFullscreenAndResume() {
+      const ok = await requestAppFullscreen();
+      if (ok) {
+        hideFullscreenLockOverlay();
+        resumeTimer();
+      }
+      updateFullscreenButton();
+    }
+
+    function handleFullscreenChange() {
+      const runningLockedTest = mode === "test" && isTestRunning && !testSubmitted && fullScreenEnforcementEnabled;
+      if (runningLockedTest) {
+        if (!isFullscreenActive()) {
+          fullScreenExits += 1;
+          pauseTimer();
+          showFullscreenLockOverlay();
+        } else {
+          hideFullscreenLockOverlay();
+          resumeTimer();
+        }
+      }
+      updateFullscreenButton();
+    }
+
+    document.addEventListener("fullscreenchange", handleFullscreenChange);
+
+    document.addEventListener("visibilitychange", () => {
+      if (mode === "test" && isTestRunning && !testSubmitted && document.hidden) {
+        focusViolations += 1;
+      }
+    });
+
+    window.addEventListener("blur", () => {
+      if (mode === "test" && isTestRunning && !testSubmitted) {
+        focusViolations += 1;
+      }
+    });
+
+    function toggleOptions(show) {
+      const overlay = document.getElementById("optionsOverlay");
+      if (overlay) overlay.style.display = show ? "flex" : "none";
+    }
+
+    const optionsButton = document.getElementById("optionsBtn");
+    if (optionsButton) {
+      optionsButton.addEventListener("click", () => toggleOptions(true));
+    }
+
+    function buildRemainingQuestions() {
+      // Sections 1–3 are present in the static HTML for this standalone test.
+    }
+
+    function stampInlineInputNumbers() {
+      document.querySelectorAll(".question-block[data-q]").forEach((block) => {
+        const qNum = block.getAttribute("data-q");
+        block.querySelectorAll(".inline-input").forEach((w) => {
+          w.setAttribute("data-q", qNum);
+        });
+      });
+    }
+
+    let dragMatchReady = false;
+
+    function setupDragMatch() {
+      if (dragMatchReady) return;
+      dragMatchReady = true;
+      let picked = "";
+      document.querySelectorAll(".drag-item, .passage-match-source").forEach((item) => {
+        item.addEventListener("dragstart", (e) => {
+          e.dataTransfer.setData("text/plain", item.dataset.value);
+          e.dataTransfer.effectAllowed = "copy";
+        });
+        item.addEventListener("click", () => {
+          document
+            .querySelectorAll(".drag-item, .passage-match-source")
+            .forEach((i) => i.classList.remove("selected"));
+          item.classList.add("selected");
+          picked = item.dataset.value;
+        });
+        item.addEventListener("keydown", (event) => {
+          if (event.key === "Enter" || event.key === " ") {
+            event.preventDefault();
+            item.click();
+          }
+        });
+      });
+
+      function apply(zone, val) {
+        const qName = zone.dataset.for;
+        const sel = document.querySelector('select[name="' + qName + '"]');
+        if (sel) {
+          const allowed = Array.from(sel.options).some((o) => o.value === val);
+          if (!allowed) return;
+          sel.value = val;
+          sel.dispatchEvent(new Event("change", { bubbles: true }));
+        }
+        zone.textContent = val;
+        zone.classList.add("filled");
+      }
+
+      function clear(zone) {
+        const qName = zone.dataset.for;
+        const sel = document.querySelector('select[name="' + qName + '"]');
+        if (sel) {
+          sel.value = "";
+          sel.dispatchEvent(new Event("change", { bubbles: true }));
+        }
+        zone.textContent = "Drop here";
+        zone.classList.remove("filled");
+      }
+
+      document.querySelectorAll(".drop-zone").forEach((zone) => {
+        zone.addEventListener("dragover", (e) => {
+          e.preventDefault();
+          zone.classList.add("over");
+        });
+        zone.addEventListener("dragleave", () => zone.classList.remove("over"));
+        zone.addEventListener("drop", (e) => {
+          e.preventDefault();
+          zone.classList.remove("over");
+          const val = e.dataTransfer.getData("text/plain");
+          apply(zone, val);
+        });
+        zone.addEventListener("click", () => {
+          if (picked) apply(zone, picked);
+        });
+        zone.addEventListener("keydown", (e) => {
+          if (e.key === "Backspace" || e.key === "Delete") clear(zone);
+
+          const key = e.key.toUpperCase();
+          if (!/^[A-Z]$/.test(key)) return;
+
+          const qName = zone.dataset.for;
+          const sel = document.querySelector('select[name="' + qName + '"]');
+          if (!sel) return;
+
+          const allowed = Array.from(sel.options).some((o) => o.value === key);
+          if (allowed) apply(zone, key);
+        });
+        zone.addEventListener("dblclick", () => clear(zone));
+      });
+
+      document.querySelectorAll(".drop-zone").forEach((zone) => {
+        const qName = zone.dataset.for;
+        const sel = document.querySelector('select[name="' + qName + '"]');
+        if (sel && sel.value) {
+          apply(zone, sel.value);
+        }
+      });
+    }
+
+    // Build all questions immediately after DOM loads (script is at the end)
+    buildRemainingQuestions();
+    stampInlineInputNumbers();
+    setupDragMatch();
+
+    /***********************
+     * INPUT & NAV HANDLING
+     ***********************/
+    function initQuestionInputs() {
+      const qPane = document.getElementById("questionContent");
+      if (!qPane) return;
+
+      stampInlineInputNumbers();
+
+      // Listen to changes on all inputs/selects/radios
+      qPane
+        .querySelectorAll("select, input[type='text'], input[type='radio']")
+        .forEach((el) => {
+          el.addEventListener("change", onAnswerChange);
+          if (el.type === "text") {
+            el.addEventListener("input", onAnswerChange);
+          }
+        });
+
+
+      qPane.addEventListener("focusin", (event) => {
+        setCurrentQuestionFromElement(event.target);
+      });
+      qPane.addEventListener("click", (event) => {
+        setCurrentQuestionFromElement(event.target);
+      });
+
+      // Start on section 1, question 1
+      switchSection(1);
+      highlightCurrentQuestion(1);
+      updateCounts();
+      buildQuestionNav();
+    }
+
+
+    function setCurrentQuestionFromElement(el) {
+      const block = el.closest(".question-block[data-q]");
+      if (!block) return;
+      const q = parseInt(block.dataset.q, 10);
+      if (Number.isNaN(q)) return;
+      currentQuestion = q;
+      highlightCurrentQuestion(q);
+      buildQuestionNav();
+    }
+
+    function onAnswerChange(e) {
+      const name = e.target.name || "";
+      if (name.startsWith("q")) {
+        const num = parseInt(name.substring(1), 10);
+        if (!isNaN(num)) currentQuestion = num;
+      }
+      updateCounts();
+      buildQuestionNav();
+      highlightCurrentQuestion(currentQuestion);
+    }
+
+    function isAnswered(qNum) {
+      const name = "q" + qNum;
+      const radios = document.querySelectorAll(
+        "input[type='radio'][name='" + name + "']"
+      );
+      if (radios.length > 0) {
+        return Array.from(radios).some((r) => r.checked);
+      }
+      const input = document.querySelector("input[type='text'][name='" + name + "']");
+      if (input) {
+        return input.value.trim().length > 0;
+      }
+      const select = document.querySelector("select[name='" + name + "']");
+      if (select) {
+        return select.value.trim().length > 0;
+      }
+      return false;
+    }
+
+    function updateCounts() {
+      const totals = { 1: 14, 2: 13, 3: 13 };
+      const answered = { 1: 0, 2: 0, 3: 0 };
+
+      [1, 2, 3].forEach((sec) => {
+        const range = sectionRanges[sec];
+        for (let q = range.from; q <= range.to; q++) {
+          if (isAnswered(q)) answered[sec]++;
+        }
+      });
+
+      // Update chip counts and status classes
+      [1, 2, 3].forEach((sec) => {
+        const chip = document.querySelector(
+          '.part-chip[data-section-chip="' + sec + '"]'
+        );
+        const span = document.getElementById("part" + sec + "Count");
+        const countText = answered[sec] + " of " + totals[sec];
+
+        if (!chip || !span) return;
+
+        chip.classList.remove("complete", "partial", "unopened");
+        if (answered[sec] === totals[sec]) {
+          chip.classList.add("complete");
+          span.textContent = "✓";
+          span.setAttribute("aria-label", "Part " + sec + " complete");
+        } else {
+          span.textContent = countText;
+          span.removeAttribute("aria-label");
+          if (visitedSections.has(sec)) {
+            chip.classList.add("partial");
+          } else {
+            chip.classList.add("unopened");
+          }
+        }
+      });
+
+      // Also update header for active section with answered count
+      const range = sectionRanges[activeSection];
+      const secAnswered = answered[activeSection];
+      const total = totals[activeSection];
+
+      const qHeader = document.getElementById("questionHeader");
+      if (qHeader && range) {
+        qHeader.textContent =
+          "Questions " +
+          range.from +
+          "–" +
+          range.to +
+          " (" +
+          secAnswered +
+          " of " +
+          total +
+          " answered)";
+      }
+
+      const pHeader = document.getElementById("passageHeader");
+      if (pHeader) {
+        if (activeSection === 1) {
+          pHeader.textContent =
+            "Part 1 – Read the text and answer questions 1–14.";
+        } else if (activeSection === 2) {
+          pHeader.textContent =
+            "Part 2 – Read the text and answer questions 15–27.";
+        } else {
+          pHeader.textContent =
+            "Part 3 – Read the text and answer questions 28–40.";
+        }
+      }
+    }
+
+    function buildQuestionNav() {
+      const nav = document.getElementById("questionNumbers");
+      if (!nav) return;
+      nav.innerHTML = "";
+
+      const range = sectionRanges[activeSection];
+      if (!range) return;
+
+      for (let q = range.from; q <= range.to; q++) {
+        const div = document.createElement("div");
+        div.className = "qnav";
+        if (isAnswered(q)) div.classList.add("answered");
+        else div.classList.add("unanswered");
+        if (q === currentQuestion) div.classList.add("current");
+        div.textContent = q;
+        div.addEventListener("click", () => {
+          currentQuestion = q;
+          highlightCurrentQuestion(q);
+          buildQuestionNav();
+          scrollToQuestion(q);
+        });
+        nav.appendChild(div);
+      }
+    }
+
+    function highlightCurrentQuestion(qNum) {
+      document
+        .querySelectorAll(".question-block")
+        .forEach((el) => el.classList.remove("current-question"));
+      const block = document.querySelector(
+        '.question-block[data-q="' + qNum + '"]'
+      );
+      if (block) {
+        block.classList.add("current-question");
+      }
+    }
+
+    function scrollToQuestion(qNum) {
+      const block = document.querySelector(
+        '.question-block[data-q="' + qNum + '"]'
+      );
+      const qPane = document.getElementById("questionPane");
+      if (block && qPane) {
+        block.scrollIntoView({ behavior: "smooth", block: "center" });
+      }
+    }
+
+    /*****************
+     * SECTION SWITCH
+     *****************/
+    function switchSection(section) {
+      if (![1, 2, 3].includes(section)) return;
+      activeSection = section;
+      visitedSections.add(section);
+
+      // Passages
+      document
+        .querySelectorAll(".passage-section")
+        .forEach((el) => (el.style.display = "none"));
+      const pass = document.querySelector(
+        '.passage-section[data-section="' + section + '"]'
+      );
+      if (pass) pass.style.display = "block";
+
+      // Questions
+      document
+        .querySelectorAll("#questionContent > div[data-section]")
+        .forEach((el) => (el.style.display = "none"));
+      const qSec = document.querySelector(
+        '#questionContent > div[data-section="' + section + '"]'
+      );
+      if (qSec) qSec.style.display = "block";
+
+      // Chips active state
+      document
+        .querySelectorAll(".part-chip")
+        .forEach((el) => el.classList.remove("active"));
+      const chip = document.querySelector(
+        '.part-chip[data-section-chip="' + section + '"]'
+      );
+      if (chip) chip.classList.add("active");
+
+      // Set current question to first in this section if outside range
+      const range = sectionRanges[section];
+      if (currentQuestion < range.from || currentQuestion > range.to) {
+        currentQuestion = range.from;
+      }
+
+      updateCounts();
+      highlightCurrentQuestion(currentQuestion);
+      buildQuestionNav();
+    }
+
+    function prevSection() {
+      if (activeSection > 1) switchSection(activeSection - 1);
+    }
+
+    function nextSection() {
+      if (activeSection < 3) switchSection(activeSection + 1);
+    }
+
+    /***************
+     * SUBMIT & SCORE
+     ***************/
+    const bandDescriptors = {
+      9: {
+        level: "Expert user",
+        description:
+          "Has fully operational command of the language: appropriate, accurate and fluent with complete understanding.",
+      },
+      8: {
+        level: "Very good user",
+        description:
+          "Has fully operational command of the language with only occasional unsystematic inaccuracies and inappropriacies. Misunderstandings may occur in unfamiliar situations.",
+      },
+      7: {
+        level: "Good user",
+        description:
+          "Has operational command of the language, though with occasional inaccuracies, inappropriacies and misunderstandings in some situations. Generally handles complex language well and understands detailed reasoning.",
+      },
+      6: {
+        level: "Competent user",
+        description:
+          "Has generally effective command of the language despite some inaccuracies, inappropriacies and misunderstandings. Can use and understand fairly complex language, particularly in familiar situations.",
+      },
+      5: {
+        level: "Modest user",
+        description:
+          "Has partial command of the language, coping with overall meaning in most situations, though likely to make many mistakes. Should be able to handle basic communication in own field.",
+      },
+      4: {
+        level: "Limited user",
+        description:
+          "Basic competence is limited to familiar situations. Has frequent problems in understanding and expression. Is not able to use complex language.",
+      },
+      3: {
+        level: "Extremely limited user",
+        description:
+          "Conveys and understands only general meaning in very familiar situations. Frequent breakdowns in communication occur.",
+      },
+      2: {
+        level: "Intermittent user",
+        description:
+          "No real communication is possible except for the most basic information using isolated words or short formulae in familiar situations and to meet immediate needs.",
+      },
+      1: {
+        level: "Non-user",
+        description:
+          "Essentially has no ability to use the language beyond possibly a few isolated words.",
+      },
+      0: {
+        level: "Did not attempt test",
+        description: "No assessable information provided.",
+      },
+    };
+
+    function getBandDescriptor(band) {
+      if (bandDescriptors[band]) return bandDescriptors[band];
+
+      const halfBandDescriptors = {
+        8.5: {
+          level: "Very good user developing towards Expert user",
+          description:
+            "This result is stronger than a typical Band 8, but it has not yet reached Band 9. It suggests very strong reading ability, with only occasional difficulty in highly complex or detailed texts.",
+        },
+        7.5: {
+          level: "Good user developing towards Very good user",
+          description:
+            "This result is stronger than a typical Band 7, but it has not yet reached Band 8. It suggests strong reading ability, with occasional difficulty in complex passages, detail, or inference.",
+        },
+        6.5: {
+          level: "Competent user developing towards Good user",
+          description:
+            "This result is stronger than a typical Band 6, but it has not yet reached Band 7. It suggests generally effective reading ability, though detail, paraphrasing, and complex ideas may still cause some problems.",
+        },
+        5.5: {
+          level: "Modest user developing towards Competent user",
+          description:
+            "This result is stronger than a typical Band 5, but it has not yet reached Band 6. It suggests you can understand the general meaning of many reading texts, but details, synonyms, and longer passages may still be difficult.",
+        },
+        4.5: {
+          level: "Limited user developing towards Modest user",
+          description:
+            "This result is stronger than a typical Band 4, but it has not yet reached Band 5. It suggests you can understand some familiar reading tasks, but you may still have frequent problems with detail, paraphrasing, and unfamiliar vocabulary.",
+        },
+        3.5: {
+          level: "Extremely limited user developing towards Limited user",
+          description:
+            "This result is stronger than a typical Band 3, but it has not yet reached Band 4. It suggests you may understand basic information in familiar contexts, but many reading tasks are still difficult.",
+        },
+        2.5: {
+          level: "Intermittent user developing towards Extremely limited user",
+          description:
+            "This result is stronger than a typical Band 2, but it has not yet reached Band 3. It suggests only basic or isolated information is understood at this stage.",
+        },
+      };
+
+      if (halfBandDescriptors[band]) return halfBandDescriptors[band];
+
+      const lower = Math.floor(band);
+      const upper = Math.ceil(band);
+      const lowerDesc = bandDescriptors[lower];
+      const upperDesc = bandDescriptors[upper];
+
+      if (lowerDesc && upperDesc) {
+        return {
+          level: "Between " + lowerDesc.level + " and " + upperDesc.level,
+          description:
+            "This half band sits between Band " +
+            lower +
+            " (" +
+            lowerDesc.level +
+            ") and Band " +
+            upper +
+            " (" +
+            upperDesc.level +
+            ").",
+        };
+      }
+
+      return bandDescriptors[0];
+    }
+
+    function getUserAnswer(qNum) {
+      const name = "q" + qNum;
+      const radios = document.querySelectorAll(
+        "input[type='radio'][name='" + name + "']"
+      );
+      if (radios.length > 0) {
+        const checked = Array.from(radios).find((r) => r.checked);
+        return checked ? checked.value.trim() : "";
+      }
+      const input = document.querySelector("input[type='text'][name='" + name + "']");
+      if (input) return input.value.trim();
+      const select = document.querySelector("select[name='" + name + "']");
+      if (select) return select.value.trim();
+      return "";
+    }
+
+    const normalise = (s) => (s || "").toLowerCase().trim().replace(/\s+/g, " ");
+
+    function evaluateQuestions() {
+      let correctCount = 0;
+
+      for (let q = 1; q <= 40; q++) {
+        const user = getUserAnswer(q);
+        const key = answerKey[q];
+        let isCorrect = false;
+
+        if (!user) {
+          isCorrect = false;
+        } else if (Array.isArray(key)) {
+          isCorrect = key.some(
+            (k) => user.toLowerCase() === String(k).toLowerCase()
+          );
+        } else if (typeof key === "string") {
+          if (/^(TRUE|FALSE|NOT GIVEN)$/.test(key)) {
+            isCorrect = user.toUpperCase() === key;
+          } else if (key.length === 1) {
+            isCorrect = user.toUpperCase() === key.toUpperCase();
+          } else if (q === 23 || q === 27) {
+            isCorrect = normalise(user) === normalise(key);
+          } else {
+            isCorrect = user.toLowerCase() === key.toLowerCase();
+          }
+        }
+
+        const block = document.querySelector(
+          '.question-block[data-q="' + q + '"]'
+        );
+        if (block) {
+          block.classList.remove("correct", "incorrect");
+          if (isCorrect) {
+            block.classList.add("correct");
+            correctCount++;
+          } else if (user) {
+            block.classList.add("incorrect");
+          }
+        }
+
+        const ca = document.getElementById("ca-" + q);
+        if (ca) {
+          const txt = correctAnswerText[q];
+          if (txt) {
+            ca.textContent = "Correct answer: " + txt;
+          }
+        }
+      }
+
+      return correctCount;
+    }
+
+    function computeBandScore(correct) {
+      /*
+       * IELTS General Training Reading raw score to band conversion
+       * 40 = 9
+       * 39 = 8.5
+       * 37-38 = 8
+       * 36 = 7.5
+       * 34-35 = 7
+       * 32-33 = 6.5
+       * 30-31 = 6
+       * 27-29 = 5.5
+       * 23-26 = 5
+       * 19-22 = 4.5
+       * 15-18 = 4
+       * 12-14 = 3.5
+       * 9-11 = 3
+       * 6-8 = 2.5
+       */
+
+      if (correct === 40) return 9;
+      if (correct === 39) return 8.5;
+      if (correct >= 37) return 8;
+      if (correct >= 36) return 7.5;
+      if (correct >= 34) return 7;
+      if (correct >= 32) return 6.5;
+      if (correct >= 30) return 6;
+      if (correct >= 27) return 5.5;
+      if (correct >= 23) return 5;
+      if (correct >= 19) return 4.5;
+      if (correct >= 15) return 4;
+      if (correct >= 12) return 3.5;
+      if (correct >= 9) return 3;
+      if (correct >= 6) return 2.5;
+      if (correct === 0) return 0;
+      return 1;
+    }
+
+
+    function confirmSubmit() {
+      const ok = window.confirm("Are you sure you want to submit your test now? You will not be able to continue answering in Test mode.");
+      if (!ok) return;
+      submitTest();
+    }
+
+    function showShortcutToast(message) {
+      const toast = document.getElementById("shortcutToast");
+      if (!toast) return;
+
+      toast.textContent = message;
+      toast.classList.add("visible");
+
+      if (shortcutToastTimer) {
+        clearTimeout(shortcutToastTimer);
+      }
+
+      shortcutToastTimer = setTimeout(() => {
+        toast.classList.remove("visible");
+      }, 1800);
+    }
+
+    function handlePrimarySubmit() {
+      if (mode === "test" && !testSubmitted) {
+        confirmSubmit();
+        return;
+      }
+      submitTest();
+    }
+
+    document.addEventListener("keydown", (event) => {
+      const isFindShortcut =
+        (event.ctrlKey || event.metaKey) &&
+        String(event.key).toLowerCase() === "f";
+
+      if (!isFindShortcut) return;
+      if (!(mode === "test" && isTestRunning && !testSubmitted)) return;
+
+      event.preventDefault();
+      showShortcutToast("Find (CTRL + F) is disabled in Test mode.");
+    }, true);
+
+
+    function submitTest() {
+      const correctCount = evaluateQuestions();
+
+      // In both modes, show correct answer text
+      Object.keys(correctAnswerText).forEach((q) => {
+        const el = document.getElementById("ca-" + q);
+        if (el) el.style.display = "block";
+      });
+
+      updateCounts();
+      buildQuestionNav();
+
+      const band = computeBandScore(correctCount);
+      const desc = getBandDescriptor(band);
+
+      const studentLine = document.getElementById("studentLine");
+      const fullScreenExitLine = document.getElementById("fullScreenExitLine");
+      const focusViolationLine = document.getElementById("focusViolationLine");
+      const totalTimeLine = document.getElementById("totalTimeLine");
+      const scoreLine = document.getElementById("scoreLine");
+      const bandLine = document.getElementById("bandLine");
+      const descriptorLine = document.getElementById("descriptorLine");
+      const resultsOverlay = document.getElementById("resultsOverlay");
+
+      if (studentLine) {
+        studentLine.textContent = studentName ? "Student: " + studentName : "Student: Not provided";
+      }
+      if (fullScreenExitLine) {
+        fullScreenExitLine.textContent = "Full screen exits: " + fullScreenExits;
+      }
+      if (focusViolationLine) {
+        focusViolationLine.textContent = "Tab switches / focus losses: " + focusViolations;
+      }
+      if (totalTimeLine) {
+        const elapsedSeconds = 60 * 60 - timerSeconds;
+        totalTimeLine.textContent = "Total time when submitted: " + formatDuration(elapsedSeconds);
+      }
+      if (scoreLine)
+        scoreLine.textContent =
+          "You answered " + correctCount + " out of 40 questions correctly.";
+      if (bandLine)
+        bandLine.textContent =
+          "Estimated IELTS Reading band: " +
+          band +
+          ". Skill level: " +
+          desc.level;
+      if (descriptorLine) descriptorLine.textContent = desc.description;
+
+      if (resultsOverlay) resultsOverlay.style.display = "flex";
+
+      if (mode === "test") {
+        testSubmitted = true;
+        isTestRunning = false;
+        isTimerPaused = false;
+        fullScreenEnforcementEnabled = false;
+        hideFullscreenLockOverlay();
+        updateFullscreenButton();
+        if (timerId) {
+          clearInterval(timerId);
+          timerId = null;
+        }
+        exitAppFullscreen();
+        // Disable further changes in test mode
+        document
+          .querySelectorAll("#questionContent select, #questionContent input")
+          .forEach((el) => (el.disabled = true));
+      }
+
+      // Close options overlay if open
+      toggleOptions(false);
+    }
+
+    function closeResults() {
+      const overlay = document.getElementById("resultsOverlay");
+      const studentLine = document.getElementById("studentLine");
+      const fullScreenExitLine = document.getElementById("fullScreenExitLine");
+      const focusViolationLine = document.getElementById("focusViolationLine");
+      const totalTimeLine = document.getElementById("totalTimeLine");
+      if (studentLine) studentLine.textContent = "";
+      if (fullScreenExitLine) fullScreenExitLine.textContent = "";
+      if (focusViolationLine) focusViolationLine.textContent = "";
+      if (totalTimeLine) totalTimeLine.textContent = "";
+      if (overlay) overlay.style.display = "none";
+    }
+
+    /**********************
+     * HIGHLIGHT & NOTES
+     **********************/
+    let currentNoteId = 0;
+    const notesStore = {}; // noteId -> { text }
+
+    function setupSelectionListeners() {
+      const toolbar = document.getElementById("selectionToolbar");
+      if (!toolbar) return;
+      toolbar.style.position = "fixed";
+
+      function updateToolbarPosition() {
+        const sel = window.getSelection();
+        if (!sel || sel.rangeCount === 0 || sel.isCollapsed) {
+          hideSelectionToolbar();
+          return;
+        }
+        const range = sel.getRangeAt(0);
+        const rect = range.getBoundingClientRect();
+        if (!rect || (rect.width === 0 && rect.height === 0)) {
+          hideSelectionToolbar();
+          return;
+        }
+        toolbar.style.left = rect.left + rect.width / 2 + "px";
+        toolbar.style.top = Math.max(56, rect.top - 32) + "px";
+        toolbar.style.display = "flex";
+      }
+
+      document.addEventListener("mouseup", () => {
+        setTimeout(updateToolbarPosition, 0);
+      });
+
+      document.addEventListener("keyup", (e) => {
+        if (
+          e.key === "Shift" ||
+          e.key === "ArrowLeft" ||
+          e.key === "ArrowRight" ||
+          e.key === "ArrowUp" ||
+          e.key === "ArrowDown"
+        ) {
+          setTimeout(updateToolbarPosition, 0);
+        }
+      });
+
+      document.addEventListener("mousedown", (e) => {
+        if (!toolbar.contains(e.target)) {
+          hideSelectionToolbar();
+        }
+      });
+    }
+
+    function hideSelectionToolbar() {
+      const toolbar = document.getElementById("selectionToolbar");
+      if (toolbar) toolbar.style.display = "none";
+    }
+
+    function findAncestorWithClass(node, className) {
+      let n = node;
+      while (n && n !== document) {
+        if (n.nodeType === 1 && n.classList.contains(className)) return n;
+        n = n.parentNode;
+      }
+      return null;
+    }
+
+    function toggleHighlightSelection() {
+      const sel = window.getSelection();
+      if (!sel || sel.rangeCount === 0 || sel.isCollapsed) return;
+      const range = sel.getRangeAt(0);
+      if (!range.toString().trim()) return;
+
+      const startHighlight = findAncestorWithClass(
+        range.startContainer,
+        "highlighted"
+      );
+      const endHighlight = findAncestorWithClass(
+        range.endContainer,
+        "highlighted"
+      );
+
+      if (startHighlight && startHighlight === endHighlight) {
+        // Remove the whole highlight span
+        const span = startHighlight;
+        const parent = span.parentNode;
+        while (span.firstChild) {
+          parent.insertBefore(span.firstChild, span);
+        }
+        parent.removeChild(span);
+      } else {
+        const span = document.createElement("span");
+        span.className = "highlighted";
+        try {
+          range.surroundContents(span);
+        } catch (e) {
+          // Fallback: simple replacement
+          span.textContent = range.toString();
+          range.deleteContents();
+          range.insertNode(span);
+        }
+      }
+
+      sel.removeAllRanges();
+      hideSelectionToolbar();
+    }
+
+    function makeNoteForSelection() {
+      const sel = window.getSelection();
+      if (!sel || sel.rangeCount === 0 || sel.isCollapsed) return;
+      const range = sel.getRangeAt(0);
+      if (!range.toString().trim()) return;
+
+      const noteId = "note-" + ++currentNoteId;
+
+      const span = document.createElement("span");
+      span.className = "note-anchor";
+      span.dataset.noteId = noteId;
+
+      try {
+        range.surroundContents(span);
+      } catch (e) {
+        span.textContent = range.toString();
+        range.deleteContents();
+        range.insertNode(span);
+      }
+
+      // Delete button
+      const del = document.createElement("button");
+      del.className = "note-delete";
+      del.textContent = "×";
+      del.addEventListener("click", (ev) => {
+        ev.stopPropagation();
+        deleteNote(noteId);
+      });
+      span.appendChild(del);
+
+      span.addEventListener("click", (ev) => {
+        // avoid re-opening when clicking delete
+        if ((ev.target).classList && (ev.target).classList.contains("note-delete"))
+          return;
+        openNoteWindow(noteId, span);
+      });
+
+      notesStore[noteId] = { text: "" };
+      openNoteWindow(noteId, span);
+      hideSelectionToolbar();
+      sel.removeAllRanges();
+    }
+
+    function openNoteWindow(noteId, anchorEl) {
+      // Remove existing note window for this note
+      const existing = document.querySelector(
+        '.note-window[data-note-id="' + noteId + '"]'
+      );
+      if (existing) existing.remove();
+
+      const rect = anchorEl.getBoundingClientRect();
+      const note = document.createElement("div");
+      note.className = "note-window";
+      note.dataset.noteId = noteId;
+      note.style.top = rect.bottom + 8 + "px";
+      note.style.left = rect.left + "px";
+
+      note.innerHTML = `
+        <div class="note-header">
+          <span>Note</span>
+          <button title="Close">×</button>
+        </div>
+        <div class="note-body">
+          <textarea></textarea>
+        </div>
+        <div class="note-footer">
+          <button>Done</button>
+        </div>
+      `;
+
+      document.body.appendChild(note);
+
+      const header = note.querySelector(".note-header");
+      const closeBtn = header.querySelector("button");
+      const textarea = note.querySelector("textarea");
+      const doneBtn = note.querySelector(".note-footer button");
+
+      if (notesStore[noteId] && notesStore[noteId].text) {
+        textarea.value = notesStore[noteId].text;
+      }
+
+      closeBtn.addEventListener("click", () => {
+        notesStore[noteId].text = textarea.value;
+        note.remove();
+      });
+
+      doneBtn.addEventListener("click", () => {
+        notesStore[noteId].text = textarea.value;
+        note.remove();
+      });
+
+      makeNoteDraggable(note, header);
+    }
+
+    function deleteNote(noteId) {
+      const anchor = document.querySelector(
+        '.note-anchor[data-note-id="' + noteId + '"]'
+      );
+      if (anchor) {
+        const parent = anchor.parentNode;
+        // move children except delete button
+        while (anchor.firstChild) {
+          const child = anchor.firstChild;
+          if (
+            child.nodeType === 1 &&
+            child.classList.contains("note-delete")
+          ) {
+            anchor.removeChild(child);
+          } else {
+            parent.insertBefore(child, anchor);
+          }
+        }
+        parent.removeChild(anchor);
+      }
+      const noteWin = document.querySelector(
+        '.note-window[data-note-id="' + noteId + '"]'
+      );
+      if (noteWin) noteWin.remove();
+      delete notesStore[noteId];
+    }
+
+    function makeNoteDraggable(noteEl, handleEl) {
+      let isDragging = false;
+      let startX = 0;
+      let startY = 0;
+      let startLeft = 0;
+      let startTop = 0;
+
+      handleEl.addEventListener("mousedown", (e) => {
+        e.preventDefault();
+        isDragging = true;
+        startX = e.clientX;
+        startY = e.clientY;
+        const rect = noteEl.getBoundingClientRect();
+        startLeft = rect.left;
+        startTop = rect.top;
+        document.addEventListener("mousemove", onMove);
+        document.addEventListener("mouseup", onUp);
+      });
+
+      function onMove(e) {
+        if (!isDragging) return;
+        const dx = e.clientX - startX;
+        const dy = e.clientY - startY;
+        noteEl.style.left = startLeft + dx + "px";
+        noteEl.style.top = startTop + dy + "px";
+      }
+
+      function onUp() {
+        isDragging = false;
+        document.removeEventListener("mousemove", onMove);
+        document.removeEventListener("mouseup", onUp);
+      }
+    }
+
+    /***********************
+     * RESIZABLE DIVIDER
+     ***********************/
+    function setupDividerDrag() {
+      const divider = document.getElementById("divider");
+      const mainInner = document.querySelector(".main-inner");
+      const leftPane = document.getElementById("passagePane");
+      const rightPane = document.getElementById("questionPane");
+      if (!divider || !mainInner || !leftPane || !rightPane) return;
+
+      let dragging = false;
+      let startX = 0;
+      let startWidthLeft = 0;
+      let totalWidth = 0;
+
+      divider.addEventListener("mousedown", (e) => {
+        e.preventDefault();
+        dragging = true;
+        const rect = mainInner.getBoundingClientRect();
+        totalWidth = rect.width;
+        startX = e.clientX;
+        const leftRect = leftPane.getBoundingClientRect();
+        startWidthLeft = leftRect.width;
+        document.body.style.cursor = "col-resize";
+      });
+
+      document.addEventListener("mousemove", (e) => {
+        if (!dragging) return;
+        const dx = e.clientX - startX;
+        let newLeftWidth = startWidthLeft + dx;
+        const min = totalWidth * 0.25;
+        const max = totalWidth * 0.75;
+        if (newLeftWidth < min) newLeftWidth = min;
+        if (newLeftWidth > max) newLeftWidth = max;
+        const leftPct = (newLeftWidth / totalWidth) * 100;
+        leftPane.style.flex = "0 0 " + leftPct + "%";
+        rightPane.style.flex = "0 0 " + (100 - leftPct) + "%";
+      });
+
+      document.addEventListener("mouseup", () => {
+        if (!dragging) return;
+        dragging = false;
+        document.body.style.cursor = "default";
+      });
+    }
+
+    // Ensure option buttons reflect the current theme and font selections on load.
+    updateThemeButtons();
+    updateFontButtons();
+    ensureModeWiring();
+
+        // IELTS Pabs animated logo
+    function initAnimatedLogo() {
+      const logoNodes = document.querySelectorAll('.logo.home-link, .logo-link .logo');
+      if (!logoNodes.length) return;
+      const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+      logoNodes.forEach((logoNode) => {
+        const rawText = (logoNode.textContent || '').trim();
+        if (rawText !== 'IELTS Pabs') return;
+
+        logoNode.setAttribute('aria-label', 'IELTS Pabs');
+
+        const fragment = document.createDocumentFragment();
+        Array.from(rawText).forEach((char, index) => {
+          const span = document.createElement('span');
+          span.className = 'logo-char';
+          span.setAttribute('aria-hidden', 'true');
+          span.style.setProperty('--logo-char-index', String(index));
+          span.textContent = char === ' ' ? ' ' : char;
+          fragment.appendChild(span);
+        });
+
+        logoNode.textContent = '';
+        logoNode.appendChild(fragment);
+
+        if (reducedMotion) {
+          logoNode.classList.remove('is-animating');
+          return;
+        }
+
+        logoNode.addEventListener('mouseenter', () => {
+          logoNode.classList.remove('is-animating');
+          void logoNode.offsetWidth;
+          logoNode.classList.add('is-animating');
+        });
+
+        logoNode.addEventListener('mouseleave', () => {
+          logoNode.classList.remove('is-animating');
+        });
+      });
+    }
+
+
+    initAnimatedLogo();
+
+    function confirmGoHome() {
+      const ok = window.confirm("Are you sure you want to leave this test and return to the home page? Your current answers may not be saved.");
+      if (ok) window.location.href = "../../../index.html";
+    }
+
+  </script>
+</body>
+
+</html>
