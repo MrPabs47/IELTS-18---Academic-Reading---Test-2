@@ -165,6 +165,44 @@ Required button pattern: `onclick="handlePrimarySubmit()"`
 
 Forbidden pattern for primary submit/check buttons: `onclick="submitTest()"`
 
+## Full-screen Test mode enforcement
+
+All new IELTS Pabs tests must preserve the stable shell's full-screen Test mode behaviour. This applies project-wide to Reading, Listening, and future test types. Study mode must remain usable without full screen.
+
+Required behaviour:
+
+1. After the student enters their name and starts a Test mode attempt, the test must attempt to enter browser full screen.
+2. Study mode must not require or enforce full screen.
+3. If full screen is supported and entered successfully, enforcement must remain active throughout the running Test mode attempt.
+4. If the student exits full screen during an active Test mode attempt, pause the timer and show a lock overlay.
+5. The lock overlay must ask the student to return to full screen before continuing.
+6. Returning to full screen must hide the lock overlay and resume the timer.
+7. If full screen is unsupported or the browser blocks the request, show a clear note that full-screen enforcement is limited on that device.
+8. The results screen must show full-screen exits, tab switches / focus losses, and total time when submitted.
+9. Once the test is submitted, full-screen enforcement must stop.
+10. The timer must never run twice, continue behind the lock overlay, or create duplicate intervals when full screen resumes.
+11. The full-screen lock overlay must never appear in Study mode.
+12. Full-screen enforcement must preserve the approved submit flow: do not remove or bypass `handlePrimarySubmit()`.
+
+Required UI elements:
+
+- `fullscreenSupportNote` on the Test mode name/start screen.
+- `fullscreenBtn` and `fullscreenBtnLabel` in the top bar.
+- `fullscreenLockOverlay` with a **Return to full screen** button.
+- `fullscreenLockPanel`, styled for readability and hidden by default with its overlay.
+- Results fields for full-screen exits, focus losses, and total time.
+
+Required JavaScript pattern:
+
+- `beginTimedTest()` must attempt full screen before starting the timed Test mode attempt.
+- A `fullscreenchange` listener must detect exits during active Test mode.
+- Leaving full screen during active Test mode must pause the timer and show `fullscreenLockOverlay`.
+- Returning to full screen must hide the overlay and resume the timer without starting a duplicate interval.
+- `submitTest()` must mark the test submitted and stop full-screen enforcement.
+- Do not remove or bypass `handlePrimarySubmit()`; submit confirmation must still work correctly while enforcement is active.
+
+For Listening tests, preserve the stable shell's audio rule as well: leaving full screen pauses the timed attempt and locks the interface, but must not stop the sequential Test mode audio.
+
 ## IELTS Pabs logo standard
 
 All test pages should keep the same logo behaviour:
@@ -219,3 +257,12 @@ Do not rely on summaries that claim only one file changed; inspect the actual ch
 21. Confirm the correct hub key and path exist in the correct category; for IELTS 19 GT Reading Test 1, the key is `19-1` under General Training Reading.
 22. Do not create duplicate sections, duplicate answerKey or correctAnswerText objects, or duplicate ca-1 to ca-40 IDs.
 23. After every merge, inspect the actual changed files, browser title, visible header, candidate/name screen, question groups, answerKey, correctAnswerText, ca-1 to ca-40, and `index.html` only during hub activation. Do not trust PR titles or summaries.
+24. Confirm Test mode attempts full screen at start.
+25. Confirm leaving full screen pauses the test.
+26. Confirm **Return to full screen** resumes the test.
+27. Confirm Study mode does not enforce full screen.
+28. Confirm results show full-screen exits, focus losses, and total time.
+29. Confirm the timer does not duplicate or continue running behind the lock overlay.
+30. Confirm submit confirmation still works with full-screen enforcement.
+31. Confirm `#fullscreenLockOverlay` is hidden by default.
+32. Confirm `#fullscreenLockPanel` is styled and readable.
