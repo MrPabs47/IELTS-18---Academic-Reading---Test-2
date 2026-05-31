@@ -330,27 +330,6 @@
       color: var(--text-soft);
     }
 
-    #fullscreenLockOverlay {
-      position: fixed;
-      inset: 0;
-      background: rgba(0, 0, 0, 0.72);
-      display: none;
-      align-items: center;
-      justify-content: center;
-      z-index: 2100;
-      pointer-events: all;
-    }
-
-    #fullscreenLockPanel {
-      width: min(520px, 92vw);
-      background: var(--bg);
-      color: var(--text);
-      border-radius: 12px;
-      padding: 20px 22px;
-      box-shadow: var(--shadow-soft);
-      text-align: center;
-    }
-
     /* Options overlay */
     #optionsOverlay {
       position: fixed;
@@ -1171,6 +1150,35 @@
       margin: 6px 0;
     }
 
+    #fullscreenLockOverlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.72);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 1700;
+    }
+
+    #fullscreenLockPanel {
+      background: var(--bg);
+      color: var(--text);
+      padding: 24px 28px;
+      border-radius: 12px;
+      box-shadow: var(--shadow-soft);
+      max-width: 520px;
+      width: 92vw;
+      text-align: center;
+    }
+
+    #fullscreenLockPanel h2 {
+      margin-top: 0;
+    }
+
+    #fullscreenLockPanel p {
+      margin: 10px 0 18px;
+    }
+
     #shortcutToast {
       position: fixed;
       left: 50%;
@@ -1359,14 +1367,6 @@
             </button>
           </div>
         </div>
-      </div>
-    </div>
-
-    <div id="fullscreenLockOverlay" role="dialog" aria-modal="true" aria-labelledby="fullscreenLockTitle">
-      <div id="fullscreenLockPanel">
-        <h2 id="fullscreenLockTitle">Test paused</h2>
-        <p>You have left full screen. Return to full screen to continue your test.</p>
-        <button class="mode-btn" type="button" onclick="returnToFullscreenAndResume()">Return to full screen</button>
       </div>
     </div>
 
@@ -1850,6 +1850,15 @@
         </div>
       </div>
     </footer>
+  </div>
+
+
+  <div id="fullscreenLockOverlay" role="dialog" aria-modal="true" aria-live="assertive">
+    <div id="fullscreenLockPanel">
+      <h2>Test paused</h2>
+      <p>You have left full screen. Return to full screen to continue your test.</p>
+      <button class="mode-btn" type="button" onclick="returnToFullscreenAndResume()">Return to full screen</button>
+    </div>
   </div>
 
   <!-- Results overlay -->
