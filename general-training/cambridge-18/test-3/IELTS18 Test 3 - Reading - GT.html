@@ -583,28 +583,29 @@
     }
 
     .note-completion-box .question-block {
-      margin: 6px 0;
-      padding: 4px 6px;
+      margin: 2px 0;
+      padding: 2px 4px;
     }
 
     .note-heading {
       font-weight: 700;
-      margin-top: 12px;
+      margin: 14px 0 5px;
     }
 
     .note-line,
     .note-line-static {
       display: flex;
       align-items: flex-start;
-      gap: 8px;
-      padding-left: 4px;
+      gap: 6px;
+      padding-left: 8px;
     }
 
     .note-line::before,
     .note-line-static::before {
       content: "•";
       flex: 0 0 auto;
-      line-height: 1.5;
+      font-size: 0.78em;
+      line-height: 1.9;
       color: var(--text-soft);
     }
 
@@ -612,6 +613,15 @@
     .note-line-static {
       margin-top: 0;
       margin-bottom: 0;
+    }
+
+    .note-line-static {
+      margin: 2px 0;
+    }
+
+    .note-completion-box .inline-input {
+      margin: 1px 2px;
+      vertical-align: middle;
     }
 
     .inline-question {
