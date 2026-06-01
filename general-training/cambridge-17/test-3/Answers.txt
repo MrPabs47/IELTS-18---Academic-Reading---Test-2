@@ -1,0 +1,79 @@
+1 E
+
+2 D
+
+3 A
+
+4 D
+
+5 E
+
+6 C
+
+7 FALSE
+
+8 NOT GIVEN
+
+9 TRUE
+
+10 FALSE
+
+11 TRUE
+
+12 NOT GIVEN
+
+13 FALSE
+
+14 NOT GIVEN
+
+15 informal
+
+16 manual
+
+17 solution
+
+18 colleague
+
+19 senior
+
+20 mediation
+
+21 3 / three months
+
+22 operator
+
+23 physical
+
+24 evenings
+
+25 self-employed
+
+26 geography
+
+27 mechanical
+
+28 vi
+
+29 vii
+
+30 ii
+
+31 i
+
+32 iv
+
+33 v
+
+34 C
+
+35 B
+
+36 A
+
+37 popping
+
+38 pullers
+
+39 candle
+
+40 arm
