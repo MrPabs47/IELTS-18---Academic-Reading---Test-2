@@ -1,0 +1,79 @@
+1 B
+
+2 E
+
+3 A
+
+4 D
+
+5 C
+
+6 TRUE
+
+7 FALSE
+
+8 NOT GIVEN
+
+9 TRUE
+
+10 NOT GIVEN
+
+11 FALSE
+
+12 TRUE
+
+13 NOT GIVEN
+
+14 FALSE
+
+15 position
+
+16 partitions
+
+17 windows
+
+18 heat
+
+19 planning
+
+20 choice
+
+21 record
+
+22 length
+
+23 steps
+
+24 feet
+
+25 cones
+
+26 sign
+
+27 blocks
+
+28 C
+
+29 G
+
+30 A
+
+31 B
+
+32 C
+
+33 D
+
+34 A
+
+35 B
+
+36 D
+
+37 back layout
+
+38 journalist
+
+39 river
+
+40 fish
