@@ -1,0 +1,3537 @@
+<!DOCTYPE html>
+<html lang="en">
+<!-- Stage 4: Sections 1 to 3 contain IELTS 17 GT Reading Test 4 content. -->
+<head>
+  <meta charset="UTF-8" />
+  <title>IELTS 17 GT Reading Test 4</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <style>
+    :root {
+      --bg: #ffffff;
+      --bg-secondary: #f5f5f5;
+      --text: #111111;
+      --text-soft: #555555;
+      --accent: #0057b8;
+      --accent-soft: #e5f0ff;
+      --border: #dddddd;
+      --highlight: #ffcc66;
+      --note-underline: #ff9900;
+      --danger: #c62828;
+      --correct: #1b5e20;
+      --incorrect: #b71c1c;
+      --orange: #ff9800;
+      --part-bg: #f2f2f2;
+      --part-active-bg: #ffffff;
+      --shadow-soft: 0 2px 10px rgba(0,0,0,0.08);
+      --font-size-base: 15px;
+    }
+
+    /* Themes */
+    body[data-theme="white-on-black"] {
+      --bg: #000000;
+      --bg-secondary: #111111;
+      --text: #ffffff;
+      --text-soft: #dddddd;
+      --border: #333333;
+      --accent: #90caf9;
+      --accent-soft: #1a237e;
+      --highlight: #ffcc66;
+      --note-underline: #ffcc66;
+      --part-bg: #111111;
+      --part-active-bg: #000000;
+      --shadow-soft: 0 2px 10px rgba(0,0,0,0.6);
+    }
+
+    body[data-theme="yellow-on-black"] {
+      --bg: #000000;
+      --bg-secondary: #111111;
+      --text: #ffff66;
+      --text-soft: #fff59d;
+      --border: #333333;
+      --accent: #fff176;
+      --accent-soft: #424242;
+      --highlight: #ffeb3b;
+      --note-underline: #ffeb3b;
+      --part-bg: #111111;
+      --part-active-bg: #000000;
+      --shadow-soft: 0 2px 10px rgba(0,0,0,0.6);
+    }
+
+    body {
+      margin: 0;
+      font-family: Arial, Helvetica, system-ui, -apple-system, "Segoe UI", sans-serif;
+      font-size: var(--font-size-base);
+      background: var(--bg);
+      color: var(--text);
+      overscroll-behavior: none;
+    }
+
+    body.font-large {
+      --font-size-base: 18px;
+    }
+    body.font-xlarge {
+      --font-size-base: 20px;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    /* Mode overlay (test vs study) */
+    #modeScreen {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.6);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 2000;
+    }
+
+    #modeScreenInner {
+      background: var(--bg);
+      color: var(--text);
+      padding: 24px 28px;
+      border-radius: 12px;
+      max-width: 480px;
+      box-shadow: var(--shadow-soft);
+    }
+
+    #modeScreenInner h1 {
+      margin-top: 0;
+      margin-bottom: 8px;
+      font-size: 1.4rem;
+    }
+
+    #modeScreenInner p {
+      margin-top: 0;
+      margin-bottom: 12px;
+      color: var(--text-soft);
+    }
+
+    .mode-buttons {
+      display: flex;
+      gap: 12px;
+      margin-top: 8px;
+      flex-wrap: wrap;
+    }
+
+    .mode-btn {
+      flex: 1 1 140px;
+      padding: 10px 14px;
+      border-radius: 999px;
+      border: 1px solid var(--accent);
+      background: var(--accent-soft);
+      color: var(--accent);
+      font-weight: 600;
+      cursor: pointer;
+      text-align: center;
+      transition: background 0.15s, transform 0.05s;
+    }
+
+    .mode-btn.secondary {
+      background: transparent;
+      color: var(--accent);
+    }
+
+    .mode-btn:hover {
+      background: var(--accent);
+      color: #fff;
+      transform: translateY(-1px);
+    }
+
+    #testStartScreen {
+      display: none;
+      margin-top: 14px;
+      padding-top: 14px;
+      border-top: 1px solid var(--border);
+    }
+
+    #testStartScreen label {
+      display: block;
+      font-weight: 600;
+      margin-bottom: 8px;
+    }
+
+    #studentNameInput {
+      max-width: 100%;
+      margin-bottom: 10px;
+    }
+
+    #app {
+      display: none;
+    }
+
+    /* Top bar */
+    .top-bar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 56px;
+      background: var(--bg-secondary);
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 20px;
+      z-index: 1000;
+    }
+
+    .top-left {
+      display: flex;
+      align-items: baseline;
+      gap: 16px;
+    }
+
+    .logo {
+      font-weight: 800;
+      font-size: 1.4rem;
+      letter-spacing: 0.08em;
+    }
+
+    /* IELTS Pabs animated logo */
+    .logo.home-link,
+    .logo-link .logo {
+      transition: color 0.2s ease, opacity 0.2s ease;
+    }
+
+    .logo.home-link {
+      cursor: pointer;
+      user-select: none;
+    }
+
+    .logo.home-link:hover,
+    .home-link:hover,
+    .logo-link:hover .logo {
+      color: #e31837;
+      opacity: 1;
+    }
+
+    .logo-char {
+      display: inline-block;
+      opacity: 1;
+      transform: none;
+      filter: none;
+      will-change: transform, opacity, filter;
+    }
+
+    .logo.is-animating .logo-char {
+      animation: logoReveal 0.45s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+      animation-delay: calc(var(--logo-char-index) * 200ms);
+    }
+
+    @keyframes logoReveal {
+      from {
+        opacity: 0;
+        transform: translateY(8px);
+        filter: blur(4px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+        filter: blur(0);
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .logo-char {
+        opacity: 1;
+        transform: none;
+        filter: none;
+        animation: none;
+      }
+    }
+
+    .test-title {
+      font-size: 0.95rem;
+      color: var(--text-soft);
+    }
+
+    .top-right {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      font-size: 0.9rem;
+    }
+
+    #timerContainer {
+      display: none;
+    }
+
+    #timerDisplay {
+      font-weight: 600;
+    }
+
+    .timer-warning {
+      color: var(--danger);
+    }
+
+    .icon-group {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .icon {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 26px;
+      height: 26px;
+      color: var(--text-soft);
+    }
+
+    .icon svg,
+    .icon-button svg {
+      width: 22px;
+      height: 22px;
+      display: block;
+      stroke: currentColor;
+    }
+
+    .icon-button {
+      border: none;
+      background: none;
+      padding: 4px 8px;
+      cursor: pointer;
+      color: var(--text-soft);
+      font-size: 1.3rem;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .icon-button:hover {
+      color: var(--accent);
+    }
+
+    #fullscreenBtn.is-active {
+      color: var(--accent);
+    }
+
+    #fullscreenBtn:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
+
+    .icon-button.with-label {
+      gap: 6px;
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      padding: 6px 10px;
+      font-size: 0.86rem;
+      line-height: 1;
+    }
+
+    #fullscreenSupportNote {
+      display: none;
+      margin-top: 8px;
+      font-size: 0.82rem;
+      color: var(--text-soft);
+    }
+
+    /* Options overlay */
+    #optionsOverlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.55);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 1500;
+    }
+
+    #optionsPanel {
+      background: var(--bg);
+      color: var(--text);
+      width: min(520px, 95vw);
+      padding: 22px 26px;
+      border-radius: 12px;
+      box-shadow: var(--shadow-soft);
+      position: relative;
+    }
+
+    #optionsPanel h2 {
+      margin: 0 0 16px;
+      text-align: center;
+    }
+
+    .options-close {
+      position: absolute;
+      top: 8px;
+      right: 12px;
+      border: none;
+      background: none;
+      font-size: 1.4rem;
+      cursor: pointer;
+      color: var(--text-soft);
+    }
+
+    .options-section {
+      margin-top: 12px;
+      border-top: 1px solid var(--border);
+      padding-top: 10px;
+    }
+
+    .options-section h3 {
+      margin: 4px 0 8px;
+      font-size: 0.95rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--text-soft);
+    }
+
+    .options-list button {
+      width: 100%;
+      text-align: left;
+      padding: 8px 10px;
+      border-radius: 6px;
+      border: 1px solid transparent;
+      background: transparent;
+      color: var(--text);
+      cursor: pointer;
+      margin-bottom: 6px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 0.95rem;
+    }
+
+    .options-list button:hover {
+      border-color: var(--accent);
+      background: var(--accent-soft);
+    }
+
+    .options-list button.active {
+      border-color: var(--accent);
+      background: var(--accent-soft);
+      font-weight: 600;
+      color: var(--text);
+    }
+
+    .submit-button {
+      width: 100%;
+      padding: 10px 14px;
+      border-radius: 999px;
+      border: none;
+      background: #d32f2f;
+      color: #fff;
+      font-weight: 600;
+      cursor: pointer;
+      margin-bottom: 10px;
+      font-size: 1rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+
+    .submit-button:hover {
+      background: #b71c1c;
+    }
+
+    /* Main layout: fixed header + footer, scrollable middle */
+    .main-area {
+      position: fixed;
+      top: 56px;
+      bottom: 64px;
+      left: 0;
+      right: 0;
+      display: flex;
+      justify-content: center;
+      padding: 4px 6px;
+    }
+
+    .main-inner {
+      width: min(1800px, calc(100% - 6px));
+      display: flex;
+      border-radius: 12px;
+      background: var(--bg-secondary);
+      box-shadow: var(--shadow-soft);
+      overflow: hidden;
+      border: none;
+    }
+
+    .pane {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      background: var(--bg);
+    }
+
+    .pane-header {
+      padding: 10px 14px;
+      border-bottom: 1px solid var(--border);
+      background: var(--bg-secondary);
+      font-weight: 600;
+      font-size: 0.98rem;
+    }
+
+    .pane-header span {
+      font-weight: 400;
+      color: var(--text-soft);
+      margin-left: 6px;
+      font-size: 0.9rem;
+    }
+
+    .pane-content {
+      flex: 1;
+      padding: 14px 18px;
+      overflow-y: auto;
+      position: relative;
+    }
+
+    .passage-section h2 {
+      margin-top: 0;
+      margin-bottom: 8px;
+      font-size: 1.1rem;
+    }
+
+    .passage-section h2:not(:first-child) {
+      margin-top: 26px;
+      padding-top: 18px;
+      border-top: 2px solid var(--border);
+    }
+
+    .passage-section h3 {
+      margin-bottom: 6px;
+      margin-top: 18px;
+      font-size: 1rem;
+    }
+
+    .passage-section p {
+      margin: 4px 0;
+      line-height: 1.45;
+    }
+
+    .passage-divider {
+      margin: 32px 0 22px;
+      border-top: 2px solid var(--border);
+      padding-top: 22px;
+    }
+
+    .passage-divider h2 {
+      margin-top: 0;
+    }
+
+    .question-group-heading {
+      margin: 16px 0 10px;
+      padding: 8px 10px;
+      border-left: 4px solid var(--accent);
+      border-radius: 8px;
+      background: var(--accent-soft);
+      font-weight: 600;
+    }
+
+    .question-block {
+      margin-bottom: 10px;
+      padding: 6px 8px;
+      border-radius: 8px;
+      border: 1px solid transparent;
+      background: transparent;
+    }
+
+    .question-block.current-question {
+      border-color: var(--accent);
+      background: var(--accent-soft);
+    }
+
+    .question-block.correct {
+      border-color: var(--correct);
+      background: rgba(67,160,71,0.08);
+    }
+
+    .question-block.incorrect {
+      border-color: var(--incorrect);
+      background: rgba(229,57,53,0.06);
+    }
+
+    .question-number-label {
+      font-weight: 600;
+      margin-right: 6px;
+    }
+
+    .question-text {
+      margin-bottom: 4px;
+    }
+
+    .option-bank,
+    .note-completion-box,
+    .summary-completion-box {
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      background: var(--bg-secondary);
+      padding: 12px 14px;
+      margin: 12px 0 14px;
+    }
+
+    .option-bank-title,
+    .box-title {
+      font-weight: 700;
+      margin-bottom: 8px;
+    }
+
+    .box-title {
+      text-align: center;
+    }
+
+    .option-bank p,
+    .note-completion-box p,
+    .summary-completion-box p {
+      margin: 6px 0;
+      line-height: 1.5;
+    }
+
+    .table-completion-wrap {
+      margin: 12px 0 14px;
+      overflow-x: auto;
+    }
+
+    .table-completion {
+      width: 100%;
+      min-width: 620px;
+      border-collapse: collapse;
+      background: var(--bg-secondary);
+    }
+
+    .table-completion th,
+    .table-completion td {
+      border: 1px solid var(--border);
+      padding: 10px 12px;
+      text-align: left;
+      vertical-align: top;
+      line-height: 1.5;
+    }
+
+    .table-completion th {
+      background: var(--accent-soft);
+      font-weight: 700;
+    }
+
+    .table-completion .table-section-row td {
+      background: var(--bg);
+      font-weight: 700;
+    }
+
+    .table-completion .question-block {
+      margin: 0;
+      padding: 0;
+    }
+
+    .table-completion .correct-answer-text {
+      margin-top: 4px;
+    }
+
+    .note-completion-box {
+      padding: 14px 16px;
+    }
+
+    .note-completion-box .box-title {
+      margin-bottom: 12px;
+    }
+
+    .note-completion-box .question-block {
+      margin: 3px 0;
+      padding: 2px 0;
+    }
+
+    .note-heading {
+      font-weight: 700;
+      line-height: 1.4;
+      margin: 16px 0 8px;
+    }
+
+    .note-line,
+    .note-line-static {
+      display: flex;
+      align-items: flex-start;
+      gap: 8px;
+      padding-left: 10px;
+      margin: 5px 0;
+      line-height: 1.5;
+    }
+
+    .note-line::before,
+    .note-line-static::before {
+      content: "";
+      flex: 0 0 auto;
+      width: 4px;
+      height: 4px;
+      margin-top: 0.68em;
+      border-radius: 50%;
+      background: var(--text-soft);
+    }
+
+    .note-line p {
+      margin: 0;
+      line-height: 1.5;
+    }
+
+    .note-completion-box .inline-input {
+      margin: 1px 2px;
+      vertical-align: middle;
+    }
+
+    .flowchart-completion-box .flowchart-step {
+      margin: 8px 0;
+      padding: 10px 12px;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      background: var(--bg);
+    }
+
+    .flowchart-completion-box .flowchart-arrow {
+      text-align: center;
+      font-size: 1.35rem;
+      line-height: 1;
+      color: var(--text-soft);
+    }
+
+    .inline-question {
+      display: inline;
+      margin: 0;
+      padding: 0 2px;
+      border-radius: 4px;
+    }
+
+    .inline-question.current-question {
+      outline: 2px solid var(--accent);
+      background: var(--accent-soft);
+    }
+
+    .summary-feedbacks {
+      margin-top: 8px;
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    .summary-completion-box .inline-input {
+      margin: 0 2px;
+    }
+
+    .question-block > select {
+      margin-top: 6px;
+    }
+
+    .short-answer-input {
+      margin-top: 8px;
+    }
+
+    .short-answer-input .inline-input.no-number {
+      max-width: 260px;
+    }
+
+    .options-row {
+      margin-top: 8px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .options-row label {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 8px;
+      border-radius: 8px;
+      margin: 0;
+      cursor: pointer;
+      background: var(--bg-secondary);
+      border: 1px solid var(--border);
+    }
+
+    select,
+    input[type="text"] {
+      padding: 6px 8px;
+      border-radius: 6px;
+      border: 1px solid var(--border);
+      font-family: inherit;
+      font-size: 1em;
+      line-height: 1.35;
+      width: 100%;
+      max-width: 260px;
+      background: var(--bg);
+      color: var(--text);
+    }
+
+    select option,
+    select optgroup {
+      background: var(--bg);
+      color: var(--text);
+    }
+
+    input::placeholder,
+    textarea::placeholder {
+      color: var(--text-soft);
+      opacity: 0.9;
+    }
+
+    select:focus,
+    input[type="text"]:focus {
+      outline: 2px solid var(--accent);
+      outline-offset: 1px;
+    }
+
+    .inline-input {
+      position: relative;
+      display: inline-block;
+      vertical-align: middle;
+      min-width: 110px;
+      max-width: 220px;
+    }
+
+    .inline-input::before {
+      content: attr(data-q);
+      position: absolute;
+      left: 1px;
+      top: 1px;
+      bottom: 1px;
+      width: 34px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: 0.85rem;
+      color: var(--text-soft);
+      background: var(--bg-secondary);
+      border-right: 1px solid var(--border);
+      border-radius: 5px 0 0 5px;
+      pointer-events: none;
+    }
+
+    .inline-input input {
+      width: 100%;
+      padding-left: 46px;
+      min-height: 34px;
+      line-height: 1.35;
+    }
+
+    .inline-input.no-number {
+      min-width: 130px;
+    }
+
+    .inline-input.no-number::before {
+      content: none;
+    }
+
+    .inline-input.no-number input {
+      padding-left: 10px;
+    }
+
+    .diagram-image {
+      display: block;
+      width: 100%;
+      max-width: 100%;
+      height: auto;
+      margin: 16px auto;
+    }
+
+    .diagram-answer-panel {
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      background: var(--bg-secondary);
+      padding: 10px 12px;
+      margin: 12px 0 16px;
+    }
+
+    .diagram-answer-panel .question-block:last-child {
+      margin-bottom: 0;
+    }
+
+    .passage-match-source {
+      display: inline-block;
+      padding: 4px 8px;
+      border: 1px dashed transparent;
+      border-radius: 8px;
+      cursor: grab;
+      transition: background 0.15s, border-color 0.15s, color 0.15s;
+    }
+
+    .passage-match-source:hover,
+    .passage-match-source:focus,
+    .passage-match-source.selected {
+      border-color: var(--accent);
+      background: var(--accent-soft);
+      color: var(--accent);
+      outline: none;
+    }
+
+    .matching-source-hint {
+      font-size: 0.9rem;
+      color: var(--text-soft);
+      margin: 10px 0 12px;
+    }
+
+    .drag-bank {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin: 10px 0 14px;
+      padding: 10px;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      background: var(--bg-secondary);
+    }
+
+    .drag-item {
+      width: 34px;
+      height: 34px;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 800;
+      border: 1px solid var(--border);
+      background: var(--bg);
+      cursor: grab;
+      user-select: none;
+    }
+
+    .drag-item.selected {
+      outline: 2px solid var(--accent);
+      outline-offset: 1px;
+    }
+
+    .drag-hint {
+      color: var(--text-soft);
+      font-size: 0.9rem;
+    }
+
+    .drop-zone {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 120px;
+      height: 34px;
+      border-radius: 8px;
+      border: 1px dashed var(--border);
+      background: var(--bg);
+      font-family: inherit;
+      font-size: 1em;
+      font-weight: 800;
+      margin-top: 6px;
+      cursor: pointer;
+    }
+
+    .drop-zone.filled {
+      border-style: solid;
+      border-color: var(--accent);
+      background: var(--accent-soft);
+    }
+
+    .drop-zone.over {
+      border-color: var(--accent);
+    }
+
+    .correct-answer-text {
+      margin-top: 4px;
+      font-size: 0.85rem;
+      color: var(--correct);
+      display: none;
+    }
+
+    /* Bottom navigation */
+    .bottom-nav {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background: var(--bg-secondary);
+      border-top: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      padding: 6px 10px;
+      font-size: 0.92rem;
+      z-index: 900;
+    }
+
+    .bottom-row {
+      width: 100%;
+    }
+
+    .bottom-row-v2 {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      width: 100%;
+    }
+
+    .bottom-left {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      flex: 1;
+      min-width: 0;
+    }
+
+    .part-summary-row {
+      display: flex;
+      gap: 8px;
+      min-width: max-content;
+      flex: 0 0 auto;
+      white-space: nowrap;
+    }
+
+    #questionNumbers {
+      display: flex;
+      flex: 1;
+      flex-wrap: nowrap;
+      overflow-x: auto;
+      gap: 5px;
+      padding: 1px 5px;
+      min-width: 0;
+      justify-content: flex-start;
+    }
+
+    .part-chip {
+      padding: 8px 12px;
+      border-radius: 999px;
+      background: var(--part-bg);
+      border: 1px solid transparent;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 0.94rem;
+      justify-content: center;
+      transition: background 0.1s, border-color 0.1s, color 0.1s;
+      text-align: center;
+      width: auto;
+      min-width: max-content;
+      flex: 0 0 auto;
+      white-space: nowrap;
+    }
+
+    .part-chip span.count {
+      color: var(--text-soft);
+      font-size: 0.85rem;
+      white-space: nowrap;
+    }
+
+    .part-chip.active {
+      background: var(--part-active-bg);
+      border-color: var(--accent);
+      font-weight: 600;
+    }
+
+    .part-chip.complete {
+      border-color: var(--correct);
+      color: var(--correct);
+    }
+
+    .part-chip.partial {
+      border-color: var(--orange);
+      color: var(--orange);
+    }
+
+    .part-chip.unopened {
+      color: var(--text-soft);
+      border-color: transparent;
+    }
+
+    #questionNumbers {
+      scroll-behavior: smooth;
+    }
+
+    .qnav {
+      min-width: 30px;
+      padding: 4px 7px;
+      border-radius: 8px;
+      text-align: center;
+      border: 1px solid var(--border);
+      background: var(--bg);
+      cursor: pointer;
+      font-size: 0.9rem;
+      font-weight: 700;
+      flex-shrink: 0;
+    }
+
+    .qnav.current {
+      border-color: var(--accent);
+      background: var(--accent-soft);
+      font-weight: 600;
+    }
+
+    .qnav.answered {
+      border-color: var(--correct);
+      background: rgba(67,160,71,0.12);
+    }
+
+    .qnav.unanswered {
+      opacity: 0.7;
+    }
+
+    .section-arrows {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .arrow-btn,
+    .check-btn {
+      border-radius: 6px;
+      border: none;
+      padding: 6px 10px;
+      cursor: pointer;
+      font-size: 0.9rem;
+      background: var(--bg-secondary);
+      border: 1px solid var(--border);
+      color: var(--text);
+    }
+
+    .arrow-btn:hover {
+      border-color: var(--accent);
+      background: var(--accent-soft);
+    }
+
+    .check-btn {
+      background: var(--accent);
+      color: #fff;
+      border-color: var(--accent);
+      font-weight: 600;
+    }
+
+    .check-btn:hover {
+      background: #00429b;
+    }
+
+    /* Highlight & notes toolbar */
+    #selectionToolbar {
+      position: absolute;
+      padding: 4px 6px;
+      background: #222;
+      color: #fff;
+      border-radius: 999px;
+      display: none;
+      z-index: 1200;
+      font-size: 0.8rem;
+      gap: 4px;
+    }
+
+    #selectionToolbar button {
+      border: none;
+      background: transparent;
+      color: inherit;
+      padding: 4px 8px;
+      border-radius: 999px;
+      cursor: pointer;
+      font-size: 0.8rem;
+    }
+
+    #selectionToolbar button:hover {
+      background: rgba(255,255,255,0.18);
+    }
+
+    .highlighted {
+      background: var(--highlight);
+    }
+
+    .note-anchor {
+      text-decoration: underline;
+      text-decoration-color: var(--note-underline);
+      text-decoration-style: solid;
+      text-decoration-thickness: 2px;
+      position: relative;
+      cursor: pointer;
+    }
+
+    .note-anchor .note-delete {
+      position: absolute;
+      top: -10px;
+      right: -10px;
+      width: 16px;
+      height: 16px;
+      border-radius: 50%;
+      border: none;
+      font-size: 0.7rem;
+      padding: 0;
+      line-height: 16px;
+      text-align: center;
+      background: var(--danger);
+      color: #fff;
+      display: none;
+      cursor: pointer;
+    }
+
+    .note-anchor:hover .note-delete {
+      display: inline-block;
+    }
+
+    .note-window {
+      position: absolute;
+      min-width: 200px;
+      min-height: 120px;
+      max-width: 340px;
+      background: var(--bg);
+      color: var(--text);
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      box-shadow: var(--shadow-soft);
+      z-index: 1300;
+      display: flex;
+      flex-direction: column;
+      resize: both;
+      overflow: hidden;
+    }
+
+    .note-header {
+      padding: 4px 8px;
+      border-bottom: 1px solid var(--border);
+      background: var(--bg-secondary);
+      cursor: move;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 0.8rem;
+    }
+
+    .note-body {
+      flex: 1;
+      padding: 6px;
+    }
+
+    .note-body textarea {
+      width: 100%;
+      height: 100%;
+      border: none;
+      outline: none;
+      background: transparent;
+      color: inherit;
+      resize: none;
+      font-size: 0.85rem;
+    }
+
+    .note-footer {
+      padding: 4px 6px;
+      text-align: right;
+      border-top: 1px solid var(--border);
+    }
+
+    .note-footer button {
+      border: none;
+      background: none;
+      color: var(--accent);
+      cursor: pointer;
+      font-size: 0.8rem;
+    }
+
+    /* Results overlay */
+    #resultsOverlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.6);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 1600;
+    }
+
+    #resultsPanel {
+      background: var(--bg);
+      color: var(--text);
+      padding: 22px 26px;
+      border-radius: 12px;
+      box-shadow: var(--shadow-soft);
+      max-width: 520px;
+      width: 95vw;
+    }
+
+    #resultsPanel h2 {
+      margin-top: 0;
+      margin-bottom: 10px;
+    }
+
+    #resultsPanel p {
+      margin: 6px 0;
+    }
+
+    #fullscreenLockOverlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.72);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 1700;
+    }
+
+    #fullscreenLockPanel {
+      background: var(--bg);
+      color: var(--text);
+      padding: 24px 28px;
+      border-radius: 12px;
+      box-shadow: var(--shadow-soft);
+      max-width: 520px;
+      width: 92vw;
+      text-align: center;
+    }
+
+    #fullscreenLockPanel h2 {
+      margin-top: 0;
+    }
+
+    #fullscreenLockPanel p {
+      margin: 10px 0 18px;
+    }
+
+    #shortcutToast {
+      position: fixed;
+      left: 50%;
+      bottom: 86px;
+      transform: translateX(-50%);
+      padding: 9px 14px;
+      border-radius: 999px;
+      border: 1px solid var(--border);
+      background: var(--bg-secondary);
+      color: var(--text);
+      font-size: 0.85rem;
+      box-shadow: var(--shadow-soft);
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.2s ease;
+      z-index: 1600;
+    }
+
+    #shortcutToast.visible {
+      opacity: 1;
+    }
+
+    /* Utility */
+    .sr-only {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      padding: 0;
+      margin: -1px;
+      overflow: hidden;
+      clip: rect(0,0,0,0);
+      white-space: nowrap;
+      border: 0;
+    }
+
+    @media (max-width: 900px) {
+      .main-inner {
+        flex-direction: column;
+      }
+      .divider {
+        display: none;
+      }
+    }
+
+    .passage-section,
+    .passage-section p,
+    .pane-content {
+      word-break: normal;
+      overflow-wrap: normal;
+      hyphens: none;
+    }
+
+    .highlighted,
+    .note-anchor {
+      word-break: normal;
+      overflow-wrap: normal;
+      hyphens: none;
+    }
+
+    .divider {
+      width: 18px;
+      min-width: 18px;
+      background: linear-gradient(90deg, transparent 0, transparent 6px, rgba(120,120,120,0.35) 6px, rgba(120,120,120,0.35) 12px, transparent 12px, transparent 100%);
+      cursor: col-resize;
+      position: relative;
+      touch-action: none;
+    }
+
+    .divider::after {
+      content: "⇄";
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 34px;
+      height: 34px;
+      border-radius: 50%;
+      border: 2px solid #0d3d73;
+      background: #03284f;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.3rem;
+      line-height: 1;
+      color: #fff;
+      opacity: 0.98;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.2);
+    }
+  </style>
+</head>
+<body data-theme="black-on-white">
+  <!-- Mode selection -->
+  <div id="modeScreen">
+    <div id="modeScreenInner">
+      <h1>IELTS 17 General Training Reading Test 4</h1>
+      <p>Select how you want to use this test.</p>
+      <div class="mode-buttons">
+        <button
+          class="mode-btn"
+          data-mode="test"
+          type="button"
+        >
+          Test mode (exam conditions)
+        </button>
+        <button
+          class="mode-btn secondary"
+          data-mode="study"
+          type="button"
+        >
+          Study mode (show feedback)
+        </button>
+      </div>
+      <p style="font-size:0.8rem;margin-top:10px;color:var(--text-soft);">
+        In both modes you can highlight text and make notes. In Test mode you submit once at the end. In Study mode you can check and change your answers as many times as you like.
+      </p>
+
+      <div id="testStartScreen">
+        <label for="studentNameInput">Your name (for test mode results)</label>
+        <input type="text" id="studentNameInput" placeholder="Enter your full name" maxlength="80" />
+        <button class="mode-btn" type="button" onclick="window.beginTimedTest && window.beginTimedTest()">Start the test now</button>
+        <p id="fullscreenSupportNote">Full screen enforcement is limited on this device.</p>
+      </div>
+    </div>
+  </div>
+
+  <div id="app">
+    <!-- Top bar -->
+    <header class="top-bar">
+      <div class="top-left">
+        <div class="logo home-link" onclick="confirmGoHome()" title="Return to home">IELTS Pabs</div>
+        <div class="test-title">
+          Reading Test 4 – General Training – Cambridge 17
+        </div>
+      </div>
+      <div class="top-right">
+        <div id="timerContainer" role="status" aria-live="polite" aria-atomic="true" aria-hidden="true">Time left: <span id="timerDisplay">60:00</span></div>
+        <div class="icon-group">
+          <span class="icon" title="Connection status">
+            <span class="sr-only">Connection status</span>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M4.93 9.93a10.5 10.5 0 0 1 14.14 0" />
+              <path d="M7.76 12.76a6.5 6.5 0 0 1 8.48 0" />
+              <path d="M10.59 15.59a2.5 2.5 0 0 1 2.82 0" />
+              <path d="M12 18h.01" />
+            </svg>
+          </span>
+          <span class="icon" title="Notifications (mock)">
+            <span class="sr-only">Notifications</span>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M15 17h5l-1.4-1.4A2 2 0 0 1 18 14.17V11a6 6 0 1 0-12 0v3.17a2 2 0 0 1-.59 1.43L4 17h5" />
+              <path d="M9 17a3 3 0 0 0 6 0" />
+            </svg>
+          </span>
+          <button id="fullscreenBtn" class="icon-button with-label" title="Enter full screen" aria-label="Enter full screen" onclick="toggleFullscreen()">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <polyline points="8 3 3 3 3 8"></polyline>
+              <line x1="3" y1="3" x2="9" y2="9"></line>
+              <polyline points="16 21 21 21 21 16"></polyline>
+              <line x1="15" y1="15" x2="21" y2="21"></line>
+              <polyline points="21 8 21 3 16 3"></polyline>
+              <line x1="15" y1="9" x2="21" y2="3"></line>
+              <polyline points="3 16 3 21 8 21"></polyline>
+              <line x1="3" y1="21" x2="9" y2="15"></line>
+            </svg><span id="fullscreenBtnLabel">Full screen</span>
+          </button>
+          <button id="optionsBtn" class="icon-button" title="Options menu" aria-label="Options menu">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="4" y1="7" x2="20" y2="7" />
+              <line x1="4" y1="12" x2="20" y2="12" />
+              <line x1="4" y1="17" x2="16" y2="17" />
+            </svg>
+          </button>
+        </div>
+      </div>
+    </header>
+
+    <!-- Options overlay -->
+    <div id="optionsOverlay">
+      <div id="optionsPanel">
+        <button class="options-close" onclick="toggleOptions(false)">✕</button>
+        <h2>Options</h2>
+
+        <button class="submit-button" onclick="handlePrimarySubmit()">
+          ✔ Submit test &amp; check answers
+        </button>
+
+        <div class="options-section">
+          <h3>Contrast</h3>
+          <div class="options-list">
+            <button id="theme-black-white" onclick="setTheme('black-on-white')">
+              <span>Black on white</span><span>✓</span>
+            </button>
+            <button id="theme-white-black" onclick="setTheme('white-on-black')">
+              <span>White on black</span><span>✓</span>
+            </button>
+            <button id="theme-yellow-black" onclick="setTheme('yellow-on-black')">
+              <span>Yellow on black</span><span>✓</span>
+            </button>
+          </div>
+        </div>
+
+        <div class="options-section">
+          <h3>Text size</h3>
+          <div class="options-list">
+            <button id="font-normal" onclick="setFontSize('normal')">
+              <span>Normal</span><span>✓</span>
+            </button>
+            <button id="font-large" onclick="setFontSize('large')">
+              <span>Large</span><span>✓</span>
+            </button>
+            <button id="font-xlarge" onclick="setFontSize('xlarge')">
+              <span>Extra large</span><span>✓</span>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Main content area -->
+    <div class="main-area">
+      <div class="main-inner">
+        <!-- Passage pane -->
+        <div class="pane" id="passagePane">
+          <div class="pane-header" id="passageHeader">
+            Part 1 <span>Read the text and answer questions 1–14.</span>
+          </div>
+          <div class="pane-content" id="passageContent">
+            <!-- Section 1 passages -->
+            <div class="passage-section" data-section="1">
+              <h2>Outdoor activities for all the family</h2>
+
+              <h3>A Perry Forest</h3>
+              <p>Our walks cater for all ages and all degrees of fitness, and are suitable for children as well as adults. Every Saturday and Sunday throughout the year our experts lead several walks. So whether you want a short stroll on level ground, or a more challenging walk to the top of Shepherds Hill, we have something for you.</p>
+
+              <h3>B Pugsley Beach Nature Reserve</h3>
+              <p>The reserve has plenty of wildlife, whatever the time of year, with its numerous species of birds, and plants that grow hardly anywhere else, but the autumn is when hundreds of grey seals arrive on the beach to have their young. The covered viewing area offers spectacular close-up views of all this, and hot drinks and snacks are available to help you keep warm.</p>
+
+              <h3>C Marston Hall</h3>
+              <p>If you ever wonder what wildlife trusts do for the environment, come to Marston Hall, where our rangers will show you how they manage wildlife habitats, from providing feeding boxes for squirrels to creating ponds for frogs and many other creatures. They’ll also take you on a short walk through the ancient pine forest in search of animal tracks and signs.</p>
+
+              <h3>D Craven Discovery Centre</h3>
+              <p>Here at the discovery centre, youngsters are introduced to the animals in our petting zoo, where they can stroke or feed the sheep, rabbits, ponies and other residents. Then they’re taken on a walk through the wood. Meanwhile, the adults can take part in one of our woodland activities, such as learning basic woodworking skills.</p>
+
+              <h3>E Shelford Family Wild Outing</h3>
+              <p>Go birdwatching or catch insects as daylight fades, then have a gentle jog along the River Wale by moonlight, and end by toasting marshmallows on a campfire. It’s all part of a Family Wild Outing in Shelford, organised by the local wildlife trust. Ideal for both adults and children.</p>
+
+              <h3>F Garston Park</h3>
+              <p>Come to Garston Park when the sun has set and explore the solar system. Ideal for children — and their parents — who are interested in astronomy. Our experts will help you to find your way among the stars, and then we gather in the visitor centre for refreshments. Please note that events are cancelled if the weather is cloudy.</p>
+
+              <div class="passage-divider">
+                <h2>Hinchingbrooke School Sixth Form</h2>
+                <p>Hinchingbrooke School consists of the lower school, for students aged 11 to 16, and the sixth form, for ages 16 to 18+. In the sixth form we provide a strong programme of guidance for students, whether they are planning on going to university, into training or straight into the workplace. We have a high rate of success with applications to universities, including growing success in recent years for medical school applicants.</p>
+                <p>While the majority of sixth-form students enter from the lower school, recent significant expansion of the sixth form is largely the result of an increase in applicants from other schools in the area. We pride ourselves on giving these external students a particularly warm welcome. We welcome your interest in joining our sixth form and look forward to offering you a place if you satisfy our minimum entry requirements.</p>
+                <p>If you are an internal student, please apply through the MyChoice16 application system. This is also where external students need to view course information. If you are an external student whose current school does not use MyChoice16 for online applications, please see our website for an application form to the school. We hold an annual Open Evening in the autumn term when you can come and view our facilities and ask any questions you may have.</p>
+                <p>Care, guidance and support in the sixth form at Hinchingbrooke is something of which we are very proud, and each of our students is treated as an individual. You will be assigned a professional sixth-form tutor who will provide you with support and guidance, and will be responsible for helping you make sensible choices about your future career path.</p>
+                <p>You will meet with your tutor at a fixed time every fortnight to discuss progress and any concerns you or your subject teachers may have about your effort and achievement. You will also set targets for yourself, in agreement with your tutor and subject teachers, and your progress towards achieving these targets will be monitored in your tutor meetings.</p>
+              </div>
+            </div>
+
+            <!-- Section 2 passages -->
+            <div class="passage-section" data-section="2">
+              <h2>Tree cutters at work</h2>
+              <p>Tree surgeon Ivars Balodis describes the teamwork involved in cutting down a large tree</p>
+              <p>Today the tree-cutting team consists of myself, Gary and Mikael. We’re going to cut down a tall tree that is inside the boundary of a busy timber yard. It’s Saturday — not a working day for the yard — and it is far easier to remove a tree when no-one else is around. As supervisor, I first pop into our office to sort out the paperwork for the day, which includes the risk assessments. Then I look at the most up-to-date weather forecast as wind and rain make our job much more difficult. Luckily, we’ve picked a good day.</p>
+              <p>Next, we load up the equipment — things like petrol-driven chainsaws of varying sizes, helmets and waterproofs, spades, rakes and other tools, etc. must all go on the truck before the three of us set off. On arrival at the site, we have a quick discussion on the procedure for the day. After that, one of us — today it’s Gary — goes up the tree to quickly select his anchor point. This is the position from which he’ll cut down the tree. It must be high enough to enable access throughout the tree’s branches, but also have sufficient strength to support the climber. The first few big branches can be cut from the tree in large pieces and dropped into the yard, so we make good progress during the morning and start our wood pile there.</p>
+              <p>Having removed the more accessible branches, we have lunch and then set up a simple system to reach the smaller upper branches. This involves placing a pulley in the tree and using thick rope to drag the branches down. When they’re cut, these will fall further away — outside the boundary of the yard. On the other side of the perimeter fence is a wide grass verge and then a footpath, where I set up a number of signs to alert the public to our activities. Working alongside a road requires vigilance, so I monitor the movements of pedestrians, and as Gary starts work, I watch what he’s doing, so I can ensure safety. Once the branches are on the ground, I throw them back over the fence to Mikael, who cuts them up and feeds the machine that dices them into very small pieces called wood chippings.</p>
+
+              <div class="passage-divider">
+                <h2>Plumbing skills</h2>
+                <p>Plumbers install and repair the equipment and pipes needed to carry water, gas and waste in homes and other buildings.</p>
+                <p>In a residential building, such as a block of flats, underfloor jobs that involve plumbing, mechanical and electrical systems are common. They may need to take place in a narrow space that is often only about 35 centimetres deep. In addition, the floors are typically covered with a wood product, engineered to resemble solid wood, that has very strict criteria as far as drilling and cutting are concerned. The plumber cannot just go in and cut holes and lay pipes. He must first think about what he is doing, read and understand the cutting chart that accompanies each of his tools and visualise how his work will impact on other tradespeople, before proceeding.</p>
+                <p>Commercial plumbers working on office buildings, hotels, restaurants, etc. have the same issues and co-ordination problems as residential plumbers, but often have to install equipment that is more sophisticated. This is because it forms part of integrated systems where mechanical work and plumbing work are combined. The equipment will have specific installation instructions, so it is critical that the plumber has the cognitive ability to understand these. In addition, often the structures are complex, and the floors and walls must be X-rayed prior to drilling in order to avoid hitting key elements such as reinforcing steel.</p>
+                <p>Service plumbers go in where others have been and often face situations where they must troubleshoot various possible causes of a plumbing problem. In order to do this effectively, they must have complete knowledge of, say, a customer’s shower unit they are servicing, even if they did not install it! They must have the ability to translate the symptoms they can see, such as leaks and blockages, into the actual problem and then take the appropriate action to rectify the issue in a fast and cost-effective way. Often service plumbers encounter residential or commercial customers who are either facing great inconvenience or have had their operations severely disrupted because of a plumbing issue. Successful service plumbers not only need good mechanical skills, but they typically need very good people skills to provide the necessary support.</p>
+              </div>
+            </div>
+
+            <!-- Section 3 passage -->
+            <div class="passage-section" data-section="3">
+              <h2>Forced rhubarb</h2>
+              <p>Rhubarb has large fan-shaped leaves and long, green edible stalks, which are commonly cooked, with sugar to make pies and other desserts. One type of rhubarb is grown in the dark to produce longer, rosier stalks and this is called ‘forced rhubarb’</p>
+
+              <h3>A</h3>
+              <p>In the north of England, a cold winter is good news for some, and not just snowmen and woolly hat makers. According to Yorkshire farmer David Westwood, this year’s forced rhubarb is the best for years. Westwood, a softly spoken Yorkshireman, should know. He’s been growing and selling rhubarb for 62 years, since he started picking on the farm aged 11. His son Jonathan works on the farm too, making him the sixth generation of the Westwoods to grow the pink stems or ‘petioles’ as they are otherwise known.</p>
+
+              <h3>B</h3>
+              <p>We meet at his farm, a few miles from the city of Wakefield, which with the cities of Bradford and Leeds form the three points of the Rhubarb Triangle, the heart of the British rhubarb industry. ‘It doesn’t grow as well anywhere else,’ insists Westwood. He has a number of theories as to why this is. The loam soil on a clay base is perfect for the roots or ‘crowns’ which rhubarb grows from. In Victorian times — the mid-to-late 1800s – when rhubarb’s popularity was at its peak, the local coal mines provided cheap fuel for heating the sheds, a crucial part of the forcing process, which involves depriving the plants of light as they develop. At the same time, the effluence from the industry enriched the soil for farmers. On top of that, according to Westwood, the high levels of pollution in the air would have been ideal for the rhubarb, as ‘rhubarb loves soot’.</p>
+
+              <h3>C</h3>
+              <p>Westwood’s farm produces both the greenish outdoor rhubarb, the kind that grows well in gardens all over the country, and the startlingly pink forced rhubarb. It’s this that is the ‘cream of the crop’, the upper class of the rhubarb family. Forced rhubarb is the one that’s most likely to convert rhubarb-haters who’ve been traumatised by harshly flavoured school pies made from green overgrown outdoor stems. The slender magenta spears, with a sherbet-tangy flavour and delicate texture, are a far cry from that coarse, bitter stuff. It’s also a rare local fruit (although technically a vegetable) at a time when imports dominate, and a welcome splash of colour in the drab winter months. No wonder chefs and food writers have fallen in love with forced rhubarb all over again. It’s enjoying a remarkable renaissance, for only 20 years ago it was in such decline that Westwood, one of the last 12 growers left from a peak of 200, was considering abandoning it.</p>
+
+              <h3>D</h3>
+              <p>There are certainly simpler ways to grow food. First the plant roots, or crowns, are grown outside for more than two years. Then, at the start of their third winter, they are left in the ground until it is cold enough to break the crowns’ dormancy. This is one of the factors that gives British rhubarb the edge over imports from the Netherlands, which arrive in the country a scene-stealing couple of weeks before the Yorkshire crop. To bring them to market that early, the Dutch crowns are fed with gibberellic acid, to replace the hormones naturally generated by a period of cold weather. Westwood is relaxed on the subject of the imported rhubarb, remarking only: ‘It’s good-looking all right, but the flavour’s nowhere near.’ Back in Yorkshire, sometime around the middle of November, the crowns are dug up, transferred to sheds with earthen floors, and watered in. The light is blocked out completely and the heating is turned on. In the warm and dark, the shoots appear so quickly that the buds can be heard gently popping. Within three weeks or so, the first round of picking, or ‘pulling’ as it’s known, can begin.</p>
+
+              <h3>E</h3>
+              <p>In Westwood’s 1920s rhubarb sheds, it is pitch black. I slip and slide on the narrow troughs that serve as paths between the beds of rhubarb crowns. It’s a relief when a team of ‘pullers’ arrive, all local men, some of whom have been working for Westwood for 40 years. Each carries a sturdy candle, and their pale flickering light reveals a sea of yellow leaves stretching 40 metres to the far wall. The men walk the beds plucking the satiny stems expertly, choosing only the ones that have reached the length of an arm. Then, cradling the fuchsia pink bundles in their arms, they move on to the next patch. It’s an extraordinary sight in this age of mechanised, computerised agriculture. ‘The pulling’s done much the same way as it always has been,’ Westwood says. ‘Electric light spoils the colour.’ A labour-intensive process, it goes some way to explain the admittedly eye-watering price of the best forced rhubarb – that and the heating, now from oil or propane rather than coal.</p>
+
+              <h3>F</h3>
+              <p>So how was this arcane cold-dark-heat process, in use since Victorian times, discovered? Westwood’s story is appealingly earthy. A gardener threw an old crown onto the horse stable muck pile. The manure was hot, and the plant was soon covered. The stable boy must have been puzzled by the startling pink spears that came pushing through the dirt a week or two later, but happily he had the good sense to gather them. Where there’s muck there’s money – and good eating indeed.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="divider" id="divider"></div>
+
+        <!-- Questions pane -->
+        <div class="pane" id="questionPane">
+          <div class="pane-header" id="questionHeader">
+            Questions 1–14
+          </div>
+          <div class="pane-content" id="questionContent">
+            <!-- Section 1 questions -->
+            <div data-section="1">
+              <p class="question-group-heading">Read “Outdoor activities for all the family” and answer Questions 1 to 7.</p>
+              <p><strong>Questions 1 to 7</strong></p>
+              <p>The text has six advertisements, A to F.</p>
+              <p>Which advertisement mentions the following?</p>
+              <p>For Questions 1 to 7, choose the correct letter, A to F.</p>
+              <p><strong>NB</strong> You may use any letter more than once.</p>
+              <div class="option-bank" aria-label="List of Advertisements">
+                <div class="option-bank-title">List of Advertisements</div>
+                <p><strong>A</strong> Perry Forest</p>
+                <p><strong>B</strong> Pugsley Beach Nature Reserve</p>
+                <p><strong>C</strong> Marston Hall</p>
+                <p><strong>D</strong> Craven Discovery Centre</p>
+                <p><strong>E</strong> Shelford Family Wild Outing</p>
+                <p><strong>F</strong> Garston Park</p>
+                <div class="drag-bank" aria-label="Draggable advertisement letters">
+                  <div class="drag-item" draggable="true" data-value="A" tabindex="0" role="button" aria-label="Use A, Perry Forest, as an answer">A</div>
+                  <div class="drag-item" draggable="true" data-value="B" tabindex="0" role="button" aria-label="Use B, Pugsley Beach Nature Reserve, as an answer">B</div>
+                  <div class="drag-item" draggable="true" data-value="C" tabindex="0" role="button" aria-label="Use C, Marston Hall, as an answer">C</div>
+                  <div class="drag-item" draggable="true" data-value="D" tabindex="0" role="button" aria-label="Use D, Craven Discovery Centre, as an answer">D</div>
+                  <div class="drag-item" draggable="true" data-value="E" tabindex="0" role="button" aria-label="Use E, Shelford Family Wild Outing, as an answer">E</div>
+                  <div class="drag-item" draggable="true" data-value="F" tabindex="0" role="button" aria-label="Use F, Garston Park, as an answer">F</div>
+                </div>
+              </div>
+              <p class="matching-source-hint">Drag an advertisement letter to an answer box, or click a letter and then click an answer box. You can also type A–F while focused on an answer box.</p>
+              <div class="question-block" data-q="1">
+                <div class="question-text"><span class="question-number-label">1.</span> running in the evening</div>
+                <select class="sr-only" name="q1"><option value="">Select…</option><option value="A">A</option><option value="B">B</option><option value="C">C</option><option value="D">D</option><option value="E">E</option><option value="F">F</option></select>
+                <div class="drop-zone" data-for="q1" tabindex="0" role="button" aria-label="Answer box for question 1">Drop here</div>
+                <div class="correct-answer-text" id="ca-1"></div>
+              </div>
+              <div class="question-block" data-q="2">
+                <div class="question-text"><span class="question-number-label">2.</span> seeing newborn animals</div>
+                <select class="sr-only" name="q2"><option value="">Select…</option><option value="A">A</option><option value="B">B</option><option value="C">C</option><option value="D">D</option><option value="E">E</option><option value="F">F</option></select>
+                <div class="drop-zone" data-for="q2" tabindex="0" role="button" aria-label="Answer box for question 2">Drop here</div>
+                <div class="correct-answer-text" id="ca-2"></div>
+              </div>
+              <div class="question-block" data-q="3">
+                <div class="question-text"><span class="question-number-label">3.</span> parents and children doing different activities at the same time</div>
+                <select class="sr-only" name="q3"><option value="">Select…</option><option value="A">A</option><option value="B">B</option><option value="C">C</option><option value="D">D</option><option value="E">E</option><option value="F">F</option></select>
+                <div class="drop-zone" data-for="q3" tabindex="0" role="button" aria-label="Answer box for question 3">Drop here</div>
+                <div class="correct-answer-text" id="ca-3"></div>
+              </div>
+              <div class="question-block" data-q="4">
+                <div class="question-text"><span class="question-number-label">4.</span> choosing from alternative routes</div>
+                <select class="sr-only" name="q4"><option value="">Select…</option><option value="A">A</option><option value="B">B</option><option value="C">C</option><option value="D">D</option><option value="E">E</option><option value="F">F</option></select>
+                <div class="drop-zone" data-for="q4" tabindex="0" role="button" aria-label="Answer box for question 4">Drop here</div>
+                <div class="correct-answer-text" id="ca-4"></div>
+              </div>
+              <div class="question-block" data-q="5">
+                <div class="question-text"><span class="question-number-label">5.</span> learning about how other people help animals</div>
+                <select class="sr-only" name="q5"><option value="">Select…</option><option value="A">A</option><option value="B">B</option><option value="C">C</option><option value="D">D</option><option value="E">E</option><option value="F">F</option></select>
+                <div class="drop-zone" data-for="q5" tabindex="0" role="button" aria-label="Answer box for question 5">Drop here</div>
+                <div class="correct-answer-text" id="ca-5"></div>
+              </div>
+              <div class="question-block" data-q="6">
+                <div class="question-text"><span class="question-number-label">6.</span> an event occurring only at a certain time of the year</div>
+                <select class="sr-only" name="q6"><option value="">Select…</option><option value="A">A</option><option value="B">B</option><option value="C">C</option><option value="D">D</option><option value="E">E</option><option value="F">F</option></select>
+                <div class="drop-zone" data-for="q6" tabindex="0" role="button" aria-label="Answer box for question 6">Drop here</div>
+                <div class="correct-answer-text" id="ca-6"></div>
+              </div>
+              <div class="question-block" data-q="7">
+                <div class="question-text"><span class="question-number-label">7.</span> identifying where animals have been</div>
+                <select class="sr-only" name="q7"><option value="">Select…</option><option value="A">A</option><option value="B">B</option><option value="C">C</option><option value="D">D</option><option value="E">E</option><option value="F">F</option></select>
+                <div class="drop-zone" data-for="q7" tabindex="0" role="button" aria-label="Answer box for question 7">Drop here</div>
+                <div class="correct-answer-text" id="ca-7"></div>
+              </div>
+
+              <p class="question-group-heading">Read “Hinchingbrooke School Sixth Form” and answer Questions 8 to 14.</p>
+              <p><strong>Questions 8 to 14</strong></p>
+              <p>Do the following statements agree with the information given in the text?</p>
+              <p>For Questions 8 to 14, choose</p>
+              <p><strong>TRUE</strong> if the statement agrees with the information</p>
+              <p><strong>FALSE</strong> if the statement contradicts the information</p>
+              <p><strong>NOT GIVEN</strong> if there is no information on this</p>
+              <div class="question-block" data-q="8">
+                <div class="question-text"><span class="question-number-label">8.</span> Some sixth-form students intend to start work immediately after leaving school.</div>
+                <div class="options-row">
+                  <label><input type="radio" name="q8" value="TRUE"> TRUE</label>
+                  <label><input type="radio" name="q8" value="FALSE"> FALSE</label>
+                  <label><input type="radio" name="q8" value="NOT GIVEN"> NOT GIVEN</label>
+                </div>
+                <div class="correct-answer-text" id="ca-8"></div>
+              </div>
+              <div class="question-block" data-q="9">
+                <div class="question-text"><span class="question-number-label">9.</span> An increasing number of students are accepted at medical school.</div>
+                <div class="options-row">
+                  <label><input type="radio" name="q9" value="TRUE"> TRUE</label>
+                  <label><input type="radio" name="q9" value="FALSE"> FALSE</label>
+                  <label><input type="radio" name="q9" value="NOT GIVEN"> NOT GIVEN</label>
+                </div>
+                <div class="correct-answer-text" id="ca-9"></div>
+              </div>
+              <div class="question-block" data-q="10">
+                <div class="question-text"><span class="question-number-label">10.</span> Most sixth-form students come from other schools.</div>
+                <div class="options-row">
+                  <label><input type="radio" name="q10" value="TRUE"> TRUE</label>
+                  <label><input type="radio" name="q10" value="FALSE"> FALSE</label>
+                  <label><input type="radio" name="q10" value="NOT GIVEN"> NOT GIVEN</label>
+                </div>
+                <div class="correct-answer-text" id="ca-10"></div>
+              </div>
+              <div class="question-block" data-q="11">
+                <div class="question-text"><span class="question-number-label">11.</span> External applicants have an interview before they can be accepted.</div>
+                <div class="options-row">
+                  <label><input type="radio" name="q11" value="TRUE"> TRUE</label>
+                  <label><input type="radio" name="q11" value="FALSE"> FALSE</label>
+                  <label><input type="radio" name="q11" value="NOT GIVEN"> NOT GIVEN</label>
+                </div>
+                <div class="correct-answer-text" id="ca-11"></div>
+              </div>
+              <div class="question-block" data-q="12">
+                <div class="question-text"><span class="question-number-label">12.</span> Applications to the sixth form can only be made through the MyChoice16 website.</div>
+                <div class="options-row">
+                  <label><input type="radio" name="q12" value="TRUE"> TRUE</label>
+                  <label><input type="radio" name="q12" value="FALSE"> FALSE</label>
+                  <label><input type="radio" name="q12" value="NOT GIVEN"> NOT GIVEN</label>
+                </div>
+                <div class="correct-answer-text" id="ca-12"></div>
+              </div>
+              <div class="question-block" data-q="13">
+                <div class="question-text"><span class="question-number-label">13.</span> External applicants can talk to current students at the Open Evening.</div>
+                <div class="options-row">
+                  <label><input type="radio" name="q13" value="TRUE"> TRUE</label>
+                  <label><input type="radio" name="q13" value="FALSE"> FALSE</label>
+                  <label><input type="radio" name="q13" value="NOT GIVEN"> NOT GIVEN</label>
+                </div>
+                <div class="correct-answer-text" id="ca-13"></div>
+              </div>
+              <div class="question-block" data-q="14">
+                <div class="question-text"><span class="question-number-label">14.</span> Students meet their tutor whenever one of them requests a meeting.</div>
+                <div class="options-row">
+                  <label><input type="radio" name="q14" value="TRUE"> TRUE</label>
+                  <label><input type="radio" name="q14" value="FALSE"> FALSE</label>
+                  <label><input type="radio" name="q14" value="NOT GIVEN"> NOT GIVEN</label>
+                </div>
+                <div class="correct-answer-text" id="ca-14"></div>
+              </div>
+            </div>
+
+        <div data-section="2" style="display:none;">
+          <p><strong>SECTION 2 Questions 15 to 27</strong></p>
+
+          <p class="question-group-heading">Read “Tree cutters at work” and answer Questions 15 to 21.</p>
+          <p><strong>Questions 15 to 21</strong></p>
+          <p>Complete the flowchart below.</p>
+          <p>Choose <strong>ONE WORD ONLY</strong> from the text for each answer.</p>
+
+          <div class="flowchart-completion-box">
+            <div class="box-title">Cutting down a big tree</div>
+            <div class="flowchart-step">
+              <p>The site supervisor checks the paperwork and the latest information on the weather first.</p>
+            </div>
+            <div class="flowchart-arrow" aria-hidden="true">↓</div>
+            <div class="flowchart-step question-block" data-q="15">
+              <p>Chainsaws, clothing, and all <span class="inline-input" data-q="15"><input type="text" name="q15" autocomplete="off" /></span> are then loaded onto the lorry.</p>
+              <div class="correct-answer-text" id="ca-15"></div>
+            </div>
+            <div class="flowchart-arrow" aria-hidden="true">↓</div>
+            <div class="flowchart-step question-block" data-q="16">
+              <p>The team talk briefly at the site about the overall <span class="inline-input" data-q="16"><input type="text" name="q16" autocomplete="off" /></span> before the work begins.</p>
+              <div class="correct-answer-text" id="ca-16"></div>
+            </div>
+            <div class="flowchart-arrow" aria-hidden="true">↓</div>
+            <div class="flowchart-step question-block" data-q="17">
+              <p>The climber’s anchor point must have the necessary height and <span class="inline-input" data-q="17"><input type="text" name="q17" autocomplete="off" /></span> for the job.</p>
+              <div class="correct-answer-text" id="ca-17"></div>
+            </div>
+            <div class="flowchart-arrow" aria-hidden="true">↓</div>
+            <div class="flowchart-step">
+              <p>The first branches are cut and placed in a pile in the yard.</p>
+            </div>
+            <div class="flowchart-arrow" aria-hidden="true">↓</div>
+            <div class="flowchart-step question-block" data-q="18">
+              <p>A pulley and some <span class="inline-input" data-q="18"><input type="text" name="q18" autocomplete="off" /></span> assist in the removal of the top branches.</p>
+              <div class="correct-answer-text" id="ca-18"></div>
+            </div>
+            <div class="flowchart-arrow" aria-hidden="true">↓</div>
+            <div class="flowchart-step question-block" data-q="19">
+              <p>At this point, signs are placed on the <span class="inline-input" data-q="19"><input type="text" name="q19" autocomplete="off" /></span>.</p>
+              <div class="correct-answer-text" id="ca-19"></div>
+            </div>
+            <div class="flowchart-arrow" aria-hidden="true">↓</div>
+            <div class="flowchart-step question-block" data-q="20">
+              <p>For safety, the actions of both the tree cutter and <span class="inline-input" data-q="20"><input type="text" name="q20" autocomplete="off" /></span> must be regularly checked.</p>
+              <div class="correct-answer-text" id="ca-20"></div>
+            </div>
+            <div class="flowchart-arrow" aria-hidden="true">↓</div>
+            <div class="flowchart-step question-block" data-q="21">
+              <p>A special machine creates <span class="inline-input" data-q="21"><input type="text" name="q21" autocomplete="off" /></span> out of some of the wood.</p>
+              <div class="correct-answer-text" id="ca-21"></div>
+            </div>
+          </div>
+
+          <p class="question-group-heading">Read “Plumbing skills” and answer Questions 22 to 27.</p>
+          <p><strong>Questions 22 to 27</strong></p>
+          <p>Complete the table below.</p>
+          <p>Choose <strong>NO MORE THAN TWO WORDS</strong> from the text for each answer.</p>
+
+          <table class="table-completion" aria-label="The work of plumbers">
+            <caption>The work of plumbers</caption>
+            <thead>
+              <tr>
+                <th scope="col">Type of plumber</th>
+                <th scope="col">Work-related issues</th>
+                <th scope="col">Skills/Actions needed</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td rowspan="3"><strong>Residential</strong></td>
+                <td>Working underfloor in a <span class="question-block inline-question" data-q="22"><span class="inline-input" data-q="22"><input type="text" name="q22" autocomplete="off" /></span></span> area</td>
+                <td>Plan carefully</td>
+              </tr>
+              <tr>
+                <td rowspan="2">Dealing with a wood product</td>
+                <td>Always use the appropriate <span class="question-block inline-question" data-q="23"><span class="inline-input" data-q="23"><input type="text" name="q23" autocomplete="off" /></span></span> for each tool</td>
+              </tr>
+              <tr>
+                <td>Consider how different <span class="question-block inline-question" data-q="24"><span class="inline-input" data-q="24"><input type="text" name="q24" autocomplete="off" /></span></span> will be affected</td>
+              </tr>
+              <tr>
+                <td><strong>Commercial</strong></td>
+                <td>Working with advanced equipment designed for integrated systems</td>
+                <td>Fully comprehend instructions<br />Take images of structures to locate important materials like <span class="question-block inline-question" data-q="25"><span class="inline-input" data-q="25"><input type="text" name="q25" autocomplete="off" /></span></span></td>
+              </tr>
+              <tr>
+                <td rowspan="2"><strong>Service</strong></td>
+                <td>Diagnosing problems and their causes<br />Fully understanding something someone else installed, e.g., a shower unit</td>
+                <td>Providing quick, <span class="question-block inline-question" data-q="26"><span class="inline-input" data-q="26"><input type="text" name="q26" autocomplete="off" /></span></span> solutions</td>
+              </tr>
+              <tr>
+                <td></td>
+                <td>Deal well with people who have a lot of <span class="question-block inline-question" data-q="27"><span class="inline-input" data-q="27"><input type="text" name="q27" autocomplete="off" /></span></span> or disruption as a result of their problems</td>
+              </tr>
+            </tbody>
+          </table>
+          <div class="summary-feedbacks">
+            <div class="correct-answer-text" id="ca-22"></div>
+            <div class="correct-answer-text" id="ca-23"></div>
+            <div class="correct-answer-text" id="ca-24"></div>
+            <div class="correct-answer-text" id="ca-25"></div>
+            <div class="correct-answer-text" id="ca-26"></div>
+            <div class="correct-answer-text" id="ca-27"></div>
+          </div>
+
+        </div>
+
+        <div data-section="3" style="display:none;">
+          <p><strong>SECTION 3 Questions 28 to 40</strong></p>
+
+          <p><strong>Questions 28 to 33</strong></p>
+          <p>The text has six paragraphs, A—F.</p>
+          <p>Choose the correct heading for each paragraph from the list of headings below.</p>
+          <p>Write the correct number; i—vii, in boxes 28—33 on your answer sheet.</p>
+          <div class="option-bank" aria-label="List of Headings">
+            <div class="option-bank-title">List of Headings</div>
+            <p><strong>i</strong> The extra time is worth it</p>
+            <p><strong>ii</strong> The preferred rhubarb for consumers</p>
+            <p><strong>iii</strong> Yorkshire’s declining air quality</p>
+            <p><strong>iv</strong> Observing the selection process</p>
+            <p><strong>v</strong> Suggesting a possible beginning</p>
+            <p><strong>vi</strong> A long-standing family business</p>
+            <p><strong>vii</strong> The best region for forced rhubarb</p>
+          </div>
+          <div class="question-block" data-q="28">
+            <div class="question-text"><span class="question-number-label">28.</span> Paragraph A</div>
+            <select name="q28" aria-label="Heading for paragraph A"><option value="">Select…</option><option value="i">i</option><option value="ii">ii</option><option value="iii">iii</option><option value="iv">iv</option><option value="v">v</option><option value="vi">vi</option><option value="vii">vii</option></select>
+            <div class="correct-answer-text" id="ca-28"></div>
+          </div>
+          <div class="question-block" data-q="29">
+            <div class="question-text"><span class="question-number-label">29.</span> Paragraph B</div>
+            <select name="q29" aria-label="Heading for paragraph B"><option value="">Select…</option><option value="i">i</option><option value="ii">ii</option><option value="iii">iii</option><option value="iv">iv</option><option value="v">v</option><option value="vi">vi</option><option value="vii">vii</option></select>
+            <div class="correct-answer-text" id="ca-29"></div>
+          </div>
+          <div class="question-block" data-q="30">
+            <div class="question-text"><span class="question-number-label">30.</span> Paragraph C</div>
+            <select name="q30" aria-label="Heading for paragraph C"><option value="">Select…</option><option value="i">i</option><option value="ii">ii</option><option value="iii">iii</option><option value="iv">iv</option><option value="v">v</option><option value="vi">vi</option><option value="vii">vii</option></select>
+            <div class="correct-answer-text" id="ca-30"></div>
+          </div>
+          <div class="question-block" data-q="31">
+            <div class="question-text"><span class="question-number-label">31.</span> Paragraph D</div>
+            <select name="q31" aria-label="Heading for paragraph D"><option value="">Select…</option><option value="i">i</option><option value="ii">ii</option><option value="iii">iii</option><option value="iv">iv</option><option value="v">v</option><option value="vi">vi</option><option value="vii">vii</option></select>
+            <div class="correct-answer-text" id="ca-31"></div>
+          </div>
+          <div class="question-block" data-q="32">
+            <div class="question-text"><span class="question-number-label">32.</span> Paragraph E</div>
+            <select name="q32" aria-label="Heading for paragraph E"><option value="">Select…</option><option value="i">i</option><option value="ii">ii</option><option value="iii">iii</option><option value="iv">iv</option><option value="v">v</option><option value="vi">vi</option><option value="vii">vii</option></select>
+            <div class="correct-answer-text" id="ca-32"></div>
+          </div>
+          <div class="question-block" data-q="33">
+            <div class="question-text"><span class="question-number-label">33.</span> Paragraph F</div>
+            <select name="q33" aria-label="Heading for paragraph F"><option value="">Select…</option><option value="i">i</option><option value="ii">ii</option><option value="iii">iii</option><option value="iv">iv</option><option value="v">v</option><option value="vi">vi</option><option value="vii">vii</option></select>
+            <div class="correct-answer-text" id="ca-33"></div>
+          </div>
+
+          <p><strong>Questions 34 to 36</strong></p>
+          <p>Choose the correct letter, A, B, C or D.</p>
+          <p>Write the correct letter in boxes 34—36 on your answer sheet.</p>
+          <div class="question-block" data-q="34">
+            <div class="question-text"><span class="question-number-label">34.</span> What aspect of forced rhubarb does the writer praise in Paragraph C?</div>
+            <div class="options-row">
+              <label><input type="radio" name="q34" value="A"> <strong>A</strong> its suitability for pies</label>
+              <label><input type="radio" name="q34" value="B"> <strong>B</strong> the smoothness of its stems</label>
+              <label><input type="radio" name="q34" value="C"> <strong>C</strong> its superiority over other types of rhubarb</label>
+              <label><input type="radio" name="q34" value="D"> <strong>D</strong> the number of places it can be successfully grown</label>
+            </div>
+            <div class="correct-answer-text" id="ca-34"></div>
+          </div>
+          <div class="question-block" data-q="35">
+            <div class="question-text"><span class="question-number-label">35.</span> Why does the writer think forced rhubarb has become more popular among cooking experts?</div>
+            <div class="options-row">
+              <label><input type="radio" name="q35" value="A"> <strong>A</strong> It is cheap and easy to grow.</label>
+              <label><input type="radio" name="q35" value="B"> <strong>B</strong> It is attractive and pleasant to eat.</label>
+              <label><input type="radio" name="q35" value="C"> <strong>C</strong> Local farmers are producing more of it.</label>
+              <label><input type="radio" name="q35" value="D"> <strong>D</strong> Imported varieties are in limited supply.</label>
+            </div>
+            <div class="correct-answer-text" id="ca-35"></div>
+          </div>
+          <div class="question-block" data-q="36">
+            <div class="question-text"><span class="question-number-label">36.</span> In the final paragraph, the writer suggests that forced rhubarb was first produced</div>
+            <div class="options-row">
+              <label><input type="radio" name="q36" value="A"> <strong>A</strong> by accident.</label>
+              <label><input type="radio" name="q36" value="B"> <strong>B</strong> as animal feed.</label>
+              <label><input type="radio" name="q36" value="C"> <strong>C</strong> through trial and error.</label>
+              <label><input type="radio" name="q36" value="D"> <strong>D</strong> while growing something else.</label>
+            </div>
+            <div class="correct-answer-text" id="ca-36"></div>
+          </div>
+
+          <p><strong>Questions 37 to 40</strong></p>
+          <p>Complete the summary below.</p>
+          <p>Choose <strong>ONE WORD ONLY</strong> from the text for each answer.</p>
+          <p>Write your answers in boxes 37—40 on your answer sheet.</p>
+
+          <div class="summary-completion-box">
+            <div class="box-title">Growing forced rhubarb</div>
+            <p>During November, rhubarb crowns are removed from the soil and replanted in dark sheds that have plenty of heating. These conditions encourage such fast growth that the buds make a <span class="question-block inline-question" data-q="37"><span class="inline-input" data-q="37"><input type="text" name="q37" autocomplete="off" /></span></span> sound as the pink stalks appear. The growing period lasts around three weeks. After that, the rhubarb can be picked by a group of people known as <span class="question-block inline-question" data-q="38"><span class="inline-input" data-q="38"><input type="text" name="q38" autocomplete="off" /></span></span>. They use a <span class="question-block inline-question" data-q="39"><span class="inline-input" data-q="39"><input type="text" name="q39" autocomplete="off" /></span></span> to inspect the stems and to make sure they are as long as a human <span class="question-block inline-question" data-q="40"><span class="inline-input" data-q="40"><input type="text" name="q40" autocomplete="off" /></span></span> before handling them with expert skill.</p>
+            <div class="summary-feedbacks">
+              <div class="correct-answer-text" id="ca-37"></div>
+              <div class="correct-answer-text" id="ca-38"></div>
+              <div class="correct-answer-text" id="ca-39"></div>
+              <div class="correct-answer-text" id="ca-40"></div>
+            </div>
+          </div>
+
+        </div>
+
+          </div>
+        </div>
+      </div>
+      <!-- selection toolbar -->
+      <div id="selectionToolbar">
+        <button onclick="toggleHighlightSelection()">Highlight</button>
+        <button onclick="makeNoteForSelection()">Make note</button>
+      </div>
+    </div>
+
+    <!-- Bottom nav -->
+    <footer class="bottom-nav">
+      <div class="bottom-row bottom-row-v2">
+        <div class="bottom-left">
+          <div class="part-summary-row">
+            <div class="part-chip active" data-section-chip="1" onclick="switchSection(1)">
+              Part 1 <span class="count" id="part1Count">0 of 14</span>
+            </div>
+            <div class="part-chip unopened" data-section-chip="2" onclick="switchSection(2)">
+              Part 2 <span class="count" id="part2Count">0 of 13</span>
+            </div>
+            <div class="part-chip unopened" data-section-chip="3" onclick="switchSection(3)">
+              Part 3 <span class="count" id="part3Count">0 of 13</span>
+            </div>
+          </div>
+
+          <div id="questionNumbers"></div>
+        </div>
+
+        <div class="section-arrows">
+          <button class="arrow-btn" onclick="prevSection()" title="Previous part">←</button>
+          <button class="arrow-btn" onclick="nextSection()" title="Next part">→</button>
+          <button class="check-btn" onclick="handlePrimarySubmit()" title="Submit test and check answers">✔ Check answers</button>
+        </div>
+      </div>
+    </footer>
+  </div>
+
+
+  <div id="fullscreenLockOverlay" role="dialog" aria-modal="true" aria-live="assertive">
+    <div id="fullscreenLockPanel">
+      <h2>Test paused</h2>
+      <p>You have left full screen. Return to full screen to continue your test.</p>
+      <button class="mode-btn" type="button" onclick="returnToFullscreenAndResume()">Return to full screen</button>
+    </div>
+  </div>
+
+  <!-- Results overlay -->
+  <div id="resultsOverlay">
+    <div id="resultsPanel">
+      <h2>IELTS 17 GT Reading Test 4</h2>
+      <p id="studentLine"></p>
+      <p id="fullScreenExitLine"></p>
+      <p id="focusViolationLine"></p>
+      <p id="totalTimeLine"></p>
+      <p id="scoreLine"></p>
+      <p id="bandLine"></p>
+      <p id="descriptorLine"></p>
+      <button style="margin-top:10px;" onclick="closeResults()">Close</button>
+    </div>
+  </div>
+
+  <div id="shortcutToast" role="status" aria-live="polite" aria-atomic="true"></div>
+
+  <script>
+    /***************
+     * GLOBAL STATE
+     ***************/
+    let mode = "test";
+    let activeSection = 1;
+    let currentQuestion = 1;
+    let timerSeconds = 60 * 60;
+    let timerId = null;
+    let testSubmitted = false;
+    let studentName = "";
+    let pendingMode = "test";
+    let isTestRunning = false;
+    let isTimerPaused = false;
+    let fullscreenSupported = false;
+    let fullScreenEnforcementEnabled = false;
+    let fullScreenExits = 0;
+    let focusViolations = 0;
+    let shortcutToastTimer = null;
+    const visitedSections = new Set();
+
+    const AVAILABLE_THEMES = [
+      "black-on-white",
+      "white-on-black",
+      "yellow-on-black",
+    ];
+    const DEFAULT_THEME = "black-on-white";
+    const STORAGE_KEYS = {
+      theme: "ielts-reading-theme",
+    };
+
+    function restoreThemePreference() {
+      const saved = localStorage.getItem(STORAGE_KEYS.theme);
+      const theme = AVAILABLE_THEMES.includes(saved) ? saved : DEFAULT_THEME;
+      document.body.setAttribute("data-theme", theme);
+    }
+
+    function setTheme(theme) {
+      if (!AVAILABLE_THEMES.includes(theme)) return;
+      document.body.setAttribute("data-theme", theme);
+      localStorage.setItem(STORAGE_KEYS.theme, theme);
+      updateThemeButtons();
+    }
+
+    function updateThemeButtons() {
+      const theme = document.body.getAttribute("data-theme") || DEFAULT_THEME;
+      const map = {
+        "black-on-white": "theme-black-white",
+        "white-on-black": "theme-white-black",
+        "yellow-on-black": "theme-yellow-black",
+      };
+      AVAILABLE_THEMES.forEach((t) => {
+        const id = map[t];
+        const btn = document.getElementById(id);
+        if (!btn) return;
+        if (t === theme) btn.classList.add("active");
+        else btn.classList.remove("active");
+      });
+    }
+
+    function setFontSize(size) {
+      document.body.classList.remove("font-large", "font-xlarge");
+      if (size === "large") document.body.classList.add("font-large");
+      if (size === "xlarge") document.body.classList.add("font-xlarge");
+      updateFontButtons();
+    }
+
+    function updateFontButtons() {
+      const sizeClass = document.body.classList.contains("font-xlarge")
+        ? "xlarge"
+        : document.body.classList.contains("font-large")
+        ? "large"
+        : "normal";
+      ["normal", "large", "xlarge"].forEach((s) => {
+        const btn = document.getElementById("font-" + s);
+        if (!btn) return;
+        if (s === sizeClass) btn.classList.add("active");
+        else btn.classList.remove("active");
+      });
+    }
+
+    const sectionRanges = {
+      1: { from: 1, to: 14 },
+      2: { from: 15, to: 27 },
+      3: { from: 28, to: 40 }
+    };
+
+    const answerKey = {
+      1: "E", 2: "B", 3: "D", 4: "A", 5: "C", 6: "B",
+      7: "C", 8: "TRUE", 9: "TRUE", 10: "FALSE",
+      11: "NOT GIVEN", 12: "FALSE", 13: "NOT GIVEN", 14: "FALSE",
+      15: "tools", 16: "procedure", 17: "strength", 18: "rope", 19: "footpath", 20: "pedestrians",
+      21: "chippings", 22: "narrow", 23: "cutting chart", 24: "tradespeople", 25: ["steel", "reinforcing steel"], 26: "cost-effective", 27: "inconvenience",
+      28: "vi", 29: "vii", 30: "ii", 31: "i", 32: "iv", 33: "v",
+      34: "C", 35: "B", 36: "A",
+      37: "popping", 38: "pullers", 39: "candle", 40: "arm"
+    };
+
+    const correctAnswerText = {
+      1: "E", 2: "B", 3: "D", 4: "A", 5: "C", 6: "B",
+      7: "C", 8: "TRUE", 9: "TRUE", 10: "FALSE",
+      11: "NOT GIVEN", 12: "FALSE", 13: "NOT GIVEN", 14: "FALSE",
+      15: "tools", 16: "procedure", 17: "strength", 18: "rope", 19: "footpath", 20: "pedestrians",
+      21: "chippings", 22: "narrow", 23: "cutting chart", 24: "tradespeople", 25: "steel / reinforcing steel", 26: "cost-effective", 27: "inconvenience",
+      28: "vi", 29: "vii", 30: "ii", 31: "i", 32: "iv", 33: "v",
+      34: "C", 35: "B", 36: "A",
+      37: "popping", 38: "pullers", 39: "candle", 40: "arm"
+    };
+
+    restoreThemePreference();
+
+    async function beginTimedTest() {
+      const input = document.getElementById("studentNameInput");
+      studentName = input ? input.value.trim() : "";
+      if (!studentName) {
+        alert("Please enter your name before starting test mode.");
+        if (input) input.focus();
+        return;
+      }
+
+      fullScreenExits = 0;
+      focusViolations = 0;
+      fullScreenEnforcementEnabled = false;
+      fullscreenSupported = isFullscreenApiSupported();
+      updateFullscreenSupportNote(false);
+
+      if (fullscreenSupported) {
+        const entered = await requestAppFullscreen();
+        if (entered) {
+          fullScreenEnforcementEnabled = true;
+        } else {
+          updateFullscreenSupportNote(true);
+        }
+      } else {
+        updateFullscreenSupportNote(true);
+      }
+
+      const startScreen = document.getElementById("testStartScreen");
+      if (startScreen) startScreen.style.display = "none";
+      const modeScreen = document.getElementById("modeScreen");
+      if (modeScreen) modeScreen.style.display = "none";
+      startTest("test");
+
+      isTestRunning = true;
+      isTimerPaused = false;
+      startTimer();
+      updateFullscreenButton();
+    }
+
+    function startTest(selectedMode) {
+      mode = selectedMode;
+      const timerContainer = document.getElementById("timerContainer");
+
+      visitedSections.clear();
+      visitedSections.add(1);
+      activeSection = 1;
+      currentQuestion = 1;
+      timerSeconds = 60 * 60;
+
+      if (timerId) {
+        clearInterval(timerId);
+        timerId = null;
+      }
+
+      if (mode === "test") {
+        if (timerContainer) {
+          timerContainer.style.display = "block";
+          timerContainer.setAttribute("aria-hidden", "false");
+        }
+      } else {
+        if (timerContainer) {
+          timerContainer.style.display = "none";
+          timerContainer.setAttribute("aria-hidden", "true");
+        }
+        isTestRunning = false;
+        isTimerPaused = false;
+        fullScreenEnforcementEnabled = false;
+        updateFullscreenSupportNote(false);
+      }
+
+      const modeScreen = document.getElementById("modeScreen");
+      if (modeScreen) modeScreen.style.display = "none";
+      document.getElementById("app").style.display = "block";
+      initQuestionInputs();
+      setupDragMatch();
+      buildQuestionNav();
+      setupSelectionListeners();
+      setupDividerDrag();
+      updateThemeButtons();
+      updateFontButtons();
+      updateFullscreenButton();
+      window.addEventListener("beforeunload", (e) => {
+        if (!testSubmitted) {
+          e.preventDefault();
+          e.returnValue = "Are you sure you want to leave? All progress will be lost.";
+          return e.returnValue;
+        }
+      }, { capture: true });
+    }
+
+    window.startTest = startTest;
+    window.beginTimedTest = beginTimedTest;
+    window.toggleFullscreen = toggleFullscreen;
+    window.returnToFullscreenAndResume = returnToFullscreenAndResume;
+    window.confirmSubmit = confirmSubmit;
+    window.handlePrimarySubmit = handlePrimarySubmit;
+
+    function wireModeButtons() {
+      const buttons = document.querySelectorAll(".mode-btn[data-mode]");
+      const modeScreen = document.getElementById("modeScreen");
+      const activate = (btn) => {
+        const selected = btn.getAttribute("data-mode") || btn.dataset.mode || "test";
+        if (selected === "test") {
+          pendingMode = "test";
+          updateFullscreenSupportNote(!isFullscreenApiSupported());
+          const startScreen = document.getElementById("testStartScreen");
+          if (startScreen) startScreen.style.display = "block";
+          const input = document.getElementById("studentNameInput");
+          if (input) input.focus();
+          return;
+        }
+        const startScreen = document.getElementById("testStartScreen");
+        if (startScreen) startScreen.style.display = "none";
+        updateFullscreenSupportNote(false);
+        studentName = "";
+        startTest(selected);
+      };
+      buttons.forEach((btn) => {
+        btn.addEventListener("click", (event) => {
+          event.stopPropagation();
+          activate(btn);
+        });
+        btn.addEventListener("keydown", (event) => {
+          if (event.key === "Enter" || event.key === " ") {
+            event.preventDefault();
+            activate(btn);
+          }
+        });
+      });
+      if (modeScreen && !modeScreen.dataset.wired) {
+        modeScreen.addEventListener("click", (event) => {
+          const btn = event.target.closest(".mode-btn[data-mode]");
+          if (!btn) return;
+          event.preventDefault();
+          activate(btn);
+        });
+        modeScreen.dataset.wired = "true";
+      }
+
+      const input = document.getElementById("studentNameInput");
+      if (input && !input.dataset.wired) {
+        input.addEventListener("keydown", (event) => {
+          if (event.key === "Enter") {
+            event.preventDefault();
+            beginTimedTest();
+          }
+        });
+        input.dataset.wired = "true";
+      }
+    }
+
+    function ensureModeWiring() {
+      if (document.readyState === "loading") {
+        document.addEventListener("DOMContentLoaded", wireModeButtons, { once: true });
+      } else {
+        wireModeButtons();
+      }
+    }
+
+    function formatDuration(totalSeconds) {
+      const sign = totalSeconds < 0 ? "+" : "";
+      const abs = Math.abs(totalSeconds);
+      const m = Math.floor(abs / 60).toString().padStart(2, "0");
+      const sec = (abs % 60).toString().padStart(2, "0");
+      return `${sign}${m}:${sec}`;
+    }
+
+    function startTimer() {
+      if (mode !== "test") return;
+      if (timerId) {
+        clearInterval(timerId);
+        timerId = null;
+      }
+      const display = document.getElementById("timerDisplay");
+      if (!display) return;
+      display.classList.remove("timer-warning");
+      display.textContent = formatDuration(timerSeconds);
+      timerId = setInterval(() => {
+        timerSeconds--;
+        display.textContent = formatDuration(timerSeconds);
+        if (timerSeconds < 0) {
+          clearInterval(timerId);
+          timerId = null;
+          if (!testSubmitted) {
+            alert("Time is up! The test will be submitted.");
+            submitTest();
+          }
+          return;
+        }
+        if (timerSeconds <= 180) display.classList.add("timer-warning");
+      }, 1000);
+    }
+
+    function pauseTimer() {
+      if (timerId) {
+        clearInterval(timerId);
+        timerId = null;
+      }
+      isTimerPaused = true;
+    }
+
+    function resumeTimer() {
+      if (!isTestRunning || mode !== "test") return;
+      if (!isTimerPaused) return;
+      isTimerPaused = false;
+      startTimer();
+    }
+
+    function isFullscreenApiSupported() {
+      const el = document.documentElement;
+      return !!(document.fullscreenEnabled && el && typeof el.requestFullscreen === "function");
+    }
+
+    function isFullscreenActive() {
+      return !!document.fullscreenElement;
+    }
+
+    function updateFullscreenSupportNote(show) {
+      const note = document.getElementById("fullscreenSupportNote");
+      if (!note) return;
+      note.style.display = show ? "block" : "none";
+    }
+
+    async function requestAppFullscreen() {
+      try {
+        if (!isFullscreenApiSupported()) return false;
+        await document.documentElement.requestFullscreen();
+        return isFullscreenActive();
+      } catch (err) {
+        return false;
+      }
+    }
+
+    async function exitAppFullscreen() {
+      try {
+        if (isFullscreenActive() && typeof document.exitFullscreen === "function") {
+          await document.exitFullscreen();
+        }
+      } catch (err) {
+        // silent by design
+      }
+    }
+
+    function showFullscreenLockOverlay() {
+      const overlay = document.getElementById("fullscreenLockOverlay");
+      if (overlay) overlay.style.display = "flex";
+      document.body.style.overflow = "hidden";
+    }
+
+    function hideFullscreenLockOverlay() {
+      const overlay = document.getElementById("fullscreenLockOverlay");
+      if (overlay) overlay.style.display = "none";
+      document.body.style.overflow = "";
+    }
+
+    function updateFullscreenButton() {
+      const btn = document.getElementById("fullscreenBtn");
+      const label = document.getElementById("fullscreenBtnLabel");
+      if (!btn || !label) return;
+
+      const isFullscreen = isFullscreenActive();
+      const locked = mode === "test" && isTestRunning && !testSubmitted && fullScreenEnforcementEnabled;
+
+      btn.classList.toggle("is-active", isFullscreen);
+      btn.disabled = false;
+
+      if (locked && isFullscreen) {
+        label.textContent = "Full screen locked";
+        btn.setAttribute("title", "Full screen locked");
+        btn.setAttribute("aria-label", "Full screen locked");
+        btn.disabled = true;
+        return;
+      }
+
+      if (isFullscreen) {
+        label.textContent = "Exit full screen";
+        btn.setAttribute("title", "Exit full screen");
+        btn.setAttribute("aria-label", "Exit full screen");
+      } else {
+        label.textContent = "Full screen";
+        btn.setAttribute("title", "Enter full screen");
+        btn.setAttribute("aria-label", "Enter full screen");
+      }
+    }
+
+    async function toggleFullscreen() {
+      const locked = mode === "test" && isTestRunning && !testSubmitted && fullScreenEnforcementEnabled;
+      if (locked && isFullscreenActive()) {
+        updateFullscreenButton();
+        return;
+      }
+
+      if (!isFullscreenActive()) {
+        await requestAppFullscreen();
+      } else {
+        await exitAppFullscreen();
+      }
+      updateFullscreenButton();
+    }
+
+    async function returnToFullscreenAndResume() {
+      const ok = await requestAppFullscreen();
+      if (ok) {
+        hideFullscreenLockOverlay();
+        resumeTimer();
+      }
+      updateFullscreenButton();
+    }
+
+    function handleFullscreenChange() {
+      const runningLockedTest = mode === "test" && isTestRunning && !testSubmitted && fullScreenEnforcementEnabled;
+      if (runningLockedTest) {
+        if (!isFullscreenActive()) {
+          fullScreenExits += 1;
+          pauseTimer();
+          showFullscreenLockOverlay();
+        } else {
+          hideFullscreenLockOverlay();
+          resumeTimer();
+        }
+      }
+      updateFullscreenButton();
+    }
+
+    document.addEventListener("fullscreenchange", handleFullscreenChange);
+
+    document.addEventListener("visibilitychange", () => {
+      if (mode === "test" && isTestRunning && !testSubmitted && document.hidden) {
+        focusViolations += 1;
+      }
+    });
+
+    window.addEventListener("blur", () => {
+      if (mode === "test" && isTestRunning && !testSubmitted) {
+        focusViolations += 1;
+      }
+    });
+
+    function toggleOptions(show) {
+      const overlay = document.getElementById("optionsOverlay");
+      if (overlay) overlay.style.display = show ? "flex" : "none";
+    }
+
+    const optionsButton = document.getElementById("optionsBtn");
+    if (optionsButton) {
+      optionsButton.addEventListener("click", () => toggleOptions(true));
+    }
+
+    function buildRemainingQuestions() {
+      // Sections 1–3 are present in the static HTML for this standalone test.
+    }
+
+    function stampInlineInputNumbers() {
+      document.querySelectorAll(".question-block[data-q]").forEach((block) => {
+        const qNum = block.getAttribute("data-q");
+        block.querySelectorAll(".inline-input").forEach((w) => {
+          w.setAttribute("data-q", qNum);
+        });
+      });
+    }
+
+    let dragMatchReady = false;
+
+    function setupDragMatch() {
+      if (dragMatchReady) return;
+      dragMatchReady = true;
+      let picked = "";
+      document.querySelectorAll(".drag-item, .passage-match-source").forEach((item) => {
+        item.addEventListener("dragstart", (e) => {
+          e.dataTransfer.setData("text/plain", item.dataset.value);
+          e.dataTransfer.effectAllowed = "copy";
+        });
+        item.addEventListener("click", () => {
+          document
+            .querySelectorAll(".drag-item, .passage-match-source")
+            .forEach((i) => i.classList.remove("selected"));
+          item.classList.add("selected");
+          picked = item.dataset.value;
+        });
+        item.addEventListener("keydown", (event) => {
+          if (event.key === "Enter" || event.key === " ") {
+            event.preventDefault();
+            item.click();
+          }
+        });
+      });
+
+      function apply(zone, val) {
+        const qName = zone.dataset.for;
+        const sel = document.querySelector('select[name="' + qName + '"]');
+        if (sel) {
+          const allowed = Array.from(sel.options).some((o) => o.value === val);
+          if (!allowed) return;
+          sel.value = val;
+          sel.dispatchEvent(new Event("change", { bubbles: true }));
+        }
+        zone.textContent = val;
+        zone.classList.add("filled");
+      }
+
+      function clear(zone) {
+        const qName = zone.dataset.for;
+        const sel = document.querySelector('select[name="' + qName + '"]');
+        if (sel) {
+          sel.value = "";
+          sel.dispatchEvent(new Event("change", { bubbles: true }));
+        }
+        zone.textContent = "Drop here";
+        zone.classList.remove("filled");
+      }
+
+      document.querySelectorAll(".drop-zone").forEach((zone) => {
+        zone.addEventListener("dragover", (e) => {
+          e.preventDefault();
+          zone.classList.add("over");
+        });
+        zone.addEventListener("dragleave", () => zone.classList.remove("over"));
+        zone.addEventListener("drop", (e) => {
+          e.preventDefault();
+          zone.classList.remove("over");
+          const val = e.dataTransfer.getData("text/plain");
+          apply(zone, val);
+        });
+        zone.addEventListener("click", () => {
+          if (picked) apply(zone, picked);
+        });
+        zone.addEventListener("keydown", (e) => {
+          if (e.key === "Backspace" || e.key === "Delete") clear(zone);
+
+          const key = e.key.toUpperCase();
+          if (!/^[A-Z]$/.test(key)) return;
+
+          const qName = zone.dataset.for;
+          const sel = document.querySelector('select[name="' + qName + '"]');
+          if (!sel) return;
+
+          const allowed = Array.from(sel.options).some((o) => o.value === key);
+          if (allowed) apply(zone, key);
+        });
+        zone.addEventListener("dblclick", () => clear(zone));
+      });
+
+      document.querySelectorAll(".drop-zone").forEach((zone) => {
+        const qName = zone.dataset.for;
+        const sel = document.querySelector('select[name="' + qName + '"]');
+        if (sel && sel.value) {
+          apply(zone, sel.value);
+        }
+      });
+    }
+
+    // Build all questions immediately after DOM loads (script is at the end)
+    buildRemainingQuestions();
+    stampInlineInputNumbers();
+    setupDragMatch();
+
+    /***********************
+     * INPUT & NAV HANDLING
+     ***********************/
+    function initQuestionInputs() {
+      const qPane = document.getElementById("questionContent");
+      if (!qPane) return;
+
+      stampInlineInputNumbers();
+
+      // Listen to changes on all inputs/selects/radios
+      qPane
+        .querySelectorAll("select, input[type='text'], input[type='radio']")
+        .forEach((el) => {
+          el.addEventListener("change", onAnswerChange);
+          if (el.type === "text") {
+            el.addEventListener("input", onAnswerChange);
+          }
+        });
+
+
+      qPane.addEventListener("focusin", (event) => {
+        setCurrentQuestionFromElement(event.target);
+      });
+      qPane.addEventListener("click", (event) => {
+        setCurrentQuestionFromElement(event.target);
+      });
+
+      // Start on section 1, question 1
+      switchSection(1);
+      highlightCurrentQuestion(1);
+      updateCounts();
+      buildQuestionNav();
+    }
+
+
+    function setCurrentQuestionFromElement(el) {
+      const block = el.closest(".question-block[data-q]");
+      if (!block) return;
+      const q = parseInt(block.dataset.q, 10);
+      if (Number.isNaN(q)) return;
+      currentQuestion = q;
+      highlightCurrentQuestion(q);
+      buildQuestionNav();
+    }
+
+    function onAnswerChange(e) {
+      const name = e.target.name || "";
+      if (name.startsWith("q")) {
+        const num = parseInt(name.substring(1), 10);
+        if (!isNaN(num)) currentQuestion = num;
+      }
+      updateCounts();
+      buildQuestionNav();
+      highlightCurrentQuestion(currentQuestion);
+    }
+
+    function isAnswered(qNum) {
+      const name = "q" + qNum;
+      const radios = document.querySelectorAll(
+        "input[type='radio'][name='" + name + "']"
+      );
+      if (radios.length > 0) {
+        return Array.from(radios).some((r) => r.checked);
+      }
+      const input = document.querySelector("input[type='text'][name='" + name + "']");
+      if (input) {
+        return input.value.trim().length > 0;
+      }
+      const select = document.querySelector("select[name='" + name + "']");
+      if (select) {
+        return select.value.trim().length > 0;
+      }
+      return false;
+    }
+
+    function updateCounts() {
+      const totals = { 1: 14, 2: 13, 3: 13 };
+      const answered = { 1: 0, 2: 0, 3: 0 };
+
+      [1, 2, 3].forEach((sec) => {
+        const range = sectionRanges[sec];
+        for (let q = range.from; q <= range.to; q++) {
+          if (isAnswered(q)) answered[sec]++;
+        }
+      });
+
+      // Update chip counts and status classes
+      [1, 2, 3].forEach((sec) => {
+        const chip = document.querySelector(
+          '.part-chip[data-section-chip="' + sec + '"]'
+        );
+        const span = document.getElementById("part" + sec + "Count");
+        const countText = answered[sec] + " of " + totals[sec];
+
+        if (!chip || !span) return;
+
+        chip.classList.remove("complete", "partial", "unopened");
+        if (answered[sec] === totals[sec]) {
+          chip.classList.add("complete");
+          span.textContent = "✓";
+          span.setAttribute("aria-label", "Part " + sec + " complete");
+        } else {
+          span.textContent = countText;
+          span.removeAttribute("aria-label");
+          if (visitedSections.has(sec)) {
+            chip.classList.add("partial");
+          } else {
+            chip.classList.add("unopened");
+          }
+        }
+      });
+
+      // Also update header for active section with answered count
+      const range = sectionRanges[activeSection];
+      const secAnswered = answered[activeSection];
+      const total = totals[activeSection];
+
+      const qHeader = document.getElementById("questionHeader");
+      if (qHeader && range) {
+        qHeader.textContent =
+          "Questions " +
+          range.from +
+          "–" +
+          range.to +
+          " (" +
+          secAnswered +
+          " of " +
+          total +
+          " answered)";
+      }
+
+      const pHeader = document.getElementById("passageHeader");
+      if (pHeader) {
+        if (activeSection === 1) {
+          pHeader.textContent =
+            "Part 1 – Read the text and answer questions 1–14.";
+        } else if (activeSection === 2) {
+          pHeader.textContent =
+            "Part 2 – Read the text and answer questions 15–27.";
+        } else {
+          pHeader.textContent =
+            "Part 3 – Read the text and answer questions 28–40.";
+        }
+      }
+    }
+
+    function buildQuestionNav() {
+      const nav = document.getElementById("questionNumbers");
+      if (!nav) return;
+      nav.innerHTML = "";
+
+      const range = sectionRanges[activeSection];
+      if (!range) return;
+
+      for (let q = range.from; q <= range.to; q++) {
+        const div = document.createElement("div");
+        div.className = "qnav";
+        if (isAnswered(q)) div.classList.add("answered");
+        else div.classList.add("unanswered");
+        if (q === currentQuestion) div.classList.add("current");
+        div.textContent = q;
+        div.addEventListener("click", () => {
+          currentQuestion = q;
+          highlightCurrentQuestion(q);
+          buildQuestionNav();
+          scrollToQuestion(q);
+        });
+        nav.appendChild(div);
+      }
+    }
+
+    function highlightCurrentQuestion(qNum) {
+      document
+        .querySelectorAll(".question-block")
+        .forEach((el) => el.classList.remove("current-question"));
+      const block = document.querySelector(
+        '.question-block[data-q="' + qNum + '"]'
+      );
+      if (block) {
+        block.classList.add("current-question");
+      }
+    }
+
+    function scrollToQuestion(qNum) {
+      const block = document.querySelector(
+        '.question-block[data-q="' + qNum + '"]'
+      );
+      const qPane = document.getElementById("questionPane");
+      if (block && qPane) {
+        block.scrollIntoView({ behavior: "smooth", block: "center" });
+      }
+    }
+
+    /*****************
+     * SECTION SWITCH
+     *****************/
+    function switchSection(section) {
+      if (![1, 2, 3].includes(section)) return;
+      activeSection = section;
+      visitedSections.add(section);
+
+      // Passages
+      document
+        .querySelectorAll(".passage-section")
+        .forEach((el) => (el.style.display = "none"));
+      const pass = document.querySelector(
+        '.passage-section[data-section="' + section + '"]'
+      );
+      if (pass) pass.style.display = "block";
+
+      // Questions
+      document
+        .querySelectorAll("#questionContent > div[data-section]")
+        .forEach((el) => (el.style.display = "none"));
+      const qSec = document.querySelector(
+        '#questionContent > div[data-section="' + section + '"]'
+      );
+      if (qSec) qSec.style.display = "block";
+
+      // Chips active state
+      document
+        .querySelectorAll(".part-chip")
+        .forEach((el) => el.classList.remove("active"));
+      const chip = document.querySelector(
+        '.part-chip[data-section-chip="' + section + '"]'
+      );
+      if (chip) chip.classList.add("active");
+
+      // Set current question to first in this section if outside range
+      const range = sectionRanges[section];
+      if (currentQuestion < range.from || currentQuestion > range.to) {
+        currentQuestion = range.from;
+      }
+
+      updateCounts();
+      highlightCurrentQuestion(currentQuestion);
+      buildQuestionNav();
+    }
+
+    function prevSection() {
+      if (activeSection > 1) switchSection(activeSection - 1);
+    }
+
+    function nextSection() {
+      if (activeSection < 3) switchSection(activeSection + 1);
+    }
+
+    /***************
+     * SUBMIT & SCORE
+     ***************/
+    const bandDescriptors = {
+      9: {
+        level: "Expert user",
+        description:
+          "Has fully operational command of the language: appropriate, accurate and fluent with complete understanding.",
+      },
+      8: {
+        level: "Very good user",
+        description:
+          "Has fully operational command of the language with only occasional unsystematic inaccuracies and inappropriacies. Misunderstandings may occur in unfamiliar situations.",
+      },
+      7: {
+        level: "Good user",
+        description:
+          "Has operational command of the language, though with occasional inaccuracies, inappropriacies and misunderstandings in some situations. Generally handles complex language well and understands detailed reasoning.",
+      },
+      6: {
+        level: "Competent user",
+        description:
+          "Has generally effective command of the language despite some inaccuracies, inappropriacies and misunderstandings. Can use and understand fairly complex language, particularly in familiar situations.",
+      },
+      5: {
+        level: "Modest user",
+        description:
+          "Has partial command of the language, coping with overall meaning in most situations, though likely to make many mistakes. Should be able to handle basic communication in own field.",
+      },
+      4: {
+        level: "Limited user",
+        description:
+          "Basic competence is limited to familiar situations. Has frequent problems in understanding and expression. Is not able to use complex language.",
+      },
+      3: {
+        level: "Extremely limited user",
+        description:
+          "Conveys and understands only general meaning in very familiar situations. Frequent breakdowns in communication occur.",
+      },
+      2: {
+        level: "Intermittent user",
+        description:
+          "No real communication is possible except for the most basic information using isolated words or short formulae in familiar situations and to meet immediate needs.",
+      },
+      1: {
+        level: "Non-user",
+        description:
+          "Essentially has no ability to use the language beyond possibly a few isolated words.",
+      },
+      0: {
+        level: "Did not attempt test",
+        description: "No assessable information provided.",
+      },
+    };
+
+    function getBandDescriptor(band) {
+      if (bandDescriptors[band]) return bandDescriptors[band];
+
+      const halfBandDescriptors = {
+        8.5: {
+          level: "Very good user developing towards Expert user",
+          description:
+            "This result is stronger than a typical Band 8, but it has not yet reached Band 9. It suggests very strong reading ability, with only occasional difficulty in highly complex or detailed texts.",
+        },
+        7.5: {
+          level: "Good user developing towards Very good user",
+          description:
+            "This result is stronger than a typical Band 7, but it has not yet reached Band 8. It suggests strong reading ability, with occasional difficulty in complex passages, detail, or inference.",
+        },
+        6.5: {
+          level: "Competent user developing towards Good user",
+          description:
+            "This result is stronger than a typical Band 6, but it has not yet reached Band 7. It suggests generally effective reading ability, though detail, paraphrasing, and complex ideas may still cause some problems.",
+        },
+        5.5: {
+          level: "Modest user developing towards Competent user",
+          description:
+            "This result is stronger than a typical Band 5, but it has not yet reached Band 6. It suggests you can understand the general meaning of many reading texts, but details, synonyms, and longer passages may still be difficult.",
+        },
+        4.5: {
+          level: "Limited user developing towards Modest user",
+          description:
+            "This result is stronger than a typical Band 4, but it has not yet reached Band 5. It suggests you can understand some familiar reading tasks, but you may still have frequent problems with detail, paraphrasing, and unfamiliar vocabulary.",
+        },
+        3.5: {
+          level: "Extremely limited user developing towards Limited user",
+          description:
+            "This result is stronger than a typical Band 3, but it has not yet reached Band 4. It suggests you may understand basic information in familiar contexts, but many reading tasks are still difficult.",
+        },
+        2.5: {
+          level: "Intermittent user developing towards Extremely limited user",
+          description:
+            "This result is stronger than a typical Band 2, but it has not yet reached Band 3. It suggests only basic or isolated information is understood at this stage.",
+        },
+      };
+
+      if (halfBandDescriptors[band]) return halfBandDescriptors[band];
+
+      const lower = Math.floor(band);
+      const upper = Math.ceil(band);
+      const lowerDesc = bandDescriptors[lower];
+      const upperDesc = bandDescriptors[upper];
+
+      if (lowerDesc && upperDesc) {
+        return {
+          level: "Between " + lowerDesc.level + " and " + upperDesc.level,
+          description:
+            "This half band sits between Band " +
+            lower +
+            " (" +
+            lowerDesc.level +
+            ") and Band " +
+            upper +
+            " (" +
+            upperDesc.level +
+            ").",
+        };
+      }
+
+      return bandDescriptors[0];
+    }
+
+    function getUserAnswer(qNum) {
+      const name = "q" + qNum;
+      const radios = document.querySelectorAll(
+        "input[type='radio'][name='" + name + "']"
+      );
+      if (radios.length > 0) {
+        const checked = Array.from(radios).find((r) => r.checked);
+        return checked ? checked.value.trim() : "";
+      }
+      const input = document.querySelector("input[type='text'][name='" + name + "']");
+      if (input) return input.value.trim();
+      const select = document.querySelector("select[name='" + name + "']");
+      if (select) return select.value.trim();
+      return "";
+    }
+
+    const normalise = (s) => (s || "").toLowerCase().trim().replace(/\s+/g, " ");
+
+    function evaluateQuestions() {
+      let correctCount = 0;
+
+      for (let q = 1; q <= 40; q++) {
+        const user = getUserAnswer(q);
+        const key = answerKey[q];
+        let isCorrect = false;
+
+        if (!user) {
+          isCorrect = false;
+        } else if (Array.isArray(key)) {
+          isCorrect = key.some(
+            (k) => user.toLowerCase() === String(k).toLowerCase()
+          );
+        } else if (typeof key === "string") {
+          if (/^(TRUE|FALSE|NOT GIVEN)$/.test(key)) {
+            isCorrect = user.toUpperCase() === key;
+          } else if (key.length === 1) {
+            isCorrect = user.toUpperCase() === key.toUpperCase();
+          } else if (q === 23 || q === 27) {
+            isCorrect = normalise(user) === normalise(key);
+          } else {
+            isCorrect = user.toLowerCase() === key.toLowerCase();
+          }
+        }
+
+        const block = document.querySelector(
+          '.question-block[data-q="' + q + '"]'
+        );
+        if (block) {
+          block.classList.remove("correct", "incorrect");
+          if (isCorrect) {
+            block.classList.add("correct");
+            correctCount++;
+          } else if (user) {
+            block.classList.add("incorrect");
+          }
+        }
+
+        const ca = document.getElementById("ca-" + q);
+        if (ca) {
+          const txt = correctAnswerText[q];
+          if (txt) {
+            ca.textContent = "Correct answer: " + txt;
+          }
+        }
+      }
+
+      return correctCount;
+    }
+
+    function computeBandScore(correct) {
+      /*
+       * IELTS General Training Reading raw score to band conversion
+       * 40 = 9
+       * 39 = 8.5
+       * 37-38 = 8
+       * 36 = 7.5
+       * 34-35 = 7
+       * 32-33 = 6.5
+       * 30-31 = 6
+       * 27-29 = 5.5
+       * 23-26 = 5
+       * 19-22 = 4.5
+       * 15-18 = 4
+       * 12-14 = 3.5
+       * 9-11 = 3
+       * 6-8 = 2.5
+       */
+
+      if (correct === 40) return 9;
+      if (correct === 39) return 8.5;
+      if (correct >= 37) return 8;
+      if (correct >= 36) return 7.5;
+      if (correct >= 34) return 7;
+      if (correct >= 32) return 6.5;
+      if (correct >= 30) return 6;
+      if (correct >= 27) return 5.5;
+      if (correct >= 23) return 5;
+      if (correct >= 19) return 4.5;
+      if (correct >= 15) return 4;
+      if (correct >= 12) return 3.5;
+      if (correct >= 9) return 3;
+      if (correct >= 6) return 2.5;
+      if (correct === 0) return 0;
+      return 1;
+    }
+
+
+    function confirmSubmit() {
+      const ok = window.confirm("Are you sure you want to submit your test now? You will not be able to continue answering in Test mode.");
+      if (!ok) return;
+      submitTest();
+    }
+
+    function showShortcutToast(message) {
+      const toast = document.getElementById("shortcutToast");
+      if (!toast) return;
+
+      toast.textContent = message;
+      toast.classList.add("visible");
+
+      if (shortcutToastTimer) {
+        clearTimeout(shortcutToastTimer);
+      }
+
+      shortcutToastTimer = setTimeout(() => {
+        toast.classList.remove("visible");
+      }, 1800);
+    }
+
+    function handlePrimarySubmit() {
+      if (mode === "test" && !testSubmitted) {
+        confirmSubmit();
+        return;
+      }
+      submitTest();
+    }
+
+    document.addEventListener("keydown", (event) => {
+      const isFindShortcut =
+        (event.ctrlKey || event.metaKey) &&
+        String(event.key).toLowerCase() === "f";
+
+      if (!isFindShortcut) return;
+      if (!(mode === "test" && isTestRunning && !testSubmitted)) return;
+
+      event.preventDefault();
+      showShortcutToast("Find (CTRL + F) is disabled in Test mode.");
+    }, true);
+
+
+    function submitTest() {
+      const correctCount = evaluateQuestions();
+
+      // In both modes, show correct answer text
+      Object.keys(correctAnswerText).forEach((q) => {
+        const el = document.getElementById("ca-" + q);
+        if (el) el.style.display = "block";
+      });
+
+      updateCounts();
+      buildQuestionNav();
+
+      const band = computeBandScore(correctCount);
+      const desc = getBandDescriptor(band);
+
+      const studentLine = document.getElementById("studentLine");
+      const fullScreenExitLine = document.getElementById("fullScreenExitLine");
+      const focusViolationLine = document.getElementById("focusViolationLine");
+      const totalTimeLine = document.getElementById("totalTimeLine");
+      const scoreLine = document.getElementById("scoreLine");
+      const bandLine = document.getElementById("bandLine");
+      const descriptorLine = document.getElementById("descriptorLine");
+      const resultsOverlay = document.getElementById("resultsOverlay");
+
+      if (studentLine) {
+        studentLine.textContent = studentName ? "Student: " + studentName : "Student: Not provided";
+      }
+      if (fullScreenExitLine) {
+        fullScreenExitLine.textContent = "Full screen exits: " + fullScreenExits;
+      }
+      if (focusViolationLine) {
+        focusViolationLine.textContent = "Tab switches / focus losses: " + focusViolations;
+      }
+      if (totalTimeLine) {
+        const elapsedSeconds = 60 * 60 - timerSeconds;
+        totalTimeLine.textContent = "Total time when submitted: " + formatDuration(elapsedSeconds);
+      }
+      if (scoreLine)
+        scoreLine.textContent =
+          "You answered " + correctCount + " out of 40 questions correctly.";
+      if (bandLine)
+        bandLine.textContent =
+          "Estimated IELTS Reading band: " +
+          band +
+          ". Skill level: " +
+          desc.level;
+      if (descriptorLine) descriptorLine.textContent = desc.description;
+
+      if (resultsOverlay) resultsOverlay.style.display = "flex";
+
+      if (mode === "test") {
+        testSubmitted = true;
+        isTestRunning = false;
+        isTimerPaused = false;
+        fullScreenEnforcementEnabled = false;
+        hideFullscreenLockOverlay();
+        updateFullscreenButton();
+        if (timerId) {
+          clearInterval(timerId);
+          timerId = null;
+        }
+        exitAppFullscreen();
+        // Disable further changes in test mode
+        document
+          .querySelectorAll("#questionContent select, #questionContent input")
+          .forEach((el) => (el.disabled = true));
+      }
+
+      // Close options overlay if open
+      toggleOptions(false);
+    }
+
+    function closeResults() {
+      const overlay = document.getElementById("resultsOverlay");
+      const studentLine = document.getElementById("studentLine");
+      const fullScreenExitLine = document.getElementById("fullScreenExitLine");
+      const focusViolationLine = document.getElementById("focusViolationLine");
+      const totalTimeLine = document.getElementById("totalTimeLine");
+      if (studentLine) studentLine.textContent = "";
+      if (fullScreenExitLine) fullScreenExitLine.textContent = "";
+      if (focusViolationLine) focusViolationLine.textContent = "";
+      if (totalTimeLine) totalTimeLine.textContent = "";
+      if (overlay) overlay.style.display = "none";
+    }
+
+    /**********************
+     * HIGHLIGHT & NOTES
+     **********************/
+    let currentNoteId = 0;
+    const notesStore = {}; // noteId -> { text }
+
+    function setupSelectionListeners() {
+      const toolbar = document.getElementById("selectionToolbar");
+      if (!toolbar) return;
+      toolbar.style.position = "fixed";
+
+      function updateToolbarPosition() {
+        const sel = window.getSelection();
+        if (!sel || sel.rangeCount === 0 || sel.isCollapsed) {
+          hideSelectionToolbar();
+          return;
+        }
+        const range = sel.getRangeAt(0);
+        const rect = range.getBoundingClientRect();
+        if (!rect || (rect.width === 0 && rect.height === 0)) {
+          hideSelectionToolbar();
+          return;
+        }
+        toolbar.style.left = rect.left + rect.width / 2 + "px";
+        toolbar.style.top = Math.max(56, rect.top - 32) + "px";
+        toolbar.style.display = "flex";
+      }
+
+      document.addEventListener("mouseup", () => {
+        setTimeout(updateToolbarPosition, 0);
+      });
+
+      document.addEventListener("keyup", (e) => {
+        if (
+          e.key === "Shift" ||
+          e.key === "ArrowLeft" ||
+          e.key === "ArrowRight" ||
+          e.key === "ArrowUp" ||
+          e.key === "ArrowDown"
+        ) {
+          setTimeout(updateToolbarPosition, 0);
+        }
+      });
+
+      document.addEventListener("mousedown", (e) => {
+        if (!toolbar.contains(e.target)) {
+          hideSelectionToolbar();
+        }
+      });
+    }
+
+    function hideSelectionToolbar() {
+      const toolbar = document.getElementById("selectionToolbar");
+      if (toolbar) toolbar.style.display = "none";
+    }
+
+    function findAncestorWithClass(node, className) {
+      let n = node;
+      while (n && n !== document) {
+        if (n.nodeType === 1 && n.classList.contains(className)) return n;
+        n = n.parentNode;
+      }
+      return null;
+    }
+
+    function toggleHighlightSelection() {
+      const sel = window.getSelection();
+      if (!sel || sel.rangeCount === 0 || sel.isCollapsed) return;
+      const range = sel.getRangeAt(0);
+      if (!range.toString().trim()) return;
+
+      const startHighlight = findAncestorWithClass(
+        range.startContainer,
+        "highlighted"
+      );
+      const endHighlight = findAncestorWithClass(
+        range.endContainer,
+        "highlighted"
+      );
+
+      if (startHighlight && startHighlight === endHighlight) {
+        // Remove the whole highlight span
+        const span = startHighlight;
+        const parent = span.parentNode;
+        while (span.firstChild) {
+          parent.insertBefore(span.firstChild, span);
+        }
+        parent.removeChild(span);
+      } else {
+        const span = document.createElement("span");
+        span.className = "highlighted";
+        try {
+          range.surroundContents(span);
+        } catch (e) {
+          // Fallback: simple replacement
+          span.textContent = range.toString();
+          range.deleteContents();
+          range.insertNode(span);
+        }
+      }
+
+      sel.removeAllRanges();
+      hideSelectionToolbar();
+    }
+
+    function makeNoteForSelection() {
+      const sel = window.getSelection();
+      if (!sel || sel.rangeCount === 0 || sel.isCollapsed) return;
+      const range = sel.getRangeAt(0);
+      if (!range.toString().trim()) return;
+
+      const noteId = "note-" + ++currentNoteId;
+
+      const span = document.createElement("span");
+      span.className = "note-anchor";
+      span.dataset.noteId = noteId;
+
+      try {
+        range.surroundContents(span);
+      } catch (e) {
+        span.textContent = range.toString();
+        range.deleteContents();
+        range.insertNode(span);
+      }
+
+      // Delete button
+      const del = document.createElement("button");
+      del.className = "note-delete";
+      del.textContent = "×";
+      del.addEventListener("click", (ev) => {
+        ev.stopPropagation();
+        deleteNote(noteId);
+      });
+      span.appendChild(del);
+
+      span.addEventListener("click", (ev) => {
+        // avoid re-opening when clicking delete
+        if ((ev.target).classList && (ev.target).classList.contains("note-delete"))
+          return;
+        openNoteWindow(noteId, span);
+      });
+
+      notesStore[noteId] = { text: "" };
+      openNoteWindow(noteId, span);
+      hideSelectionToolbar();
+      sel.removeAllRanges();
+    }
+
+    function openNoteWindow(noteId, anchorEl) {
+      // Remove existing note window for this note
+      const existing = document.querySelector(
+        '.note-window[data-note-id="' + noteId + '"]'
+      );
+      if (existing) existing.remove();
+
+      const rect = anchorEl.getBoundingClientRect();
+      const note = document.createElement("div");
+      note.className = "note-window";
+      note.dataset.noteId = noteId;
+      note.style.top = rect.bottom + 8 + "px";
+      note.style.left = rect.left + "px";
+
+      note.innerHTML = `
+        <div class="note-header">
+          <span>Note</span>
+          <button title="Close">×</button>
+        </div>
+        <div class="note-body">
+          <textarea></textarea>
+        </div>
+        <div class="note-footer">
+          <button>Done</button>
+        </div>
+      `;
+
+      document.body.appendChild(note);
+
+      const header = note.querySelector(".note-header");
+      const closeBtn = header.querySelector("button");
+      const textarea = note.querySelector("textarea");
+      const doneBtn = note.querySelector(".note-footer button");
+
+      if (notesStore[noteId] && notesStore[noteId].text) {
+        textarea.value = notesStore[noteId].text;
+      }
+
+      closeBtn.addEventListener("click", () => {
+        notesStore[noteId].text = textarea.value;
+        note.remove();
+      });
+
+      doneBtn.addEventListener("click", () => {
+        notesStore[noteId].text = textarea.value;
+        note.remove();
+      });
+
+      makeNoteDraggable(note, header);
+    }
+
+    function deleteNote(noteId) {
+      const anchor = document.querySelector(
+        '.note-anchor[data-note-id="' + noteId + '"]'
+      );
+      if (anchor) {
+        const parent = anchor.parentNode;
+        // move children except delete button
+        while (anchor.firstChild) {
+          const child = anchor.firstChild;
+          if (
+            child.nodeType === 1 &&
+            child.classList.contains("note-delete")
+          ) {
+            anchor.removeChild(child);
+          } else {
+            parent.insertBefore(child, anchor);
+          }
+        }
+        parent.removeChild(anchor);
+      }
+      const noteWin = document.querySelector(
+        '.note-window[data-note-id="' + noteId + '"]'
+      );
+      if (noteWin) noteWin.remove();
+      delete notesStore[noteId];
+    }
+
+    function makeNoteDraggable(noteEl, handleEl) {
+      let isDragging = false;
+      let startX = 0;
+      let startY = 0;
+      let startLeft = 0;
+      let startTop = 0;
+
+      handleEl.addEventListener("mousedown", (e) => {
+        e.preventDefault();
+        isDragging = true;
+        startX = e.clientX;
+        startY = e.clientY;
+        const rect = noteEl.getBoundingClientRect();
+        startLeft = rect.left;
+        startTop = rect.top;
+        document.addEventListener("mousemove", onMove);
+        document.addEventListener("mouseup", onUp);
+      });
+
+      function onMove(e) {
+        if (!isDragging) return;
+        const dx = e.clientX - startX;
+        const dy = e.clientY - startY;
+        noteEl.style.left = startLeft + dx + "px";
+        noteEl.style.top = startTop + dy + "px";
+      }
+
+      function onUp() {
+        isDragging = false;
+        document.removeEventListener("mousemove", onMove);
+        document.removeEventListener("mouseup", onUp);
+      }
+    }
+
+    /***********************
+     * RESIZABLE DIVIDER
+     ***********************/
+    function setupDividerDrag() {
+      const divider = document.getElementById("divider");
+      const mainInner = document.querySelector(".main-inner");
+      const leftPane = document.getElementById("passagePane");
+      const rightPane = document.getElementById("questionPane");
+      if (!divider || !mainInner || !leftPane || !rightPane) return;
+
+      let dragging = false;
+      let startX = 0;
+      let startWidthLeft = 0;
+      let totalWidth = 0;
+
+      divider.addEventListener("mousedown", (e) => {
+        e.preventDefault();
+        dragging = true;
+        const rect = mainInner.getBoundingClientRect();
+        totalWidth = rect.width;
+        startX = e.clientX;
+        const leftRect = leftPane.getBoundingClientRect();
+        startWidthLeft = leftRect.width;
+        document.body.style.cursor = "col-resize";
+      });
+
+      document.addEventListener("mousemove", (e) => {
+        if (!dragging) return;
+        const dx = e.clientX - startX;
+        let newLeftWidth = startWidthLeft + dx;
+        const min = totalWidth * 0.25;
+        const max = totalWidth * 0.75;
+        if (newLeftWidth < min) newLeftWidth = min;
+        if (newLeftWidth > max) newLeftWidth = max;
+        const leftPct = (newLeftWidth / totalWidth) * 100;
+        leftPane.style.flex = "0 0 " + leftPct + "%";
+        rightPane.style.flex = "0 0 " + (100 - leftPct) + "%";
+      });
+
+      document.addEventListener("mouseup", () => {
+        if (!dragging) return;
+        dragging = false;
+        document.body.style.cursor = "default";
+      });
+    }
+
+    // Ensure option buttons reflect the current theme and font selections on load.
+    updateThemeButtons();
+    updateFontButtons();
+    ensureModeWiring();
+
+        // IELTS Pabs animated logo
+    function initAnimatedLogo() {
+      const logoNodes = document.querySelectorAll('.logo.home-link, .logo-link .logo');
+      if (!logoNodes.length) return;
+      const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+      logoNodes.forEach((logoNode) => {
+        const rawText = (logoNode.textContent || '').trim();
+        if (rawText !== 'IELTS Pabs') return;
+
+        logoNode.setAttribute('aria-label', 'IELTS Pabs');
+
+        const fragment = document.createDocumentFragment();
+        Array.from(rawText).forEach((char, index) => {
+          const span = document.createElement('span');
+          span.className = 'logo-char';
+          span.setAttribute('aria-hidden', 'true');
+          span.style.setProperty('--logo-char-index', String(index));
+          span.textContent = char === ' ' ? ' ' : char;
+          fragment.appendChild(span);
+        });
+
+        logoNode.textContent = '';
+        logoNode.appendChild(fragment);
+
+        if (reducedMotion) {
+          logoNode.classList.remove('is-animating');
+          return;
+        }
+
+        logoNode.addEventListener('mouseenter', () => {
+          logoNode.classList.remove('is-animating');
+          void logoNode.offsetWidth;
+          logoNode.classList.add('is-animating');
+        });
+
+        logoNode.addEventListener('mouseleave', () => {
+          logoNode.classList.remove('is-animating');
+        });
+      });
+    }
+
+
+    initAnimatedLogo();
+
+    function confirmGoHome() {
+      const ok = window.confirm("Are you sure you want to leave this test and return to the home page? Your current answers may not be saved.");
+      if (ok) window.location.href = "../../../index.html";
+    }
+
+  </script>
+</body>
+
+</html>
