@@ -1,79 +1,79 @@
-1. FALSE
+1. E
 
-2. TRUE
+2. D
 
-3. NOT GIVEN
+3. C
 
-4. TRUE
+4. A
 
-5. FALSE
+5. C
 
-6. TRUE
+6. True
 
-7. FALSE
+7. Not given
 
-8. F
+8. Not given
 
-9. H
+9. False
 
-10. C
+10. True
 
-11. F
+11. True
 
-12. A
+12. Not given
 
-13. D
+13. False
 
-14. E
+14. False
 
-15. festivals
+15. correct
 
-16. budget
+16. conversation
 
-17. partnerships
+17. filter
 
-18. diversity
+18. fresh
 
-19. database
+19. flavour / flavor
 
-20. accounting
+20. bitter
 
-21. knowledge
+21. day
 
-22. regulations
+22. issues
 
-23. responsibilities
+23. relevant Information
 
-24. leaflets
+24. (meeting) Agenda
 
-25. statement
+25. conflicts
 
-26. contractors
+26. tension
 
-27. stress
+27. social activity
 
-28. B
+28. vii
 
-29. A
+29. iii
 
-30. C
+30. i
 
-31. B
+31. vi
 
-32. D
+32. viii
 
-33. C
+33. v
 
-34. F
+34. B
 
-35. B
+35. C
 
-36. A
+36. B
 
-37. community service
+37. C
 
-38. shifting sand
+38. G
 
-39. copper
+39. E
 
-40. farmers
+40. B
