@@ -559,19 +559,65 @@
       background: transparent;
     }
 
-    .question-block.current-question {
+    .question-block.current-question,
+    .inline-answer.current-question {
       border-color: var(--accent);
       background: var(--accent-soft);
     }
 
-    .question-block.correct {
+    .question-block.correct,
+    .inline-answer.correct {
       border-color: var(--correct);
       background: rgba(67,160,71,0.08);
     }
 
-    .question-block.incorrect {
+    .question-block.incorrect,
+    .inline-answer.incorrect {
       border-color: var(--incorrect);
       background: rgba(229,57,53,0.06);
+    }
+
+    .inline-answer {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      width: auto;
+      margin: 0 2px;
+      padding: 1px 3px;
+      border: 1px solid transparent;
+      border-radius: 6px;
+      vertical-align: baseline;
+    }
+
+    .feedback-only {
+      margin: 2px 0 0;
+      padding: 0;
+      border: 0;
+      background: transparent;
+    }
+
+    .feedback-only.current-question,
+    .feedback-only.correct,
+    .feedback-only.incorrect {
+      border: 0;
+      background: transparent;
+    }
+
+    .matching-select {
+      width: auto;
+      min-width: 150px;
+      max-width: 100%;
+      padding: 5px 8px;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      background: var(--bg);
+      color: var(--text);
+      font-family: inherit;
+      font-size: 0.95rem;
+    }
+
+    .matching-control {
+      margin-top: 4px;
     }
 
     .question-number-label {
@@ -1067,8 +1113,9 @@
     }
 
     
-    .summary-box { border:1px solid var(--line); border-radius:10px; padding:14px; margin:10px 0; background:var(--bg-secondary);} 
-    .summary-box-title { text-align:center; font-weight:700; margin-bottom:8px; }
+    .summary-box { border:1px solid var(--line); border-radius:10px; padding:10px 12px; margin:8px 0 12px; background:var(--bg-secondary);}
+    .summary-box p { margin: 6px 0; line-height: 1.55; }
+    .summary-box-title { text-align:center; font-weight:700; margin-bottom:6px; }
     .notes-box { border:1px solid var(--border); border-radius:4px; padding:14px 16px; margin:10px 0 14px; background:var(--bg); }
     .notes-box-title { text-align:center; font-weight:700; font-size:1.05rem; margin:0 0 10px; }
     .notes-subheading { font-weight:700; margin:10px 0 6px; }
@@ -1079,7 +1126,8 @@
     .people-box-title { text-align:center; font-weight:700; margin-bottom:8px; }
     .people-list-line { margin:4px 0; }
     .summary-gap { display:inline-flex; align-items:center; gap:6px; margin:0 2px; }
-    .summary-gap select { min-width:150px; }
+    .summary-gap select { min-width:80px; width:auto; font-family: inherit; font-size: 0.95rem; }
+    .inline-input input { font-family: inherit; font-size: 0.95rem; }
     .summary-options-box { border:1px solid var(--line); border-radius:10px; padding:12px; margin:10px 0 14px; }
     .summary-options-grid { display:grid; grid-template-columns:repeat(2,minmax(180px,1fr)); gap:6px 14px; }
     .summary-feedback-row { margin-top:8px; display:grid; gap:4px; }
@@ -1440,10 +1488,10 @@
                 <p>Which section contains the following information?</p>
                 <p>Write the correct letter, A–H, in boxes 1–4 on your answer sheet.</p>
               </div>
-              <div class="question-block" data-q="1"><div class="question-text"><span class="question-number-label">1.</span> an explanation of the industrial processes that create potential raw materials for concrete</div><div class="options-row"><label><input type="radio" name="q1" value="A" /> A</label><label><input type="radio" name="q1" value="B" /> B</label><label><input type="radio" name="q1" value="C" /> C</label><label><input type="radio" name="q1" value="D" /> D</label><label><input type="radio" name="q1" value="E" /> E</label><label><input type="radio" name="q1" value="F" /> F</label><label><input type="radio" name="q1" value="G" /> G</label><label><input type="radio" name="q1" value="H" /> H</label></div><div class="correct-answer-text" id="ca-1"></div></div>
-              <div class="question-block" data-q="2"><div class="question-text"><span class="question-number-label">2.</span> a reference to the various locations where high-rise wooden buildings can be found</div><div class="options-row"><label><input type="radio" name="q2" value="A" /> A</label><label><input type="radio" name="q2" value="B" /> B</label><label><input type="radio" name="q2" value="C" /> C</label><label><input type="radio" name="q2" value="D" /> D</label><label><input type="radio" name="q2" value="E" /> E</label><label><input type="radio" name="q2" value="F" /> F</label><label><input type="radio" name="q2" value="G" /> G</label><label><input type="radio" name="q2" value="H" /> H</label></div><div class="correct-answer-text" id="ca-2"></div></div>
-              <div class="question-block" data-q="3"><div class="question-text"><span class="question-number-label">3.</span> an indication of how widely available the raw materials of concrete are</div><div class="options-row"><label><input type="radio" name="q3" value="A" /> A</label><label><input type="radio" name="q3" value="B" /> B</label><label><input type="radio" name="q3" value="C" /> C</label><label><input type="radio" name="q3" value="D" /> D</label><label><input type="radio" name="q3" value="E" /> E</label><label><input type="radio" name="q3" value="F" /> F</label><label><input type="radio" name="q3" value="G" /> G</label><label><input type="radio" name="q3" value="H" /> H</label></div><div class="correct-answer-text" id="ca-3"></div></div>
-              <div class="question-block" data-q="4"><div class="question-text"><span class="question-number-label">4.</span> the belief that more high-rise wooden buildings are needed before wood can be regarded as a viable construction material</div><div class="options-row"><label><input type="radio" name="q4" value="A" /> A</label><label><input type="radio" name="q4" value="B" /> B</label><label><input type="radio" name="q4" value="C" /> C</label><label><input type="radio" name="q4" value="D" /> D</label><label><input type="radio" name="q4" value="E" /> E</label><label><input type="radio" name="q4" value="F" /> F</label><label><input type="radio" name="q4" value="G" /> G</label><label><input type="radio" name="q4" value="H" /> H</label></div><div class="correct-answer-text" id="ca-4"></div></div>
+              <div class="question-block" data-q="1"><div class="question-text"><span class="question-number-label">1.</span> an explanation of the industrial processes that create potential raw materials for concrete</div><div class="matching-control"><select class="matching-select" name="q1"><option value="">Select section</option><option value="A">A</option><option value="B">B</option><option value="C">C</option><option value="D">D</option><option value="E">E</option><option value="F">F</option><option value="G">G</option><option value="H">H</option></select></div><div class="correct-answer-text" id="ca-1"></div></div>
+              <div class="question-block" data-q="2"><div class="question-text"><span class="question-number-label">2.</span> a reference to the various locations where high-rise wooden buildings can be found</div><div class="matching-control"><select class="matching-select" name="q2"><option value="">Select section</option><option value="A">A</option><option value="B">B</option><option value="C">C</option><option value="D">D</option><option value="E">E</option><option value="F">F</option><option value="G">G</option><option value="H">H</option></select></div><div class="correct-answer-text" id="ca-2"></div></div>
+              <div class="question-block" data-q="3"><div class="question-text"><span class="question-number-label">3.</span> an indication of how widely available the raw materials of concrete are</div><div class="matching-control"><select class="matching-select" name="q3"><option value="">Select section</option><option value="A">A</option><option value="B">B</option><option value="C">C</option><option value="D">D</option><option value="E">E</option><option value="F">F</option><option value="G">G</option><option value="H">H</option></select></div><div class="correct-answer-text" id="ca-3"></div></div>
+              <div class="question-block" data-q="4"><div class="question-text"><span class="question-number-label">4.</span> the belief that more high-rise wooden buildings are needed before wood can be regarded as a viable construction material</div><div class="matching-control"><select class="matching-select" name="q4"><option value="">Select section</option><option value="A">A</option><option value="B">B</option><option value="C">C</option><option value="D">D</option><option value="E">E</option><option value="F">F</option><option value="G">G</option><option value="H">H</option></select></div><div class="correct-answer-text" id="ca-4"></div></div>
 
               <div class="instruction-block">
                 <p><strong>Questions 5–8</strong></p>
@@ -1453,11 +1501,11 @@
               </div>
               <div class="summary-box">
                 <div class="summary-box-title">Making buildings with wood</div>
-                <p>Wood is a traditional building material, but current environmental concerns are encouraging <span class="inline-input" data-q="5"><input type="text" name="q5" /></span> to use wood in modern construction projects. Using wood, however, has its challenges. For example, as <span class="inline-input" data-q="6"><input type="text" name="q6" /></span> in the atmosphere enters wood, it increases in size. In addition, wood is prone to pests and the risk of fire is greater. However, wood can be turned into a better construction material if it is treated and combined with other materials. In one process, <span class="inline-input" data-q="7"><input type="text" name="q7" /></span> of solid wood are glued together to create building blocks. These blocks are lighter than concrete and steel but equal them in strength. Experts say that wooden buildings are an improvement on those made of concrete and steel in terms of the <span class="inline-input" data-q="8"><input type="text" name="q8" /></span> with which they can be constructed and how much noise is generated by the process.</p>
-                <div class="question-block" data-q="5"><div class="correct-answer-text" id="ca-5"></div></div>
-                <div class="question-block" data-q="6"><div class="correct-answer-text" id="ca-6"></div></div>
-                <div class="question-block" data-q="7"><div class="correct-answer-text" id="ca-7"></div></div>
-                <div class="question-block" data-q="8"><div class="correct-answer-text" id="ca-8"></div></div>
+                <p>Wood is a traditional building material, but current environmental concerns are encouraging <span class="inline-input inline-answer" data-q="5"><input type="text" name="q5" /></span> to use wood in modern construction projects. Using wood, however, has its challenges. For example, as <span class="inline-input inline-answer" data-q="6"><input type="text" name="q6" /></span> in the atmosphere enters wood, it increases in size. In addition, wood is prone to pests and the risk of fire is greater. However, wood can be turned into a better construction material if it is treated and combined with other materials. In one process, <span class="inline-input inline-answer" data-q="7"><input type="text" name="q7" /></span> of solid wood are glued together to create building blocks. These blocks are lighter than concrete and steel but equal them in strength. Experts say that wooden buildings are an improvement on those made of concrete and steel in terms of the <span class="inline-input inline-answer" data-q="8"><input type="text" name="q8" /></span> with which they can be constructed and how much noise is generated by the process.</p>
+                <div class="question-block feedback-only" data-q="5"><div class="correct-answer-text" id="ca-5"></div></div>
+                <div class="question-block feedback-only" data-q="6"><div class="correct-answer-text" id="ca-6"></div></div>
+                <div class="question-block feedback-only" data-q="7"><div class="correct-answer-text" id="ca-7"></div></div>
+                <div class="question-block feedback-only" data-q="8"><div class="correct-answer-text" id="ca-8"></div></div>
               </div>
 
               <div class="instruction-block">
@@ -1474,11 +1522,11 @@
                 <p>C Anna Surgenor</p>
                 <p>D Felix Preston and Johanna Lehne</p>
               </div>
-              <div class="question-block" data-q="9"><div class="question-text"><span class="question-number-label">9.</span> The environmental advantage of cement alternatives may not be as great as initially assumed.</div><div class="options-row"><label><input type="radio" name="q9" value="A" /> A</label><label><input type="radio" name="q9" value="B" /> B</label><label><input type="radio" name="q9" value="C" /> C</label><label><input type="radio" name="q9" value="D" /> D</label></div><div class="correct-answer-text" id="ca-9"></div></div>
-              <div class="question-block" data-q="10"><div class="question-text"><span class="question-number-label">10.</span> It would be hard to create a construction alternative to concrete that offers so many comparable benefits.</div><div class="options-row"><label><input type="radio" name="q10" value="A" /> A</label><label><input type="radio" name="q10" value="B" /> B</label><label><input type="radio" name="q10" value="C" /> C</label><label><input type="radio" name="q10" value="D" /> D</label></div><div class="correct-answer-text" id="ca-10"></div></div>
-              <div class="question-block" data-q="11"><div class="question-text"><span class="question-number-label">11.</span> Worries about the environment have led to increased interest in wood as a construction material.</div><div class="options-row"><label><input type="radio" name="q11" value="A" /> A</label><label><input type="radio" name="q11" value="B" /> B</label><label><input type="radio" name="q11" value="C" /> C</label><label><input type="radio" name="q11" value="D" /> D</label></div><div class="correct-answer-text" id="ca-11"></div></div>
-              <div class="question-block" data-q="12"><div class="question-text"><span class="question-number-label">12.</span> Expense has been a factor in the negative response to the development of new cements.</div><div class="options-row"><label><input type="radio" name="q12" value="A" /> A</label><label><input type="radio" name="q12" value="B" /> B</label><label><input type="radio" name="q12" value="C" /> C</label><label><input type="radio" name="q12" value="D" /> D</label></div><div class="correct-answer-text" id="ca-12"></div></div>
-              <div class="question-block" data-q="13"><div class="question-text"><span class="question-number-label">13.</span> The environmental damage caused by concrete is due to it being produced in large quantities.</div><div class="options-row"><label><input type="radio" name="q13" value="A" /> A</label><label><input type="radio" name="q13" value="B" /> B</label><label><input type="radio" name="q13" value="C" /> C</label><label><input type="radio" name="q13" value="D" /> D</label></div><div class="correct-answer-text" id="ca-13"></div></div>
+              <div class="question-block" data-q="9"><div class="question-text"><span class="question-number-label">9.</span> The environmental advantage of cement alternatives may not be as great as initially assumed.</div><div class="matching-control"><select class="matching-select" name="q9"><option value="">Select person</option><option value="A">A</option><option value="B">B</option><option value="C">C</option><option value="D">D</option></select></div><div class="correct-answer-text" id="ca-9"></div></div>
+              <div class="question-block" data-q="10"><div class="question-text"><span class="question-number-label">10.</span> It would be hard to create a construction alternative to concrete that offers so many comparable benefits.</div><div class="matching-control"><select class="matching-select" name="q10"><option value="">Select person</option><option value="A">A</option><option value="B">B</option><option value="C">C</option><option value="D">D</option></select></div><div class="correct-answer-text" id="ca-10"></div></div>
+              <div class="question-block" data-q="11"><div class="question-text"><span class="question-number-label">11.</span> Worries about the environment have led to increased interest in wood as a construction material.</div><div class="matching-control"><select class="matching-select" name="q11"><option value="">Select person</option><option value="A">A</option><option value="B">B</option><option value="C">C</option><option value="D">D</option></select></div><div class="correct-answer-text" id="ca-11"></div></div>
+              <div class="question-block" data-q="12"><div class="question-text"><span class="question-number-label">12.</span> Expense has been a factor in the negative response to the development of new cements.</div><div class="matching-control"><select class="matching-select" name="q12"><option value="">Select person</option><option value="A">A</option><option value="B">B</option><option value="C">C</option><option value="D">D</option></select></div><div class="correct-answer-text" id="ca-12"></div></div>
+              <div class="question-block" data-q="13"><div class="question-text"><span class="question-number-label">13.</span> The environmental damage caused by concrete is due to it being produced in large quantities.</div><div class="matching-control"><select class="matching-select" name="q13"><option value="">Select person</option><option value="A">A</option><option value="B">B</option><option value="C">C</option><option value="D">D</option></select></div><div class="correct-answer-text" id="ca-13"></div></div>
             </div>
 
             <!-- Section 2 questions -->
@@ -1500,13 +1548,13 @@
                 <p>vii A disappointing outcome for customers</p>
                 <p>viii A better option than the steam car arises</p>
               </div>
-              <div class="question-block" data-q="14"><div class="question-text"><span class="question-number-label">14.</span> Paragraph A</div><div class="options-row"><label><input type="radio" name="q14" value="i" /> i</label><label><input type="radio" name="q14" value="ii" /> ii</label><label><input type="radio" name="q14" value="iii" /> iii</label><label><input type="radio" name="q14" value="iv" /> iv</label><label><input type="radio" name="q14" value="v" /> v</label><label><input type="radio" name="q14" value="vi" /> vi</label><label><input type="radio" name="q14" value="vii" /> vii</label><label><input type="radio" name="q14" value="viii" /> viii</label></div><div class="correct-answer-text" id="ca-14"></div></div>
-              <div class="question-block" data-q="15"><div class="question-text"><span class="question-number-label">15.</span> Paragraph B</div><div class="options-row"><label><input type="radio" name="q15" value="i" /> i</label><label><input type="radio" name="q15" value="ii" /> ii</label><label><input type="radio" name="q15" value="iii" /> iii</label><label><input type="radio" name="q15" value="iv" /> iv</label><label><input type="radio" name="q15" value="v" /> v</label><label><input type="radio" name="q15" value="vi" /> vi</label><label><input type="radio" name="q15" value="vii" /> vii</label><label><input type="radio" name="q15" value="viii" /> viii</label></div><div class="correct-answer-text" id="ca-15"></div></div>
-              <div class="question-block" data-q="16"><div class="question-text"><span class="question-number-label">16.</span> Paragraph C</div><div class="options-row"><label><input type="radio" name="q16" value="i" /> i</label><label><input type="radio" name="q16" value="ii" /> ii</label><label><input type="radio" name="q16" value="iii" /> iii</label><label><input type="radio" name="q16" value="iv" /> iv</label><label><input type="radio" name="q16" value="v" /> v</label><label><input type="radio" name="q16" value="vi" /> vi</label><label><input type="radio" name="q16" value="vii" /> vii</label><label><input type="radio" name="q16" value="viii" /> viii</label></div><div class="correct-answer-text" id="ca-16"></div></div>
-              <div class="question-block" data-q="17"><div class="question-text"><span class="question-number-label">17.</span> Paragraph D</div><div class="options-row"><label><input type="radio" name="q17" value="i" /> i</label><label><input type="radio" name="q17" value="ii" /> ii</label><label><input type="radio" name="q17" value="iii" /> iii</label><label><input type="radio" name="q17" value="iv" /> iv</label><label><input type="radio" name="q17" value="v" /> v</label><label><input type="radio" name="q17" value="vi" /> vi</label><label><input type="radio" name="q17" value="vii" /> vii</label><label><input type="radio" name="q17" value="viii" /> viii</label></div><div class="correct-answer-text" id="ca-17"></div></div>
-              <div class="question-block" data-q="18"><div class="question-text"><span class="question-number-label">18.</span> Paragraph E</div><div class="options-row"><label><input type="radio" name="q18" value="i" /> i</label><label><input type="radio" name="q18" value="ii" /> ii</label><label><input type="radio" name="q18" value="iii" /> iii</label><label><input type="radio" name="q18" value="iv" /> iv</label><label><input type="radio" name="q18" value="v" /> v</label><label><input type="radio" name="q18" value="vi" /> vi</label><label><input type="radio" name="q18" value="vii" /> vii</label><label><input type="radio" name="q18" value="viii" /> viii</label></div><div class="correct-answer-text" id="ca-18"></div></div>
-              <div class="question-block" data-q="19"><div class="question-text"><span class="question-number-label">19.</span> Paragraph F</div><div class="options-row"><label><input type="radio" name="q19" value="i" /> i</label><label><input type="radio" name="q19" value="ii" /> ii</label><label><input type="radio" name="q19" value="iii" /> iii</label><label><input type="radio" name="q19" value="iv" /> iv</label><label><input type="radio" name="q19" value="v" /> v</label><label><input type="radio" name="q19" value="vi" /> vi</label><label><input type="radio" name="q19" value="vii" /> vii</label><label><input type="radio" name="q19" value="viii" /> viii</label></div><div class="correct-answer-text" id="ca-19"></div></div>
-              <div class="question-block" data-q="20"><div class="question-text"><span class="question-number-label">20.</span> Paragraph G</div><div class="options-row"><label><input type="radio" name="q20" value="i" /> i</label><label><input type="radio" name="q20" value="ii" /> ii</label><label><input type="radio" name="q20" value="iii" /> iii</label><label><input type="radio" name="q20" value="iv" /> iv</label><label><input type="radio" name="q20" value="v" /> v</label><label><input type="radio" name="q20" value="vi" /> vi</label><label><input type="radio" name="q20" value="vii" /> vii</label><label><input type="radio" name="q20" value="viii" /> viii</label></div><div class="correct-answer-text" id="ca-20"></div></div>
+              <div class="question-block" data-q="14"><div class="question-text"><span class="question-number-label">14.</span> Paragraph A</div><div class="matching-control"><select class="matching-select" name="q14"><option value="">Select heading</option><option value="i">i</option><option value="ii">ii</option><option value="iii">iii</option><option value="iv">iv</option><option value="v">v</option><option value="vi">vi</option><option value="vii">vii</option><option value="viii">viii</option></select></div><div class="correct-answer-text" id="ca-14"></div></div>
+              <div class="question-block" data-q="15"><div class="question-text"><span class="question-number-label">15.</span> Paragraph B</div><div class="matching-control"><select class="matching-select" name="q15"><option value="">Select heading</option><option value="i">i</option><option value="ii">ii</option><option value="iii">iii</option><option value="iv">iv</option><option value="v">v</option><option value="vi">vi</option><option value="vii">vii</option><option value="viii">viii</option></select></div><div class="correct-answer-text" id="ca-15"></div></div>
+              <div class="question-block" data-q="16"><div class="question-text"><span class="question-number-label">16.</span> Paragraph C</div><div class="matching-control"><select class="matching-select" name="q16"><option value="">Select heading</option><option value="i">i</option><option value="ii">ii</option><option value="iii">iii</option><option value="iv">iv</option><option value="v">v</option><option value="vi">vi</option><option value="vii">vii</option><option value="viii">viii</option></select></div><div class="correct-answer-text" id="ca-16"></div></div>
+              <div class="question-block" data-q="17"><div class="question-text"><span class="question-number-label">17.</span> Paragraph D</div><div class="matching-control"><select class="matching-select" name="q17"><option value="">Select heading</option><option value="i">i</option><option value="ii">ii</option><option value="iii">iii</option><option value="iv">iv</option><option value="v">v</option><option value="vi">vi</option><option value="vii">vii</option><option value="viii">viii</option></select></div><div class="correct-answer-text" id="ca-17"></div></div>
+              <div class="question-block" data-q="18"><div class="question-text"><span class="question-number-label">18.</span> Paragraph E</div><div class="matching-control"><select class="matching-select" name="q18"><option value="">Select heading</option><option value="i">i</option><option value="ii">ii</option><option value="iii">iii</option><option value="iv">iv</option><option value="v">v</option><option value="vi">vi</option><option value="vii">vii</option><option value="viii">viii</option></select></div><div class="correct-answer-text" id="ca-18"></div></div>
+              <div class="question-block" data-q="19"><div class="question-text"><span class="question-number-label">19.</span> Paragraph F</div><div class="matching-control"><select class="matching-select" name="q19"><option value="">Select heading</option><option value="i">i</option><option value="ii">ii</option><option value="iii">iii</option><option value="iv">iv</option><option value="v">v</option><option value="vi">vi</option><option value="vii">vii</option><option value="viii">viii</option></select></div><div class="correct-answer-text" id="ca-19"></div></div>
+              <div class="question-block" data-q="20"><div class="question-text"><span class="question-number-label">20.</span> Paragraph G</div><div class="matching-control"><select class="matching-select" name="q20"><option value="">Select heading</option><option value="i">i</option><option value="ii">ii</option><option value="iii">iii</option><option value="iv">iv</option><option value="v">v</option><option value="vi">vi</option><option value="vii">vii</option><option value="viii">viii</option></select></div><div class="correct-answer-text" id="ca-20"></div></div>
 
               <div class="instruction-block">
                 <p><strong>Questions 21–23</strong></p>
@@ -1525,11 +1573,11 @@
               </div>
               <div class="summary-box">
                 <div class="summary-box-title">The Model E</div>
-                <p>The Model E was road-tested in 1924 by the Automobile Club of America. They found it easy to drive, despite its weight, and it impressed the spectators. A later version of the Model E raised its <span class="inline-input" data-q="24"><input type="text" name="q24" /></span>, while keeping its emissions extremely low.</p>
-                <p>The steam car was too expensive for many people and its design was constantly being altered. Under <span class="inline-input" data-q="25"><input type="text" name="q25" /></span> cars were produced before the company went out of business. However, even today, there are Model Es on the road in the US. They are straightforward to maintain, and they satisfy California’s <span class="inline-input" data-q="26"><input type="text" name="q26" /></span> emissions laws. Perhaps today’s technology and materials would help us revive the steam car.</p>
-                <div class="question-block" data-q="24"><div class="correct-answer-text" id="ca-24"></div></div>
-                <div class="question-block" data-q="25"><div class="correct-answer-text" id="ca-25"></div></div>
-                <div class="question-block" data-q="26"><div class="correct-answer-text" id="ca-26"></div></div>
+                <p>The Model E was road-tested in 1924 by the Automobile Club of America. They found it easy to drive, despite its weight, and it impressed the spectators. A later version of the Model E raised its <span class="inline-input inline-answer" data-q="24"><input type="text" name="q24" /></span>, while keeping its emissions extremely low.</p>
+                <p>The steam car was too expensive for many people and its design was constantly being altered. Under <span class="inline-input inline-answer" data-q="25"><input type="text" name="q25" /></span> cars were produced before the company went out of business. However, even today, there are Model Es on the road in the US. They are straightforward to maintain, and they satisfy California’s <span class="inline-input inline-answer" data-q="26"><input type="text" name="q26" /></span> emissions laws. Perhaps today’s technology and materials would help us revive the steam car.</p>
+                <div class="question-block feedback-only" data-q="24"><div class="correct-answer-text" id="ca-24"></div></div>
+                <div class="question-block feedback-only" data-q="25"><div class="correct-answer-text" id="ca-25"></div></div>
+                <div class="question-block feedback-only" data-q="26"><div class="correct-answer-text" id="ca-26"></div></div>
               </div>
             </div>
 
@@ -1566,12 +1614,12 @@
               </div>
               <div class="summary-box">
                 <div class="summary-box-title">Is streaming effective?</div>
-                <p>According to Professor John Hattie of the Melbourne Education Research Institute there is very little indication that streaming leads to <span class="summary-gap"><select name="q31"><option value="">31</option><option value="A">A</option><option value="B">B</option><option value="C">C</option><option value="D">D</option><option value="E">E</option><option value="F">F</option><option value="G">G</option><option value="H">H</option><option value="I">I</option></select></span>. He points out that, in schools which use streaming, the most significant impact is on those students placed in the <span class="summary-gap"><select name="q32"><option value="">32</option><option value="A">A</option><option value="B">B</option><option value="C">C</option><option value="D">D</option><option value="E">E</option><option value="F">F</option><option value="G">G</option><option value="H">H</option><option value="I">I</option></select></span>, especially where a large proportion of them have <span class="summary-gap"><select name="q33"><option value="">33</option><option value="A">A</option><option value="B">B</option><option value="C">C</option><option value="D">D</option><option value="E">E</option><option value="F">F</option><option value="G">G</option><option value="H">H</option><option value="I">I</option></select></span>. Meanwhile, for the <span class="summary-gap"><select name="q34"><option value="">34</option><option value="A">A</option><option value="B">B</option><option value="C">C</option><option value="D">D</option><option value="E">E</option><option value="F">F</option><option value="G">G</option><option value="H">H</option><option value="I">I</option></select></span>, there appears to be only minimal advantage. A further issue is that teachers tend to have <span class="summary-gap"><select name="q35"><option value="">35</option><option value="A">A</option><option value="B">B</option><option value="C">C</option><option value="D">D</option><option value="E">E</option><option value="F">F</option><option value="G">G</option><option value="H">H</option><option value="I">I</option></select></span> of students in streamed groups.</p>
-                <div class="question-block" data-q="31"><div class="correct-answer-text" id="ca-31"></div></div>
-                <div class="question-block" data-q="32"><div class="correct-answer-text" id="ca-32"></div></div>
-                <div class="question-block" data-q="33"><div class="correct-answer-text" id="ca-33"></div></div>
-                <div class="question-block" data-q="34"><div class="correct-answer-text" id="ca-34"></div></div>
-                <div class="question-block" data-q="35"><div class="correct-answer-text" id="ca-35"></div></div>
+                <p>According to Professor John Hattie of the Melbourne Education Research Institute there is very little indication that streaming leads to <span class="summary-gap inline-answer" data-q="31"><select name="q31"><option value="">31</option><option value="A">A</option><option value="B">B</option><option value="C">C</option><option value="D">D</option><option value="E">E</option><option value="F">F</option><option value="G">G</option><option value="H">H</option><option value="I">I</option></select></span>. He points out that, in schools which use streaming, the most significant impact is on those students placed in the <span class="summary-gap inline-answer" data-q="32"><select name="q32"><option value="">32</option><option value="A">A</option><option value="B">B</option><option value="C">C</option><option value="D">D</option><option value="E">E</option><option value="F">F</option><option value="G">G</option><option value="H">H</option><option value="I">I</option></select></span>, especially where a large proportion of them have <span class="summary-gap inline-answer" data-q="33"><select name="q33"><option value="">33</option><option value="A">A</option><option value="B">B</option><option value="C">C</option><option value="D">D</option><option value="E">E</option><option value="F">F</option><option value="G">G</option><option value="H">H</option><option value="I">I</option></select></span>. Meanwhile, for the <span class="summary-gap inline-answer" data-q="34"><select name="q34"><option value="">34</option><option value="A">A</option><option value="B">B</option><option value="C">C</option><option value="D">D</option><option value="E">E</option><option value="F">F</option><option value="G">G</option><option value="H">H</option><option value="I">I</option></select></span>, there appears to be only minimal advantage. A further issue is that teachers tend to have <span class="summary-gap inline-answer" data-q="35"><select name="q35"><option value="">35</option><option value="A">A</option><option value="B">B</option><option value="C">C</option><option value="D">D</option><option value="E">E</option><option value="F">F</option><option value="G">G</option><option value="H">H</option><option value="I">I</option></select></span> of students in streamed groups.</p>
+                <div class="question-block feedback-only" data-q="31"><div class="correct-answer-text" id="ca-31"></div></div>
+                <div class="question-block feedback-only" data-q="32"><div class="correct-answer-text" id="ca-32"></div></div>
+                <div class="question-block feedback-only" data-q="33"><div class="correct-answer-text" id="ca-33"></div></div>
+                <div class="question-block feedback-only" data-q="34"><div class="correct-answer-text" id="ca-34"></div></div>
+                <div class="question-block feedback-only" data-q="35"><div class="correct-answer-text" id="ca-35"></div></div>
               </div>
 
               <div class="instruction-block">
@@ -2340,11 +2388,24 @@
           }
         });
 
+      qPane.addEventListener("focusin", setCurrentQuestionFromElement);
+      qPane.addEventListener("click", setCurrentQuestionFromElement);
+
       // Start on section 1, question 1
       switchSection(1);
       highlightCurrentQuestion(1);
       updateCounts();
       buildQuestionNav();
+    }
+
+    function setCurrentQuestionFromElement(e) {
+      const target = e.target.closest("[data-q]");
+      if (!target || target.classList.contains("feedback-only")) return;
+      const num = parseInt(target.getAttribute("data-q"), 10);
+      if (isNaN(num)) return;
+      currentQuestion = num;
+      buildQuestionNav();
+      highlightCurrentQuestion(currentQuestion);
     }
 
     function onAnswerChange(e) {
@@ -2485,22 +2546,26 @@
       }
     }
 
+    function getQuestionTarget(qNum) {
+      return (
+        document.querySelector('.inline-answer[data-q="' + qNum + '"]') ||
+        document.querySelector('.question-block[data-q="' + qNum + '"]:not(.feedback-only)') ||
+        document.querySelector('.question-block[data-q="' + qNum + '"]')
+      );
+    }
+
     function highlightCurrentQuestion(qNum) {
       document
-        .querySelectorAll(".question-block")
+        .querySelectorAll(".question-block, .inline-answer")
         .forEach((el) => el.classList.remove("current-question"));
-      const block = document.querySelector(
-        '.question-block[data-q="' + qNum + '"]'
-      );
-      if (block) {
+      const block = getQuestionTarget(qNum);
+      if (block && !block.classList.contains("feedback-only")) {
         block.classList.add("current-question");
       }
     }
 
     function scrollToQuestion(qNum) {
-      const block = document.querySelector(
-        '.question-block[data-q="' + qNum + '"]'
-      );
+      const block = getQuestionTarget(qNum);
       const qPane = document.getElementById("questionPane");
       if (block && qPane) {
         block.scrollIntoView({ behavior: "smooth", block: "center" });
@@ -2741,11 +2806,14 @@
           }
         }
 
-        const block = document.querySelector(
-          '.question-block[data-q="' + q + '"]'
+        const block = getQuestionTarget(q);
+        const feedbackBlock = document.querySelector(
+          '.question-block.feedback-only[data-q="' + q + '"]'
         );
+        [block, feedbackBlock].forEach((el) => {
+          if (el) el.classList.remove("correct", "incorrect");
+        });
         if (block) {
-          block.classList.remove("correct", "incorrect");
           if (isCorrect) {
             block.classList.add("correct");
             correctCount++;
