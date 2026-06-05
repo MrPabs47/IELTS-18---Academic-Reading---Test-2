@@ -3046,6 +3046,101 @@
       return null;
     }
 
+    function getSelectedTextOffsets(range, textNode) {
+      if (!textNode || textNode.nodeType !== Node.TEXT_NODE) return null;
+      const length = textNode.nodeValue.length;
+      if (!length) return null;
+
+      const textRange = document.createRange();
+      textRange.selectNodeContents(textNode);
+
+      const endsBeforeTextStarts =
+        range.compareBoundaryPoints(Range.END_TO_START, textRange) <= 0;
+      const startsAfterTextEnds =
+        range.compareBoundaryPoints(Range.START_TO_END, textRange) >= 0;
+
+      textRange.detach();
+
+      if (endsBeforeTextStarts || startsAfterTextEnds) return null;
+
+      let start = 0;
+      let end = length;
+
+      if (range.startContainer === textNode) {
+        start = range.startOffset;
+      }
+      if (range.endContainer === textNode) {
+        end = range.endOffset;
+      }
+
+      if (start >= end) return null;
+      return { start, end };
+    }
+
+    function wrapTextNodePortion(textNode, start, end, className) {
+      let selectedNode = textNode;
+
+      if (end < selectedNode.nodeValue.length) {
+        selectedNode.splitText(end);
+      }
+      if (start > 0) {
+        selectedNode = selectedNode.splitText(start);
+      }
+      if (!selectedNode.nodeValue) return null;
+
+      const span = document.createElement("span");
+      span.className = className;
+      selectedNode.parentNode.insertBefore(span, selectedNode);
+      span.appendChild(selectedNode);
+      return span;
+    }
+
+    function highlightRangePreservingStructure(range) {
+      const textSelections = [];
+      const root = range.commonAncestorContainer;
+
+      if (root.nodeType === Node.TEXT_NODE) {
+        const offsets = getSelectedTextOffsets(range, root);
+        if (offsets) {
+          textSelections.push({
+            node: root,
+            start: offsets.start,
+            end: offsets.end,
+          });
+        }
+      } else {
+        const walker = document.createTreeWalker(
+          root,
+          NodeFilter.SHOW_TEXT,
+          {
+            acceptNode(node) {
+              if (!node.nodeValue.trim()) return NodeFilter.FILTER_REJECT;
+              return getSelectedTextOffsets(range, node)
+                ? NodeFilter.FILTER_ACCEPT
+                : NodeFilter.FILTER_REJECT;
+            },
+          }
+        );
+
+        let node = walker.nextNode();
+        while (node) {
+          const offsets = getSelectedTextOffsets(range, node);
+          if (offsets) {
+            textSelections.push({
+              node,
+              start: offsets.start,
+              end: offsets.end,
+            });
+          }
+          node = walker.nextNode();
+        }
+      }
+
+      textSelections.reverse().forEach(({ node, start, end }) => {
+        wrapTextNodePortion(node, start, end, "highlighted");
+      });
+    }
+
     function toggleHighlightSelection() {
       const sel = window.getSelection();
       if (!sel || sel.rangeCount === 0 || sel.isCollapsed) return;
@@ -3075,10 +3170,7 @@
         try {
           range.surroundContents(span);
         } catch (e) {
-          // Fallback: simple replacement
-          span.textContent = range.toString();
-          range.deleteContents();
-          range.insertNode(span);
+          highlightRangePreservingStructure(range);
         }
       }
 
