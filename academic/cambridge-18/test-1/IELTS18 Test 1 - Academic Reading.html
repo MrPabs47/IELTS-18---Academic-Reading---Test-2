@@ -2986,6 +2986,7 @@
      **********************/
     let currentNoteId = 0;
     const notesStore = {}; // noteId -> { text }
+    let isAdjustingSelection = false;
 
     function setupSelectionListeners() {
       const toolbar = document.getElementById("selectionToolbar");
@@ -3030,6 +3031,8 @@
           hideSelectionToolbar();
         }
       });
+
+      document.addEventListener("selectionchange", clipLivePassageSelection);
     }
 
     function hideSelectionToolbar() {
@@ -3160,6 +3163,113 @@
       }
 
       return null;
+    }
+
+    function isForwardSelection(selection) {
+      if (selection.anchorNode === selection.focusNode) {
+        return selection.anchorOffset <= selection.focusOffset;
+      }
+
+      const anchorRange = document.createRange();
+      const focusRange = document.createRange();
+      anchorRange.setStart(selection.anchorNode, selection.anchorOffset);
+      focusRange.setStart(selection.focusNode, selection.focusOffset);
+      anchorRange.collapse(true);
+      focusRange.collapse(true);
+      const isForward =
+        anchorRange.compareBoundaryPoints(Range.START_TO_START, focusRange) <= 0;
+      anchorRange.detach();
+      focusRange.detach();
+      return isForward;
+    }
+
+    function setSelectionExtent(
+      selection,
+      anchorNode,
+      anchorOffset,
+      focusNode,
+      focusOffset
+    ) {
+      if (typeof selection.setBaseAndExtent === "function") {
+        selection.setBaseAndExtent(
+          anchorNode,
+          anchorOffset,
+          focusNode,
+          focusOffset
+        );
+        return;
+      }
+
+      if (typeof selection.extend === "function") {
+        const range = document.createRange();
+        range.setStart(anchorNode, anchorOffset);
+        range.collapse(true);
+        selection.removeAllRanges();
+        selection.addRange(range);
+        selection.extend(focusNode, focusOffset);
+        return;
+      }
+
+      const anchorRange = document.createRange();
+      const focusRange = document.createRange();
+      anchorRange.setStart(anchorNode, anchorOffset);
+      focusRange.setStart(focusNode, focusOffset);
+      anchorRange.collapse(true);
+      focusRange.collapse(true);
+
+      const range = document.createRange();
+      if (
+        anchorRange.compareBoundaryPoints(Range.START_TO_START, focusRange) <= 0
+      ) {
+        range.setStart(anchorNode, anchorOffset);
+        range.setEnd(focusNode, focusOffset);
+      } else {
+        range.setStart(focusNode, focusOffset);
+        range.setEnd(anchorNode, anchorOffset);
+      }
+      anchorRange.detach();
+      focusRange.detach();
+      selection.removeAllRanges();
+      selection.addRange(range);
+    }
+
+    function clipLivePassageSelection() {
+      if (isAdjustingSelection) return;
+
+      const passagePane = document.getElementById("passagePane");
+      const selection = window.getSelection();
+      if (
+        !passagePane ||
+        !selection ||
+        selection.rangeCount === 0 ||
+        selection.isCollapsed ||
+        !selection.anchorNode ||
+        !selection.focusNode ||
+        !passagePane.contains(selection.anchorNode)
+      ) {
+        return;
+      }
+
+      const anchorBlock = getHighlightBlock(selection.anchorNode);
+      const focusBlock = getHighlightBlock(selection.focusNode);
+      if (!anchorBlock || anchorBlock === focusBlock) return;
+
+      const clipForward = isForwardSelection(selection);
+      const clipNode = anchorBlock;
+      const clipOffset = clipForward ? anchorBlock.childNodes.length : 0;
+
+      isAdjustingSelection = true;
+      try {
+        setSelectionExtent(
+          selection,
+          selection.anchorNode,
+          selection.anchorOffset,
+          clipNode,
+          clipOffset
+        );
+      } finally {
+        isAdjustingSelection = false;
+      }
     }
 
     function applyHighlightToRange(range) {
