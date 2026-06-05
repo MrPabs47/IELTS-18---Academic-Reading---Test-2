@@ -20,7 +20,7 @@ This project uses static HTML test pages. All new Reading tests must follow the 
 10. Do not create JavaScript that automatically changes question numbers into bullet points.
 11. Bullet points must be based on the actual question type and layout, not the question number range.
 12. Keep the IELTS Pabs logo behaviour: red hover, hover-triggered blur animation, confirmation home link, pointer cursor on hover, and no text insertion cursor. Recommended CSS: `.logo.home-link { cursor: pointer; user-select: none; }`.
-13. Build Reading tests in staged prompts: shell only, passages only, questions and answers only, specific formatting and OCR cleanup, visual smoke check, highlight behaviour check, hub activation, and documentation update only if new issues were found. If old shell content appears, repair in smaller sections. Always inspect actual changed files and actual HTML, not only the PR title or description.
+13. Build Reading tests in staged prompts: shell only, passages only, questions and answers only, specific formatting and OCR cleanup, visual smoke check, highlight behaviour check, hub activation, and documentation update only if new issues were found. If old shell content appears, repair in smaller sections. Always inspect actual changed files and actual HTML, not only the PR title or description. For Academic Reading, use shell-only, passages-only, and then questions and answers. If a test contains several different question layouts, build the question pane by part: Part 1 questions, Part 2 questions, Part 3 questions, then answerKey/correctAnswerText/sectionRanges. This prevents Codex from applying one inappropriate layout pattern across unrelated question types.
 14. GT Reading is organised differently: Section 1 may contain two or more short texts, Section 2 may contain two workplace/practical texts, and Section 3 is usually one longer text. Build GT Reading tests in staged prompts: shell only, passages only, questions and answers only or by section if needed, specific formatting and OCR cleanup, visual smoke check, highlight behaviour check, hub activation, and documentation update only if new problems were found. Do not build a full GT test in one massive pass.
 
 
@@ -35,11 +35,16 @@ This project uses static HTML test pages. All new Reading tests must follow the 
 
 Academic Reading structure:
 
-1. Academic Reading normally has one main passage per section.
+1. Academic Reading normally has one main passage per section, so the passage structure is usually simpler than GT.
 2. Do not apply GT mini text separation rules to Academic sections unless the source clearly shows separate texts.
 3. Passage 1 should map to Questions 1 to about 13.
 4. Passage 2 should map to Questions 14 to about 26.
 5. Passage 3 should map to Questions 27 to 40.
+6. Academic question layouts still need careful control even when the passage structure is simple.
+7. Before building questions, classify all question groups by type.
+8. If a section contains matching tasks, summaries, multiple-choice questions, and TRUE/FALSE/YES/NO questions, build questions by part or by question group.
+9. Do not let one layout style spread across all question types.
+10. Example lesson: IELTS 18 Academic Reading Test 3 had mixed layouts, so Part 1, Part 2, and Part 3 questions were safer as separate question-pane stages instead of one large replacement stage.
 
 Desktop split layout:
 
@@ -183,9 +188,15 @@ Layout:
 - Use a bordered summary box if the original task shows the summary inside a bordered box or as a summary paragraph.
 - If the source summary has a title, center or clearly emphasise that title at the top of the bordered box.
 - Use inline answer boxes.
+- Inline text inputs should sit naturally inside the summary text.
 - Put the question number inside the answer box.
 - Keep the summary as connected paragraph-style text; do not split into visually disconnected rows unless the source is actually row-based. Feedback areas must exist but should not disrupt paragraph flow before submission.
-- Use bullet points only if the source summary is in note form. Example lessons: Academic Test 4 `Mining the sea floor` and `Contemporary hunter-gatherer societies` needed bordered summary boxes; GT Test 1 `The importance of the ‘face with tears of joy’` needed a cleaner connected summary box.
+- Do not create large empty visible question blocks below the summary only to hold feedback.
+- If feedback containers are needed for `ca-*` IDs, they may be feedback-only and should not create visible blank panels.
+- Current-question highlighting should target the visible inline input wrapper, not an empty feedback-only block.
+- Empty feedback-only containers should not receive current-question, correct, or incorrect styling that creates blank blue, green, or red areas.
+- Summary boxes should not have unnecessary blank vertical space or large minimum height unless required by the source layout.
+- Use bullet points only if the source summary is in note form. Example lessons: Academic Test 4 `Mining the sea floor` and `Contemporary hunter-gatherer societies` needed bordered summary boxes; GT Test 1 `The importance of the ‘face with tears of joy’` needed a cleaner connected summary box. IELTS 18 Academic Reading Test 3 Q5-Q8, Q24-Q26, and Q31-Q35 needed visible inline answer wrappers with feedback-only containers to avoid blank current-question highlight areas.
 
 ## Summary completion with options
 
@@ -196,9 +207,16 @@ Layout:
 - Use a bordered summary box.
 - Put the title inside the box if the source has a title.
 - Use inline dropdowns.
+- Inline dropdowns should sit naturally inside the summary text.
 - Show the question number before each dropdown.
 - Below the summary, create a separate bordered options box.
 - Dropdowns should show both letter and phrase where possible.
+- Do not create large empty visible question blocks below the summary only to hold feedback.
+- If feedback containers are needed for `ca-*` IDs, they may be feedback-only and should not create visible blank panels.
+- Current-question highlighting should target the visible inline dropdown wrapper, not an empty feedback-only block.
+- Empty feedback-only containers should not receive current-question, correct, or incorrect styling that creates blank blue, green, or red areas.
+- Summary boxes should not have unnecessary blank vertical space or large minimum height unless required by the source layout.
+- Example lesson: IELTS 18 Academic Reading Test 3 Q5-Q8, Q24-Q26, and Q31-Q35 needed inline answer wrappers and feedback-only containers so selection and answer checking did not create blank highlighted areas.
 
 ## Sentence completion
 
@@ -222,8 +240,14 @@ Which paragraph contains the following information?
 Layout:
 - Normal numbered question blocks.
 - Visible question numbers.
-- Dropdowns with paragraph letters.
+- Matching tasks should normally use compact dropdowns, not full radio-card option blocks.
+- Use compact dropdowns when the student is choosing one paragraph, section, or label from a bank.
+- Dropdown placeholders should be clear, for example `Select paragraph` or `Select section`.
+- Dropdowns should show paragraph letters, section letters, or labels.
+- Show the option bank clearly above or beside the question group when the original task includes one.
+- Do not use full stacked radio-card options for matching tasks unless there is a specific reason.
 - Passage paragraph letters must be bold and easy to scan using paragraph-letter.
+- Example lesson: IELTS 18 Academic Reading Test 3 Q1-Q4 matching information to sections A-H used compact dropdowns.
 
 ## Matching headings
 
@@ -231,8 +255,11 @@ Use for tasks where students choose headings for paragraphs.
 
 Layout:
 - Show the list of headings clearly, in a bordered option-bank box if the source presents it that way.
+- Matching headings should normally use compact dropdowns, not full radio-card option blocks.
 - Use dropdowns for each paragraph.
-- Dropdowns should show both Roman numeral and heading text. Example lesson: GT Test 1 Q28-32 needed the `List of Headings` clearly formatted.
+- Dropdown placeholders should be clear, for example `Select heading`.
+- Dropdowns should show both Roman numeral and heading text. Example lessons: GT Test 1 Q28-32 needed the `List of Headings` clearly formatted; IELTS 18 Academic Reading Test 3 Q14-Q20 matching headings used compact dropdowns.
+- Do not use full stacked radio-card options merely because the answer is a Roman numeral.
 
 ## Matching people / experts / researchers
 
@@ -242,8 +269,11 @@ Layout:
 - If the source has a `List of People`, `List of Experts`, or similar bank, render that list in a separate bordered box.
 - Keep the numbered matching statements separate and normally numbered.
 - Show the full list of people clearly.
+- Matching people, experts, researchers, statements, or features should normally use compact dropdowns, not full radio-card option blocks, when the answer is a letter, name, person, paragraph, or section from a bank.
 - Use dropdowns.
-- Dropdowns should show both letter and name. Example lesson: Academic Test 4 Q18-23 needed the `List of People` in a bordered box.
+- Dropdown placeholders should be clear, for example `Select person`.
+- Dropdowns should show both letter and name. Example lessons: Academic Test 4 Q18-23 needed the `List of People` in a bordered box; IELTS 18 Academic Reading Test 3 Q9-Q13 people matching used compact dropdowns.
+- Do not use full stacked radio-card options merely because the answer is a letter.
 
 ## Matching tasks using passage labels
 
@@ -251,8 +281,11 @@ Use when the original task asks students to match information to labelled review
 
 Layout:
 - Make passage labels interactive when useful, so students can drag or click/select labels directly from the passage pane.
+- Drag/click passage labels are useful when the original task naturally uses labelled mini-texts, reviews, people cards, or short labelled texts.
 - On hover/focus, interactive passage labels should show a dashed/outlined rectangle or similar affordance.
 - Keep dropdown or keyboard accessibility as a backup.
+- For normal Academic paragraph or section matching, compact dropdowns are usually safer and closer to the answer-sheet experience.
+- Do not force drag/drop for standard Academic paragraph matching unless the design has already been deliberately chosen.
 - Do not force students to rely only on a repeated option bank if the original task naturally uses labels in the passage.
 - Example lesson: for GT Test 1 Q8-14, labels `A Mary-Anne`, `B Davina`, `C Naga`, `D Libby`, and `E Laura` should be draggable/click-selectable from the passage pane.
 
@@ -262,6 +295,8 @@ Layout:
 There must be only one active question highlighted at a time. Highlighting must update when the user clicks a bottom question number, clicks inside a question block, focuses an input, clicks a radio option, focuses a dropdown, or clicks/focuses a drop zone.
 
 Do not rely only on `change` or `input` events. Use a helper such as `setCurrentQuestionFromElement(event.target)` and attach it to `#questionContent` with both `focusin` and `click`. Do not scroll when the user simply clicks inside a question; only bottom question navigation should scroll.
+
+For inline summary inputs or dropdowns, the current-question state should target the visible inline answer wrapper. The page may use a helper such as `getQuestionTarget(qNum)` to prefer visible inline answer elements before falling back to normal question blocks. Feedback-only blocks must not show current-question styling, and they must not receive correct or incorrect styling that creates blank highlighted areas. This prevents blank highlighted areas after a student selects or types an inline answer.
 
 ## Answer alternatives from Answers.txt
 
@@ -277,7 +312,9 @@ Complete each sentence with the correct ending.
 
 Layout:
 - Show endings clearly.
+- Matching sentence endings should normally use compact dropdowns, not full radio-card option blocks.
 - Use dropdowns.
+- Dropdown placeholders should be clear, for example `Select ending`.
 - Dropdowns should show both letter and full ending phrase.
 - Keep the original sentence beginning visible.
 
@@ -290,9 +327,12 @@ Layout:
 - Normal question block.
 - Visible question number.
 - Full question text.
+- Use radio-card options for real multiple-choice tasks where each answer option has its own full text, such as A, B, C, and D choices.
+- Do not use radio-card options merely because the answer is a letter. Matching tasks should normally remain compact dropdowns.
 - Radio buttons in clear clickable row/card styling, not plain labels separated only by line breaks or `<br>` tags.
 - Show the full option text.
 - Add comfortable spacing between multiple-choice questions.
+- Example lesson: IELTS 18 Academic Reading Test 3 Q21-Q23 and Q27-Q30 were real multiple-choice questions, so radio-card options were appropriate. Q1-Q4, Q9-Q13, and Q14-Q20 were matching tasks, so compact dropdowns were appropriate.
 
 ## Multiple choice, choose TWO
 
@@ -300,6 +340,7 @@ Use for tasks that say:
 Choose TWO letters.
 
 Layout:
+- Use checkbox-card options for real multiple-choice tasks where each answer option has its own full text. Do not use checkbox/radio-card styling merely because the answers are letters in a matching bank.
 - Checkbox-style options in clear clickable row/card styling, not plain labels separated only by line breaks or `<br>` tags.
 - Students can select a maximum of two options.
 - If two options are already selected and the student clicks a third, prevent the third selection.
