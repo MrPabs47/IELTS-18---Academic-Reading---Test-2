@@ -20,8 +20,8 @@ This project uses static HTML test pages. All new Reading tests must follow the 
 10. Do not create JavaScript that automatically changes question numbers into bullet points.
 11. Bullet points must be based on the actual question type and layout, not the question number range.
 12. Keep the IELTS Pabs logo behaviour: red hover, hover-triggered blur animation, confirmation home link, pointer cursor on hover, and no text insertion cursor. Recommended CSS: `.logo.home-link { cursor: pointer; user-select: none; }`.
-13. Build Reading tests in staged prompts: shell only, passages only, questions and answers only, specific formatting and OCR cleanup, visual smoke check, hub activation, and documentation update only if new issues were found. If old shell content appears, repair in smaller sections. Always inspect actual changed files and actual HTML, not only the PR title or description.
-14. GT Reading is organised differently: Section 1 may contain two or more short texts, Section 2 may contain two workplace/practical texts, and Section 3 is usually one longer text. Build GT Reading tests in staged prompts: shell only, passages only, questions and answers only or by section if needed, specific formatting and OCR cleanup, visual smoke check, hub activation, and documentation update only if new problems were found. Do not build a full GT test in one massive pass.
+13. Build Reading tests in staged prompts: shell only, passages only, questions and answers only, specific formatting and OCR cleanup, visual smoke check, highlight behaviour check, hub activation, and documentation update only if new issues were found. If old shell content appears, repair in smaller sections. Always inspect actual changed files and actual HTML, not only the PR title or description.
+14. GT Reading is organised differently: Section 1 may contain two or more short texts, Section 2 may contain two workplace/practical texts, and Section 3 is usually one longer text. Build GT Reading tests in staged prompts: shell only, passages only, questions and answers only or by section if needed, specific formatting and OCR cleanup, visual smoke check, highlight behaviour check, hub activation, and documentation update only if new problems were found. Do not build a full GT test in one massive pass.
 
 
 ## Passage pane rules for Reading
@@ -65,6 +65,55 @@ Pre-hub visual check:
 6. Confirm answer checking still works.
 7. Confirm Test mode and Study mode behaviour still work.
 8. Confirm full-screen Test mode enforcement still works.
+9. Test normal same-paragraph passage highlighting.
+10. Test dragging from the end of one passage paragraph into the next paragraph.
+11. Confirm the blue selection preview clips at the paragraph boundary if live clipping is implemented.
+12. Confirm the final highlight stops at the starting paragraph.
+13. Confirm the next paragraph remains separate and unchanged.
+14. Test a long question that wraps across two lines.
+15. Confirm highlighting within that same question still works.
+16. Test dragging from one question into the next question.
+17. Confirm it does not create an unsafe highlight across questions.
+18. Confirm answer inputs, dropdowns, radio buttons, and feedback still work.
+
+## Reading highlight behaviour
+
+General principle:
+
+1. Highlighting must never damage the Reading test layout.
+2. Highlighting must never merge two separate passage paragraphs.
+3. Highlighting must never replace multiple paragraphs with one single highlighted span.
+4. Highlighting should prioritise safe behaviour over allowing very large multi-block selections.
+
+Passage pane rule:
+
+1. In the passage pane, highlighting should work within one paragraph or safe text block at a time.
+2. If the user starts selecting in one passage paragraph and drags into the next paragraph, the live blue selection preview should clip at the end of the starting paragraph when possible.
+3. When the user clicks Highlight, the final highlight must also stop at the end of the starting paragraph.
+4. The following paragraph must remain unchanged.
+5. No alert, toast, warning, or visible message should appear.
+6. If the user wants to highlight the next paragraph, they should select that paragraph separately and highlight again.
+7. This rule also applies to passage labels or other safe passage text blocks such as headings, table cells, or list items where relevant.
+
+Question pane rule:
+
+1. In the question pane, highlighting may work inside one question, one instruction block, or one safe question text block.
+2. If a question is long and wraps over two visual lines, highlighting should still work because it is one question block.
+3. Highlighting does not need to work across separate questions.
+4. Highlighting does not need to work across separate task blocks.
+5. If the user selects from one question into the next question, the highlight should be clipped or blocked safely rather than crossing into the next question.
+6. This is acceptable because the question pane contains mixed elements such as instructions, inputs, tables, dropdowns, radio buttons, and feedback areas.
+7. The main requirement is that highlighting must not break question layout, inputs, answer checking, or feedback display.
+
+Implementation rule for future tests:
+
+1. Do not use destructive highlight fallbacks that replace a selected range with one span containing `range.toString()`.
+2. Do not use a fallback that calls `range.deleteContents()` and `range.insertNode(span)` across multiple paragraphs.
+3. Use safe block detection for highlights.
+4. Final highlight behaviour should clip to the starting safe block when a selection crosses into another block.
+5. Live blue selection clipping is allowed if it does not interfere with normal selection or test functions.
+6. Live blue selection clipping must be limited to the relevant pane and must not interfere with text selection in unrelated areas.
+7. Use a guard flag if using `selectionchange` so it does not create selectionchange loops.
 
 ## Shared form control and navigation rules
 
