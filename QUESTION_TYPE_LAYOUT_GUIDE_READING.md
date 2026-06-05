@@ -20,8 +20,8 @@ This project uses static HTML test pages. All new Reading tests must follow the 
 10. Do not create JavaScript that automatically changes question numbers into bullet points.
 11. Bullet points must be based on the actual question type and layout, not the question number range.
 12. Keep the IELTS Pabs logo behaviour: red hover, hover-triggered blur animation, confirmation home link, pointer cursor on hover, and no text insertion cursor. Recommended CSS: `.logo.home-link { cursor: pointer; user-select: none; }`.
-13. Build Reading tests in staged prompts: shell only, passages only, questions and answers only, formatting cleanup only, hub activation only, then documentation update only if new issues were found. If old shell content appears, repair in smaller sections. Always inspect actual changed files and actual HTML, not only the PR title or description.
-14. GT Reading is organised differently: Section 1 may contain two or more short texts, Section 2 may contain two workplace/practical texts, and Section 3 is usually one longer text. Build GT Reading tests in stages only: shell only, passages only, questions and answers by section if needed, formatting cleanup only, hub activation only, and documentation update only if new problems were found. Do not build a full GT test in one massive pass.
+13. Build Reading tests in staged prompts: shell only, passages only, questions and answers only, specific formatting and OCR cleanup, visual smoke check, hub activation, and documentation update only if new issues were found. If old shell content appears, repair in smaller sections. Always inspect actual changed files and actual HTML, not only the PR title or description.
+14. GT Reading is organised differently: Section 1 may contain two or more short texts, Section 2 may contain two workplace/practical texts, and Section 3 is usually one longer text. Build GT Reading tests in staged prompts: shell only, passages only, questions and answers only or by section if needed, specific formatting and OCR cleanup, visual smoke check, hub activation, and documentation update only if new problems were found. Do not build a full GT test in one massive pass.
 
 
 ## Passage pane rules for Reading
@@ -30,6 +30,41 @@ This project uses static HTML test pages. All new Reading tests must follow the 
 - Do not repeat redundant `Questions...` or `Read the text...` lines if the fixed pane header and question pane already provide that instruction.
 - Section 3 should start cleanly with the passage title and paragraph A when the source is paragraph-labelled.
 - If a GT section contains two separate texts, clearly separate them in the passage pane with headings, spacing, and divider styling so they do not visually merge. For example, GT Test 1 Section 1 needed clear separation between `Gobridge Tramlink FAQs` and `Adorable Knitwear`, and Section 2 needed clear separation between `How to Become a Great Leader` and `Resigning from a Job in a Professional Manner`.
+
+## Academic Reading build checks
+
+Academic Reading structure:
+
+1. Academic Reading normally has one main passage per section.
+2. Do not apply GT mini text separation rules to Academic sections unless the source clearly shows separate texts.
+3. Passage 1 should map to Questions 1 to about 13.
+4. Passage 2 should map to Questions 14 to about 26.
+5. Passage 3 should map to Questions 27 to 40.
+
+Desktop split layout:
+
+1. Before hub activation, verify that `#passagePane`, `#divider`, and `#questionPane` are sibling elements inside `.main-inner`.
+2. `#divider` and `#questionPane` must not be nested inside `#passagePane` or `#passageContent`.
+3. On desktop width, the passage must appear on the left, questions on the right, and the divider between them.
+
+Completion question layout:
+
+1. Sentence completion must show the question number before the sentence.
+2. Sentence completion must not show the question number inside the answer gap.
+3. If the shell uses `.inline-input::before` to show `data-q` inside gaps, add a modifier such as `.inline-input.no-gap-number` for sentence-completion gaps.
+4. Table, note, and summary completion may keep numbered gaps only when this matches the original visual layout.
+5. Before building questions, classify each completion task as sentence completion, table completion, note completion, or summary completion.
+
+Pre-hub visual check:
+
+1. Do not activate the hub until the rendered test page has been checked visually.
+2. Confirm the left/right split layout works.
+3. Confirm question numbering looks correct.
+4. Confirm section switching works.
+5. Confirm footer counts are correct.
+6. Confirm answer checking still works.
+7. Confirm Test mode and Study mode behaviour still work.
+8. Confirm full-screen Test mode enforcement still works.
 
 ## Shared form control and navigation rules
 
