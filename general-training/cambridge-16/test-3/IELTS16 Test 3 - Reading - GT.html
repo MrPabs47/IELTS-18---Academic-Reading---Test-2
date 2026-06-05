@@ -1,0 +1,3527 @@
+<!DOCTYPE html>
+<html lang="en">
+<!-- IELTS 16 GT Reading Test 3 page. -->
+<head>
+  <meta charset="UTF-8" />
+  <title>IELTS 16 GT Reading Test 3</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <style>
+    :root {
+      --bg: #ffffff;
+      --bg-secondary: #f5f5f5;
+      --text: #111111;
+      --text-soft: #555555;
+      --accent: #0057b8;
+      --accent-soft: #e5f0ff;
+      --border: #dddddd;
+      --highlight: #ffcc66;
+      --note-underline: #ff9900;
+      --danger: #c62828;
+      --correct: #1b5e20;
+      --incorrect: #b71c1c;
+      --orange: #ff9800;
+      --part-bg: #f2f2f2;
+      --part-active-bg: #ffffff;
+      --shadow-soft: 0 2px 10px rgba(0,0,0,0.08);
+      --font-size-base: 15px;
+    }
+
+    /* Themes */
+    body[data-theme="white-on-black"] {
+      --bg: #000000;
+      --bg-secondary: #111111;
+      --text: #ffffff;
+      --text-soft: #dddddd;
+      --border: #333333;
+      --accent: #90caf9;
+      --accent-soft: #1a237e;
+      --highlight: #ffcc66;
+      --note-underline: #ffcc66;
+      --part-bg: #111111;
+      --part-active-bg: #000000;
+      --shadow-soft: 0 2px 10px rgba(0,0,0,0.6);
+    }
+
+    body[data-theme="yellow-on-black"] {
+      --bg: #000000;
+      --bg-secondary: #111111;
+      --text: #ffff66;
+      --text-soft: #fff59d;
+      --border: #333333;
+      --accent: #fff176;
+      --accent-soft: #424242;
+      --highlight: #ffeb3b;
+      --note-underline: #ffeb3b;
+      --part-bg: #111111;
+      --part-active-bg: #000000;
+      --shadow-soft: 0 2px 10px rgba(0,0,0,0.6);
+    }
+
+    body {
+      margin: 0;
+      font-family: Arial, Helvetica, system-ui, -apple-system, "Segoe UI", sans-serif;
+      font-size: var(--font-size-base);
+      background: var(--bg);
+      color: var(--text);
+      overscroll-behavior: none;
+    }
+
+    body.font-large {
+      --font-size-base: 18px;
+    }
+    body.font-xlarge {
+      --font-size-base: 20px;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    /* Mode overlay (test vs study) */
+    #modeScreen {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.6);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 2000;
+    }
+
+    #modeScreenInner {
+      background: var(--bg);
+      color: var(--text);
+      padding: 24px 28px;
+      border-radius: 12px;
+      max-width: 480px;
+      box-shadow: var(--shadow-soft);
+    }
+
+    #modeScreenInner h1 {
+      margin-top: 0;
+      margin-bottom: 8px;
+      font-size: 1.4rem;
+    }
+
+    #modeScreenInner p {
+      margin-top: 0;
+      margin-bottom: 12px;
+      color: var(--text-soft);
+    }
+
+    .mode-buttons {
+      display: flex;
+      gap: 12px;
+      margin-top: 8px;
+      flex-wrap: wrap;
+    }
+
+    .mode-btn {
+      flex: 1 1 140px;
+      padding: 10px 14px;
+      border-radius: 999px;
+      border: 1px solid var(--accent);
+      background: var(--accent-soft);
+      color: var(--accent);
+      font-weight: 600;
+      cursor: pointer;
+      text-align: center;
+      transition: background 0.15s, transform 0.05s;
+    }
+
+    .mode-btn.secondary {
+      background: transparent;
+      color: var(--accent);
+    }
+
+    .mode-btn:hover {
+      background: var(--accent);
+      color: #fff;
+      transform: translateY(-1px);
+    }
+
+    #testStartScreen {
+      display: none;
+      margin-top: 14px;
+      padding-top: 14px;
+      border-top: 1px solid var(--border);
+    }
+
+    #testStartScreen label {
+      display: block;
+      font-weight: 600;
+      margin-bottom: 8px;
+    }
+
+    #studentNameInput {
+      max-width: 100%;
+      margin-bottom: 10px;
+    }
+
+    #app {
+      display: none;
+    }
+
+    /* Top bar */
+    .top-bar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 56px;
+      background: var(--bg-secondary);
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 20px;
+      z-index: 1000;
+    }
+
+    .top-left {
+      display: flex;
+      align-items: baseline;
+      gap: 16px;
+    }
+
+    .logo {
+      font-weight: 800;
+      font-size: 1.4rem;
+      letter-spacing: 0.08em;
+    }
+
+    /* IELTS Pabs animated logo */
+    .logo.home-link,
+    .logo-link .logo {
+      transition: color 0.2s ease, opacity 0.2s ease;
+    }
+
+    .logo.home-link {
+      cursor: pointer;
+      user-select: none;
+    }
+
+    .logo.home-link:hover,
+    .home-link:hover,
+    .logo-link:hover .logo {
+      color: #e31837;
+      opacity: 1;
+    }
+
+    .logo-char {
+      display: inline-block;
+      opacity: 1;
+      transform: none;
+      filter: none;
+      will-change: transform, opacity, filter;
+    }
+
+    .logo.is-animating .logo-char {
+      animation: logoReveal 0.45s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+      animation-delay: calc(var(--logo-char-index) * 200ms);
+    }
+
+    @keyframes logoReveal {
+      from {
+        opacity: 0;
+        transform: translateY(8px);
+        filter: blur(4px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+        filter: blur(0);
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .logo-char {
+        opacity: 1;
+        transform: none;
+        filter: none;
+        animation: none;
+      }
+    }
+
+    .test-title {
+      font-size: 0.95rem;
+      color: var(--text-soft);
+    }
+
+    .top-right {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      font-size: 0.9rem;
+    }
+
+    #timerContainer {
+      display: none;
+    }
+
+    #timerDisplay {
+      font-weight: 600;
+    }
+
+    .timer-warning {
+      color: var(--danger);
+    }
+
+    .icon-group {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .icon {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 26px;
+      height: 26px;
+      color: var(--text-soft);
+    }
+
+    .icon svg,
+    .icon-button svg {
+      width: 22px;
+      height: 22px;
+      display: block;
+      stroke: currentColor;
+    }
+
+    .icon-button {
+      border: none;
+      background: none;
+      padding: 4px 8px;
+      cursor: pointer;
+      color: var(--text-soft);
+      font-size: 1.3rem;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .icon-button:hover {
+      color: var(--accent);
+    }
+
+    #fullscreenBtn.is-active {
+      color: var(--accent);
+    }
+
+    #fullscreenBtn:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
+
+    .icon-button.with-label {
+      gap: 6px;
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      padding: 6px 10px;
+      font-size: 0.86rem;
+      line-height: 1;
+    }
+
+    #fullscreenSupportNote {
+      display: none;
+      margin-top: 8px;
+      font-size: 0.82rem;
+      color: var(--text-soft);
+    }
+
+    /* Options overlay */
+    #optionsOverlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.55);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 1500;
+    }
+
+    #optionsPanel {
+      background: var(--bg);
+      color: var(--text);
+      width: min(520px, 95vw);
+      padding: 22px 26px;
+      border-radius: 12px;
+      box-shadow: var(--shadow-soft);
+      position: relative;
+    }
+
+    #optionsPanel h2 {
+      margin: 0 0 16px;
+      text-align: center;
+    }
+
+    .options-close {
+      position: absolute;
+      top: 8px;
+      right: 12px;
+      border: none;
+      background: none;
+      font-size: 1.4rem;
+      cursor: pointer;
+      color: var(--text-soft);
+    }
+
+    .options-section {
+      margin-top: 12px;
+      border-top: 1px solid var(--border);
+      padding-top: 10px;
+    }
+
+    .options-section h3 {
+      margin: 4px 0 8px;
+      font-size: 0.95rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--text-soft);
+    }
+
+    .options-list button {
+      width: 100%;
+      text-align: left;
+      padding: 8px 10px;
+      border-radius: 6px;
+      border: 1px solid transparent;
+      background: transparent;
+      color: var(--text);
+      cursor: pointer;
+      margin-bottom: 6px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 0.95rem;
+    }
+
+    .options-list button:hover {
+      border-color: var(--accent);
+      background: var(--accent-soft);
+    }
+
+    .options-list button.active {
+      border-color: var(--accent);
+      background: var(--accent-soft);
+      font-weight: 600;
+      color: var(--text);
+    }
+
+    .submit-button {
+      width: 100%;
+      padding: 10px 14px;
+      border-radius: 999px;
+      border: none;
+      background: #d32f2f;
+      color: #fff;
+      font-weight: 600;
+      cursor: pointer;
+      margin-bottom: 10px;
+      font-size: 1rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+
+    .submit-button:hover {
+      background: #b71c1c;
+    }
+
+    /* Main layout: fixed header + footer, scrollable middle */
+    .main-area {
+      position: fixed;
+      top: 56px;
+      bottom: 64px;
+      left: 0;
+      right: 0;
+      display: flex;
+      justify-content: center;
+      padding: 4px 6px;
+    }
+
+    .main-inner {
+      width: min(1800px, calc(100% - 6px));
+      display: flex;
+      border-radius: 12px;
+      background: var(--bg-secondary);
+      box-shadow: var(--shadow-soft);
+      overflow: hidden;
+      border: none;
+    }
+
+    .pane {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      background: var(--bg);
+    }
+
+    .pane-header {
+      padding: 10px 14px;
+      border-bottom: 1px solid var(--border);
+      background: var(--bg-secondary);
+      font-weight: 600;
+      font-size: 0.98rem;
+    }
+
+    .pane-header span {
+      font-weight: 400;
+      color: var(--text-soft);
+      margin-left: 6px;
+      font-size: 0.9rem;
+    }
+
+    .pane-content {
+      flex: 1;
+      padding: 14px 18px;
+      overflow-y: auto;
+      position: relative;
+    }
+
+    .passage-section h2 {
+      margin-top: 0;
+      margin-bottom: 8px;
+      font-size: 1.1rem;
+    }
+
+    .passage-section h2:not(:first-child) {
+      margin-top: 26px;
+      padding-top: 18px;
+      border-top: 2px solid var(--border);
+    }
+
+    .passage-section h3 {
+      margin-bottom: 6px;
+      margin-top: 18px;
+      font-size: 1rem;
+    }
+
+    .passage-section p {
+      margin: 4px 0;
+      line-height: 1.45;
+    }
+
+    .passage-divider {
+      margin: 32px 0 22px;
+      border-top: 2px solid var(--border);
+      padding-top: 22px;
+    }
+
+    .passage-divider h2 {
+      margin-top: 0;
+    }
+
+    .question-group-heading {
+      margin: 16px 0 10px;
+      padding: 8px 10px;
+      border-left: 4px solid var(--accent);
+      border-radius: 8px;
+      background: var(--accent-soft);
+      font-weight: 600;
+    }
+
+    .question-block {
+      margin-bottom: 10px;
+      padding: 6px 8px;
+      border-radius: 8px;
+      border: 1px solid transparent;
+      background: transparent;
+    }
+
+    .question-block.current-question {
+      border-color: var(--accent);
+      background: var(--accent-soft);
+    }
+
+    .question-block.correct {
+      border-color: var(--correct);
+      background: rgba(67,160,71,0.08);
+    }
+
+    .question-block.incorrect {
+      border-color: var(--incorrect);
+      background: rgba(229,57,53,0.06);
+    }
+
+    .question-number-label {
+      font-weight: 600;
+      margin-right: 6px;
+    }
+
+    .question-text {
+      margin-bottom: 4px;
+    }
+
+    .option-bank,
+    .note-completion-box,
+    .summary-completion-box {
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      background: var(--bg-secondary);
+      padding: 12px 14px;
+      margin: 12px 0 14px;
+    }
+
+    .option-bank-title,
+    .box-title {
+      font-weight: 700;
+      margin-bottom: 8px;
+    }
+
+    .box-title {
+      text-align: center;
+    }
+
+    .option-bank p,
+    .note-completion-box p,
+    .summary-completion-box p {
+      margin: 6px 0;
+      line-height: 1.5;
+    }
+
+    .table-completion-wrap {
+      margin: 12px 0 14px;
+      overflow-x: auto;
+    }
+
+    .table-completion {
+      width: 100%;
+      min-width: 620px;
+      border-collapse: collapse;
+      background: var(--bg-secondary);
+    }
+
+    .table-completion th,
+    .table-completion td {
+      border: 1px solid var(--border);
+      padding: 10px 12px;
+      text-align: left;
+      vertical-align: top;
+      line-height: 1.5;
+    }
+
+    .table-completion th {
+      background: var(--accent-soft);
+      font-weight: 700;
+    }
+
+    .table-completion .table-section-row td {
+      background: var(--bg);
+      font-weight: 700;
+    }
+
+    .table-completion .question-block {
+      margin: 0;
+      padding: 0;
+    }
+
+    .table-completion .correct-answer-text {
+      margin-top: 4px;
+    }
+
+    .note-completion-box {
+      padding: 14px 16px;
+    }
+
+    .note-completion-box .box-title {
+      margin-bottom: 12px;
+    }
+
+    .note-completion-box .question-block {
+      margin: 3px 0;
+      padding: 2px 0;
+    }
+
+    .note-heading {
+      font-weight: 700;
+      line-height: 1.4;
+      margin: 16px 0 8px;
+    }
+
+    .note-line,
+    .note-line-static {
+      display: flex;
+      align-items: flex-start;
+      gap: 8px;
+      padding-left: 10px;
+      margin: 5px 0;
+      line-height: 1.5;
+    }
+
+    .note-line::before,
+    .note-line-static::before {
+      content: "";
+      flex: 0 0 auto;
+      width: 4px;
+      height: 4px;
+      margin-top: 0.68em;
+      border-radius: 50%;
+      background: var(--text-soft);
+    }
+
+    .note-line p {
+      margin: 0;
+      line-height: 1.5;
+    }
+
+    .note-completion-box .inline-input {
+      margin: 1px 2px;
+      vertical-align: middle;
+    }
+
+    .flowchart-completion-box .flowchart-step {
+      margin: 8px 0;
+      padding: 10px 12px;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      background: var(--bg);
+    }
+
+    .flowchart-completion-box .flowchart-arrow {
+      text-align: center;
+      font-size: 1.35rem;
+      line-height: 1;
+      color: var(--text-soft);
+    }
+
+    .inline-question {
+      display: inline;
+      margin: 0;
+      padding: 0 2px;
+      border-radius: 4px;
+    }
+
+    .inline-question.current-question {
+      outline: 2px solid var(--accent);
+      background: var(--accent-soft);
+    }
+
+    .summary-feedbacks {
+      margin-top: 8px;
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    .summary-completion-box .inline-input {
+      margin: 0 2px;
+    }
+
+    .question-block > select {
+      margin-top: 6px;
+    }
+
+    .short-answer-input {
+      margin-top: 8px;
+    }
+
+    .short-answer-input .inline-input.no-number {
+      max-width: 260px;
+    }
+
+    .options-row {
+      margin-top: 8px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .options-row label {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 8px;
+      border-radius: 8px;
+      margin: 0;
+      cursor: pointer;
+      background: var(--bg-secondary);
+      border: 1px solid var(--border);
+    }
+
+    select,
+    input[type="text"] {
+      padding: 6px 8px;
+      border-radius: 6px;
+      border: 1px solid var(--border);
+      font-family: inherit;
+      font-size: 1em;
+      line-height: 1.35;
+      width: 100%;
+      max-width: 260px;
+      background: var(--bg);
+      color: var(--text);
+    }
+
+    select option,
+    select optgroup {
+      background: var(--bg);
+      color: var(--text);
+    }
+
+    input::placeholder,
+    textarea::placeholder {
+      color: var(--text-soft);
+      opacity: 0.9;
+    }
+
+    select:focus,
+    input[type="text"]:focus {
+      outline: 2px solid var(--accent);
+      outline-offset: 1px;
+    }
+
+    .inline-input {
+      position: relative;
+      display: inline-block;
+      vertical-align: middle;
+      min-width: 110px;
+      max-width: 220px;
+    }
+
+    .inline-input::before {
+      content: attr(data-q);
+      position: absolute;
+      left: 1px;
+      top: 1px;
+      bottom: 1px;
+      width: 34px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: 0.85rem;
+      color: var(--text-soft);
+      background: var(--bg-secondary);
+      border-right: 1px solid var(--border);
+      border-radius: 5px 0 0 5px;
+      pointer-events: none;
+    }
+
+    .inline-input input {
+      width: 100%;
+      padding-left: 46px;
+      min-height: 34px;
+      line-height: 1.35;
+    }
+
+    .inline-input.no-number {
+      min-width: 130px;
+    }
+
+    .inline-input.no-number::before {
+      content: none;
+    }
+
+    .inline-input.no-number input {
+      padding-left: 10px;
+    }
+
+    .diagram-image {
+      display: block;
+      width: 100%;
+      max-width: 100%;
+      height: auto;
+      margin: 16px auto;
+    }
+
+    .diagram-answer-panel {
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      background: var(--bg-secondary);
+      padding: 10px 12px;
+      margin: 12px 0 16px;
+    }
+
+    .diagram-answer-panel .question-block:last-child {
+      margin-bottom: 0;
+    }
+
+    .passage-match-source {
+      display: inline-block;
+      padding: 4px 8px;
+      border: 1px dashed transparent;
+      border-radius: 8px;
+      cursor: grab;
+      transition: background 0.15s, border-color 0.15s, color 0.15s;
+    }
+
+    .passage-match-source:hover,
+    .passage-match-source:focus,
+    .passage-match-source.selected {
+      border-color: var(--accent);
+      background: var(--accent-soft);
+      color: var(--accent);
+      outline: none;
+    }
+
+    .matching-source-hint {
+      font-size: 0.9rem;
+      color: var(--text-soft);
+      margin: 10px 0 12px;
+    }
+
+    .drag-bank {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin: 10px 0 14px;
+      padding: 10px;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      background: var(--bg-secondary);
+    }
+
+    .drag-item {
+      width: 34px;
+      height: 34px;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 800;
+      border: 1px solid var(--border);
+      background: var(--bg);
+      cursor: grab;
+      user-select: none;
+    }
+
+    .drag-item.selected {
+      outline: 2px solid var(--accent);
+      outline-offset: 1px;
+    }
+
+    .drag-hint {
+      color: var(--text-soft);
+      font-size: 0.9rem;
+    }
+
+    .drop-zone {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 120px;
+      height: 34px;
+      border-radius: 8px;
+      border: 1px dashed var(--border);
+      background: var(--bg);
+      font-family: inherit;
+      font-size: 1em;
+      font-weight: 800;
+      margin-top: 6px;
+      cursor: pointer;
+    }
+
+    .drop-zone.filled {
+      border-style: solid;
+      border-color: var(--accent);
+      background: var(--accent-soft);
+    }
+
+    .drop-zone.over {
+      border-color: var(--accent);
+    }
+
+    .correct-answer-text {
+      margin-top: 4px;
+      font-size: 0.85rem;
+      color: var(--correct);
+      display: none;
+    }
+
+    /* Bottom navigation */
+    .bottom-nav {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background: var(--bg-secondary);
+      border-top: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      padding: 6px 10px;
+      font-size: 0.92rem;
+      z-index: 900;
+    }
+
+    .bottom-row {
+      width: 100%;
+    }
+
+    .bottom-row-v2 {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      width: 100%;
+    }
+
+    .bottom-left {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      flex: 1;
+      min-width: 0;
+    }
+
+    .part-summary-row {
+      display: flex;
+      gap: 8px;
+      min-width: max-content;
+      flex: 0 0 auto;
+      white-space: nowrap;
+    }
+
+    #questionNumbers {
+      display: flex;
+      flex: 1;
+      flex-wrap: nowrap;
+      overflow-x: auto;
+      gap: 5px;
+      padding: 1px 5px;
+      min-width: 0;
+      justify-content: flex-start;
+    }
+
+    .part-chip {
+      padding: 8px 12px;
+      border-radius: 999px;
+      background: var(--part-bg);
+      border: 1px solid transparent;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 0.94rem;
+      justify-content: center;
+      transition: background 0.1s, border-color 0.1s, color 0.1s;
+      text-align: center;
+      width: auto;
+      min-width: max-content;
+      flex: 0 0 auto;
+      white-space: nowrap;
+    }
+
+    .part-chip span.count {
+      color: var(--text-soft);
+      font-size: 0.85rem;
+      white-space: nowrap;
+    }
+
+    .part-chip.active {
+      background: var(--part-active-bg);
+      border-color: var(--accent);
+      font-weight: 600;
+    }
+
+    .part-chip.complete {
+      border-color: var(--correct);
+      color: var(--correct);
+    }
+
+    .part-chip.partial {
+      border-color: var(--orange);
+      color: var(--orange);
+    }
+
+    .part-chip.unopened {
+      color: var(--text-soft);
+      border-color: transparent;
+    }
+
+    #questionNumbers {
+      scroll-behavior: smooth;
+    }
+
+    .qnav {
+      min-width: 30px;
+      padding: 4px 7px;
+      border-radius: 8px;
+      text-align: center;
+      border: 1px solid var(--border);
+      background: var(--bg);
+      cursor: pointer;
+      font-size: 0.9rem;
+      font-weight: 700;
+      flex-shrink: 0;
+    }
+
+    .qnav.current {
+      border-color: var(--accent);
+      background: var(--accent-soft);
+      font-weight: 600;
+    }
+
+    .qnav.answered {
+      border-color: var(--correct);
+      background: rgba(67,160,71,0.12);
+    }
+
+    .qnav.unanswered {
+      opacity: 0.7;
+    }
+
+    .section-arrows {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .arrow-btn,
+    .check-btn {
+      border-radius: 6px;
+      border: none;
+      padding: 6px 10px;
+      cursor: pointer;
+      font-size: 0.9rem;
+      background: var(--bg-secondary);
+      border: 1px solid var(--border);
+      color: var(--text);
+    }
+
+    .arrow-btn:hover {
+      border-color: var(--accent);
+      background: var(--accent-soft);
+    }
+
+    .check-btn {
+      background: var(--accent);
+      color: #fff;
+      border-color: var(--accent);
+      font-weight: 600;
+    }
+
+    .check-btn:hover {
+      background: #00429b;
+    }
+
+    /* Highlight & notes toolbar */
+    #selectionToolbar {
+      position: absolute;
+      padding: 4px 6px;
+      background: #222;
+      color: #fff;
+      border-radius: 999px;
+      display: none;
+      z-index: 1200;
+      font-size: 0.8rem;
+      gap: 4px;
+    }
+
+    #selectionToolbar button {
+      border: none;
+      background: transparent;
+      color: inherit;
+      padding: 4px 8px;
+      border-radius: 999px;
+      cursor: pointer;
+      font-size: 0.8rem;
+    }
+
+    #selectionToolbar button:hover {
+      background: rgba(255,255,255,0.18);
+    }
+
+    .highlighted {
+      background: var(--highlight);
+    }
+
+    .note-anchor {
+      text-decoration: underline;
+      text-decoration-color: var(--note-underline);
+      text-decoration-style: solid;
+      text-decoration-thickness: 2px;
+      position: relative;
+      cursor: pointer;
+    }
+
+    .note-anchor .note-delete {
+      position: absolute;
+      top: -10px;
+      right: -10px;
+      width: 16px;
+      height: 16px;
+      border-radius: 50%;
+      border: none;
+      font-size: 0.7rem;
+      padding: 0;
+      line-height: 16px;
+      text-align: center;
+      background: var(--danger);
+      color: #fff;
+      display: none;
+      cursor: pointer;
+    }
+
+    .note-anchor:hover .note-delete {
+      display: inline-block;
+    }
+
+    .note-window {
+      position: absolute;
+      min-width: 200px;
+      min-height: 120px;
+      max-width: 340px;
+      background: var(--bg);
+      color: var(--text);
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      box-shadow: var(--shadow-soft);
+      z-index: 1300;
+      display: flex;
+      flex-direction: column;
+      resize: both;
+      overflow: hidden;
+    }
+
+    .note-header {
+      padding: 4px 8px;
+      border-bottom: 1px solid var(--border);
+      background: var(--bg-secondary);
+      cursor: move;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 0.8rem;
+    }
+
+    .note-body {
+      flex: 1;
+      padding: 6px;
+    }
+
+    .note-body textarea {
+      width: 100%;
+      height: 100%;
+      border: none;
+      outline: none;
+      background: transparent;
+      color: inherit;
+      resize: none;
+      font-size: 0.85rem;
+    }
+
+    .note-footer {
+      padding: 4px 6px;
+      text-align: right;
+      border-top: 1px solid var(--border);
+    }
+
+    .note-footer button {
+      border: none;
+      background: none;
+      color: var(--accent);
+      cursor: pointer;
+      font-size: 0.8rem;
+    }
+
+    /* Results overlay */
+    #resultsOverlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.6);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 1600;
+    }
+
+    #resultsPanel {
+      background: var(--bg);
+      color: var(--text);
+      padding: 22px 26px;
+      border-radius: 12px;
+      box-shadow: var(--shadow-soft);
+      max-width: 520px;
+      width: 95vw;
+    }
+
+    #resultsPanel h2 {
+      margin-top: 0;
+      margin-bottom: 10px;
+    }
+
+    #resultsPanel p {
+      margin: 6px 0;
+    }
+
+    #fullscreenLockOverlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.72);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 1700;
+    }
+
+    #fullscreenLockPanel {
+      background: var(--bg);
+      color: var(--text);
+      padding: 24px 28px;
+      border-radius: 12px;
+      box-shadow: var(--shadow-soft);
+      max-width: 520px;
+      width: 92vw;
+      text-align: center;
+    }
+
+    #fullscreenLockPanel h2 {
+      margin-top: 0;
+    }
+
+    #fullscreenLockPanel p {
+      margin: 10px 0 18px;
+    }
+
+    #shortcutToast {
+      position: fixed;
+      left: 50%;
+      bottom: 86px;
+      transform: translateX(-50%);
+      padding: 9px 14px;
+      border-radius: 999px;
+      border: 1px solid var(--border);
+      background: var(--bg-secondary);
+      color: var(--text);
+      font-size: 0.85rem;
+      box-shadow: var(--shadow-soft);
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.2s ease;
+      z-index: 1600;
+    }
+
+    #shortcutToast.visible {
+      opacity: 1;
+    }
+
+    /* Utility */
+    .sr-only {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      padding: 0;
+      margin: -1px;
+      overflow: hidden;
+      clip: rect(0,0,0,0);
+      white-space: nowrap;
+      border: 0;
+    }
+
+    @media (max-width: 900px) {
+      .main-inner {
+        flex-direction: column;
+      }
+      .divider {
+        display: none;
+      }
+    }
+
+    .passage-section,
+    .passage-section p,
+    .pane-content {
+      word-break: normal;
+      overflow-wrap: normal;
+      hyphens: none;
+    }
+
+    .highlighted,
+    .note-anchor {
+      word-break: normal;
+      overflow-wrap: normal;
+      hyphens: none;
+    }
+
+    .divider {
+      width: 18px;
+      min-width: 18px;
+      background: linear-gradient(90deg, transparent 0, transparent 6px, rgba(120,120,120,0.35) 6px, rgba(120,120,120,0.35) 12px, transparent 12px, transparent 100%);
+      cursor: col-resize;
+      position: relative;
+      touch-action: none;
+    }
+
+    .divider::after {
+      content: "⇄";
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 34px;
+      height: 34px;
+      border-radius: 50%;
+      border: 2px solid #0d3d73;
+      background: #03284f;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.3rem;
+      line-height: 1;
+      color: #fff;
+      opacity: 0.98;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.2);
+    }
+  </style>
+</head>
+<body data-theme="black-on-white">
+  <!-- Mode selection -->
+  <div id="modeScreen">
+    <div id="modeScreenInner">
+      <h1>IELTS 16 General Training Reading Test 3</h1>
+      <p>Select how you want to use this test.</p>
+      <div class="mode-buttons">
+        <button
+          class="mode-btn"
+          data-mode="test"
+          type="button"
+        >
+          Test mode (exam conditions)
+        </button>
+        <button
+          class="mode-btn secondary"
+          data-mode="study"
+          type="button"
+        >
+          Study mode (show feedback)
+        </button>
+      </div>
+      <p style="font-size:0.8rem;margin-top:10px;color:var(--text-soft);">
+        In both modes you can highlight text and make notes. In Test mode you submit once at the end. In Study mode you can check and change your answers as many times as you like.
+      </p>
+
+      <div id="testStartScreen">
+        <label for="studentNameInput">Your name (for test mode results)</label>
+        <input type="text" id="studentNameInput" placeholder="Enter your full name" maxlength="80" />
+        <button class="mode-btn" type="button" onclick="window.beginTimedTest && window.beginTimedTest()">Start the test now</button>
+        <p id="fullscreenSupportNote">Full screen enforcement is limited on this device.</p>
+      </div>
+    </div>
+  </div>
+
+  <div id="app">
+    <!-- Top bar -->
+    <header class="top-bar">
+      <div class="top-left">
+        <div class="logo home-link" onclick="confirmGoHome()" title="Return to home">IELTS Pabs</div>
+        <div class="test-title">
+          Reading Test 3 – General Training – Cambridge 16
+        </div>
+      </div>
+      <div class="top-right">
+        <div id="timerContainer" role="status" aria-live="polite" aria-atomic="true" aria-hidden="true">Time left: <span id="timerDisplay">60:00</span></div>
+        <div class="icon-group">
+          <span class="icon" title="Connection status">
+            <span class="sr-only">Connection status</span>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M4.93 9.93a10.5 10.5 0 0 1 14.14 0" />
+              <path d="M7.76 12.76a6.5 6.5 0 0 1 8.48 0" />
+              <path d="M10.59 15.59a2.5 2.5 0 0 1 2.82 0" />
+              <path d="M12 18h.01" />
+            </svg>
+          </span>
+          <span class="icon" title="Notifications (mock)">
+            <span class="sr-only">Notifications</span>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M15 17h5l-1.4-1.4A2 2 0 0 1 18 14.17V11a6 6 0 1 0-12 0v3.17a2 2 0 0 1-.59 1.43L4 17h5" />
+              <path d="M9 17a3 3 0 0 0 6 0" />
+            </svg>
+          </span>
+          <button id="fullscreenBtn" class="icon-button with-label" title="Enter full screen" aria-label="Enter full screen" onclick="toggleFullscreen()">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <polyline points="8 3 3 3 3 8"></polyline>
+              <line x1="3" y1="3" x2="9" y2="9"></line>
+              <polyline points="16 21 21 21 21 16"></polyline>
+              <line x1="15" y1="15" x2="21" y2="21"></line>
+              <polyline points="21 8 21 3 16 3"></polyline>
+              <line x1="15" y1="9" x2="21" y2="3"></line>
+              <polyline points="3 16 3 21 8 21"></polyline>
+              <line x1="3" y1="21" x2="9" y2="15"></line>
+            </svg><span id="fullscreenBtnLabel">Full screen</span>
+          </button>
+          <button id="optionsBtn" class="icon-button" title="Options menu" aria-label="Options menu">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="4" y1="7" x2="20" y2="7" />
+              <line x1="4" y1="12" x2="20" y2="12" />
+              <line x1="4" y1="17" x2="16" y2="17" />
+            </svg>
+          </button>
+        </div>
+      </div>
+    </header>
+
+    <!-- Options overlay -->
+    <div id="optionsOverlay">
+      <div id="optionsPanel">
+        <button class="options-close" onclick="toggleOptions(false)">✕</button>
+        <h2>Options</h2>
+
+        <button class="submit-button" onclick="handlePrimarySubmit()">
+          ✔ Submit test &amp; check answers
+        </button>
+
+        <div class="options-section">
+          <h3>Contrast</h3>
+          <div class="options-list">
+            <button id="theme-black-white" onclick="setTheme('black-on-white')">
+              <span>Black on white</span><span>✓</span>
+            </button>
+            <button id="theme-white-black" onclick="setTheme('white-on-black')">
+              <span>White on black</span><span>✓</span>
+            </button>
+            <button id="theme-yellow-black" onclick="setTheme('yellow-on-black')">
+              <span>Yellow on black</span><span>✓</span>
+            </button>
+          </div>
+        </div>
+
+        <div class="options-section">
+          <h3>Text size</h3>
+          <div class="options-list">
+            <button id="font-normal" onclick="setFontSize('normal')">
+              <span>Normal</span><span>✓</span>
+            </button>
+            <button id="font-large" onclick="setFontSize('large')">
+              <span>Large</span><span>✓</span>
+            </button>
+            <button id="font-xlarge" onclick="setFontSize('xlarge')">
+              <span>Extra large</span><span>✓</span>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Main content area -->
+    <div class="main-area">
+      <div class="main-inner">
+        <!-- Passage pane -->
+        <div class="pane" id="passagePane">
+          <div class="pane-header" id="passageHeader">
+            Part 1 <span>Read the text and answer questions 1–14.</span>
+          </div>
+          <div class="pane-content" id="passageContent">
+            <!-- Section 1 passages -->
+            <div class="passage-section" data-section="1">
+              <h2>Maps showing walks starting from Bingham Town Hall</h2>
+
+              <h3>A</h3>
+              <p>The walk described in this leaflet takes you to one of the many places in the district where bricks were made for hundreds of years, until it was closed in the late 19th century. This brickworks is now the largest and best-known nature reserve in the area. Please note that the ground is very uneven, and under-sixes should not be taken on this walk.</p>
+
+              <h3>B</h3>
+              <p>This walk will take you to the top of Burley Hill, along a nice easy path that people of all ages will be able to manage. From the summit you can see for a great distance to the north and west, across a landscape that includes half a dozen lakes and the entrance to Butter Caves. Bear in mind, though, that mist often comes in from the sea and covers the hilltop.</p>
+
+              <h3>C</h3>
+              <p>This route leads you through the village of Cottesloe, which was created in the 1930s and is famous for its strange-looking houses and ceramics factory, which is still the largest employer in the area. An artificial lake was originally created beside the village, and has since been filled in and turned into an adventure playground. After you leave Cottesloe, you have a choice of routes to return to the starting point, so either continue via Thurley Park, or if it’s raining, take the shorter direct route.</p>
+
+              <h3>D</h3>
+              <p>This walk is ideal in fine weather, as it takes you to the shore of a lake, at a spot convenient for swimming. Children will want to enjoy themselves in the adventure playground nearby. From there you continue to Starling Cottage, which draws people from around the world to visit the home, from 1920 to 1927, of the poet Barbara Cottam.</p>
+
+              <h3>E</h3>
+              <p>If you want an easy, undemanding walk over flat ground, this walk will suit you perfectly. It passes the entrance to the famous Butter Caves visitor attraction, so you can combine a visit there with the walk, or just take shelter if it starts raining! On the final stage of the walk you pass through Wimpole, the village where Richard Merton, the architect of a number of local buildings, lived for much of his life.</p>
+
+              <div class="passage-divider">
+                <h2>The Maplehampton scarecrow competition – a great success!</h2>
+                <p>There was once a time when farmers all over the country put scarecrows in fields of growing crops. A traditional scarecrow was a model – usually life-size – of a man or woman dressed in old clothes, and their purpose was to frighten the birds away; though how successful they were is a matter of opinion!</p>
+                <p>Maplehampton’s scarecrow competition took place on September 12th. Local farmers supplied everything needed to make a scarecrow – like pieces of wood to form a frame, and straw to stuff the scarecrow. The scarecrows were dressed in old clothes which the competitors brought with them.</p>
+                <p>The festival was held in the village hall, instead of outdoors as planned, due to the unusually high temperature. There were two classes, one for adults and one for children, all of them working in small teams. Over 20 teams took part, each creating one scarecrow. They were encouraged by an audience of around 50, and had ideas and guidance from local artist Tracey Sanzo.</p>
+                <p>The scarecrows were judged by a team of people from the village. The winning children’s team made a scarecrow that looked like a giant bird – which would surely keep every real bird away! The winning adult team’s scarecrow was dressed as an alien from another planet, and its face was painted to make it look very frightening – at least to human beings!</p>
+                <p>After the judging, many of the participants and the spectators had a picnic which they had brought. Some of the scarecrows then went home to their creators’ gardens. Alice Cameron, a local farmer, liked one of the scarecrows so much, she bought it to stand on her balcony: she said she didn’t need it to scare birds away from her crops, as only bird-scarers that made a noise were effective. She just wanted to be able to see it! The event raised over £300 for village funds.</p>
+              </div>
+            </div>
+
+            <!-- Section 2 passages -->
+            <div class="passage-section" data-section="2">
+              <h2>Qualities that make a great barista</h2>
+              <p>Truly great baristas take the time to develop the key skills that will enable them to deliver the highest possible quality of coffee-based beverage and service. As a barista, you must make a concerted effort to listen to your clientele and make sure the drinks you produce are correct in all respects. This is particularly important when you consider the sheer range and complexity of modern coffee drinks, which may start from a single (or double) shot of espresso but can include many additional elements. If you become distracted by the conversation that is going on nearby, you may ultimately miss the mark from a service perspective.</p>
+              <p>One thing that separates a great from a good barista is that the former is constantly busy and has a strong work ethic. You will often catch a great barista rinsing out the filter in their machines, for example, as this erodes the build-up of burnt coffee oil that can begin to impact on the quality and taste of each espresso shot. Similarly, do not be surprised to hear the sound of the coffee grinder at work. This highlights the keen attention to detail that distinguishes skilled baristas, as they have the desire and the awareness to make every drink with completely fresh ground coffee. This type of attentiveness helps baristas to get the most from the coffee that they use, as many of the delicate aromas found in espresso are lost when exposed to the open air.</p>
+              <p>Timing is everything when it comes to producing the perfect cup of coffee. A great barista knows precisely when to finish the extraction of espresso, at the point when the balance of flavour has reached its optimum levels. They also understand how important this is; those who act too soon are left with a drink without flavour while those who delay the finish risk burning the beverage and tainting it with a bitter after-taste.</p>
+              <p>When it comes to customer service, there is so much more to a coffee shop experience than drinking perfectly roasted blends. The atmosphere and the ambience also play a central role, and the interaction that the customer has with their barista sets the tone for an enjoyable experience. Great baristas ask their customers how their day is going or what they’re going to do later; they read local newspapers and keep up with issues that really matter, all of which make a real difference in a competitive marketplace.</p>
+
+              <div class="passage-divider">
+                <h2>Running a meeting</h2>
+                <p>Prior to the meeting, think about the seating and arrange it in an appropriate way. A circle can work well for informal meetings, but sometimes the furniture cannot be re-arranged or rows are more suitable. Consider the participants and decide what is best. Before people arrive, it’s a good idea to designate someone to stand at the entrance and greet everyone.</p>
+                <p>If the meeting is small, start by requesting everyone to introduce themselves and to give a bit of relevant information in addition to their name. This may be what they do or why they are there. For all meetings, you need to introduce the chairperson, i.e., yourself, and any other outside speakers you have invited.</p>
+                <p>Next, make sure everyone can see the agenda or has a copy of it. Briefly run through the items then take one point at a time, and make sure the group doesn’t stray from that point until it has been dealt with. Encourage participation at all times so that attendees can contribute but don’t let everyone talk at the same time. Try to keep discussions positive, but don’t ignore conflicts – find a solution for them and make sure they are resolved before they grow.</p>
+                <p>Summarise points regularly and make clear action points. Write these down and don’t forget to note who’s doing what, and by when. Encourage everyone to feel able to volunteer for tasks and roles. It can help if the more experienced members of the group offer to share skills and knowledge, but don’t let the same people take on all the work as this can lead to tension within the group.</p>
+                <p>At the end, remember to thank everyone for turning up and contributing. It can be nice to follow the meeting with a social activity like sharing a meal or going to a cafe.</p>
+              </div>
+            </div>
+
+            <!-- Section 3 passage -->
+            <div class="passage-section" data-section="3">
+              <h2>Feathers as decoration in European history</h2>
+
+              <h3>A</h3>
+              <p>Today, we do not generally associate feathers with the military in Europe, yet history shows that in fact feathers have played an intriguing role in European military clothing. The Bersaglieri of the Italian Army, for example, still wear a bunch of long black feathers in their hats hanging down to one side, while British fusiliers have a clipped feather plume whose colour varies according to their regiment. The Royalists in the English Civil War adorned their headgear with ostrich feathers. ‘Historically, feathers were an incredibly expressive accessory for men,’ observes Cambridge historian, Professor Ulinka Rublack. ‘Nobody has really looked at why this was the case. That’s a story that I want to tell.’</p>
+              <p>Rublack is beginning to study the use of featherwork in early modern fashion as part of a joint project between the Universities of Cambridge, Basel and Bern. To the outsider, its preoccupations (her co-researchers are studying gold, glass and veils) might seem surprising. Yet such materials sustained significant economies and expertise.</p>
+
+              <h3>B</h3>
+              <p>Rublack has spotted that something unusual started to happen with feathers during the 16th century. In 1500, they were barely worn at all in Europe; 100 years later they had become an indispensable accessory for the fashionable European man. In prosperous trading centres, the citizens started wearing hats bedecked with feathers from cranes and swallows. Headgear was specially manufactured so that feathers could be inserted more easily. By 1573, Plantin’s Flemish-French dictionary was even obliged to offer words to describe people who chose not to wear them, recommending such terms as: ‘the featherless’ and ‘unfeathered’.</p>
+              <p>Featherworking became big business. From Prague and Nuremberg to Paris and Madrid, people started to make a living from decorating feathers for clothing. Impressive efforts went into dyeing them. A 1548 recipe recommends using ashes, lead monoxide and river water to create a ‘very beautiful’ black, for example.</p>
+
+              <h3>C</h3>
+              <p>Why this happened will become clearer as Rublack’s project develops. One crucial driver, however, was exploration – the discovery of new lands, especially in South America. Compared with many of the other species that early European colonists encountered, exotic birds could be captured, transported and kept with relative ease. Europe experienced a sudden ‘bird-craze’, as exotic birds became a relatively common sight in the continent’s largest markets.</p>
+              <p>Given the link with new territories and conquest, ruling elites wore feathers partly to express their power and reach. But there were also more complex reasons. In 1599, for example, Duke Frederick of Wurttemberg held a display at his court at which he personally appeared wearing a costume covered in exotic feathers and representing the Americas. This was not just a symbol of power, but of cultural connectedness, Rublack suggests: ‘The message seems to be that he was embracing the global in a duchy that was quite insular and territorial.’</p>
+
+              <h3>D</h3>
+              <p>Nor were feathers worn by the powerful alone. In 1530, a legislative assembly at Augsburg imposed restrictions on peasants and traders adopting what it clearly felt should be an elite fashion. The measure did not last, perhaps because health manuals of the era recommended feathers could keep the wearer safe from ‘bad’ air – cold, miasma, damp or excessive heat – all of which were regarded as hazardous. During the 1550s, Eleanor of Toledo had hats made from peacock feathers to keep her dry in the rain. Gradually, feathers came to indicate that the wearer was healthy and civilised. Artists and musicians took to wearing them as a mark of subtlety and style.</p>
+
+              <h3>E</h3>
+              <p>As with most fads, this enthusiasm eventually wore off. By the mid-17th century, feathers were out of style, with one striking exception. Within the armies of Europe feathers remained an essential part of military costume. Rublack thinks that there may have been several reasons for this strange contradiction. ‘It’s associated with the notion of graceful warfaring,’ she says. ‘This was a period when there were no standing armies and it was hard to draft soldiers. One solution was to aestheticise the military, to make it seem graceful and powerful.’ Feathers became associated with the idea of an art of warfare. They were also already a part of military garb among many native American peoples and in the Ottoman empire. Rublack believes that just as some of these cultures considered the feathers of certain birds to be highly significant, and sometimes sacred, European soldiers saw the feathers as imparting noble passions, bravery and courage.</p>
+
+              <h3>F</h3>
+              <p>In time, her research may therefore reveal a tension about the ongoing use of feathers in this unlikely context. But, as she also notes, she is perhaps the first historian to have spotted the curious emotional resonance of feathers in military fashion at all. All this shows a sea-change in methodologies: historians now chart the ways in which our identities are shaped through deep connections with ‘stuff’ – the material objects that are parts of our lives.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="divider" id="divider"></div>
+
+        <!-- Questions pane -->
+        <div class="pane" id="questionPane">
+          <div class="pane-header" id="questionHeader">
+            Questions 1–14
+          </div>
+          <div class="pane-content" id="questionContent">
+            <!-- Section 1 questions -->
+            <div data-section="1">
+              <p class="question-group-heading">Read “Maps showing walks starting from Bingham Town Hall” and answer Questions 1 to 5.</p>
+              <p><strong>Questions 1 to 5</strong></p>
+              <p>The text has five paragraphs, A-E.</p>
+              <p>Which paragraph mentions the following?</p>
+              <p>Choose the correct letter, A-E.</p>
+              <p><strong>NB</strong> You may use any letter more than once.</p>
+              <div class="question-block" data-q="1">
+                <div class="question-text"><span class="question-number-label">1.</span> The chance to go into caves</div>
+                <select name="q1" aria-label="Answer for question 1"><option value="">Select…</option><option value="A">A</option><option value="B">B</option><option value="C">C</option><option value="D">D</option><option value="E">E</option></select>
+                <div class="correct-answer-text" id="ca-1"></div>
+              </div>
+              <div class="question-block" data-q="2">
+                <div class="question-text"><span class="question-number-label">2.</span> The chance to spend time beside a lake</div>
+                <select name="q2" aria-label="Answer for question 2"><option value="">Select…</option><option value="A">A</option><option value="B">B</option><option value="C">C</option><option value="D">D</option><option value="E">E</option></select>
+                <div class="correct-answer-text" id="ca-2"></div>
+              </div>
+              <div class="question-block" data-q="3">
+                <div class="question-text"><span class="question-number-label">3.</span> Some unusual architecture</div>
+                <select name="q3" aria-label="Answer for question 3"><option value="">Select…</option><option value="A">A</option><option value="B">B</option><option value="C">C</option><option value="D">D</option><option value="E">E</option></select>
+                <div class="correct-answer-text" id="ca-3"></div>
+              </div>
+              <div class="question-block" data-q="4">
+                <div class="question-text"><span class="question-number-label">4.</span> Unsuitability for young children</div>
+                <select name="q4" aria-label="Answer for question 4"><option value="">Select…</option><option value="A">A</option><option value="B">B</option><option value="C">C</option><option value="D">D</option><option value="E">E</option></select>
+                <div class="correct-answer-text" id="ca-4"></div>
+              </div>
+              <div class="question-block" data-q="5">
+                <div class="question-text"><span class="question-number-label">5.</span> The length of the walk depending on the weather</div>
+                <select name="q5" aria-label="Answer for question 5"><option value="">Select…</option><option value="A">A</option><option value="B">B</option><option value="C">C</option><option value="D">D</option><option value="E">E</option></select>
+                <div class="correct-answer-text" id="ca-5"></div>
+              </div>
+
+              <p class="question-group-heading">Read “The Maplehampton scarecrow competition – a great success!” and answer Questions 6 to 14.</p>
+              <p><strong>Questions 6 to 14</strong></p>
+              <p>Do the following statements agree with the information given in the text?</p>
+              <p>For Questions 6 to 14, choose</p>
+              <p><strong>TRUE</strong> if the statement agrees with the information</p>
+              <p><strong>FALSE</strong> if the statement contradicts the information</p>
+              <p><strong>NOT GIVEN</strong> if there is no information on this</p>
+              <div class="question-block" data-q="6">
+                <div class="question-text"><span class="question-number-label">6.</span> Traditionally, most scarecrows were the same size as a human being.</div>
+                <div class="options-row">
+                  <label><input type="radio" name="q6" value="TRUE"> TRUE</label>
+                  <label><input type="radio" name="q6" value="FALSE"> FALSE</label>
+                  <label><input type="radio" name="q6" value="NOT GIVEN"> NOT GIVEN</label>
+                </div>
+                <div class="correct-answer-text" id="ca-6"></div>
+              </div>
+              <div class="question-block" data-q="7">
+                <div class="question-text"><span class="question-number-label">7.</span> The competition in September was the first one in Maplehampton.</div>
+                <div class="options-row">
+                  <label><input type="radio" name="q7" value="TRUE"> TRUE</label>
+                  <label><input type="radio" name="q7" value="FALSE"> FALSE</label>
+                  <label><input type="radio" name="q7" value="NOT GIVEN"> NOT GIVEN</label>
+                </div>
+                <div class="correct-answer-text" id="ca-7"></div>
+              </div>
+              <div class="question-block" data-q="8">
+                <div class="question-text"><span class="question-number-label">8.</span> The farmers who provided materials could take part in the competition.</div>
+                <div class="options-row">
+                  <label><input type="radio" name="q8" value="TRUE"> TRUE</label>
+                  <label><input type="radio" name="q8" value="FALSE"> FALSE</label>
+                  <label><input type="radio" name="q8" value="NOT GIVEN"> NOT GIVEN</label>
+                </div>
+                <div class="correct-answer-text" id="ca-8"></div>
+              </div>
+              <div class="question-block" data-q="9">
+                <div class="question-text"><span class="question-number-label">9.</span> Old clothes were supplied to the people who made the scarecrows.</div>
+                <div class="options-row">
+                  <label><input type="radio" name="q9" value="TRUE"> TRUE</label>
+                  <label><input type="radio" name="q9" value="FALSE"> FALSE</label>
+                  <label><input type="radio" name="q9" value="NOT GIVEN"> NOT GIVEN</label>
+                </div>
+                <div class="correct-answer-text" id="ca-9"></div>
+              </div>
+              <div class="question-block" data-q="10">
+                <div class="question-text"><span class="question-number-label">10.</span> The venue for the competition was changed because of the weather.</div>
+                <div class="options-row">
+                  <label><input type="radio" name="q10" value="TRUE"> TRUE</label>
+                  <label><input type="radio" name="q10" value="FALSE"> FALSE</label>
+                  <label><input type="radio" name="q10" value="NOT GIVEN"> NOT GIVEN</label>
+                </div>
+                <div class="correct-answer-text" id="ca-10"></div>
+              </div>
+              <div class="question-block" data-q="11">
+                <div class="question-text"><span class="question-number-label">11.</span> Competitors could get advice on making their scarecrows.</div>
+                <div class="options-row">
+                  <label><input type="radio" name="q11" value="TRUE"> TRUE</label>
+                  <label><input type="radio" name="q11" value="FALSE"> FALSE</label>
+                  <label><input type="radio" name="q11" value="NOT GIVEN"> NOT GIVEN</label>
+                </div>
+                <div class="correct-answer-text" id="ca-11"></div>
+              </div>
+              <div class="question-block" data-q="12">
+                <div class="question-text"><span class="question-number-label">12.</span> In the judges’ opinion, the scarecrow dressed as an alien was better than the giant bird.</div>
+                <div class="options-row">
+                  <label><input type="radio" name="q12" value="TRUE"> TRUE</label>
+                  <label><input type="radio" name="q12" value="FALSE"> FALSE</label>
+                  <label><input type="radio" name="q12" value="NOT GIVEN"> NOT GIVEN</label>
+                </div>
+                <div class="correct-answer-text" id="ca-12"></div>
+              </div>
+              <div class="question-block" data-q="13">
+                <div class="question-text"><span class="question-number-label">13.</span> The competition organisers supplied a picnic for the competitors and spectators.</div>
+                <div class="options-row">
+                  <label><input type="radio" name="q13" value="TRUE"> TRUE</label>
+                  <label><input type="radio" name="q13" value="FALSE"> FALSE</label>
+                  <label><input type="radio" name="q13" value="NOT GIVEN"> NOT GIVEN</label>
+                </div>
+                <div class="correct-answer-text" id="ca-13"></div>
+              </div>
+              <div class="question-block" data-q="14">
+                <div class="question-text"><span class="question-number-label">14.</span> Alice Cameron bought a scarecrow to frighten birds away from her crops.</div>
+                <div class="options-row">
+                  <label><input type="radio" name="q14" value="TRUE"> TRUE</label>
+                  <label><input type="radio" name="q14" value="FALSE"> FALSE</label>
+                  <label><input type="radio" name="q14" value="NOT GIVEN"> NOT GIVEN</label>
+                </div>
+                <div class="correct-answer-text" id="ca-14"></div>
+              </div>
+            </div>
+
+        <div data-section="2" style="display:none;">
+          <p><strong>SECTION 2 Questions 15 to 27</strong></p>
+
+          <p class="question-group-heading">Read “Qualities that make a great barista” and answer Questions 15 to 22.</p>
+          <p><strong>Questions 15 to 22</strong></p>
+          <p>Complete the notes below.</p>
+          <p>Choose <strong>ONE WORD ONLY</strong> from the text for each answer.</p>
+          <p>Write your answers in boxes 15-22 on your answer sheet.</p>
+
+          <div class="note-completion-box">
+            <div class="box-title">Notes on being a great barista</div>
+
+            <div class="note-heading">Serving the customer</div>
+            <div class="note-line question-block" data-q="15">
+              <p>Be sure you make drinks that are <span class="inline-input" data-q="15"><input type="text" name="q15" autocomplete="off" /></span> for the customer</p>
+              <div class="correct-answer-text" id="ca-15"></div>
+            </div>
+            <div class="note-line question-block" data-q="16">
+              <p>Ignore any <span class="inline-input" data-q="16"><input type="text" name="q16" autocomplete="off" /></span> around you</p>
+              <div class="correct-answer-text" id="ca-16"></div>
+            </div>
+
+            <div class="note-heading">Using the equipment</div>
+            <div class="note-line question-block" data-q="17">
+              <p>Clean the machine <span class="inline-input" data-q="17"><input type="text" name="q17" autocomplete="off" /></span> regularly</p>
+              <div class="correct-answer-text" id="ca-17"></div>
+            </div>
+            <div class="note-line question-block" data-q="18">
+              <p>Grinding always use ground coffee that is <span class="inline-input" data-q="18"><input type="text" name="q18" autocomplete="off" /></span></p>
+              <div class="correct-answer-text" id="ca-18"></div>
+            </div>
+            <div class="note-line-static"><p>remember that air causes the smell to fade</p></div>
+
+            <div class="note-heading">Making the coffee</div>
+            <div class="note-line question-block" data-q="19">
+              <p>Know when to stop making the espresso too early reduces the <span class="inline-input" data-q="19"><input type="text" name="q19" autocomplete="off" /></span></p>
+              <div class="correct-answer-text" id="ca-19"></div>
+            </div>
+            <div class="note-line question-block" data-q="20">
+              <p>Too late makes the coffee <span class="inline-input" data-q="20"><input type="text" name="q20" autocomplete="off" /></span></p>
+              <div class="correct-answer-text" id="ca-20"></div>
+            </div>
+
+            <div class="note-heading">Giving good customer service</div>
+            <div class="note-line question-block" data-q="21">
+              <p>Talk to your customers ask about the customers’ <span class="inline-input" data-q="21"><input type="text" name="q21" autocomplete="off" /></span></p>
+              <div class="correct-answer-text" id="ca-21"></div>
+            </div>
+            <div class="note-line question-block" data-q="22">
+              <p>Know something about the important <span class="inline-input" data-q="22"><input type="text" name="q22" autocomplete="off" /></span> in the area</p>
+              <div class="correct-answer-text" id="ca-22"></div>
+            </div>
+          </div>
+
+          <p class="question-group-heading">Read “Running a meeting” and answer Questions 23 to 27.</p>
+          <p><strong>Questions 23 to 27</strong></p>
+          <p>Complete the flow chart below.</p>
+          <p>Choose <strong>NO MORE THAN TWO WORDS</strong> from the text for each answer.</p>
+          <p>Write your answers in boxes 23-27 on your answer sheet.</p>
+
+          <div class="flowchart-completion-box">
+            <div class="box-title">Tips on running a meeting</div>
+            <div class="flowchart-step">Arrange seats according to the types of meeting and participants</div>
+            <div class="flowchart-arrow">↓</div>
+            <div class="flowchart-step question-block" data-q="23">
+              In small meetings, ask people from some <span class="inline-input" data-q="23"><input type="text" name="q23" autocomplete="off" /></span> as they introduce themselves
+              <div class="correct-answer-text" id="ca-23"></div>
+            </div>
+            <div class="flowchart-arrow">↓</div>
+            <div class="flowchart-step question-block" data-q="24">
+              Make sure the <span class="inline-input" data-q="24"><input type="text" name="q24" autocomplete="off" /></span> is available to everyone
+              <div class="correct-answer-text" id="ca-24"></div>
+            </div>
+            <div class="flowchart-arrow">↓</div>
+            <div class="flowchart-step question-block" data-q="25">
+              Involve people in the discussion and solve any <span class="inline-input" data-q="25"><input type="text" name="q25" autocomplete="off" /></span> quickly if they arise
+              <div class="correct-answer-text" id="ca-25"></div>
+            </div>
+            <div class="flowchart-arrow">↓</div>
+            <div class="flowchart-step">Note action points and who is responsible for them</div>
+            <div class="flowchart-arrow">↓</div>
+            <div class="flowchart-step question-block" data-q="26">
+              Avoid <span class="inline-input" data-q="26"><input type="text" name="q26" autocomplete="off" /></span> by involving a range of people in tasks
+              <div class="correct-answer-text" id="ca-26"></div>
+            </div>
+            <div class="flowchart-arrow">↓</div>
+            <div class="flowchart-step question-block" data-q="27">
+              Thanks people for coming, and possibly have some kind of <span class="inline-input" data-q="27"><input type="text" name="q27" autocomplete="off" /></span> afterwards
+              <div class="correct-answer-text" id="ca-27"></div>
+            </div>
+          </div>
+
+        </div>
+
+        <div data-section="3" style="display:none;">
+          <p><strong>SECTION 3 Questions 28 to 40</strong></p>
+
+          <p><strong>Questions 28 to 33</strong></p>
+          <p>The text has six sections, A to F.</p>
+          <p>Choose the correct heading for each section from the list of headings below.</p>
+          <p>Choose the correct number, i to viii.</p>
+
+          <div class="option-bank" aria-label="List of Headings">
+            <div class="option-bank-title">List of Headings</div>
+            <p><strong>i</strong> The link between feathers and a wider international awareness</p>
+            <p><strong>ii</strong> An unsuitable decoration for military purposes</p>
+            <p><strong>iii</strong> A significant rise in the popularity of feathers</p>
+            <p><strong>iv</strong> Growing disapproval of the trapping of birds for their feathers</p>
+            <p><strong>v</strong> A new approach to researching the past</p>
+            <p><strong>vi</strong> Feathers as protection and as a symbol of sophistication</p>
+            <p><strong>vii</strong> An interesting relationship between the wearing of feathers and gender</p>
+            <p><strong>viii</strong> A reason for the continued use of feathers by soldiers</p>
+          </div>
+
+          <div class="question-block" data-q="28">
+            <div class="question-text"><span class="question-number-label">28.</span> Section A</div>
+            <select name="q28" aria-label="Heading for section A"><option value="">Select…</option><option value="i">i</option><option value="ii">ii</option><option value="iii">iii</option><option value="iv">iv</option><option value="v">v</option><option value="vi">vi</option><option value="vii">vii</option><option value="viii">viii</option></select>
+            <div class="correct-answer-text" id="ca-28"></div>
+          </div>
+          <div class="question-block" data-q="29">
+            <div class="question-text"><span class="question-number-label">29.</span> Section B</div>
+            <select name="q29" aria-label="Heading for section B"><option value="">Select…</option><option value="i">i</option><option value="ii">ii</option><option value="iii">iii</option><option value="iv">iv</option><option value="v">v</option><option value="vi">vi</option><option value="vii">vii</option><option value="viii">viii</option></select>
+            <div class="correct-answer-text" id="ca-29"></div>
+          </div>
+          <div class="question-block" data-q="30">
+            <div class="question-text"><span class="question-number-label">30.</span> Section C</div>
+            <select name="q30" aria-label="Heading for section C"><option value="">Select…</option><option value="i">i</option><option value="ii">ii</option><option value="iii">iii</option><option value="iv">iv</option><option value="v">v</option><option value="vi">vi</option><option value="vii">vii</option><option value="viii">viii</option></select>
+            <div class="correct-answer-text" id="ca-30"></div>
+          </div>
+          <div class="question-block" data-q="31">
+            <div class="question-text"><span class="question-number-label">31.</span> Section D</div>
+            <select name="q31" aria-label="Heading for section D"><option value="">Select…</option><option value="i">i</option><option value="ii">ii</option><option value="iii">iii</option><option value="iv">iv</option><option value="v">v</option><option value="vi">vi</option><option value="vii">vii</option><option value="viii">viii</option></select>
+            <div class="correct-answer-text" id="ca-31"></div>
+          </div>
+          <div class="question-block" data-q="32">
+            <div class="question-text"><span class="question-number-label">32.</span> Section E</div>
+            <select name="q32" aria-label="Heading for section E"><option value="">Select…</option><option value="i">i</option><option value="ii">ii</option><option value="iii">iii</option><option value="iv">iv</option><option value="v">v</option><option value="vi">vi</option><option value="vii">vii</option><option value="viii">viii</option></select>
+            <div class="correct-answer-text" id="ca-32"></div>
+          </div>
+          <div class="question-block" data-q="33">
+            <div class="question-text"><span class="question-number-label">33.</span> Section F</div>
+            <select name="q33" aria-label="Heading for section F"><option value="">Select…</option><option value="i">i</option><option value="ii">ii</option><option value="iii">iii</option><option value="iv">iv</option><option value="v">v</option><option value="vi">vi</option><option value="vii">vii</option><option value="viii">viii</option></select>
+            <div class="correct-answer-text" id="ca-33"></div>
+          </div>
+
+          <p><strong>Questions 34 to 36</strong></p>
+          <p>Choose the correct letter, A, B, C or D.</p>
+
+          <div class="question-block" data-q="34">
+            <div class="question-text"><span class="question-number-label">34.</span> In Section B, what information is given about the use of feathers in the 16th century?</div>
+            <div class="options-row">
+              <label><input type="radio" name="q34" value="A"> <strong>A</strong> Some were not real feathers, but imitations.</label>
+              <label><input type="radio" name="q34" value="B"> <strong>B</strong> They were sometimes coloured artificially.</label>
+              <label><input type="radio" name="q34" value="C"> <strong>C</strong> Birds were specially bred for their feathers.</label>
+              <label><input type="radio" name="q34" value="D"> <strong>D</strong> There was some disapproval of their use for decoration.</label>
+            </div>
+            <div class="correct-answer-text" id="ca-34"></div>
+          </div>
+          <div class="question-block" data-q="35">
+            <div class="question-text"><span class="question-number-label">35.</span> Rublack suggests the feather costume worn by Duke Frederick in 1599 represented</div>
+            <div class="options-row">
+              <label><input type="radio" name="q35" value="A"> <strong>A</strong> a lack of sensitivity to American traditions.</label>
+              <label><input type="radio" name="q35" value="B"> <strong>B</strong> a rejection of the beliefs held by those around him.</label>
+              <label><input type="radio" name="q35" value="C"> <strong>C</strong> a positive attitude towards the culture of the Americas.</label>
+              <label><input type="radio" name="q35" value="D"> <strong>D</strong> a wish to follow a fashion of the time.</label>
+            </div>
+            <div class="correct-answer-text" id="ca-35"></div>
+          </div>
+          <div class="question-block" data-q="36">
+            <div class="question-text"><span class="question-number-label">36.</span> According to Rublack, one reason why feathers survived in European military costume was because</div>
+            <div class="options-row">
+              <label><input type="radio" name="q36" value="A"> <strong>A</strong> birds were seen as having religious significance.</label>
+              <label><input type="radio" name="q36" value="B"> <strong>B</strong> feathers suggested certain qualities about military activities.</label>
+              <label><input type="radio" name="q36" value="C"> <strong>C</strong> the power of feathers was feared by other cultures.</label>
+              <label><input type="radio" name="q36" value="D"> <strong>D</strong> soldiers came to associate particular birds with warlike qualities.</label>
+            </div>
+            <div class="correct-answer-text" id="ca-36"></div>
+          </div>
+
+          <p><strong>Questions 37 to 40</strong></p>
+          <p>Complete each sentence with the correct ending, A to G, below.</p>
+
+          <div class="option-bank" aria-label="Sentence ending options">
+            <div class="option-bank-title">Sentence ending options</div>
+            <p><strong>A</strong> lost popularity in the 16th century.</p>
+            <p><strong>B</strong> were used as protection from bad weather.</p>
+            <p><strong>C</strong> are worn today by some soldiers.</p>
+            <p><strong>D</strong> could only be worn by men of noble birth.</p>
+            <p><strong>E</strong> were used to create an outfit worn by a person of high status.</p>
+            <p><strong>F</strong> were once awarded for military achievements.</p>
+            <p><strong>G</strong> became popular decorations for urban dwellers in the 16th century.</p>
+          </div>
+
+          <div class="question-block" data-q="37">
+            <div class="question-text"><span class="question-number-label">37.</span> Hats decorated with long black feathers</div>
+            <select name="q37" aria-label="Sentence ending for question 37"><option value="">Select…</option><option value="A">A</option><option value="B">B</option><option value="C">C</option><option value="D">D</option><option value="E">E</option><option value="F">F</option><option value="G">G</option></select>
+            <div class="correct-answer-text" id="ca-37"></div>
+          </div>
+          <div class="question-block" data-q="38">
+            <div class="question-text"><span class="question-number-label">38.</span> Feathers from cranes and swallows</div>
+            <select name="q38" aria-label="Sentence ending for question 38"><option value="">Select…</option><option value="A">A</option><option value="B">B</option><option value="C">C</option><option value="D">D</option><option value="E">E</option><option value="F">F</option><option value="G">G</option></select>
+            <div class="correct-answer-text" id="ca-38"></div>
+          </div>
+          <div class="question-block" data-q="39">
+            <div class="question-text"><span class="question-number-label">39.</span> Feathers from exotic birds</div>
+            <select name="q39" aria-label="Sentence ending for question 39"><option value="">Select…</option><option value="A">A</option><option value="B">B</option><option value="C">C</option><option value="D">D</option><option value="E">E</option><option value="F">F</option><option value="G">G</option></select>
+            <div class="correct-answer-text" id="ca-39"></div>
+          </div>
+          <div class="question-block" data-q="40">
+            <div class="question-text"><span class="question-number-label">40.</span> Peacock feathers</div>
+            <select name="q40" aria-label="Sentence ending for question 40"><option value="">Select…</option><option value="A">A</option><option value="B">B</option><option value="C">C</option><option value="D">D</option><option value="E">E</option><option value="F">F</option><option value="G">G</option></select>
+            <div class="correct-answer-text" id="ca-40"></div>
+          </div>
+        </div>
+
+        </div>
+
+          </div>
+        </div>
+      </div>
+      <!-- selection toolbar -->
+      <div id="selectionToolbar">
+        <button onclick="toggleHighlightSelection()">Highlight</button>
+        <button onclick="makeNoteForSelection()">Make note</button>
+      </div>
+    </div>
+
+    <!-- Bottom nav -->
+    <footer class="bottom-nav">
+      <div class="bottom-row bottom-row-v2">
+        <div class="bottom-left">
+          <div class="part-summary-row">
+            <div class="part-chip active" data-section-chip="1" onclick="switchSection(1)">
+              Part 1 <span class="count" id="part1Count">0 of 14</span>
+            </div>
+            <div class="part-chip unopened" data-section-chip="2" onclick="switchSection(2)">
+              Part 2 <span class="count" id="part2Count">0 of 13</span>
+            </div>
+            <div class="part-chip unopened" data-section-chip="3" onclick="switchSection(3)">
+              Part 3 <span class="count" id="part3Count">0 of 13</span>
+            </div>
+          </div>
+
+          <div id="questionNumbers"></div>
+        </div>
+
+        <div class="section-arrows">
+          <button class="arrow-btn" onclick="prevSection()" title="Previous part">←</button>
+          <button class="arrow-btn" onclick="nextSection()" title="Next part">→</button>
+          <button class="check-btn" onclick="handlePrimarySubmit()" title="Submit test and check answers">✔ Check answers</button>
+        </div>
+      </div>
+    </footer>
+  </div>
+
+
+  <div id="fullscreenLockOverlay" role="dialog" aria-modal="true" aria-live="assertive">
+    <div id="fullscreenLockPanel">
+      <h2>Test paused</h2>
+      <p>You have left full screen. Return to full screen to continue your test.</p>
+      <button class="mode-btn" type="button" onclick="returnToFullscreenAndResume()">Return to full screen</button>
+    </div>
+  </div>
+
+  <!-- Results overlay -->
+  <div id="resultsOverlay">
+    <div id="resultsPanel">
+      <h2>IELTS 16 GT Reading Test 3</h2>
+      <p id="studentLine"></p>
+      <p id="fullScreenExitLine"></p>
+      <p id="focusViolationLine"></p>
+      <p id="totalTimeLine"></p>
+      <p id="scoreLine"></p>
+      <p id="bandLine"></p>
+      <p id="descriptorLine"></p>
+      <button style="margin-top:10px;" onclick="closeResults()">Close</button>
+    </div>
+  </div>
+
+  <div id="shortcutToast" role="status" aria-live="polite" aria-atomic="true"></div>
+
+  <script>
+    /***************
+     * GLOBAL STATE
+     ***************/
+    let mode = "test";
+    let activeSection = 1;
+    let currentQuestion = 1;
+    let timerSeconds = 60 * 60;
+    let timerId = null;
+    let testSubmitted = false;
+    let studentName = "";
+    let pendingMode = "test";
+    let isTestRunning = false;
+    let isTimerPaused = false;
+    let fullscreenSupported = false;
+    let fullScreenEnforcementEnabled = false;
+    let fullScreenExits = 0;
+    let focusViolations = 0;
+    let shortcutToastTimer = null;
+    const visitedSections = new Set();
+
+    const AVAILABLE_THEMES = [
+      "black-on-white",
+      "white-on-black",
+      "yellow-on-black",
+    ];
+    const DEFAULT_THEME = "black-on-white";
+    const STORAGE_KEYS = {
+      theme: "ielts-reading-theme",
+    };
+
+    function restoreThemePreference() {
+      const saved = localStorage.getItem(STORAGE_KEYS.theme);
+      const theme = AVAILABLE_THEMES.includes(saved) ? saved : DEFAULT_THEME;
+      document.body.setAttribute("data-theme", theme);
+    }
+
+    function setTheme(theme) {
+      if (!AVAILABLE_THEMES.includes(theme)) return;
+      document.body.setAttribute("data-theme", theme);
+      localStorage.setItem(STORAGE_KEYS.theme, theme);
+      updateThemeButtons();
+    }
+
+    function updateThemeButtons() {
+      const theme = document.body.getAttribute("data-theme") || DEFAULT_THEME;
+      const map = {
+        "black-on-white": "theme-black-white",
+        "white-on-black": "theme-white-black",
+        "yellow-on-black": "theme-yellow-black",
+      };
+      AVAILABLE_THEMES.forEach((t) => {
+        const id = map[t];
+        const btn = document.getElementById(id);
+        if (!btn) return;
+        if (t === theme) btn.classList.add("active");
+        else btn.classList.remove("active");
+      });
+    }
+
+    function setFontSize(size) {
+      document.body.classList.remove("font-large", "font-xlarge");
+      if (size === "large") document.body.classList.add("font-large");
+      if (size === "xlarge") document.body.classList.add("font-xlarge");
+      updateFontButtons();
+    }
+
+    function updateFontButtons() {
+      const sizeClass = document.body.classList.contains("font-xlarge")
+        ? "xlarge"
+        : document.body.classList.contains("font-large")
+        ? "large"
+        : "normal";
+      ["normal", "large", "xlarge"].forEach((s) => {
+        const btn = document.getElementById("font-" + s);
+        if (!btn) return;
+        if (s === sizeClass) btn.classList.add("active");
+        else btn.classList.remove("active");
+      });
+    }
+
+    const sectionRanges = {
+      1: { from: 1, to: 14 },
+      2: { from: 15, to: 27 },
+      3: { from: 28, to: 40 }
+    };
+
+    const answerKey = {
+      1: "E", 2: "D", 3: "C", 4: "A", 5: "C", 6: "True",
+      7: "Not given", 8: "Not given", 9: "False", 10: "True",
+      11: "True", 12: "Not given", 13: "False", 14: "False",
+      15: "correct", 16: "conversation", 17: "filter", 18: "fresh", 19: ["flavour", "flavor"], 20: "bitter",
+      21: "day", 22: "issues", 23: "relevant information", 24: ["agenda", "meeting agenda"], 25: "conflicts", 26: "tension", 27: "social activity",
+      28: "vii", 29: "iii", 30: "i", 31: "vi", 32: "viii", 33: "v",
+      34: "B", 35: "C", 36: "B", 37: "C", 38: "G", 39: "E", 40: "B"
+    };
+
+    const correctAnswerText = {
+      1: "E", 2: "D", 3: "C", 4: "A", 5: "C", 6: "True",
+      7: "Not given", 8: "Not given", 9: "False", 10: "True",
+      11: "True", 12: "Not given", 13: "False", 14: "False",
+      15: "correct", 16: "conversation", 17: "filter", 18: "fresh", 19: "flavour / flavor", 20: "bitter",
+      21: "day", 22: "issues", 23: "relevant information", 24: "agenda / meeting agenda", 25: "conflicts", 26: "tension", 27: "social activity",
+      28: "vii", 29: "iii", 30: "i", 31: "vi", 32: "viii", 33: "v",
+      34: "B", 35: "C", 36: "B", 37: "C", 38: "G", 39: "E", 40: "B"
+    };
+
+    restoreThemePreference();
+
+    async function beginTimedTest() {
+      const input = document.getElementById("studentNameInput");
+      studentName = input ? input.value.trim() : "";
+      if (!studentName) {
+        alert("Please enter your name before starting test mode.");
+        if (input) input.focus();
+        return;
+      }
+
+      fullScreenExits = 0;
+      focusViolations = 0;
+      fullScreenEnforcementEnabled = false;
+      fullscreenSupported = isFullscreenApiSupported();
+      updateFullscreenSupportNote(false);
+
+      if (fullscreenSupported) {
+        const entered = await requestAppFullscreen();
+        if (entered) {
+          fullScreenEnforcementEnabled = true;
+        } else {
+          updateFullscreenSupportNote(true);
+        }
+      } else {
+        updateFullscreenSupportNote(true);
+      }
+
+      const startScreen = document.getElementById("testStartScreen");
+      if (startScreen) startScreen.style.display = "none";
+      const modeScreen = document.getElementById("modeScreen");
+      if (modeScreen) modeScreen.style.display = "none";
+      startTest("test");
+
+      isTestRunning = true;
+      isTimerPaused = false;
+      startTimer();
+      updateFullscreenButton();
+    }
+
+    function startTest(selectedMode) {
+      mode = selectedMode;
+      const timerContainer = document.getElementById("timerContainer");
+
+      visitedSections.clear();
+      visitedSections.add(1);
+      activeSection = 1;
+      currentQuestion = 1;
+      timerSeconds = 60 * 60;
+
+      if (timerId) {
+        clearInterval(timerId);
+        timerId = null;
+      }
+
+      if (mode === "test") {
+        if (timerContainer) {
+          timerContainer.style.display = "block";
+          timerContainer.setAttribute("aria-hidden", "false");
+        }
+      } else {
+        if (timerContainer) {
+          timerContainer.style.display = "none";
+          timerContainer.setAttribute("aria-hidden", "true");
+        }
+        isTestRunning = false;
+        isTimerPaused = false;
+        fullScreenEnforcementEnabled = false;
+        updateFullscreenSupportNote(false);
+      }
+
+      const modeScreen = document.getElementById("modeScreen");
+      if (modeScreen) modeScreen.style.display = "none";
+      document.getElementById("app").style.display = "block";
+      initQuestionInputs();
+      setupDragMatch();
+      buildQuestionNav();
+      setupSelectionListeners();
+      setupDividerDrag();
+      updateThemeButtons();
+      updateFontButtons();
+      updateFullscreenButton();
+      window.addEventListener("beforeunload", (e) => {
+        if (!testSubmitted) {
+          e.preventDefault();
+          e.returnValue = "Are you sure you want to leave? All progress will be lost.";
+          return e.returnValue;
+        }
+      }, { capture: true });
+    }
+
+    window.startTest = startTest;
+    window.beginTimedTest = beginTimedTest;
+    window.toggleFullscreen = toggleFullscreen;
+    window.returnToFullscreenAndResume = returnToFullscreenAndResume;
+    window.confirmSubmit = confirmSubmit;
+    window.handlePrimarySubmit = handlePrimarySubmit;
+
+    function wireModeButtons() {
+      const buttons = document.querySelectorAll(".mode-btn[data-mode]");
+      const modeScreen = document.getElementById("modeScreen");
+      const activate = (btn) => {
+        const selected = btn.getAttribute("data-mode") || btn.dataset.mode || "test";
+        if (selected === "test") {
+          pendingMode = "test";
+          updateFullscreenSupportNote(!isFullscreenApiSupported());
+          const startScreen = document.getElementById("testStartScreen");
+          if (startScreen) startScreen.style.display = "block";
+          const input = document.getElementById("studentNameInput");
+          if (input) input.focus();
+          return;
+        }
+        const startScreen = document.getElementById("testStartScreen");
+        if (startScreen) startScreen.style.display = "none";
+        updateFullscreenSupportNote(false);
+        studentName = "";
+        startTest(selected);
+      };
+      buttons.forEach((btn) => {
+        btn.addEventListener("click", (event) => {
+          event.stopPropagation();
+          activate(btn);
+        });
+        btn.addEventListener("keydown", (event) => {
+          if (event.key === "Enter" || event.key === " ") {
+            event.preventDefault();
+            activate(btn);
+          }
+        });
+      });
+      if (modeScreen && !modeScreen.dataset.wired) {
+        modeScreen.addEventListener("click", (event) => {
+          const btn = event.target.closest(".mode-btn[data-mode]");
+          if (!btn) return;
+          event.preventDefault();
+          activate(btn);
+        });
+        modeScreen.dataset.wired = "true";
+      }
+
+      const input = document.getElementById("studentNameInput");
+      if (input && !input.dataset.wired) {
+        input.addEventListener("keydown", (event) => {
+          if (event.key === "Enter") {
+            event.preventDefault();
+            beginTimedTest();
+          }
+        });
+        input.dataset.wired = "true";
+      }
+    }
+
+    function ensureModeWiring() {
+      if (document.readyState === "loading") {
+        document.addEventListener("DOMContentLoaded", wireModeButtons, { once: true });
+      } else {
+        wireModeButtons();
+      }
+    }
+
+    function formatDuration(totalSeconds) {
+      const sign = totalSeconds < 0 ? "+" : "";
+      const abs = Math.abs(totalSeconds);
+      const m = Math.floor(abs / 60).toString().padStart(2, "0");
+      const sec = (abs % 60).toString().padStart(2, "0");
+      return `${sign}${m}:${sec}`;
+    }
+
+    function startTimer() {
+      if (mode !== "test") return;
+      if (timerId) {
+        clearInterval(timerId);
+        timerId = null;
+      }
+      const display = document.getElementById("timerDisplay");
+      if (!display) return;
+      display.classList.remove("timer-warning");
+      display.textContent = formatDuration(timerSeconds);
+      timerId = setInterval(() => {
+        timerSeconds--;
+        display.textContent = formatDuration(timerSeconds);
+        if (timerSeconds < 0) {
+          clearInterval(timerId);
+          timerId = null;
+          if (!testSubmitted) {
+            alert("Time is up! The test will be submitted.");
+            submitTest();
+          }
+          return;
+        }
+        if (timerSeconds <= 180) display.classList.add("timer-warning");
+      }, 1000);
+    }
+
+    function pauseTimer() {
+      if (timerId) {
+        clearInterval(timerId);
+        timerId = null;
+      }
+      isTimerPaused = true;
+    }
+
+    function resumeTimer() {
+      if (!isTestRunning || mode !== "test") return;
+      if (!isTimerPaused) return;
+      isTimerPaused = false;
+      startTimer();
+    }
+
+    function isFullscreenApiSupported() {
+      const el = document.documentElement;
+      return !!(document.fullscreenEnabled && el && typeof el.requestFullscreen === "function");
+    }
+
+    function isFullscreenActive() {
+      return !!document.fullscreenElement;
+    }
+
+    function updateFullscreenSupportNote(show) {
+      const note = document.getElementById("fullscreenSupportNote");
+      if (!note) return;
+      note.style.display = show ? "block" : "none";
+    }
+
+    async function requestAppFullscreen() {
+      try {
+        if (!isFullscreenApiSupported()) return false;
+        await document.documentElement.requestFullscreen();
+        return isFullscreenActive();
+      } catch (err) {
+        return false;
+      }
+    }
+
+    async function exitAppFullscreen() {
+      try {
+        if (isFullscreenActive() && typeof document.exitFullscreen === "function") {
+          await document.exitFullscreen();
+        }
+      } catch (err) {
+        // silent by design
+      }
+    }
+
+    function showFullscreenLockOverlay() {
+      const overlay = document.getElementById("fullscreenLockOverlay");
+      if (overlay) overlay.style.display = "flex";
+      document.body.style.overflow = "hidden";
+    }
+
+    function hideFullscreenLockOverlay() {
+      const overlay = document.getElementById("fullscreenLockOverlay");
+      if (overlay) overlay.style.display = "none";
+      document.body.style.overflow = "";
+    }
+
+    function updateFullscreenButton() {
+      const btn = document.getElementById("fullscreenBtn");
+      const label = document.getElementById("fullscreenBtnLabel");
+      if (!btn || !label) return;
+
+      const isFullscreen = isFullscreenActive();
+      const locked = mode === "test" && isTestRunning && !testSubmitted && fullScreenEnforcementEnabled;
+
+      btn.classList.toggle("is-active", isFullscreen);
+      btn.disabled = false;
+
+      if (locked && isFullscreen) {
+        label.textContent = "Full screen locked";
+        btn.setAttribute("title", "Full screen locked");
+        btn.setAttribute("aria-label", "Full screen locked");
+        btn.disabled = true;
+        return;
+      }
+
+      if (isFullscreen) {
+        label.textContent = "Exit full screen";
+        btn.setAttribute("title", "Exit full screen");
+        btn.setAttribute("aria-label", "Exit full screen");
+      } else {
+        label.textContent = "Full screen";
+        btn.setAttribute("title", "Enter full screen");
+        btn.setAttribute("aria-label", "Enter full screen");
+      }
+    }
+
+    async function toggleFullscreen() {
+      const locked = mode === "test" && isTestRunning && !testSubmitted && fullScreenEnforcementEnabled;
+      if (locked && isFullscreenActive()) {
+        updateFullscreenButton();
+        return;
+      }
+
+      if (!isFullscreenActive()) {
+        await requestAppFullscreen();
+      } else {
+        await exitAppFullscreen();
+      }
+      updateFullscreenButton();
+    }
+
+    async function returnToFullscreenAndResume() {
+      const ok = await requestAppFullscreen();
+      if (ok) {
+        hideFullscreenLockOverlay();
+        resumeTimer();
+      }
+      updateFullscreenButton();
+    }
+
+    function handleFullscreenChange() {
+      const runningLockedTest = mode === "test" && isTestRunning && !testSubmitted && fullScreenEnforcementEnabled;
+      if (runningLockedTest) {
+        if (!isFullscreenActive()) {
+          fullScreenExits += 1;
+          pauseTimer();
+          showFullscreenLockOverlay();
+        } else {
+          hideFullscreenLockOverlay();
+          resumeTimer();
+        }
+      }
+      updateFullscreenButton();
+    }
+
+    document.addEventListener("fullscreenchange", handleFullscreenChange);
+
+    document.addEventListener("visibilitychange", () => {
+      if (mode === "test" && isTestRunning && !testSubmitted && document.hidden) {
+        focusViolations += 1;
+      }
+    });
+
+    window.addEventListener("blur", () => {
+      if (mode === "test" && isTestRunning && !testSubmitted) {
+        focusViolations += 1;
+      }
+    });
+
+    function toggleOptions(show) {
+      const overlay = document.getElementById("optionsOverlay");
+      if (overlay) overlay.style.display = show ? "flex" : "none";
+    }
+
+    const optionsButton = document.getElementById("optionsBtn");
+    if (optionsButton) {
+      optionsButton.addEventListener("click", () => toggleOptions(true));
+    }
+
+    function buildRemainingQuestions() {
+      // Sections 1–3 are present in the static HTML for this standalone test.
+    }
+
+    function stampInlineInputNumbers() {
+      document.querySelectorAll(".question-block[data-q]").forEach((block) => {
+        const qNum = block.getAttribute("data-q");
+        block.querySelectorAll(".inline-input").forEach((w) => {
+          w.setAttribute("data-q", qNum);
+        });
+      });
+    }
+
+    let dragMatchReady = false;
+
+    function setupDragMatch() {
+      if (dragMatchReady) return;
+      dragMatchReady = true;
+      let picked = "";
+      document.querySelectorAll(".drag-item, .passage-match-source").forEach((item) => {
+        item.addEventListener("dragstart", (e) => {
+          e.dataTransfer.setData("text/plain", item.dataset.value);
+          e.dataTransfer.effectAllowed = "copy";
+        });
+        item.addEventListener("click", () => {
+          document
+            .querySelectorAll(".drag-item, .passage-match-source")
+            .forEach((i) => i.classList.remove("selected"));
+          item.classList.add("selected");
+          picked = item.dataset.value;
+        });
+        item.addEventListener("keydown", (event) => {
+          if (event.key === "Enter" || event.key === " ") {
+            event.preventDefault();
+            item.click();
+          }
+        });
+      });
+
+      function apply(zone, val) {
+        const qName = zone.dataset.for;
+        const sel = document.querySelector('select[name="' + qName + '"]');
+        if (sel) {
+          const allowed = Array.from(sel.options).some((o) => o.value === val);
+          if (!allowed) return;
+          sel.value = val;
+          sel.dispatchEvent(new Event("change", { bubbles: true }));
+        }
+        zone.textContent = val;
+        zone.classList.add("filled");
+      }
+
+      function clear(zone) {
+        const qName = zone.dataset.for;
+        const sel = document.querySelector('select[name="' + qName + '"]');
+        if (sel) {
+          sel.value = "";
+          sel.dispatchEvent(new Event("change", { bubbles: true }));
+        }
+        zone.textContent = "Drop here";
+        zone.classList.remove("filled");
+      }
+
+      document.querySelectorAll(".drop-zone").forEach((zone) => {
+        zone.addEventListener("dragover", (e) => {
+          e.preventDefault();
+          zone.classList.add("over");
+        });
+        zone.addEventListener("dragleave", () => zone.classList.remove("over"));
+        zone.addEventListener("drop", (e) => {
+          e.preventDefault();
+          zone.classList.remove("over");
+          const val = e.dataTransfer.getData("text/plain");
+          apply(zone, val);
+        });
+        zone.addEventListener("click", () => {
+          if (picked) apply(zone, picked);
+        });
+        zone.addEventListener("keydown", (e) => {
+          if (e.key === "Backspace" || e.key === "Delete") clear(zone);
+
+          const key = e.key.toUpperCase();
+          if (!/^[A-Z]$/.test(key)) return;
+
+          const qName = zone.dataset.for;
+          const sel = document.querySelector('select[name="' + qName + '"]');
+          if (!sel) return;
+
+          const allowed = Array.from(sel.options).some((o) => o.value === key);
+          if (allowed) apply(zone, key);
+        });
+        zone.addEventListener("dblclick", () => clear(zone));
+      });
+
+      document.querySelectorAll(".drop-zone").forEach((zone) => {
+        const qName = zone.dataset.for;
+        const sel = document.querySelector('select[name="' + qName + '"]');
+        if (sel && sel.value) {
+          apply(zone, sel.value);
+        }
+      });
+    }
+
+    // Build all questions immediately after DOM loads (script is at the end)
+    buildRemainingQuestions();
+    stampInlineInputNumbers();
+    setupDragMatch();
+
+    /***********************
+     * INPUT & NAV HANDLING
+     ***********************/
+    function initQuestionInputs() {
+      const qPane = document.getElementById("questionContent");
+      if (!qPane) return;
+
+      stampInlineInputNumbers();
+
+      // Listen to changes on all inputs/selects/radios
+      qPane
+        .querySelectorAll("select, input[type='text'], input[type='radio']")
+        .forEach((el) => {
+          el.addEventListener("change", onAnswerChange);
+          if (el.type === "text") {
+            el.addEventListener("input", onAnswerChange);
+          }
+        });
+
+
+      qPane.addEventListener("focusin", (event) => {
+        setCurrentQuestionFromElement(event.target);
+      });
+      qPane.addEventListener("click", (event) => {
+        setCurrentQuestionFromElement(event.target);
+      });
+
+      // Start on section 1, question 1
+      switchSection(1);
+      highlightCurrentQuestion(1);
+      updateCounts();
+      buildQuestionNav();
+    }
+
+
+    function setCurrentQuestionFromElement(el) {
+      const block = el.closest(".question-block[data-q]");
+      if (!block) return;
+      const q = parseInt(block.dataset.q, 10);
+      if (Number.isNaN(q)) return;
+      currentQuestion = q;
+      highlightCurrentQuestion(q);
+      buildQuestionNav();
+    }
+
+    function onAnswerChange(e) {
+      const name = e.target.name || "";
+      if (name.startsWith("q")) {
+        const num = parseInt(name.substring(1), 10);
+        if (!isNaN(num)) currentQuestion = num;
+      }
+      updateCounts();
+      buildQuestionNav();
+      highlightCurrentQuestion(currentQuestion);
+    }
+
+    function isAnswered(qNum) {
+      const name = "q" + qNum;
+      const radios = document.querySelectorAll(
+        "input[type='radio'][name='" + name + "']"
+      );
+      if (radios.length > 0) {
+        return Array.from(radios).some((r) => r.checked);
+      }
+      const input = document.querySelector("input[type='text'][name='" + name + "']");
+      if (input) {
+        return input.value.trim().length > 0;
+      }
+      const select = document.querySelector("select[name='" + name + "']");
+      if (select) {
+        return select.value.trim().length > 0;
+      }
+      return false;
+    }
+
+    function updateCounts() {
+      const totals = { 1: 14, 2: 13, 3: 13 };
+      const answered = { 1: 0, 2: 0, 3: 0 };
+
+      [1, 2, 3].forEach((sec) => {
+        const range = sectionRanges[sec];
+        for (let q = range.from; q <= range.to; q++) {
+          if (isAnswered(q)) answered[sec]++;
+        }
+      });
+
+      // Update chip counts and status classes
+      [1, 2, 3].forEach((sec) => {
+        const chip = document.querySelector(
+          '.part-chip[data-section-chip="' + sec + '"]'
+        );
+        const span = document.getElementById("part" + sec + "Count");
+        const countText = answered[sec] + " of " + totals[sec];
+
+        if (!chip || !span) return;
+
+        chip.classList.remove("complete", "partial", "unopened");
+        if (answered[sec] === totals[sec]) {
+          chip.classList.add("complete");
+          span.textContent = "✓";
+          span.setAttribute("aria-label", "Part " + sec + " complete");
+        } else {
+          span.textContent = countText;
+          span.removeAttribute("aria-label");
+          if (visitedSections.has(sec)) {
+            chip.classList.add("partial");
+          } else {
+            chip.classList.add("unopened");
+          }
+        }
+      });
+
+      // Also update header for active section with answered count
+      const range = sectionRanges[activeSection];
+      const secAnswered = answered[activeSection];
+      const total = totals[activeSection];
+
+      const qHeader = document.getElementById("questionHeader");
+      if (qHeader && range) {
+        qHeader.textContent =
+          "Questions " +
+          range.from +
+          "–" +
+          range.to +
+          " (" +
+          secAnswered +
+          " of " +
+          total +
+          " answered)";
+      }
+
+      const pHeader = document.getElementById("passageHeader");
+      if (pHeader) {
+        if (activeSection === 1) {
+          pHeader.textContent =
+            "Part 1 – Read the text and answer questions 1–14.";
+        } else if (activeSection === 2) {
+          pHeader.textContent =
+            "Part 2 – Read the text and answer questions 15–27.";
+        } else {
+          pHeader.textContent =
+            "Part 3 – Read the text and answer questions 28–40.";
+        }
+      }
+    }
+
+    function buildQuestionNav() {
+      const nav = document.getElementById("questionNumbers");
+      if (!nav) return;
+      nav.innerHTML = "";
+
+      const range = sectionRanges[activeSection];
+      if (!range) return;
+
+      for (let q = range.from; q <= range.to; q++) {
+        const div = document.createElement("div");
+        div.className = "qnav";
+        if (isAnswered(q)) div.classList.add("answered");
+        else div.classList.add("unanswered");
+        if (q === currentQuestion) div.classList.add("current");
+        div.textContent = q;
+        div.addEventListener("click", () => {
+          currentQuestion = q;
+          highlightCurrentQuestion(q);
+          buildQuestionNav();
+          scrollToQuestion(q);
+        });
+        nav.appendChild(div);
+      }
+    }
+
+    function highlightCurrentQuestion(qNum) {
+      document
+        .querySelectorAll(".question-block")
+        .forEach((el) => el.classList.remove("current-question"));
+      const block = document.querySelector(
+        '.question-block[data-q="' + qNum + '"]'
+      );
+      if (block) {
+        block.classList.add("current-question");
+      }
+    }
+
+    function scrollToQuestion(qNum) {
+      const block = document.querySelector(
+        '.question-block[data-q="' + qNum + '"]'
+      );
+      const qPane = document.getElementById("questionPane");
+      if (block && qPane) {
+        block.scrollIntoView({ behavior: "smooth", block: "center" });
+      }
+    }
+
+    /*****************
+     * SECTION SWITCH
+     *****************/
+    function switchSection(section) {
+      if (![1, 2, 3].includes(section)) return;
+      activeSection = section;
+      visitedSections.add(section);
+
+      // Passages
+      document
+        .querySelectorAll(".passage-section")
+        .forEach((el) => (el.style.display = "none"));
+      const pass = document.querySelector(
+        '.passage-section[data-section="' + section + '"]'
+      );
+      if (pass) pass.style.display = "block";
+
+      // Questions
+      document
+        .querySelectorAll("#questionContent > div[data-section]")
+        .forEach((el) => (el.style.display = "none"));
+      const qSec = document.querySelector(
+        '#questionContent > div[data-section="' + section + '"]'
+      );
+      if (qSec) qSec.style.display = "block";
+
+      // Chips active state
+      document
+        .querySelectorAll(".part-chip")
+        .forEach((el) => el.classList.remove("active"));
+      const chip = document.querySelector(
+        '.part-chip[data-section-chip="' + section + '"]'
+      );
+      if (chip) chip.classList.add("active");
+
+      // Set current question to first in this section if outside range
+      const range = sectionRanges[section];
+      if (currentQuestion < range.from || currentQuestion > range.to) {
+        currentQuestion = range.from;
+      }
+
+      updateCounts();
+      highlightCurrentQuestion(currentQuestion);
+      buildQuestionNav();
+    }
+
+    function prevSection() {
+      if (activeSection > 1) switchSection(activeSection - 1);
+    }
+
+    function nextSection() {
+      if (activeSection < 3) switchSection(activeSection + 1);
+    }
+
+    /***************
+     * SUBMIT & SCORE
+     ***************/
+    const bandDescriptors = {
+      9: {
+        level: "Expert user",
+        description:
+          "Has fully operational command of the language: appropriate, accurate and fluent with complete understanding.",
+      },
+      8: {
+        level: "Very good user",
+        description:
+          "Has fully operational command of the language with only occasional unsystematic inaccuracies and inappropriacies. Misunderstandings may occur in unfamiliar situations.",
+      },
+      7: {
+        level: "Good user",
+        description:
+          "Has operational command of the language, though with occasional inaccuracies, inappropriacies and misunderstandings in some situations. Generally handles complex language well and understands detailed reasoning.",
+      },
+      6: {
+        level: "Competent user",
+        description:
+          "Has generally effective command of the language despite some inaccuracies, inappropriacies and misunderstandings. Can use and understand fairly complex language, particularly in familiar situations.",
+      },
+      5: {
+        level: "Modest user",
+        description:
+          "Has partial command of the language, coping with overall meaning in most situations, though likely to make many mistakes. Should be able to handle basic communication in own field.",
+      },
+      4: {
+        level: "Limited user",
+        description:
+          "Basic competence is limited to familiar situations. Has frequent problems in understanding and expression. Is not able to use complex language.",
+      },
+      3: {
+        level: "Extremely limited user",
+        description:
+          "Conveys and understands only general meaning in very familiar situations. Frequent breakdowns in communication occur.",
+      },
+      2: {
+        level: "Intermittent user",
+        description:
+          "No real communication is possible except for the most basic information using isolated words or short formulae in familiar situations and to meet immediate needs.",
+      },
+      1: {
+        level: "Non-user",
+        description:
+          "Essentially has no ability to use the language beyond possibly a few isolated words.",
+      },
+      0: {
+        level: "Did not attempt test",
+        description: "No assessable information provided.",
+      },
+    };
+
+    function getBandDescriptor(band) {
+      if (bandDescriptors[band]) return bandDescriptors[band];
+
+      const halfBandDescriptors = {
+        8.5: {
+          level: "Very good user developing towards Expert user",
+          description:
+            "This result is stronger than a typical Band 8, but it has not yet reached Band 9. It suggests very strong reading ability, with only occasional difficulty in highly complex or detailed texts.",
+        },
+        7.5: {
+          level: "Good user developing towards Very good user",
+          description:
+            "This result is stronger than a typical Band 7, but it has not yet reached Band 8. It suggests strong reading ability, with occasional difficulty in complex passages, detail, or inference.",
+        },
+        6.5: {
+          level: "Competent user developing towards Good user",
+          description:
+            "This result is stronger than a typical Band 6, but it has not yet reached Band 7. It suggests generally effective reading ability, though detail, paraphrasing, and complex ideas may still cause some problems.",
+        },
+        5.5: {
+          level: "Modest user developing towards Competent user",
+          description:
+            "This result is stronger than a typical Band 5, but it has not yet reached Band 6. It suggests you can understand the general meaning of many reading texts, but details, synonyms, and longer passages may still be difficult.",
+        },
+        4.5: {
+          level: "Limited user developing towards Modest user",
+          description:
+            "This result is stronger than a typical Band 4, but it has not yet reached Band 5. It suggests you can understand some familiar reading tasks, but you may still have frequent problems with detail, paraphrasing, and unfamiliar vocabulary.",
+        },
+        3.5: {
+          level: "Extremely limited user developing towards Limited user",
+          description:
+            "This result is stronger than a typical Band 3, but it has not yet reached Band 4. It suggests you may understand basic information in familiar contexts, but many reading tasks are still difficult.",
+        },
+        2.5: {
+          level: "Intermittent user developing towards Extremely limited user",
+          description:
+            "This result is stronger than a typical Band 2, but it has not yet reached Band 3. It suggests only basic or isolated information is understood at this stage.",
+        },
+      };
+
+      if (halfBandDescriptors[band]) return halfBandDescriptors[band];
+
+      const lower = Math.floor(band);
+      const upper = Math.ceil(band);
+      const lowerDesc = bandDescriptors[lower];
+      const upperDesc = bandDescriptors[upper];
+
+      if (lowerDesc && upperDesc) {
+        return {
+          level: "Between " + lowerDesc.level + " and " + upperDesc.level,
+          description:
+            "This half band sits between Band " +
+            lower +
+            " (" +
+            lowerDesc.level +
+            ") and Band " +
+            upper +
+            " (" +
+            upperDesc.level +
+            ").",
+        };
+      }
+
+      return bandDescriptors[0];
+    }
+
+    function getUserAnswer(qNum) {
+      const name = "q" + qNum;
+      const radios = document.querySelectorAll(
+        "input[type='radio'][name='" + name + "']"
+      );
+      if (radios.length > 0) {
+        const checked = Array.from(radios).find((r) => r.checked);
+        return checked ? checked.value.trim() : "";
+      }
+      const input = document.querySelector("input[type='text'][name='" + name + "']");
+      if (input) return input.value.trim();
+      const select = document.querySelector("select[name='" + name + "']");
+      if (select) return select.value.trim();
+      return "";
+    }
+
+    const normalise = (s) => (s || "").toLowerCase().trim().replace(/\s+/g, " ");
+
+    function evaluateQuestions() {
+      let correctCount = 0;
+
+      for (let q = 1; q <= 40; q++) {
+        const user = getUserAnswer(q);
+        const key = answerKey[q];
+        let isCorrect = false;
+
+        if (!user) {
+          isCorrect = false;
+        } else if (Array.isArray(key)) {
+          isCorrect = key.some(
+            (k) => user.toLowerCase() === String(k).toLowerCase()
+          );
+        } else if (typeof key === "string") {
+          if (/^(TRUE|FALSE|NOT GIVEN)$/.test(key)) {
+            isCorrect = user.toUpperCase() === key;
+          } else if (key.length === 1) {
+            isCorrect = user.toUpperCase() === key.toUpperCase();
+          } else if (q === 23 || q === 27) {
+            isCorrect = normalise(user) === normalise(key);
+          } else {
+            isCorrect = user.toLowerCase() === key.toLowerCase();
+          }
+        }
+
+        const block = document.querySelector(
+          '.question-block[data-q="' + q + '"]'
+        );
+        if (block) {
+          block.classList.remove("correct", "incorrect");
+          if (isCorrect) {
+            block.classList.add("correct");
+            correctCount++;
+          } else if (user) {
+            block.classList.add("incorrect");
+          }
+        }
+
+        const ca = document.getElementById("ca-" + q);
+        if (ca) {
+          const txt = correctAnswerText[q];
+          if (txt) {
+            ca.textContent = "Correct answer: " + txt;
+          }
+        }
+      }
+
+      return correctCount;
+    }
+
+    function computeBandScore(correct) {
+      /*
+       * IELTS General Training Reading raw score to band conversion
+       * 40 = 9
+       * 39 = 8.5
+       * 37-38 = 8
+       * 36 = 7.5
+       * 34-35 = 7
+       * 32-33 = 6.5
+       * 30-31 = 6
+       * 27-29 = 5.5
+       * 23-26 = 5
+       * 19-22 = 4.5
+       * 15-18 = 4
+       * 12-14 = 3.5
+       * 9-11 = 3
+       * 6-8 = 2.5
+       */
+
+      if (correct === 40) return 9;
+      if (correct === 39) return 8.5;
+      if (correct >= 37) return 8;
+      if (correct >= 36) return 7.5;
+      if (correct >= 34) return 7;
+      if (correct >= 32) return 6.5;
+      if (correct >= 30) return 6;
+      if (correct >= 27) return 5.5;
+      if (correct >= 23) return 5;
+      if (correct >= 19) return 4.5;
+      if (correct >= 15) return 4;
+      if (correct >= 12) return 3.5;
+      if (correct >= 9) return 3;
+      if (correct >= 6) return 2.5;
+      if (correct === 0) return 0;
+      return 1;
+    }
+
+
+    function confirmSubmit() {
+      const ok = window.confirm("Are you sure you want to submit your test now? You will not be able to continue answering in Test mode.");
+      if (!ok) return;
+      submitTest();
+    }
+
+    function showShortcutToast(message) {
+      const toast = document.getElementById("shortcutToast");
+      if (!toast) return;
+
+      toast.textContent = message;
+      toast.classList.add("visible");
+
+      if (shortcutToastTimer) {
+        clearTimeout(shortcutToastTimer);
+      }
+
+      shortcutToastTimer = setTimeout(() => {
+        toast.classList.remove("visible");
+      }, 1800);
+    }
+
+    function handlePrimarySubmit() {
+      if (mode === "test" && !testSubmitted) {
+        confirmSubmit();
+        return;
+      }
+      submitTest();
+    }
+
+    document.addEventListener("keydown", (event) => {
+      const isFindShortcut =
+        (event.ctrlKey || event.metaKey) &&
+        String(event.key).toLowerCase() === "f";
+
+      if (!isFindShortcut) return;
+      if (!(mode === "test" && isTestRunning && !testSubmitted)) return;
+
+      event.preventDefault();
+      showShortcutToast("Find (CTRL + F) is disabled in Test mode.");
+    }, true);
+
+
+    function submitTest() {
+      const correctCount = evaluateQuestions();
+
+      // In both modes, show correct answer text
+      Object.keys(correctAnswerText).forEach((q) => {
+        const el = document.getElementById("ca-" + q);
+        if (el) el.style.display = "block";
+      });
+
+      updateCounts();
+      buildQuestionNav();
+
+      const band = computeBandScore(correctCount);
+      const desc = getBandDescriptor(band);
+
+      const studentLine = document.getElementById("studentLine");
+      const fullScreenExitLine = document.getElementById("fullScreenExitLine");
+      const focusViolationLine = document.getElementById("focusViolationLine");
+      const totalTimeLine = document.getElementById("totalTimeLine");
+      const scoreLine = document.getElementById("scoreLine");
+      const bandLine = document.getElementById("bandLine");
+      const descriptorLine = document.getElementById("descriptorLine");
+      const resultsOverlay = document.getElementById("resultsOverlay");
+
+      if (studentLine) {
+        studentLine.textContent = studentName ? "Student: " + studentName : "Student: Not provided";
+      }
+      if (fullScreenExitLine) {
+        fullScreenExitLine.textContent = "Full screen exits: " + fullScreenExits;
+      }
+      if (focusViolationLine) {
+        focusViolationLine.textContent = "Tab switches / focus losses: " + focusViolations;
+      }
+      if (totalTimeLine) {
+        const elapsedSeconds = 60 * 60 - timerSeconds;
+        totalTimeLine.textContent = "Total time when submitted: " + formatDuration(elapsedSeconds);
+      }
+      if (scoreLine)
+        scoreLine.textContent =
+          "You answered " + correctCount + " out of 40 questions correctly.";
+      if (bandLine)
+        bandLine.textContent =
+          "Estimated IELTS Reading band: " +
+          band +
+          ". Skill level: " +
+          desc.level;
+      if (descriptorLine) descriptorLine.textContent = desc.description;
+
+      if (resultsOverlay) resultsOverlay.style.display = "flex";
+
+      if (mode === "test") {
+        testSubmitted = true;
+        isTestRunning = false;
+        isTimerPaused = false;
+        fullScreenEnforcementEnabled = false;
+        hideFullscreenLockOverlay();
+        updateFullscreenButton();
+        if (timerId) {
+          clearInterval(timerId);
+          timerId = null;
+        }
+        exitAppFullscreen();
+        // Disable further changes in test mode
+        document
+          .querySelectorAll("#questionContent select, #questionContent input")
+          .forEach((el) => (el.disabled = true));
+      }
+
+      // Close options overlay if open
+      toggleOptions(false);
+    }
+
+    function closeResults() {
+      const overlay = document.getElementById("resultsOverlay");
+      const studentLine = document.getElementById("studentLine");
+      const fullScreenExitLine = document.getElementById("fullScreenExitLine");
+      const focusViolationLine = document.getElementById("focusViolationLine");
+      const totalTimeLine = document.getElementById("totalTimeLine");
+      if (studentLine) studentLine.textContent = "";
+      if (fullScreenExitLine) fullScreenExitLine.textContent = "";
+      if (focusViolationLine) focusViolationLine.textContent = "";
+      if (totalTimeLine) totalTimeLine.textContent = "";
+      if (overlay) overlay.style.display = "none";
+    }
+
+    /**********************
+     * HIGHLIGHT & NOTES
+     **********************/
+    let currentNoteId = 0;
+    const notesStore = {}; // noteId -> { text }
+
+    function setupSelectionListeners() {
+      const toolbar = document.getElementById("selectionToolbar");
+      if (!toolbar) return;
+      toolbar.style.position = "fixed";
+
+      function updateToolbarPosition() {
+        const sel = window.getSelection();
+        if (!sel || sel.rangeCount === 0 || sel.isCollapsed) {
+          hideSelectionToolbar();
+          return;
+        }
+        const range = sel.getRangeAt(0);
+        const rect = range.getBoundingClientRect();
+        if (!rect || (rect.width === 0 && rect.height === 0)) {
+          hideSelectionToolbar();
+          return;
+        }
+        toolbar.style.left = rect.left + rect.width / 2 + "px";
+        toolbar.style.top = Math.max(56, rect.top - 32) + "px";
+        toolbar.style.display = "flex";
+      }
+
+      document.addEventListener("mouseup", () => {
+        setTimeout(updateToolbarPosition, 0);
+      });
+
+      document.addEventListener("keyup", (e) => {
+        if (
+          e.key === "Shift" ||
+          e.key === "ArrowLeft" ||
+          e.key === "ArrowRight" ||
+          e.key === "ArrowUp" ||
+          e.key === "ArrowDown"
+        ) {
+          setTimeout(updateToolbarPosition, 0);
+        }
+      });
+
+      document.addEventListener("mousedown", (e) => {
+        if (!toolbar.contains(e.target)) {
+          hideSelectionToolbar();
+        }
+      });
+    }
+
+    function hideSelectionToolbar() {
+      const toolbar = document.getElementById("selectionToolbar");
+      if (toolbar) toolbar.style.display = "none";
+    }
+
+    function findAncestorWithClass(node, className) {
+      let n = node;
+      while (n && n !== document) {
+        if (n.nodeType === 1 && n.classList.contains(className)) return n;
+        n = n.parentNode;
+      }
+      return null;
+    }
+
+    function toggleHighlightSelection() {
+      const sel = window.getSelection();
+      if (!sel || sel.rangeCount === 0 || sel.isCollapsed) return;
+      const range = sel.getRangeAt(0);
+      if (!range.toString().trim()) return;
+
+      const startHighlight = findAncestorWithClass(
+        range.startContainer,
+        "highlighted"
+      );
+      const endHighlight = findAncestorWithClass(
+        range.endContainer,
+        "highlighted"
+      );
+
+      if (startHighlight && startHighlight === endHighlight) {
+        // Remove the whole highlight span
+        const span = startHighlight;
+        const parent = span.parentNode;
+        while (span.firstChild) {
+          parent.insertBefore(span.firstChild, span);
+        }
+        parent.removeChild(span);
+      } else {
+        const span = document.createElement("span");
+        span.className = "highlighted";
+        try {
+          range.surroundContents(span);
+        } catch (e) {
+          // Fallback: simple replacement
+          span.textContent = range.toString();
+          range.deleteContents();
+          range.insertNode(span);
+        }
+      }
+
+      sel.removeAllRanges();
+      hideSelectionToolbar();
+    }
+
+    function makeNoteForSelection() {
+      const sel = window.getSelection();
+      if (!sel || sel.rangeCount === 0 || sel.isCollapsed) return;
+      const range = sel.getRangeAt(0);
+      if (!range.toString().trim()) return;
+
+      const noteId = "note-" + ++currentNoteId;
+
+      const span = document.createElement("span");
+      span.className = "note-anchor";
+      span.dataset.noteId = noteId;
+
+      try {
+        range.surroundContents(span);
+      } catch (e) {
+        span.textContent = range.toString();
+        range.deleteContents();
+        range.insertNode(span);
+      }
+
+      // Delete button
+      const del = document.createElement("button");
+      del.className = "note-delete";
+      del.textContent = "×";
+      del.addEventListener("click", (ev) => {
+        ev.stopPropagation();
+        deleteNote(noteId);
+      });
+      span.appendChild(del);
+
+      span.addEventListener("click", (ev) => {
+        // avoid re-opening when clicking delete
+        if ((ev.target).classList && (ev.target).classList.contains("note-delete"))
+          return;
+        openNoteWindow(noteId, span);
+      });
+
+      notesStore[noteId] = { text: "" };
+      openNoteWindow(noteId, span);
+      hideSelectionToolbar();
+      sel.removeAllRanges();
+    }
+
+    function openNoteWindow(noteId, anchorEl) {
+      // Remove existing note window for this note
+      const existing = document.querySelector(
+        '.note-window[data-note-id="' + noteId + '"]'
+      );
+      if (existing) existing.remove();
+
+      const rect = anchorEl.getBoundingClientRect();
+      const note = document.createElement("div");
+      note.className = "note-window";
+      note.dataset.noteId = noteId;
+      note.style.top = rect.bottom + 8 + "px";
+      note.style.left = rect.left + "px";
+
+      note.innerHTML = `
+        <div class="note-header">
+          <span>Note</span>
+          <button title="Close">×</button>
+        </div>
+        <div class="note-body">
+          <textarea></textarea>
+        </div>
+        <div class="note-footer">
+          <button>Done</button>
+        </div>
+      `;
+
+      document.body.appendChild(note);
+
+      const header = note.querySelector(".note-header");
+      const closeBtn = header.querySelector("button");
+      const textarea = note.querySelector("textarea");
+      const doneBtn = note.querySelector(".note-footer button");
+
+      if (notesStore[noteId] && notesStore[noteId].text) {
+        textarea.value = notesStore[noteId].text;
+      }
+
+      closeBtn.addEventListener("click", () => {
+        notesStore[noteId].text = textarea.value;
+        note.remove();
+      });
+
+      doneBtn.addEventListener("click", () => {
+        notesStore[noteId].text = textarea.value;
+        note.remove();
+      });
+
+      makeNoteDraggable(note, header);
+    }
+
+    function deleteNote(noteId) {
+      const anchor = document.querySelector(
+        '.note-anchor[data-note-id="' + noteId + '"]'
+      );
+      if (anchor) {
+        const parent = anchor.parentNode;
+        // move children except delete button
+        while (anchor.firstChild) {
+          const child = anchor.firstChild;
+          if (
+            child.nodeType === 1 &&
+            child.classList.contains("note-delete")
+          ) {
+            anchor.removeChild(child);
+          } else {
+            parent.insertBefore(child, anchor);
+          }
+        }
+        parent.removeChild(anchor);
+      }
+      const noteWin = document.querySelector(
+        '.note-window[data-note-id="' + noteId + '"]'
+      );
+      if (noteWin) noteWin.remove();
+      delete notesStore[noteId];
+    }
+
+    function makeNoteDraggable(noteEl, handleEl) {
+      let isDragging = false;
+      let startX = 0;
+      let startY = 0;
+      let startLeft = 0;
+      let startTop = 0;
+
+      handleEl.addEventListener("mousedown", (e) => {
+        e.preventDefault();
+        isDragging = true;
+        startX = e.clientX;
+        startY = e.clientY;
+        const rect = noteEl.getBoundingClientRect();
+        startLeft = rect.left;
+        startTop = rect.top;
+        document.addEventListener("mousemove", onMove);
+        document.addEventListener("mouseup", onUp);
+      });
+
+      function onMove(e) {
+        if (!isDragging) return;
+        const dx = e.clientX - startX;
+        const dy = e.clientY - startY;
+        noteEl.style.left = startLeft + dx + "px";
+        noteEl.style.top = startTop + dy + "px";
+      }
+
+      function onUp() {
+        isDragging = false;
+        document.removeEventListener("mousemove", onMove);
+        document.removeEventListener("mouseup", onUp);
+      }
+    }
+
+    /***********************
+     * RESIZABLE DIVIDER
+     ***********************/
+    function setupDividerDrag() {
+      const divider = document.getElementById("divider");
+      const mainInner = document.querySelector(".main-inner");
+      const leftPane = document.getElementById("passagePane");
+      const rightPane = document.getElementById("questionPane");
+      if (!divider || !mainInner || !leftPane || !rightPane) return;
+
+      let dragging = false;
+      let startX = 0;
+      let startWidthLeft = 0;
+      let totalWidth = 0;
+
+      divider.addEventListener("mousedown", (e) => {
+        e.preventDefault();
+        dragging = true;
+        const rect = mainInner.getBoundingClientRect();
+        totalWidth = rect.width;
+        startX = e.clientX;
+        const leftRect = leftPane.getBoundingClientRect();
+        startWidthLeft = leftRect.width;
+        document.body.style.cursor = "col-resize";
+      });
+
+      document.addEventListener("mousemove", (e) => {
+        if (!dragging) return;
+        const dx = e.clientX - startX;
+        let newLeftWidth = startWidthLeft + dx;
+        const min = totalWidth * 0.25;
+        const max = totalWidth * 0.75;
+        if (newLeftWidth < min) newLeftWidth = min;
+        if (newLeftWidth > max) newLeftWidth = max;
+        const leftPct = (newLeftWidth / totalWidth) * 100;
+        leftPane.style.flex = "0 0 " + leftPct + "%";
+        rightPane.style.flex = "0 0 " + (100 - leftPct) + "%";
+      });
+
+      document.addEventListener("mouseup", () => {
+        if (!dragging) return;
+        dragging = false;
+        document.body.style.cursor = "default";
+      });
+    }
+
+    // Ensure option buttons reflect the current theme and font selections on load.
+    updateThemeButtons();
+    updateFontButtons();
+    ensureModeWiring();
+
+        // IELTS Pabs animated logo
+    function initAnimatedLogo() {
+      const logoNodes = document.querySelectorAll('.logo.home-link, .logo-link .logo');
+      if (!logoNodes.length) return;
+      const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+      logoNodes.forEach((logoNode) => {
+        const rawText = (logoNode.textContent || '').trim();
+        if (rawText !== 'IELTS Pabs') return;
+
+        logoNode.setAttribute('aria-label', 'IELTS Pabs');
+
+        const fragment = document.createDocumentFragment();
+        Array.from(rawText).forEach((char, index) => {
+          const span = document.createElement('span');
+          span.className = 'logo-char';
+          span.setAttribute('aria-hidden', 'true');
+          span.style.setProperty('--logo-char-index', String(index));
+          span.textContent = char === ' ' ? ' ' : char;
+          fragment.appendChild(span);
+        });
+
+        logoNode.textContent = '';
+        logoNode.appendChild(fragment);
+
+        if (reducedMotion) {
+          logoNode.classList.remove('is-animating');
+          return;
+        }
+
+        logoNode.addEventListener('mouseenter', () => {
+          logoNode.classList.remove('is-animating');
+          void logoNode.offsetWidth;
+          logoNode.classList.add('is-animating');
+        });
+
+        logoNode.addEventListener('mouseleave', () => {
+          logoNode.classList.remove('is-animating');
+        });
+      });
+    }
+
+
+    initAnimatedLogo();
+
+    function confirmGoHome() {
+      const ok = window.confirm("Are you sure you want to leave this test and return to the home page? Your current answers may not be saved.");
+      if (ok) window.location.href = "../../../index.html";
+    }
+
+  </script>
+</body>
+
+</html>
