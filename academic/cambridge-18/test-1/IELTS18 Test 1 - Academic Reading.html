@@ -3141,6 +3141,39 @@
       });
     }
 
+    function getHighlightBlock(node) {
+      const passagePane = document.getElementById("passagePane");
+      if (!passagePane) return null;
+
+      let n = node;
+      if (n && n.nodeType === Node.TEXT_NODE) n = n.parentNode;
+
+      while (n && n !== passagePane && n !== document) {
+        if (
+          n.nodeType === Node.ELEMENT_NODE &&
+          n.matches("p, li, h2, h3, h4, td, th") &&
+          passagePane.contains(n)
+        ) {
+          return n;
+        }
+        n = n.parentNode;
+      }
+
+      return null;
+    }
+
+    function applyHighlightToRange(range) {
+      if (!range.toString().trim()) return;
+
+      const span = document.createElement("span");
+      span.className = "highlighted";
+      try {
+        range.surroundContents(span);
+      } catch (e) {
+        highlightRangePreservingStructure(range);
+      }
+    }
+
     function toggleHighlightSelection() {
       const sel = window.getSelection();
       if (!sel || sel.rangeCount === 0 || sel.isCollapsed) return;
@@ -3165,13 +3198,17 @@
         }
         parent.removeChild(span);
       } else {
-        const span = document.createElement("span");
-        span.className = "highlighted";
-        try {
-          range.surroundContents(span);
-        } catch (e) {
-          highlightRangePreservingStructure(range);
+        const startBlock = getHighlightBlock(range.startContainer);
+        const endBlock = getHighlightBlock(range.endContainer);
+        let rangeToHighlight = range;
+
+        if (startBlock && startBlock !== endBlock) {
+          rangeToHighlight = document.createRange();
+          rangeToHighlight.setStart(range.startContainer, range.startOffset);
+          rangeToHighlight.setEnd(startBlock, startBlock.childNodes.length);
         }
+
+        applyHighlightToRange(rangeToHighlight);
       }
 
       sel.removeAllRanges();
