@@ -45,6 +45,7 @@ Academic Reading structure:
 8. If a section contains matching tasks, summaries, multiple-choice questions, and TRUE/FALSE/YES/NO questions, build questions by part or by question group.
 9. Do not let one layout style spread across all question types.
 10. Example lesson: IELTS 18 Academic Reading Test 3 had mixed layouts, so Part 1, Part 2, and Part 3 questions were safer as separate question-pane stages instead of one large replacement stage.
+11. Example lesson: IELTS 17 Academic Reading Test 2 should be used as a model for several Academic layouts: Q1-Q5 use numbered inline blanks; Q19-Q23 use a boxed `List of Researchers`; Q37-Q40 use a boxed A-G word list for summary completion; and Q24 accepts `flavour / flavor` as spelling alternatives, not as paired answers.
 
 Desktop split layout:
 
@@ -124,9 +125,34 @@ Implementation rule for future tests:
 
 - Text inputs, inline inputs, and dropdowns should inherit the page font family and use a font size consistent with the surrounding question text.
 - Inline inputs should not look oversized or force awkward line breaks unless the screen is narrow.
+- For notes completion, summary completion, and sentence completion where the answer blank appears inside a sentence or note, prefer the numbered inline-answer style when the stable shell supports it: the question number is visually attached to the left side of the blank and the input remains inside the sentence or note line.
+- Numbered inline-answer blanks must preserve the original input name such as `name="q1"`, the wrapper `data-q` value, the matching feedback container such as `ca-1`, inline-answer current-question targeting, and feedback-only behaviour when a separate visible question block would create blank highlight panels.
+- Numbered inline-answer blanks must avoid duplicate visible question numbers and must not create large blank highlighted panels below the summary, sentence, or notes only to hold feedback.
+- If a completion sentence already has a separate visible leading question number, do not also show the number inside the blank; choose one clean numbering style and keep the blank inline.
 - Bottom navigation part chips and counts must stay on one line. Use `white-space: nowrap`, `inline-flex`, suitable spacing, and horizontal overflow for question buttons if needed.
 - When a GT section has two texts, the question pane must clearly say which questions belong to which text. Add the heading style `Read “Text title” and answer Questions X to Y.` before each question group linked to a separate GT text.
 - The bottom navigation must not wrap labels such as `Part 1` and `0 of 14` onto separate lines. Use `inline-flex`, `white-space: nowrap`, `width: auto`, `flex: 0 0 auto`, and `min-width: max-content` where needed. Question numbers may scroll horizontally if needed.
+
+
+## Boxed lists and option banks
+
+For Academic Reading question groups that include a visible source list or option bank, place the list in a neat bordered box when possible.
+
+This applies to:
+- `List of Researchers`
+- `List of People`
+- `List of Headings`
+- `List of Phrases`
+- A-G, A-J, or similar word lists for summary completion
+- Organisation lists, feature lists, and similar matching banks
+
+Layout rules:
+- Preserve the exact source wording, letters, Roman numerals, names, and order.
+- Do not invent a heading that is not in the source. If the source only shows a lettered word list, label the box generically only when the test UI needs an accessibility/context label, and do not present that label as source wording.
+- Keep the list in the question pane with the relevant question group. Do not move it into the passage pane.
+- Do not change dropdown values, radio values, checkbox values, answer options, or answerKey values when adding the box.
+- Keep the numbered matching statements or summary text separate from the boxed list.
+- Example lesson: IELTS 17 Academic Reading Test 2 Q19-Q23 needed a boxed `List of Researchers`, and Q37-Q40 needed the A-G word list in a bordered box below the summary.
 
 ## TRUE / FALSE / NOT GIVEN
 
@@ -169,7 +195,8 @@ Layout:
 - Use headings, indentation, and bullet-style lines where appropriate.
 - Bullet points should sit on the same line as the note text, not float on a separate line. Avoid absolute-positioned bullets if they cause vertical misalignment; flex-row bullet layout is safer.
 - Question numbers may appear inside or beside the input for note-completion, but do not duplicate the number in a confusing way.
-- Use inline input boxes with data-q.
+- When the blank is embedded in a note line, prefer a numbered inline-answer blank where the number is visually attached to the left side of the input.
+- Use inline input boxes with data-q, preserving the matching `name="q#"` input and `ca-#` feedback container.
 - Example lesson: GT Test 1 Q22-27 `The best way to resign` needed note-style headings, bullet lines, and aligned bullets.
 
 Example:
@@ -189,7 +216,8 @@ Layout:
 - If the source summary has a title, center or clearly emphasise that title at the top of the bordered box.
 - Use inline answer boxes.
 - Inline text inputs should sit naturally inside the summary text.
-- Put the question number inside the answer box.
+- Prefer numbered inline-answer blanks where the number is visually attached to the left side of the blank, preserving input names, `data-q`, feedback-only `ca-#` containers, and current-question targeting.
+- Put the question number inside or attached to the answer box only when this is the chosen numbering style for the group; do not also show a duplicate visible number before the sentence or summary text.
 - Keep the summary as connected paragraph-style text; do not split into visually disconnected rows unless the source is actually row-based. Feedback areas must exist but should not disrupt paragraph flow before submission.
 - Do not create large empty visible question blocks below the summary only to hold feedback.
 - If feedback containers are needed for `ca-*` IDs, they may be feedback-only and should not create visible blank panels.
@@ -209,14 +237,14 @@ Layout:
 - Use inline dropdowns.
 - Inline dropdowns should sit naturally inside the summary text.
 - Show the question number before each dropdown.
-- Below the summary, create a separate bordered options box.
+- Below the summary, create a separate bordered options box for the source word or phrase list.
 - Dropdowns should show both letter and phrase where possible.
 - Do not create large empty visible question blocks below the summary only to hold feedback.
 - If feedback containers are needed for `ca-*` IDs, they may be feedback-only and should not create visible blank panels.
 - Current-question highlighting should target the visible inline dropdown wrapper, not an empty feedback-only block.
 - Empty feedback-only containers should not receive current-question, correct, or incorrect styling that creates blank blue, green, or red areas.
 - Summary boxes should not have unnecessary blank vertical space or large minimum height unless required by the source layout.
-- Example lesson: IELTS 18 Academic Reading Test 3 Q5-Q8, Q24-Q26, and Q31-Q35 needed inline answer wrappers and feedback-only containers so selection and answer checking did not create blank highlighted areas.
+- Example lesson: IELTS 18 Academic Reading Test 3 Q5-Q8, Q24-Q26, and Q31-Q35 needed inline answer wrappers and feedback-only containers so selection and answer checking did not create blank highlighted areas. IELTS 17 Academic Reading Test 2 Q37-Q40 needed the A-G word list preserved in a bordered options box.
 
 ## Sentence completion
 
@@ -225,7 +253,7 @@ Complete the sentences below.
 
 Layout:
 - Use a vertical list of separate sentence items.
-- Each sentence should have one clear visible question number at the start of the sentence.
+- Each sentence should have one clear question number, either at the start of the sentence or visually attached to the left side of an inline-answer blank.
 - The answer input should sit naturally inside the blank position.
 - Do not leave fake underscores plus a separate input below the sentence.
 - Do not duplicate the question number inside the input if the sentence already starts with the question number.
@@ -298,12 +326,22 @@ Do not rely only on `change` or `input` events. Use a helper such as `setCurrent
 
 For inline summary inputs or dropdowns, the current-question state should target the visible inline answer wrapper. The page may use a helper such as `getQuestionTarget(qNum)` to prefer visible inline answer elements before falling back to normal question blocks. Feedback-only blocks must not show current-question styling, and they must not receive correct or incorrect styling that creates blank highlighted areas. This prevents blank highlighted areas after a student selects or types an inline answer.
 
-## Answer alternatives from Answers.txt
+## Answer alternatives and array answer logic from Answers.txt
 
-When Answers.txt indicates alternatives such as habitat(s):
+Array answers can mean different things depending on the question type. Confirm the layout before changing scorer logic.
 
-- answerKey must accept both forms, e.g. `10: ["habitat", "habitats"]`
-- correctAnswerText must display both forms clearly, e.g. `habitat / habitats`
+For spelling alternatives or singular/plural alternatives in normal text-input questions:
+- Use an array so the scorer accepts any one item, e.g. `10: ["habitat", "habitats"]` or `24: ["flavour", "flavor"]`.
+- The student answer must match one accepted item after the normal text-input cleanup. It must not require all array items.
+- Do not split a text-input answer by commas for these alternatives.
+- Reject combined answers such as `flavour, flavor` unless the source explicitly requires multiple answers in one box.
+- `correctAnswerText` must display alternatives clearly, e.g. `habitat / habitats` or `flavour / flavor`.
+- Example lesson: IELTS 17 Academic Reading Test 2 Q24 accepts `flavour / flavor` as spelling alternatives for one text-input answer, not as paired answers.
+
+For paired choose-two checkbox questions:
+- Only use sorted-set or complete-set array logic when the question layout is actually a paired checkbox group that asks students to choose two letters or options.
+- Score the pair in either order for that paired checkbox group.
+- Do not apply paired sorted-set logic to normal text-input spelling alternatives.
 
 ## Matching sentence endings
 
