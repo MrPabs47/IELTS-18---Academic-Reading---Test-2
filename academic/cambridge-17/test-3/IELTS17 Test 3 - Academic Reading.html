@@ -1921,89 +1921,89 @@
     };
 
     const answerKey = {
-      1: "rock",
-      2: "cave",
-      3: "clay",
-      4: "Essenes",
-      5: "Hebrew",
-      6: "NOT GIVEN",
+      1: "carnivorous",
+      2: "scent",
+      3: "pouch",
+      4: "fossil",
+      5: "habitat",
+      6: "TRUE",
       7: "FALSE",
-      8: "TRUE",
-      9: "TRUE",
-      10: "FALSE",
+      8: "NOT GIVEN",
+      9: "FALSE",
+      10: "NOT GIVEN",
       11: "FALSE",
       12: "TRUE",
       13: "NOT GIVEN",
-      14: "C",
-      15: "B",
-      16: "E",
-      17: "A",
-      18: "C",
-      19: "B",
-      20: "D",
-      21: "A",
-      22: "C",
-      23: "A",
-      24: ["flavour", "flavor"],
-      25: "size",
-      26: "salt",
+      14: "F",
+      15: "G",
+      16: "A",
+      17: "H",
+      18: "B",
+      19: "E",
+      20: "C",
+      21: ["B", "C"],
+      22: ["B", "C"],
+      23: "solid",
+      24: ["orangutan", "Sumatran orangutan", "orang-utan", "Sumatran orang-utan"],
+      25: "carbon stocks",
+      26: "biodiversity",
       27: "D",
-      28: "A",
-      29: "A",
-      30: "C",
-      31: "A",
+      28: "B",
+      29: "C",
+      30: "D",
+      31: "C",
       32: "NO",
-      33: "NOT GIVEN",
-      34: "YES",
+      33: "YES",
+      34: "NOT GIVEN",
       35: "NO",
-      36: "NOT GIVEN",
-      37: "F",
-      38: "D",
-      39: "E",
-      40: "B"
+      36: "H",
+      37: "D",
+      38: "I",
+      39: "B",
+      40: "F"
     };
 
     const correctAnswerText = {
-      1: "rock",
-      2: "cave",
-      3: "clay",
-      4: "Essenes",
-      5: "Hebrew",
-      6: "NOT GIVEN",
+      1: "carnivorous",
+      2: "scent",
+      3: "pouch",
+      4: "fossil",
+      5: "habitat",
+      6: "TRUE",
       7: "FALSE",
-      8: "TRUE",
-      9: "TRUE",
-      10: "FALSE",
+      8: "NOT GIVEN",
+      9: "FALSE",
+      10: "NOT GIVEN",
       11: "FALSE",
       12: "TRUE",
       13: "NOT GIVEN",
-      14: "C",
-      15: "B",
-      16: "E",
-      17: "A",
-      18: "C",
-      19: "B",
-      20: "D",
-      21: "A",
-      22: "C",
-      23: "A",
-      24: "flavour / flavor",
-      25: "size",
-      26: "salt",
+      14: "F",
+      15: "G",
+      16: "A",
+      17: "H",
+      18: "B",
+      19: "E",
+      20: "C",
+      21: "B / C",
+      22: "B / C",
+      23: "solid",
+      24: "orangutan / Sumatran orangutan / orang-utan / Sumatran orang-utan",
+      25: "carbon stocks",
+      26: "biodiversity",
       27: "D",
-      28: "A",
-      29: "A",
-      30: "C",
-      31: "A",
+      28: "B",
+      29: "C",
+      30: "D",
+      31: "C",
       32: "NO",
-      33: "NOT GIVEN",
-      34: "YES",
+      33: "YES",
+      34: "NOT GIVEN",
       35: "NO",
-      36: "NOT GIVEN",
-      37: "F",
-      38: "D",
-      39: "E",
-      40: "B"
+      36: "H",
+      37: "D",
+      38: "I",
+      39: "B",
+      40: "F"
     };
 
     /********************
@@ -2509,8 +2509,6 @@
       if (!qPane) return;
 
       stampInlineInputNumbers();
-      enforceChooseTwoLimit("q10_11");
-      enforceChooseTwoLimit("q12_13");
       enforceChooseTwoLimit("q21_22");
 
       // Listen to changes on all inputs/selects/radios
@@ -2555,16 +2553,10 @@
     }
 
     function isAnswered(qNum) {
-      if (qNum === 10 || qNum === 11) {
-        const pairedCheckboxes = document.querySelectorAll("input[type='checkbox'][name='q10_11']");
+      if (qNum === 21 || qNum === 22) {
+        const pairedCheckboxes = document.querySelectorAll("input[type='checkbox'][name='q21_22']");
         if (pairedCheckboxes.length > 0) {
-          return document.querySelectorAll("input[type='checkbox'][name='q10_11']:checked").length > (qNum - 10);
-        }
-      }
-      if (qNum === 12 || qNum === 13) {
-        const pairedCheckboxes = document.querySelectorAll("input[type='checkbox'][name='q12_13']");
-        if (pairedCheckboxes.length > 0) {
-          return document.querySelectorAll("input[type='checkbox'][name='q12_13']:checked").length > (qNum - 12);
+          return document.querySelectorAll("input[type='checkbox'][name='q21_22']:checked").length > (qNum - 21);
         }
       }
       const name = "q" + qNum;
@@ -2885,16 +2877,10 @@
     }
 
     function getUserAnswer(qNum) {
-      if (qNum === 10 || qNum === 11) {
-        const pairedCheckboxes = document.querySelectorAll("input[type='checkbox'][name='q10_11']");
+      if (qNum === 21 || qNum === 22) {
+        const pairedCheckboxes = document.querySelectorAll("input[type='checkbox'][name='q21_22']");
         if (pairedCheckboxes.length > 0) {
-          return Array.from(document.querySelectorAll("input[type='checkbox'][name='q10_11']:checked")).map((c) => c.value).join(",");
-        }
-      }
-      if (qNum === 12 || qNum === 13) {
-        const pairedCheckboxes = document.querySelectorAll("input[type='checkbox'][name='q12_13']");
-        if (pairedCheckboxes.length > 0) {
-          return Array.from(document.querySelectorAll("input[type='checkbox'][name='q12_13']:checked")).map((c) => c.value).join(",");
+          return Array.from(document.querySelectorAll("input[type='checkbox'][name='q21_22']:checked")).map((c) => c.value).join(",");
         }
       }
       const name = "q" + qNum;
@@ -2923,7 +2909,7 @@
         if (!user) {
           isCorrect = false;
         } else if (Array.isArray(key)) {
-          if (q === 10 || q === 11 || q === 12 || q === 13) {
+          if (q === 21 || q === 22) {
             const picked = user ? user.split(",").map((x) => x.trim()).filter(Boolean).sort().join(",") : "";
             const expected = key.map((x) => String(x).trim()).sort().join(",");
             isCorrect = picked === expected;
