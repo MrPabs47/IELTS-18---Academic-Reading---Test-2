@@ -1935,89 +1935,89 @@
     };
 
     const answerKey = {
-      1: "population",
-      2: "suburbs",
-      3: "businessmen",
-      4: "funding",
-      5: "press",
-      6: "soil",
+      1: "rock",
+      2: "cave",
+      3: "clay",
+      4: "Essenes",
+      5: "Hebrew",
+      6: "NOT GIVEN",
       7: "FALSE",
-      8: "NOT GIVEN",
+      8: "TRUE",
       9: "TRUE",
-      10: "TRUE",
+      10: "FALSE",
       11: "FALSE",
-      12: "FALSE",
+      12: "TRUE",
       13: "NOT GIVEN",
-      14: "A",
-      15: "F",
+      14: "C",
+      15: "B",
       16: "E",
-      17: "D",
-      18: "fortress",
-      19: "bullfights",
-      20: "opera",
-      21: "salt",
-      22: "shops",
-      23: ["C", "D"],
-      24: ["C", "D"],
-      25: ["B", "E"],
-      26: ["B", "E"],
-      27: "H",
-      28: "J",
-      29: "F",
-      30: "B",
-      31: "D",
-      32: "NOT GIVEN",
-      33: "NO",
-      34: "NO",
-      35: "YES",
-      36: "B",
-      37: "C",
-      38: "A",
-      39: "B",
-      40: "D"
+      17: "A",
+      18: "C",
+      19: "B",
+      20: "D",
+      21: "A",
+      22: "C",
+      23: "A",
+      24: ["flavour", "flavor"],
+      25: "size",
+      26: "salt",
+      27: "D",
+      28: "A",
+      29: "A",
+      30: "C",
+      31: "A",
+      32: "NO",
+      33: "NOT GIVEN",
+      34: "YES",
+      35: "NO",
+      36: "NOT GIVEN",
+      37: "F",
+      38: "D",
+      39: "E",
+      40: "B"
     };
 
     const correctAnswerText = {
-      1: "population",
-      2: "suburbs",
-      3: "businessmen",
-      4: "funding",
-      5: "press",
-      6: "soil",
+      1: "rock",
+      2: "cave",
+      3: "clay",
+      4: "Essenes",
+      5: "Hebrew",
+      6: "NOT GIVEN",
       7: "FALSE",
-      8: "NOT GIVEN",
+      8: "TRUE",
       9: "TRUE",
-      10: "TRUE",
+      10: "FALSE",
       11: "FALSE",
-      12: "FALSE",
+      12: "TRUE",
       13: "NOT GIVEN",
-      14: "A",
-      15: "F",
+      14: "C",
+      15: "B",
       16: "E",
-      17: "D",
-      18: "fortress",
-      19: "bullfights",
-      20: "opera",
-      21: "salt",
-      22: "shops",
-      23: "C / D",
-      24: "C / D",
-      25: "B / E",
-      26: "B / E",
-      27: "H",
-      28: "J",
-      29: "F",
-      30: "B",
-      31: "D",
-      32: "NOT GIVEN",
-      33: "NO",
-      34: "NO",
-      35: "YES",
-      36: "B",
-      37: "C",
-      38: "A",
-      39: "B",
-      40: "D"
+      17: "A",
+      18: "C",
+      19: "B",
+      20: "D",
+      21: "A",
+      22: "C",
+      23: "A",
+      24: "flavour / flavor",
+      25: "size",
+      26: "salt",
+      27: "D",
+      28: "A",
+      29: "A",
+      30: "C",
+      31: "A",
+      32: "NO",
+      33: "NOT GIVEN",
+      34: "YES",
+      35: "NO",
+      36: "NOT GIVEN",
+      37: "F",
+      38: "D",
+      39: "E",
+      40: "B"
     };
 
     /********************
@@ -2525,8 +2525,6 @@
       stampInlineInputNumbers();
       enforceChooseTwoLimit("q10_11");
       enforceChooseTwoLimit("q12_13");
-      enforceChooseTwoLimit("q23_24");
-      enforceChooseTwoLimit("q25_26");
 
       // Listen to changes on all inputs/selects/radios
       qPane
@@ -2580,18 +2578,6 @@
         const pairedCheckboxes = document.querySelectorAll("input[type='checkbox'][name='q12_13']");
         if (pairedCheckboxes.length > 0) {
           return document.querySelectorAll("input[type='checkbox'][name='q12_13']:checked").length > (qNum - 12);
-        }
-      }
-      if (qNum === 23 || qNum === 24) {
-        const pairedCheckboxes = document.querySelectorAll("input[type='checkbox'][name='q23_24']");
-        if (pairedCheckboxes.length > 0) {
-          return document.querySelectorAll("input[type='checkbox'][name='q23_24']:checked").length > (qNum - 23);
-        }
-      }
-      if (qNum === 25 || qNum === 26) {
-        const pairedCheckboxes = document.querySelectorAll("input[type='checkbox'][name='q25_26']");
-        if (pairedCheckboxes.length > 0) {
-          return document.querySelectorAll("input[type='checkbox'][name='q25_26']:checked").length > (qNum - 25);
         }
       }
       const name = "q" + qNum;
@@ -2924,18 +2910,6 @@
           return Array.from(document.querySelectorAll("input[type='checkbox'][name='q12_13']:checked")).map((c) => c.value).join(",");
         }
       }
-      if (qNum === 23 || qNum === 24) {
-        const pairedCheckboxes = document.querySelectorAll("input[type='checkbox'][name='q23_24']");
-        if (pairedCheckboxes.length > 0) {
-          return Array.from(document.querySelectorAll("input[type='checkbox'][name='q23_24']:checked")).map((c) => c.value).join(",");
-        }
-      }
-      if (qNum === 25 || qNum === 26) {
-        const pairedCheckboxes = document.querySelectorAll("input[type='checkbox'][name='q25_26']");
-        if (pairedCheckboxes.length > 0) {
-          return Array.from(document.querySelectorAll("input[type='checkbox'][name='q25_26']:checked")).map((c) => c.value).join(",");
-        }
-      }
       const name = "q" + qNum;
       const radios = document.querySelectorAll(
         "input[type='radio'][name='" + name + "']"
@@ -2962,7 +2936,7 @@
         if (!user) {
           isCorrect = false;
         } else if (Array.isArray(key)) {
-          if (q === 10 || q === 11 || q === 12 || q === 13 || q === 23 || q === 24 || q === 25 || q === 26) {
+          if (q === 10 || q === 11 || q === 12 || q === 13) {
             const picked = user ? user.split(",").map((x) => x.trim()).filter(Boolean).sort().join(",") : "";
             const expected = key.map((x) => String(x).trim()).sort().join(",");
             isCorrect = picked === expected;
