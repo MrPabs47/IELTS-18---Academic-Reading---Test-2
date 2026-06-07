@@ -583,6 +583,11 @@
       background: rgba(229,57,53,0.06);
     }
 
+    .question-block.partial-correct {
+      border-color: var(--correct);
+      background: rgba(67,160,71,0.04);
+    }
+
     .inline-answer {
       display: inline-flex;
       align-items: center;
@@ -2898,6 +2903,20 @@
       return "";
     }
 
+    function getChooseTwoCorrectCount(groupName, correctLetters) {
+      const correctSet = new Set(correctLetters.map((letter) => String(letter).trim().toUpperCase()));
+      const selectedLetters = new Set(
+        Array.from(document.querySelectorAll("input[type='checkbox'][name='" + groupName + "']:checked"))
+          .map((checkbox) => String(checkbox.value).trim().toUpperCase())
+          .filter(Boolean)
+      );
+      let correctSelections = 0;
+      selectedLetters.forEach((letter) => {
+        if (correctSet.has(letter)) correctSelections++;
+      });
+      return Math.min(correctSelections, correctSet.size);
+    }
+
     function evaluateQuestions() {
       let correctCount = 0;
 
@@ -2905,17 +2924,15 @@
         const user = getUserAnswer(q);
         const key = answerKey[q];
         let isCorrect = false;
+        const isChooseTwoPair = q === 21 || q === 22;
 
-        if (!user) {
+        if (isChooseTwoPair) {
+          const correctSelections = getChooseTwoCorrectCount("q21_22", key);
+          isCorrect = correctSelections > q - 21;
+        } else if (!user) {
           isCorrect = false;
         } else if (Array.isArray(key)) {
-          if (q === 21 || q === 22) {
-            const picked = user ? user.split(",").map((x) => x.trim()).filter(Boolean).sort().join(",") : "";
-            const expected = key.map((x) => String(x).trim()).sort().join(",");
-            isCorrect = picked === expected;
-          } else {
-            isCorrect = key.some((k) => user.toLowerCase() === String(k).toLowerCase());
-          }
+          isCorrect = key.some((k) => user.toLowerCase() === String(k).toLowerCase());
         } else if (typeof key === "string") {
           if (/^(TRUE|FALSE|NOT GIVEN)$/.test(key)) {
             isCorrect = user.toUpperCase() === key;
@@ -2930,15 +2947,30 @@
         const feedbackBlock = document.querySelector(
           '.question-block.feedback-only[data-q="' + q + '"]'
         );
-        [block, feedbackBlock].forEach((el) => {
-          if (el) el.classList.remove("correct", "incorrect");
-        });
-        if (block) {
-          if (isCorrect) {
-            block.classList.add("correct");
-            correctCount++;
-          } else if (user) {
-            block.classList.add("incorrect");
+        if (isChooseTwoPair) {
+          if (q === 21 && block) {
+            block.classList.remove("correct", "incorrect", "partial-correct");
+            const correctSelections = getChooseTwoCorrectCount("q21_22", key);
+            if (correctSelections === 2) {
+              block.classList.add("correct");
+            } else if (correctSelections === 1) {
+              block.classList.add("partial-correct");
+            } else if (user) {
+              block.classList.add("incorrect");
+            }
+          }
+          if (isCorrect) correctCount++;
+        } else {
+          [block, feedbackBlock].forEach((el) => {
+            if (el) el.classList.remove("correct", "incorrect");
+          });
+          if (block) {
+            if (isCorrect) {
+              block.classList.add("correct");
+              correctCount++;
+            } else if (user) {
+              block.classList.add("incorrect");
+            }
           }
         }
 
