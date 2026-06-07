@@ -1,0 +1,3773 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>IELTS 17 Academic Reading Test 2</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <style>
+    :root {
+      --bg: #ffffff;
+      --bg-secondary: #f5f5f5;
+      --text: #111111;
+      --text-soft: #555555;
+      --accent: #0057b8;
+      --accent-soft: #e5f0ff;
+      --border: #dddddd;
+      --highlight: #ffcc66;
+      --note-underline: #ff9900;
+      --danger: #c62828;
+      --correct: #1b5e20;
+      --incorrect: #b71c1c;
+      --orange: #ff9800;
+      --part-bg: #f2f2f2;
+      --part-active-bg: #ffffff;
+      --shadow-soft: 0 2px 10px rgba(0,0,0,0.08);
+      --font-size-base: 15px;
+    }
+
+    /* Themes */
+    body[data-theme="white-on-black"] {
+      --bg: #000000;
+      --bg-secondary: #111111;
+      --text: #ffffff;
+      --text-soft: #dddddd;
+      --border: #333333;
+      --accent: #90caf9;
+      --accent-soft: #1a237e;
+      --highlight: #ffcc66;
+      --note-underline: #ffcc66;
+      --part-bg: #111111;
+      --part-active-bg: #000000;
+      --shadow-soft: 0 2px 10px rgba(0,0,0,0.6);
+    }
+
+    body[data-theme="yellow-on-black"] {
+      --bg: #000000;
+      --bg-secondary: #111111;
+      --text: #ffff66;
+      --text-soft: #fff59d;
+      --border: #333333;
+      --accent: #fff176;
+      --accent-soft: #424242;
+      --highlight: #ffeb3b;
+      --note-underline: #ffeb3b;
+      --part-bg: #111111;
+      --part-active-bg: #000000;
+      --shadow-soft: 0 2px 10px rgba(0,0,0,0.6);
+    }
+
+    body {
+      margin: 0;
+      font-family: Arial, Helvetica, system-ui, -apple-system, "Segoe UI", sans-serif;
+      font-size: var(--font-size-base);
+      background: var(--bg);
+      color: var(--text);
+      overscroll-behavior: none;
+    }
+
+    body.font-large {
+      --font-size-base: 18px;
+    }
+    body.font-xlarge {
+      --font-size-base: 20px;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    /* Mode overlay (test vs study) */
+    #modeScreen {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.6);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 2000;
+    }
+
+    #modeScreenInner {
+      background: var(--bg);
+      color: var(--text);
+      padding: 24px 28px;
+      border-radius: 12px;
+      max-width: 480px;
+      box-shadow: var(--shadow-soft);
+    }
+
+    #modeScreenInner h1 {
+      margin-top: 0;
+      margin-bottom: 8px;
+      font-size: 1.4rem;
+    }
+
+    #modeScreenInner p {
+      margin-top: 0;
+      margin-bottom: 12px;
+      color: var(--text-soft);
+    }
+
+    .mode-buttons {
+      display: flex;
+      gap: 12px;
+      margin-top: 8px;
+      flex-wrap: wrap;
+    }
+
+    .mode-btn {
+      flex: 1 1 140px;
+      padding: 10px 14px;
+      border-radius: 999px;
+      border: 1px solid var(--accent);
+      background: var(--accent-soft);
+      color: var(--accent);
+      font-weight: 600;
+      cursor: pointer;
+      text-align: center;
+      transition: background 0.15s, transform 0.05s;
+    }
+
+    .mode-btn.secondary {
+      background: transparent;
+      color: var(--accent);
+    }
+
+    .mode-btn:hover {
+      background: var(--accent);
+      color: #fff;
+      transform: translateY(-1px);
+    }
+
+    #testStartScreen {
+      display: none;
+      margin-top: 14px;
+      padding-top: 14px;
+      border-top: 1px solid var(--border);
+    }
+
+    #testStartScreen label {
+      display: block;
+      font-weight: 600;
+      margin-bottom: 8px;
+    }
+
+    #studentNameInput {
+      max-width: 100%;
+      margin-bottom: 10px;
+    }
+
+    #app {
+      display: none;
+    }
+
+    body.mode-screen-active .top-bar,
+    body.mode-screen-active .main-area,
+    body.mode-screen-active .bottom-nav {
+      display: none !important;
+    }
+
+    /* Top bar */
+    .top-bar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 56px;
+      background: var(--bg-secondary);
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 20px;
+      z-index: 1000;
+    }
+
+    .top-left {
+      display: flex;
+      align-items: baseline;
+      gap: 16px;
+    }
+
+    .logo {
+      font-weight: 800;
+      font-size: 1.4rem;
+      letter-spacing: 0.08em;
+    }
+
+    /* IELTS Pabs animated logo */
+    .logo.home-link,
+    .logo-link .logo {
+      transition: color 0.2s ease, opacity 0.2s ease;
+    }
+
+    .logo.home-link:hover,
+    .home-link:hover,
+    .logo-link:hover .logo {
+      color: #e31837;
+      opacity: 1;
+    }
+
+    .logo-char {
+      display: inline-block;
+      opacity: 1;
+      transform: none;
+      filter: none;
+      will-change: transform, opacity, filter;
+    }
+
+    .logo.is-animating .logo-char {
+      animation: logoReveal 0.45s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+      animation-delay: calc(var(--logo-char-index) * 200ms);
+    }
+
+    @keyframes logoReveal {
+      from {
+        opacity: 0;
+        transform: translateY(8px);
+        filter: blur(4px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+        filter: blur(0);
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .logo-char {
+        opacity: 1;
+        transform: none;
+        filter: none;
+        animation: none;
+      }
+    }
+    .home-link { cursor: pointer; transition: color 0.2s ease, opacity 0.2s ease; }
+    .home-link:hover { color: #e31837; opacity: 1; }
+    .passage-main-title { font-weight: 700; font-size: 1.2rem; margin: 0 0 8px; }
+    .passage-subtitle { font-style: italic; color: var(--text-soft); margin: 0 0 12px; }
+    .paragraph-letter { font-weight: 700; display: inline-block; margin-right: 8px; }
+
+
+    .test-title {
+      font-size: 0.95rem;
+      color: var(--text-soft);
+    }
+
+    .top-right {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      font-size: 0.9rem;
+    }
+
+    #timerContainer {
+      display: none;
+    }
+
+    #timerDisplay {
+      font-weight: 600;
+    }
+
+    .timer-warning {
+      color: var(--danger);
+    }
+
+    #timerContainer.timer-expired {
+      color: var(--danger);
+      font-weight: 700;
+    }
+
+    .icon-group {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .icon {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 26px;
+      height: 26px;
+      color: var(--text-soft);
+    }
+
+    .icon svg,
+    .icon-button svg {
+      width: 22px;
+      height: 22px;
+      display: block;
+      stroke: currentColor;
+    }
+
+    .icon-button {
+      border: none;
+      background: none;
+      padding: 4px 8px;
+      cursor: pointer;
+      color: var(--text-soft);
+      font-size: 1.3rem;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .icon-button:hover {
+      color: var(--accent);
+    }
+
+    #fullscreenBtn.is-active {
+      color: var(--accent);
+    }
+
+    #fullscreenBtn:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
+
+    .icon-button.with-label {
+      gap: 6px;
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      padding: 6px 10px;
+      font-size: 0.86rem;
+      line-height: 1;
+    }
+
+    #fullscreenSupportNote {
+      display: none;
+      margin-top: 8px;
+      font-size: 0.82rem;
+      color: var(--text-soft);
+    }
+
+    #fullscreenLockOverlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.72);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 2100;
+      pointer-events: all;
+    }
+
+    #fullscreenLockPanel {
+      width: min(520px, 92vw);
+      background: var(--bg);
+      color: var(--text);
+      border-radius: 12px;
+      padding: 20px 22px;
+      box-shadow: var(--shadow-soft);
+      text-align: center;
+    }
+
+    /* Options overlay */
+    #optionsOverlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.55);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 1500;
+    }
+
+    #optionsPanel {
+      background: var(--bg);
+      color: var(--text);
+      width: min(520px, 95vw);
+      padding: 22px 26px;
+      border-radius: 12px;
+      box-shadow: var(--shadow-soft);
+      position: relative;
+    }
+
+    #optionsPanel h2 {
+      margin: 0 0 16px;
+      text-align: center;
+    }
+
+    .options-close {
+      position: absolute;
+      top: 8px;
+      right: 12px;
+      border: none;
+      background: none;
+      font-size: 1.4rem;
+      cursor: pointer;
+      color: var(--text-soft);
+    }
+
+    .options-section {
+      margin-top: 12px;
+      border-top: 1px solid var(--border);
+      padding-top: 10px;
+    }
+
+    .options-section h3 {
+      margin: 4px 0 8px;
+      font-size: 0.95rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--text-soft);
+    }
+
+    .options-list button {
+      width: 100%;
+      text-align: left;
+      padding: 8px 10px;
+      border-radius: 6px;
+      border: 1px solid transparent;
+      background: transparent;
+      color: var(--text);
+      cursor: pointer;
+      margin-bottom: 6px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 0.95rem;
+    }
+
+    .options-list button:hover {
+      border-color: var(--accent);
+      background: var(--accent-soft);
+    }
+
+    .options-list button.active {
+      border-color: var(--accent);
+      background: var(--accent-soft);
+      font-weight: 600;
+      color: var(--text);
+    }
+
+    .submit-button {
+      width: 100%;
+      padding: 10px 14px;
+      border-radius: 999px;
+      border: none;
+      background: #d32f2f;
+      color: #fff;
+      font-weight: 600;
+      cursor: pointer;
+      margin-bottom: 10px;
+      font-size: 1rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+
+    .submit-button:hover {
+      background: #b71c1c;
+    }
+
+    /* Main layout: fixed header + footer, scrollable middle */
+    .main-area {
+      position: fixed;
+      top: 56px;
+      bottom: 64px;
+      left: 0;
+      right: 0;
+      display: flex;
+      justify-content: center;
+      padding: 4px 6px;
+    }
+
+    .main-inner {
+      width: min(1800px, calc(100% - 6px));
+      display: flex;
+      border-radius: 12px;
+      background: var(--bg-secondary);
+      box-shadow: var(--shadow-soft);
+      overflow: hidden;
+      border: none;
+    }
+
+    .pane {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      background: var(--bg);
+    }
+
+    .pane-header {
+      padding: 10px 14px;
+      border-bottom: 1px solid var(--border);
+      background: var(--bg-secondary);
+      font-weight: 600;
+      font-size: 0.98rem;
+    }
+
+    .pane-header span {
+      font-weight: 400;
+      color: var(--text-soft);
+      margin-left: 6px;
+      font-size: 0.9rem;
+    }
+
+    .pane-content {
+      flex: 1;
+      padding: 14px 18px;
+      overflow-y: auto;
+      position: relative;
+    }
+
+    .passage-section h2 {
+      margin-top: 0;
+      margin-bottom: 8px;
+      font-size: 1.1rem;
+    }
+
+    #passagePane .passage-section h3 {
+      margin: 20px 0 8px;
+      font-size: 1rem;
+      line-height: 1.25;
+    }
+
+    #passagePane .passage-section p {
+      margin: 0 0 13px;
+      line-height: 1.52;
+    }
+
+    .passage-divider {
+      margin: 24px 0 20px;
+      border-top: 1px solid var(--border);
+      padding-top: 18px;
+    }
+
+    .instruction-block {
+      margin-bottom: 10px;
+    }
+
+    .instruction-block p {
+      margin: 4px 0;
+      line-height: 1.45;
+    }
+
+    .instruction-block .instruction-title,
+    .instruction-block .instruction-subtitle {
+      font-size: inherit;
+      font-weight: inherit;
+      margin: 4px 0;
+    }
+
+    .instruction-block .instruction-note {
+      font-style: italic;
+    }
+
+    .question-block {
+      margin-bottom: 10px;
+      padding: 6px 8px;
+      border-radius: 8px;
+      border: 1px solid transparent;
+      background: transparent;
+    }
+
+    .question-block.current-question,
+    .inline-answer.current-question {
+      border-color: var(--accent);
+      background: var(--accent-soft);
+    }
+
+    .question-block.correct,
+    .inline-answer.correct {
+      border-color: var(--correct);
+      background: rgba(67,160,71,0.08);
+    }
+
+    .question-block.incorrect,
+    .inline-answer.incorrect {
+      border-color: var(--incorrect);
+      background: rgba(229,57,53,0.06);
+    }
+
+    .inline-answer {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      width: auto;
+      margin: 0 2px;
+      padding: 1px 3px;
+      border: 1px solid transparent;
+      border-radius: 6px;
+      vertical-align: baseline;
+    }
+
+    .feedback-only {
+      margin: 2px 0 0;
+      padding: 0;
+      border: 0;
+      background: transparent;
+    }
+
+    .feedback-only.current-question,
+    .feedback-only.correct,
+    .feedback-only.incorrect {
+      border: 0;
+      background: transparent;
+    }
+
+    .matching-select {
+      width: auto;
+      min-width: 150px;
+      max-width: 100%;
+      padding: 5px 8px;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      background: var(--bg);
+      color: var(--text);
+      font-family: inherit;
+      font-size: 0.95rem;
+    }
+
+    .matching-control {
+      margin-top: 4px;
+    }
+
+    .question-number-label {
+      font-weight: 600;
+      margin-right: 6px;
+    }
+
+    .question-text {
+      margin-bottom: 4px;
+    }
+
+    .note-bullet::before {
+      content: "•";
+      font-weight: 700;
+      margin-right: 8px;
+    }
+
+    .question-text::before {
+      content: none !important;
+    }
+
+    .question-text.note-bullet::before {
+      content: "•" !important;
+      font-weight: 700;
+      margin-right: 8px;
+    }
+
+    .question-block[data-q="8"] .question-number-label,
+    .question-block[data-q="9"] .question-number-label,
+    .question-block[data-q="10"] .question-number-label,
+    .question-block[data-q="11"] .question-number-label,
+    .question-block[data-q="12"] .question-number-label,
+    .question-block[data-q="13"] .question-number-label {
+      display: inline !important;
+      visibility: visible !important;
+    }
+
+    .options-row {
+      margin-top: 8px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .options-row label {
+      display: block;
+      padding: 6px 8px;
+      border-radius: 8px;
+      margin: 0;
+      cursor: pointer;
+      background: var(--bg-secondary);
+      border: 1px solid var(--border);
+    }
+
+    select,
+    input[type="text"] {
+      padding: 6px 8px;
+      border-radius: 6px;
+      border: 1px solid var(--border);
+      font-size: 0.95rem;
+      width: 100%;
+      max-width: 260px;
+      background: var(--bg);
+      color: var(--text);
+    }
+
+    select option,
+    select optgroup {
+      background: var(--bg);
+      color: var(--text);
+    }
+
+    input::placeholder,
+    textarea::placeholder {
+      color: var(--text-soft);
+      opacity: 0.9;
+    }
+
+    select:focus,
+    input[type="text"]:focus {
+      outline: 2px solid var(--accent);
+      outline-offset: 1px;
+    }
+
+    .inline-input {
+      position: relative;
+      display: inline-block;
+      vertical-align: middle;
+      min-width: 85px;
+      max-width: 170px;
+    }
+
+    .inline-input::before {
+      content: attr(data-q);
+      position: absolute;
+      left: 1px;
+      top: 1px;
+      bottom: 1px;
+      width: 34px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: 0.85rem;
+      color: var(--text-soft);
+      background: var(--bg-secondary);
+      border-right: 1px solid var(--border);
+      border-radius: 5px 0 0 5px;
+      pointer-events: none;
+    }
+
+    .inline-input input {
+      width: 100%;
+      padding-left: 46px;
+      height: 34px;
+      line-height: 34px;
+    }
+
+    .inline-input.no-gap-number::before {
+      content: none !important;
+    }
+
+    .inline-input.no-gap-number input {
+      padding-left: 8px;
+    }
+
+    .drag-bank {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin: 10px 0 14px;
+      padding: 10px;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      background: var(--bg-secondary);
+    }
+
+    .drag-item {
+      min-height: 36px;
+      padding: 8px 14px;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      border: 1px solid var(--border);
+      background: var(--bg);
+      cursor: grab;
+      user-select: none;
+    }
+
+    .drag-item.selected {
+      outline: 2px solid var(--accent);
+      outline-offset: 1px;
+    }
+
+    .drag-hint {
+      color: var(--text-soft);
+      font-size: 0.9rem;
+    }
+
+    .drop-zone {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 180px;
+      height: 34px;
+      padding: 0 10px;
+      border-radius: 8px;
+      border: 1px dashed var(--border);
+      background: var(--bg);
+      font-weight: 700;
+      margin-top: 6px;
+    }
+
+    .drop-zone.filled {
+      border-style: solid;
+      border-color: var(--accent);
+      background: var(--accent-soft);
+    }
+
+    .drop-zone.over {
+      border-color: var(--accent);
+    }
+
+    .correct-answer-text {
+      margin-top: 4px;
+      font-size: 0.85rem;
+      color: var(--correct);
+      display: none;
+    }
+
+    /* Bottom navigation */
+    .bottom-nav {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background: var(--bg-secondary);
+      border-top: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      padding: 4px 10px;
+      font-size: 0.92rem;
+      z-index: 900;
+    }
+
+    .bottom-row {
+      width: 100%;
+    }
+
+    /* Bottom navigation */
+    .bottom-nav {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background: var(--bg-secondary);
+      border-top: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      padding: 4px 10px;
+      font-size: 0.92rem;
+      z-index: 900;
+    }
+
+    .bottom-row {
+      width: 100%;
+    }
+
+    .bottom-row-v2 {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      width: 100%;
+    }
+
+    .bottom-left {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      flex: 1;
+      min-width: 0;
+    }
+
+    .part-summary-row {
+      display: flex;
+      gap: 8px;
+      min-width: 320px;
+    }
+
+    #questionNumbers {
+      display: flex;
+      flex: 1;
+      flex-wrap: nowrap;
+      overflow-x: auto;
+      gap: 5px;
+      padding: 1px 5px;
+      min-width: 0;
+      justify-content: flex-start;
+    }
+
+    .part-chip {
+      padding: 6px 12px;
+      border-radius: 999px;
+      background: var(--part-bg);
+      border: 1px solid transparent;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 0.94rem;
+      justify-content: center;
+      transition: background 0.1s, border-color 0.1s, color 0.1s;
+      text-align: center;
+      width: 100%;
+      min-height: 44px;
+      white-space: nowrap;
+    }
+
+    .part-chip span.count {
+      color: var(--text-soft);
+      font-size: 0.85rem;
+      white-space: nowrap;
+    }
+
+    .part-chip.active {
+      background: var(--part-active-bg);
+      border-color: var(--accent);
+      font-weight: 600;
+    }
+
+    .part-chip.complete {
+      border-color: var(--correct);
+      color: var(--correct);
+    }
+
+    .part-chip.partial {
+      border-color: var(--orange);
+      color: var(--orange);
+    }
+
+    .part-chip.unopened {
+      color: var(--text-soft);
+      border-color: transparent;
+    }
+
+    #questionNumbers {
+      scroll-behavior: smooth;
+    }
+
+    .qnav {
+      min-width: 30px;
+      padding: 4px 7px;
+      border-radius: 8px;
+      text-align: center;
+      border: 1px solid var(--border);
+      background: var(--bg);
+      cursor: pointer;
+      font-size: 0.9rem;
+      font-weight: 700;
+      flex-shrink: 0;
+    }
+
+    .qnav.current {
+      border-color: var(--accent);
+      background: var(--accent-soft);
+      font-weight: 600;
+    }
+
+    .qnav.answered {
+      border-color: var(--correct);
+      background: rgba(67,160,71,0.22);
+    }
+
+    .qnav.unanswered {
+      opacity: 0.7;
+    }
+
+    .section-arrows {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .arrow-btn,
+    .check-btn {
+      border-radius: 6px;
+      border: none;
+      padding: 5px 10px;
+      cursor: pointer;
+      font-size: 0.9rem;
+      background: var(--bg-secondary);
+      border: 1px solid var(--border);
+      color: var(--text);
+    }
+
+    .arrow-btn:hover {
+      border-color: var(--accent);
+      background: var(--accent-soft);
+    }
+
+    .check-btn {
+      background: var(--accent);
+      color: #fff;
+      border-color: var(--accent);
+      font-weight: 600;
+    }
+
+    .check-btn:hover {
+      background: #00429b;
+    }
+
+    /* Highlight & notes toolbar */
+    #selectionToolbar {
+      position: absolute;
+      padding: 4px 6px;
+      background: #222;
+      color: #fff;
+      border-radius: 999px;
+      display: none;
+      z-index: 1200;
+      font-size: 0.8rem;
+      gap: 4px;
+    }
+
+    #selectionToolbar button {
+      border: none;
+      background: transparent;
+      color: inherit;
+      padding: 4px 8px;
+      border-radius: 999px;
+      cursor: pointer;
+      font-size: 0.8rem;
+    }
+
+    #selectionToolbar button:hover {
+      background: rgba(255,255,255,0.18);
+    }
+
+    .highlighted {
+      background: var(--highlight);
+    }
+
+    .note-anchor {
+      text-decoration: underline;
+      text-decoration-color: var(--note-underline);
+      text-decoration-style: solid;
+      text-decoration-thickness: 2px;
+      position: relative;
+      cursor: pointer;
+    }
+
+    .note-anchor .note-delete {
+      position: absolute;
+      top: -10px;
+      right: -10px;
+      width: 16px;
+      height: 16px;
+      border-radius: 50%;
+      border: none;
+      font-size: 0.7rem;
+      padding: 0;
+      line-height: 16px;
+      text-align: center;
+      background: var(--danger);
+      color: #fff;
+      display: none;
+      cursor: pointer;
+    }
+
+    .note-anchor:hover .note-delete {
+      display: inline-block;
+    }
+
+    .note-window {
+      position: absolute;
+      min-width: 200px;
+      min-height: 120px;
+      max-width: 340px;
+      background: var(--bg);
+      color: var(--text);
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      box-shadow: var(--shadow-soft);
+      z-index: 1300;
+      display: flex;
+      flex-direction: column;
+      resize: both;
+      overflow: hidden;
+    }
+
+    .note-header {
+      padding: 4px 8px;
+      border-bottom: 1px solid var(--border);
+      background: var(--bg-secondary);
+      cursor: move;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 0.8rem;
+    }
+
+    .note-body {
+      flex: 1;
+      padding: 6px;
+    }
+
+    .note-body textarea {
+      width: 100%;
+      height: 100%;
+      border: none;
+      outline: none;
+      background: transparent;
+      color: inherit;
+      resize: none;
+      font-size: 0.85rem;
+    }
+
+    .note-footer {
+      padding: 4px 6px;
+      text-align: right;
+      border-top: 1px solid var(--border);
+    }
+
+    .note-footer button {
+      border: none;
+      background: none;
+      color: var(--accent);
+      cursor: pointer;
+      font-size: 0.8rem;
+    }
+
+
+    .summary-box { border:1px solid var(--line); border-radius:10px; padding:10px 12px; margin:8px 0 12px; background:var(--bg-secondary);}
+    .summary-box p { margin: 6px 0; line-height: 1.55; }
+    .summary-box-title { text-align:center; font-weight:700; margin-bottom:6px; }
+    .notes-box { border:1px solid var(--border); border-radius:4px; padding:14px 16px; margin:10px 0 14px; background:var(--bg); }
+    .notes-box-title { text-align:center; font-weight:700; font-size:1.05rem; margin:0 0 10px; }
+    .notes-subheading { font-weight:700; margin:10px 0 6px; }
+    .notes-box .question-text.note-bullet::before { content: "• "; margin-right: 8px; color: var(--text-soft); }
+    .notes-box .notes-subheading::before,
+    .notes-box .notes-box-title::before { content: none; }
+    .people-box { border:1px solid var(--border); border-radius:4px; padding:12px 14px; margin:8px 0 14px; }
+    .people-box-title { text-align:center; font-weight:700; margin-bottom:8px; }
+    .people-list-line { margin:4px 0; }
+    .summary-gap { display:inline-flex; align-items:center; gap:6px; margin:0 2px; }
+    .summary-gap select { min-width:80px; width:auto; font-family: inherit; font-size: 0.95rem; }
+    .inline-input input { font-family: inherit; font-size: 0.95rem; }
+    .summary-options-box { border:1px solid var(--line); border-radius:10px; padding:12px; margin:10px 0 14px; }
+    .summary-options-grid { display:grid; grid-template-columns:repeat(2,minmax(180px,1fr)); gap:6px 14px; }
+    .summary-feedback-row { margin-top:8px; display:grid; gap:4px; }
+/* Results overlay */
+    #resultsOverlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.6);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 1600;
+    }
+
+    #resultsPanel {
+      background: var(--bg);
+      color: var(--text);
+      padding: 22px 26px;
+      border-radius: 12px;
+      box-shadow: var(--shadow-soft);
+      max-width: 520px;
+      width: 95vw;
+    }
+
+    #resultsPanel h2 {
+      margin-top: 0;
+      margin-bottom: 10px;
+    }
+
+    #resultsPanel p {
+      margin: 6px 0;
+    }
+
+    #shortcutToast {
+      position: fixed;
+      left: 50%;
+      bottom: 86px;
+      transform: translateX(-50%);
+      padding: 9px 14px;
+      border-radius: 999px;
+      border: 1px solid var(--border);
+      background: var(--bg-secondary);
+      color: var(--text);
+      font-size: 0.85rem;
+      box-shadow: var(--shadow-soft);
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.2s ease;
+      z-index: 1600;
+    }
+
+    #shortcutToast.visible {
+      opacity: 1;
+    }
+
+    /* Utility */
+    .sr-only {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      padding: 0;
+      margin: -1px;
+      overflow: hidden;
+      clip: rect(0,0,0,0);
+      white-space: nowrap;
+      border: 0;
+    }
+
+    @media (max-width: 900px) {
+      .main-inner {
+        flex-direction: column;
+      }
+      .divider {
+        display: none;
+      }
+    }
+
+    .divider {
+      width: 18px;
+      min-width: 18px;
+      background: linear-gradient(90deg, transparent 0, transparent 6px, rgba(120,120,120,0.35) 6px, rgba(120,120,120,0.35) 12px, transparent 12px, transparent 100%);
+      cursor: col-resize;
+      position: relative;
+      touch-action: none;
+    }
+
+    .divider::after {
+      content: "⇄";
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 34px;
+      height: 34px;
+      border-radius: 50%;
+      border: 2px solid #0d3d73;
+      background: #03284f;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.3rem;
+      line-height: 1;
+      color: #fff;
+      opacity: 0.98;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.2);
+    }
+
+    .question-text.gap-fill {
+      display: block;
+      line-height: 1.35;
+    }
+
+    .gap-bullet {
+      display: inline-block;
+      font-size: 1.2rem;
+      line-height: 1;
+      margin-right: 8px;
+      vertical-align: top;
+    }
+
+    .gap-answer-tail {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      white-space: nowrap;
+    }
+
+    .drop-zone-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-top: 6px;
+    }
+
+    .clear-drop-btn {
+      border: 1px solid var(--border);
+      background: var(--bg-secondary);
+      color: var(--text);
+      border-radius: 6px;
+      padding: 4px 8px;
+      cursor: pointer;
+      font-size: 0.82rem;
+    }
+  </style>
+</head>
+<body data-theme="black-on-white" class="mode-screen-active">
+  <!-- Mode selection -->
+  <div id="modeScreen">
+    <div id="modeScreenInner">
+      <h1>IELTS 17 Academic Reading Test 2</h1>
+      <p>Select how you want to use this test.</p>
+      <div class="mode-buttons">
+        <button
+          class="mode-btn"
+          data-mode="test"
+          type="button"
+
+        >
+          Test mode (exam conditions)
+        </button>
+        <button
+          class="mode-btn secondary"
+          data-mode="study"
+          type="button"
+
+        >
+          Study mode (show feedback)
+        </button>
+      </div>
+      <p style="font-size:0.8rem;margin-top:10px;color:var(--text-soft);">
+        In both modes you can highlight text and make notes. In Test mode you submit once at the end. In Study mode you can check and change your answers as many times as you like.
+      </p>
+
+      <div id="testStartScreen">
+        <label for="studentNameInput">Your name (for test mode results)</label>
+        <input type="text" id="studentNameInput" placeholder="Enter your full name" maxlength="80" />
+        <button class="mode-btn" type="button" onclick="window.beginTimedTest && window.beginTimedTest()">Start the test now</button>
+        <p id="fullscreenSupportNote">Full screen enforcement is limited on this device.</p>
+      </div>
+    </div>
+  </div>
+
+  <div id="app">
+    <!-- Top bar -->
+    <header class="top-bar">
+      <div class="top-left">
+        <div class="logo home-link" onclick="confirmGoHome()" title="Return to home">IELTS Pabs</div>
+        <div class="test-title">
+          IELTS 17 Academic Reading Test 2
+        </div>
+      </div>
+      <div class="top-right">
+        <div id="timerContainer" role="status" aria-live="polite" aria-atomic="true" aria-hidden="true"><span id="timerPrefix">Time left:</span> <span id="timerDisplay">60:00</span></div>
+        <div class="icon-group">
+          <span class="icon" title="Connection status">
+            <span class="sr-only">Connection status</span>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M4.93 9.93a10.5 10.5 0 0 1 14.14 0" />
+              <path d="M7.76 12.76a6.5 6.5 0 0 1 8.48 0" />
+              <path d="M10.59 15.59a2.5 2.5 0 0 1 2.82 0" />
+              <path d="M12 18h.01" />
+            </svg>
+          </span>
+          <span class="icon" title="Notifications (mock)">
+            <span class="sr-only">Notifications</span>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M15 17h5l-1.4-1.4A2 2 0 0 1 18 14.17V11a6 6 0 1 0-12 0v3.17a2 2 0 0 1-.59 1.43L4 17h5" />
+              <path d="M9 17a3 3 0 0 0 6 0" />
+            </svg>
+          </span>
+          <button id="fullscreenBtn" class="icon-button with-label" title="Enter full screen" aria-label="Enter full screen" onclick="toggleFullscreen()">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <polyline points="8 3 3 3 3 8"></polyline>
+              <line x1="3" y1="3" x2="9" y2="9"></line>
+              <polyline points="16 21 21 21 21 16"></polyline>
+              <line x1="15" y1="15" x2="21" y2="21"></line>
+              <polyline points="21 8 21 3 16 3"></polyline>
+              <line x1="15" y1="9" x2="21" y2="3"></line>
+              <polyline points="3 16 3 21 8 21"></polyline>
+              <line x1="3" y1="21" x2="9" y2="15"></line>
+            </svg><span id="fullscreenBtnLabel">Full screen</span>
+          </button>
+          <button id="optionsBtn" class="icon-button" title="Options menu" aria-label="Options menu">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="4" y1="7" x2="20" y2="7" />
+              <line x1="4" y1="12" x2="20" y2="12" />
+              <line x1="4" y1="17" x2="16" y2="17" />
+            </svg>
+          </button>
+        </div>
+      </div>
+    </header>
+
+    <!-- Options overlay -->
+    <div id="optionsOverlay">
+      <div id="optionsPanel">
+        <button class="options-close" onclick="toggleOptions(false)">✕</button>
+        <h2>Options</h2>
+
+        <button class="submit-button" onclick="handlePrimarySubmit()">
+          ✔ Submit test &amp; check answers
+        </button>
+
+        <div class="options-section">
+          <h3>Contrast</h3>
+          <div class="options-list">
+            <button id="theme-black-white" onclick="setTheme('black-on-white')">
+              <span>Black on white</span><span>✓</span>
+            </button>
+            <button id="theme-white-black" onclick="setTheme('white-on-black')">
+              <span>White on black</span><span>✓</span>
+            </button>
+            <button id="theme-yellow-black" onclick="setTheme('yellow-on-black')">
+              <span>Yellow on black</span><span>✓</span>
+            </button>
+          </div>
+        </div>
+
+        <div class="options-section">
+          <h3>Text size</h3>
+          <div class="options-list">
+            <button id="font-normal" onclick="setFontSize('normal')">
+              <span>Normal</span><span>✓</span>
+            </button>
+            <button id="font-large" onclick="setFontSize('large')">
+              <span>Large</span><span>✓</span>
+            </button>
+            <button id="font-xlarge" onclick="setFontSize('xlarge')">
+              <span>Extra large</span><span>✓</span>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Main content area -->
+    <div class="main-area">
+      <div class="main-inner">
+        <!-- Passage pane -->
+        <div class="pane" id="passagePane">
+          <div class="pane-header" id="passageHeader">
+            Part 1 <span>Read the text and answer questions 1–13.</span>
+          </div>
+          <div class="pane-content" id="passageContent">
+            <!-- Section 1 passage -->
+            <div class="passage-section" data-section="1">
+              <h2 class="passage-main-title">The development of the London underground railway</h2>
+              <p>In the first half of the 1800s, London’s population grew at an astonishing rate, and the central area became increasingly congested. In addition, the expansion of the overground railway network resulted in more and more passengers arriving in the capital. However, in 1846, a Royal Commission decided that the railways should not be allowed to enter the City, the capital’s historic and business centre. The result was that the overground railway stations formed a ring around the City. The area within consisted of poorly built, overcrowded slums and the streets were full of horse-drawn traffic. Crossing the City became a nightmare. It could take an hour and a half to travel 8 km by horse-drawn carriage or bus. Numerous schemes were proposed to resolve these problems, but few succeeded.</p>
+              <p>Amongst the most vocal advocates for a solution to London’s traffic problems was Charles Pearson, who worked as a solicitor for the City of London. He saw both social and economic advantages in building an underground railway that would link the overground railway stations together and clear London slums at the same time. His idea was to relocate the poor workers who lived in the inner-city slums to newly constructed suburbs, and to provide cheap rail travel for them to get to work. Pearson’s ideas gained support amongst some businessmen and in 1851 he submitted a plan to Parliament. It was rejected, but coincided with a proposal from another group for an underground connecting line, which Parliament passed.</p>
+              <p>The two groups merged and established the Metropolitan Railway Company in August 1854. The company’s plan was to construct an underground railway line from the Great Western Railway’s (GWR) station at Paddington to the edge of the City at Farringdon Street – a distance of almost 5 km. The organisation had difficulty in raising the funding for such a radical and expensive scheme, not least because of the critical articles printed by the press. Objectors argued that the tunnels would collapse under the weight of traffic overhead, buildings would be shaken and passengers would be poisoned by the emissions from the train engines. However, Pearson and his partners persisted.</p>
+              <p>The GWR, aware that the new line would finally enable them to run trains into the heart of the City, invested almost £250,000 in the scheme. Eventually, over a five-year period, £1m was raised. The chosen route ran beneath existing main roads to minimise the expense of demolishing buildings. Originally scheduled to be completed in 21 months, the construction of the underground line took three years. It was built just below street level using a technique known as ‘cut and cover’. A trench about ten metres wide and six metres deep was dug, and the sides temporarily help up with timber beams. Brick walls were then constructed, and finally a brick arch was added to create a tunnel. A two-metre-deep layer of soil was laid on top of the tunnel and the road above rebuilt.</p>
+              <p>The Metropolitan line, which opened on 10 January 1863, was the world’s first underground railway. On its first day, almost 40,000 passengers were carried between Paddington and Farringdon, the journey taking about 18 minutes. By the end of the Metropolitan’s first year of operation, 9.5 million journeys had been made.</p>
+              <p>Even as the Metropolitan began operation, the first extensions to the line were being authorised; these were built over the next five years, reaching Moorgate in the east to London and Hammersmith in the west. The original plan was to pull the trains with steam locomotives, using firebricks in the boilers to provide steam, but these engines were never introduced. Instead, the line used specially designed locomotives that were fitted with water tanks in which steam could be condensed. However, smoke and fumes remained a problem, even though ventilation shafts were added to the tunnels.</p>
+              <p>Despite the extension of the underground railway, by the 1880s, congestion on London’s streets had become worse. The problem was partly that the existing underground lines formed a circuit around the centre of London and extended to the suburbs, but did not cross the capital’s centre. The ‘cut and cover’ method of construction was not an option in this part of the capital. The only alternative was to tunnel deep underground.</p>
+              <p>Although the technology to create these tunnels existed, steam locomotives could not be used in such a confined space. It wasn’t until the development of a reliable electric motor, and a means of transferring power from the generator to a moving train, that the world’s first deep-level electric railway, the City &amp; South London, became possible. The line opened in 1890, and ran from the City to Stockwell, south of the River Thames. The trains were made up of three carriages and driven by electric engines. The carriages were narrow and had tiny windows just below the roof because it was thought that passengers would not want to look out at the tunnel walls. The line was not without its problems, mainly caused by an unreliable power supply, Although the City &amp; South London Railway was a great technical achievement, it did not make a profit. Then, in 1900, the Central London Railway, known as the ‘Tuppenny Tube’, began operation using new electric locomotives. It was very popular and soon afterwards new railways and extensions were added to the growing tube network. By 1907, the heart of today’s Underground system was in place.</p>
+            </div>
+
+            <!-- Section 2 passage -->
+            <div class="passage-section" data-section="2" style="display:none;">
+              <h2 class="passage-main-title">Stadiums: past, present and future</h2>
+              <h3>A</h3>
+              <p>Stadiums are among the oldest forms of urban architecture: vast stadiums where the public could watch sporting events were at the centre of western city life as far back as the ancient Greek and Roman Empires, well before the construction of the great medieval cathedrals and the grand 19th- and 20th-century railway stations which dominated urban skylines in later eras.</p>
+              <p>Today, however, stadiums are regarded with growing scepticism. Construction costs can soar above £1 billion, and stadiums finished for major events such as the Olympic Games or the FIFA World Cup have notably fallen into disuse and disrepair.</p>
+              <p>But this need not be the cause. History shows that stadiums can drive urban development and adapt to the culture of every age. Even today, architects and planners are finding new ways to adapt the mono-functional sports arenas which became emblematic of modernisation during the 20th century.</p>
+              <h3>B</h3>
+              <p>The amphitheatre* of Arles in southwest France, with a capacity of 25,000 spectators, is perhaps the best example of just how versatile stadiums can be. Built by the Romans in 90 AD, it became a fortress with four towers after the fifth century, and was then transformed into a village containing more than 200 houses. With the growing interest in conservation during the 19th century, it was converted back into an arena for the staging of bullfights, thereby returning the structure to its original use as a venue for public spectacles.</p>
+              <p>Another example is the imposing arena of Verona in northern Italy, with space for 30,000 spectators, which was built 60 years before the Arles amphitheatre and 40 years before Rome’s famous Colosseum. It has endured the centuries and is currently considered one of the world’s prime sites for opera, thanks to its outstanding acoustics.</p>
+              <h3>C</h3>
+              <p>The area in the centre of the Italian town of Lucca, known as the Piazza dell’ Anfiteatro, is yet another impressive example of an amphitheatre becoming absorbed into the fabric of the city. The site evolved in a similar way to Arles and was progressively filled with buildings from the Middle Ages until the 19th century, variously used as houses, a salt depot and a prison. But rather than reverting to an arena, it became a market square, designed by Romanticist architect Lorenzo Nottolini. Today, the ruins of the amphitheatre remain embedded in the various shops and residences surrounding the public square.</p>
+              <h3>D</h3>
+              <p>There are many similarities between modern stadiums and the ancient amphitheatres intended for games. But some of the flexibility was lost at the beginning of the 20th century, as stadiums were developed using new products such as steel and reinforced concrete, and made use of bright lights for night-time matches.</p>
+              <p>Many such stadiums are situated in suburban areas, designed for sporting use only and surrounded by parking lots. These factors mean that they may not be as accessible to the general public, require more energy to run and contribute to urban heat.</p>
+              <h3>E</h3>
+              <p>But many of today’s most innovative architects see scope for the stadium to help improve the city. Among the current strategies, two seem to be having particular success: the stadium as an urban hub, and as a power plant.</p>
+              <p>There’s a growing trend for stadiums to be equipped with public spaces and services that serve a function beyond sport, such as hotels, retail outlets, conference centres, restaurants and bars, children’s playgrounds and green space. Creating mixed-use developments such as this reinforces compactness and multi-functionality, making more efficient use of land and helping to regenerate urban spaces.</p>
+              <p>This opens the space up to families and a wider cross-section of society, instead of catering only to sportspeople and supporters. There have been many examples of this in the UK: the mixed-use facilities at Wembley and Old Trafford have become a blueprint for many other stadiums in the world.</p>
+              <h3>F</h3>
+              <p>The phenomenon of stadium as power stations has arisen from the idea that energy problems can be overcome by integrating interconnected buildings by means of a smart grid, which is an electricity supply network that uses digital communications technology to detect and react to local changes in usage, without significant energy losses. Stadiums are ideal for these purposes, because their canopies have a large surface area for fitting photovoltaic panels and rise high enough (more than 40 metres) to make use of micro wind turbines.</p>
+              <p>Freiburg Mage Solar Stadium in Germany is the first of a new wave of stadiums as power plants, which also includes the Amsterdam Arena and the Kaohsiung Stadium. The latter, inaugurated in 2009, has 8,844 photovoltaic panels producing up to 1.14 GWh of electricity annually. This reduces the annual output of carbon dioxide by 660 tons and supplies up to 80 percent of the surrounding area when the stadium is not in use. This is proof that a stadium can serve its city, and have a decidedly positive impact in terms of reduction of CO2 emissions.</p>
+              <h3>G</h3>
+              <p>Sporting arenas have always been central to the life and culture of cities. In every era, the stadium has acquired new value and uses: from military fortress to residential village, public space to theatre and most recently a field for experimentation in advanced engineering. The stadium of today now brings together multiple functions, thus helping cities to create a sustainable future.</p>
+              <p class="passage-footnote">* amphitheatre: (especially in Greek and Roman architecture) an open circular or oval building with a central space surrounded by tiers of seats for spectators, for the presentation of dramatic or sporting events</p>
+            </div>
+
+            <!-- Section 3 passage -->
+            <div class="passage-section" data-section="3" style="display:none;">
+              <h2 class="passage-main-title">To catch a king</h2>
+              <p><em>Anna Keay reviews Charles Spencer’s book about the hunt for King Charles II during the English Civil War of the seventeenth century</em></p>
+              <p>Charles Spencer’s latest book, To Catch a King, tells us the story of the hunt for King Charles II in the six weeks after his resounding defeat at the Battle of Worcester in September 1651. And what a story it is. After his father was executed by the Parliamentarians in 1649, the young Charles II sacrificed one of the very principles his father had died for and did a deal with Scots, thereby accepting Presbyterianism* as the national religion in return for being crowned King of Scots. His arrival in Edinburgh prompted the English Parliamentary army to invade Scotland in a pre-emptive strike. This was followed by a Scottish invasion of England. The two sides finally faced one another at Worcester in the west of England in 1651. After being comprehensively defeated on the meadows outside the city by the Parliamentarian army, the 21-year-old king found himself the subject of a national manhunt, with a huge sum offered for his capture, through a series of heart-poundingly close escapes, to evade the Parliamentarians before seeking refuge in France. For the next nine years, the penniless and defeated Charles wandered around Europe with only a small group of loyal supporters.</p>
+              <p>Years later, after his restoration as king, the 50-year-old Charles II requested a meeting with the writer and diarist Samuel Pepys. His intention when asking Pepys to commit his story to paper was to ensure that this most extraordinary episode was never forgotten. Over two three-hour sittings, the king related to him in great detail his personal recollections of the six weeks he had spent as a fugitive. As the king and secretary settled down (a scene that is surely a gift for a future scriptwriter), Charles commenced his story: ‘After the battle was so absolutely lost as to be beyond hope of recovery, I began to think of the best way of saving myself.’</p>
+              <p>One of the joys of Spencer’s book, a result not least of its use of Charles II’s own narrative as well as those of his supporters, is just how close the reader gets to the action. The day-by-day retelling of the fugitives’ doings provides delicious details: the cutting of the king’s long hair with agricultural shears, the use of walnut leaves to dye his pale skin, and the day Charles spent lying on a branch of the great oak tree in Boscobel Wood as the Parliamentary soldiers scoured the forest floor below. Spencer draws out both the humour – such as the preposterous refusal of Charles’s friend Henry Wilmot to adopt disguise on the grounds that it was beneath his dignity – and the emotional tension when the secret of the king’s presence was cautiously revealed to his supporters.</p>
+              <p>Charles’s adventures after losing the Battle of Worcester hide the uncomfortable truth that whilst almost everyone in England had been appalled by the execution of his father, they had not welcomed the arrival of his son with the Scots army, but had instead firmly bolted their doors. This was partly because he rode at the head of what looked like a foreign invasion force and partly because, after almost a decade of civil war, people were desperate to avoid it beginning again. This makes it all the more interesting that Charles II himself loved the story so much ever after. As well as retelling it to anyone who would listen, causing eye-rolling among courtiers, he set in train a series of initiatives to memorialise it. There was to be a new order of chivalry, the Knights of the Royal Oak. A series of enormous oil paintings depicting the episode were produced, including a two-metre-wide canvas of Boscobel Wood and a set of six similarly enormous paintings of the king on the run. In 1660, Charles II commissioned the artist John Michael Wright to paint a flying squadron of cherubs* carrying an oak tree to the heavens on the ceiling of his bedchamber. It is hard to imagine many other kings marking the lowest point in their life so enthusiastically, or indeed pulling off such an escape in the first place.</p>
+              <p>Charles Spencer is the perfect person to pass the story on to a new generation. His pacey, readable prose steers deftly clear of modern idioms and elegantly brings to life the details of the great tale. He has even-handed sympathy for both the fugitive king and the fierce republican regime that hunted him, and he succeeds in his desire to explore far more of the background of the story than previous books on the subject have done. Indeed, the opening third of the book is about how Charles II found himself at Worcester in the first place, which for some will be reason alone to read To Catch a King.</p>
+              <p>The tantalizing question left, in the end, is that of what it all meant. Would Charles II have been a different king had these six weeks never happened? The days and nights spent in hiding must have affected him in some way. Did the need to assume disguises, to survive on wit and charm alone, to use trickery and subterfuge to escape from tight corners help form him? This is the one area where the book doesn’t quite hit the mark. Instead its depiction of Charles II in his final years as an ineffective, pleasure-loving monarch doesn’t do justice to the man (neither is it accurate), or to the complexity of his character. But this one niggle aside, To Catch a King is an excellent read, and those who come to it knowing little of the famous tale will find they have a treat in store.</p>
+              <p class="passage-footnote">* Presbyterianism: part of the reformed Protestant religion</p>
+              <p class="passage-footnote">* cherub: an image of angelic children used in paintings</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="divider" id="divider"></div>
+
+        <!-- Questions pane -->
+        <div class="pane" id="questionPane">
+          <div class="pane-header" id="questionHeader">
+            SECTION 1 Questions 1–13
+          </div>
+          <div class="pane-content" id="questionContent">
+
+            <!-- Section 1 questions -->
+            <div data-section="1">
+              <div class="instruction-block">
+                <p><strong>Questions 1–6</strong></p>
+                <p>Complete the notes below.</p>
+                <p>Choose <strong>ONE WORD ONLY</strong> from the passage for each answer.</p>
+                <p>Write your answers in boxes 1–6 on your answer sheet.</p>
+              </div>
+              <div class="summary-box">
+                <div class="summary-box-title">The London underground railway</div>
+                <p><strong>The problem</strong></p>
+                <p>– The <span class="question-number-label">1</span> <span class="inline-input inline-answer no-gap-number" data-q="1"><input type="text" name="q1" /></span> of London increased rapidly between 1800 and 1850</p>
+                <p>– The streets were full of horse-drawn vehicles</p>
+
+                <p><strong>The proposed solution</strong></p>
+                <p>– Charles Pearson, a solicitor, suggested building an underground railway</p>
+                <p>– Building the railway would make it possible to move people to better housing in the <span class="question-number-label">2</span> <span class="inline-input inline-answer no-gap-number" data-q="2"><input type="text" name="q2" /></span></p>
+                <p>– A number of <span class="question-number-label">3</span> <span class="inline-input inline-answer no-gap-number" data-q="3"><input type="text" name="q3" /></span> agreed with Pearson’s idea</p>
+                <p>– The company initially had problems getting the <span class="question-number-label">4</span> <span class="inline-input inline-answer no-gap-number" data-q="4"><input type="text" name="q4" /></span> needed for the project</p>
+                <p>– Negative articles about the project appeared in the <span class="question-number-label">5</span> <span class="inline-input inline-answer no-gap-number" data-q="5"><input type="text" name="q5" /></span></p>
+
+                <p><strong>The construction</strong></p>
+                <p>– The chosen route did not require many buildings to be pulled down</p>
+                <p>– The ‘cut and cover’ method was used to construct the tunnels</p>
+                <p>– With the completion of the brick arch, the tunnel was covered with <span class="question-number-label">6</span> <span class="inline-input inline-answer no-gap-number" data-q="6"><input type="text" name="q6" /></span></p>
+                <div class="question-block feedback-only" data-q="1"><div class="correct-answer-text" id="ca-1"></div></div>
+                <div class="question-block feedback-only" data-q="2"><div class="correct-answer-text" id="ca-2"></div></div>
+                <div class="question-block feedback-only" data-q="3"><div class="correct-answer-text" id="ca-3"></div></div>
+                <div class="question-block feedback-only" data-q="4"><div class="correct-answer-text" id="ca-4"></div></div>
+                <div class="question-block feedback-only" data-q="5"><div class="correct-answer-text" id="ca-5"></div></div>
+                <div class="question-block feedback-only" data-q="6"><div class="correct-answer-text" id="ca-6"></div></div>
+              </div>
+
+              <div class="instruction-block">
+                <p><strong>Questions 7–13</strong></p>
+                <p>Do the following statements agree with the information given in Reading Passage 1?</p>
+                <p>In boxes 7–13 on your answer sheet, write</p>
+                <p><strong>TRUE</strong> if the statement agrees with the information</p>
+                <p><strong>FALSE</strong> if the statement contradicts the information</p>
+                <p><strong>NOT GIVEN</strong> if there is no information on this</p>
+              </div>
+              <div class="question-block" data-q="7">
+                <div class="question-text"><span class="question-number-label">7.</span> Other countries had built underground railways before the Metropolitan line opened.</div>
+                <div class="options-row"><label><input type="radio" name="q7" value="TRUE" /> TRUE</label><label><input type="radio" name="q7" value="FALSE" /> FALSE</label><label><input type="radio" name="q7" value="NOT GIVEN" /> NOT GIVEN</label></div>
+                <div class="correct-answer-text" id="ca-7"></div>
+              </div>
+              <div class="question-block" data-q="8">
+                <div class="question-text"><span class="question-number-label">8.</span> More people than predicted travelled on the Metropolitan line on the first day.</div>
+                <div class="options-row"><label><input type="radio" name="q8" value="TRUE" /> TRUE</label><label><input type="radio" name="q8" value="FALSE" /> FALSE</label><label><input type="radio" name="q8" value="NOT GIVEN" /> NOT GIVEN</label></div>
+                <div class="correct-answer-text" id="ca-8"></div>
+              </div>
+              <div class="question-block" data-q="9">
+                <div class="question-text"><span class="question-number-label">9.</span> The use of ventilation shafts failed to prevent pollution in the tunnels.</div>
+                <div class="options-row"><label><input type="radio" name="q9" value="TRUE" /> TRUE</label><label><input type="radio" name="q9" value="FALSE" /> FALSE</label><label><input type="radio" name="q9" value="NOT GIVEN" /> NOT GIVEN</label></div>
+                <div class="correct-answer-text" id="ca-9"></div>
+              </div>
+              <div class="question-block" data-q="10">
+                <div class="question-text"><span class="question-number-label">10.</span> A different approach from the ‘cut and cover’ technique was required in London’s central area.</div>
+                <div class="options-row"><label><input type="radio" name="q10" value="TRUE" /> TRUE</label><label><input type="radio" name="q10" value="FALSE" /> FALSE</label><label><input type="radio" name="q10" value="NOT GIVEN" /> NOT GIVEN</label></div>
+                <div class="correct-answer-text" id="ca-10"></div>
+              </div>
+              <div class="question-block" data-q="11">
+                <div class="question-text"><span class="question-number-label">11.</span> The windows on City &amp; South London trains were at eye level.</div>
+                <div class="options-row"><label><input type="radio" name="q11" value="TRUE" /> TRUE</label><label><input type="radio" name="q11" value="FALSE" /> FALSE</label><label><input type="radio" name="q11" value="NOT GIVEN" /> NOT GIVEN</label></div>
+                <div class="correct-answer-text" id="ca-11"></div>
+              </div>
+              <div class="question-block" data-q="12">
+                <div class="question-text"><span class="question-number-label">12.</span> The City &amp; South London Railway was a financial success.</div>
+                <div class="options-row"><label><input type="radio" name="q12" value="TRUE" /> TRUE</label><label><input type="radio" name="q12" value="FALSE" /> FALSE</label><label><input type="radio" name="q12" value="NOT GIVEN" /> NOT GIVEN</label></div>
+                <div class="correct-answer-text" id="ca-12"></div>
+              </div>
+              <div class="question-block" data-q="13">
+                <div class="question-text"><span class="question-number-label">13.</span> Trains on the ‘Tuppenny Tube’ nearly always ran on time.</div>
+                <div class="options-row"><label><input type="radio" name="q13" value="TRUE" /> TRUE</label><label><input type="radio" name="q13" value="FALSE" /> FALSE</label><label><input type="radio" name="q13" value="NOT GIVEN" /> NOT GIVEN</label></div>
+                <div class="correct-answer-text" id="ca-13"></div>
+              </div>
+            </div>
+
+            <!-- Section 2 questions -->
+            <div data-section="2" style="display:none;">
+              <div class="instruction-block">
+                <p><strong>READING PASSAGE 2: Questions 14-26</strong></p>
+                <p>Reading Passage 2 has seven paragraphs, A-G.</p>
+                <p>Which section contains the following information?</p>
+                <p>Write the correct letter, A-G, in boxes 14-17 on your answer sheet.</p>
+                <p><strong>NB</strong> You may use any letter more than once.</p>
+              </div>
+
+              <div class="question-block" data-q="14">
+                <div class="question-text"><span class="question-number-label">14</span> A mention of negative attitudes towards stadium building projects</div>
+                <div class="matching-control"><select class="matching-select" name="q14"><option value="">Select section</option><option value="A">A</option><option value="B">B</option><option value="C">C</option><option value="D">D</option><option value="E">E</option><option value="F">F</option><option value="G">G</option></select></div>
+                <div class="correct-answer-text" id="ca-14"></div>
+              </div>
+
+              <div class="question-block" data-q="15">
+                <div class="question-text"><span class="question-number-label">15</span> figures demonstrating the environmental benefits of a certain stadium</div>
+                <div class="matching-control"><select class="matching-select" name="q15"><option value="">Select section</option><option value="A">A</option><option value="B">B</option><option value="C">C</option><option value="D">D</option><option value="E">E</option><option value="F">F</option><option value="G">G</option></select></div>
+                <div class="correct-answer-text" id="ca-15"></div>
+              </div>
+
+              <div class="question-block" data-q="16">
+                <div class="question-text"><span class="question-number-label">16</span> Examples of the wide range of facilities available at some new stadiums</div>
+                <div class="matching-control"><select class="matching-select" name="q16"><option value="">Select section</option><option value="A">A</option><option value="B">B</option><option value="C">C</option><option value="D">D</option><option value="E">E</option><option value="F">F</option><option value="G">G</option></select></div>
+                <div class="correct-answer-text" id="ca-16"></div>
+              </div>
+
+              <div class="question-block" data-q="17">
+                <div class="question-text"><span class="question-number-label">17</span> Reference to the disadvantages of the stadiums built during a certain era</div>
+                <div class="matching-control"><select class="matching-select" name="q17"><option value="">Select section</option><option value="A">A</option><option value="B">B</option><option value="C">C</option><option value="D">D</option><option value="E">E</option><option value="F">F</option><option value="G">G</option></select></div>
+                <div class="correct-answer-text" id="ca-17"></div>
+              </div>
+
+              <div class="instruction-block">
+                <p><strong>Questions 18-22</strong></p>
+                <p>Complete the summary below.</p>
+                <p>Choose <strong>ONE WORD ONLY</strong> from the passage for each answer.</p>
+                <p>Write your answers in boxes 18-22 on your answer sheet.</p>
+              </div>
+              <div class="summary-box">
+                <div class="summary-box-title">Roman amphitheatres</div>
+                <p>
+                  The Roman stadiums of Europe have proved very versatile. The amphitheatre of Arles, for example, was converted first into a <span class="question-number-label">18</span> <span class="inline-input inline-answer no-gap-number" data-q="18"><input type="text" name="q18" /></span>, then into a residential area and finally into an arena where spectators could watch <span class="question-number-label">19</span> <span class="inline-input inline-answer no-gap-number" data-q="19"><input type="text" name="q19" /></span>. Meanwhile, the arena in Verona, one of the oldest Roman amphitheatres, is famous today as a venue where <span class="question-number-label">20</span> <span class="inline-input inline-answer no-gap-number" data-q="20"><input type="text" name="q20" /></span> is performed. The site of Lucca’s amphitheatre has also been used for many purposes over the centuries, including the storage of <span class="question-number-label">21</span> <span class="inline-input inline-answer no-gap-number" data-q="21"><input type="text" name="q21" /></span>. It is now a market square with <span class="question-number-label">22</span> <span class="inline-input inline-answer no-gap-number" data-q="22"><input type="text" name="q22" /></span> and homes incorporated into the remains of the Roman amphitheatre.
+                </p>
+                <div class="question-block feedback-only" data-q="18"><div class="correct-answer-text" id="ca-18"></div></div>
+                <div class="question-block feedback-only" data-q="19"><div class="correct-answer-text" id="ca-19"></div></div>
+                <div class="question-block feedback-only" data-q="20"><div class="correct-answer-text" id="ca-20"></div></div>
+                <div class="question-block feedback-only" data-q="21"><div class="correct-answer-text" id="ca-21"></div></div>
+                <div class="question-block feedback-only" data-q="22"><div class="correct-answer-text" id="ca-22"></div></div>
+              </div>
+
+              <div class="instruction-block">
+                <p><strong>Questions 23-24</strong></p>
+                <p>Choose <strong>TWO</strong> letters, A-E.</p>
+                <p>Write the correct letters in boxes 23 and 24 on your answer sheet.</p>
+              </div>
+              <div class="question-block" data-q="23">
+                <div class="question-text">When comparing twentieth-century stadiums to ancient amphitheatres in Section D, which <strong>TWO</strong> negative features does the writer mention?</div>
+                <div class="options-row">
+                  <label><input type="checkbox" name="q23_24" value="A" /> <strong>A</strong> They are less imaginatively designed</label>
+                  <label><input type="checkbox" name="q23_24" value="B" /> <strong>B</strong> They are less spacious</label>
+                  <label><input type="checkbox" name="q23_24" value="C" /> <strong>C</strong> They are in less convenient locations</label>
+                  <label><input type="checkbox" name="q23_24" value="D" /> <strong>D</strong> They are less versatile</label>
+                  <label><input type="checkbox" name="q23_24" value="E" /> <strong>E</strong> They are made of less durable materials</label>
+                </div>
+                <div class="correct-answer-text" id="ca-23"></div>
+              </div>
+              <div class="question-block feedback-only" data-q="24"><div class="correct-answer-text" id="ca-24"></div></div>
+
+              <div class="instruction-block">
+                <p><strong>Questions 25-26</strong></p>
+                <p>Choose <strong>TWO</strong> letters, A-E.</p>
+                <p>Write the correct letters in boxes 25 and 26 on your answer sheet.</p>
+              </div>
+              <div class="question-block" data-q="25">
+                <div class="question-text">Which <strong>TWO</strong> advantages of modern stadium design does the writer mention?</div>
+                <div class="options-row">
+                  <label><input type="checkbox" name="q25_26" value="A" /> <strong>A</strong> offering improved amenities for the enjoyment of sports events</label>
+                  <label><input type="checkbox" name="q25_26" value="B" /> <strong>B</strong> bringing community life back into the city environment</label>
+                  <label><input type="checkbox" name="q25_26" value="C" /> <strong>C</strong> facilitating research into solar and wind energy solutions</label>
+                  <label><input type="checkbox" name="q25_26" value="D" /> <strong>D</strong> enabling local residents to reduce their consumption of electricity</label>
+                  <label><input type="checkbox" name="q25_26" value="E" /> <strong>E</strong> providing a suitable site for the installation of renewable power generators</label>
+                </div>
+                <div class="correct-answer-text" id="ca-25"></div>
+              </div>
+              <div class="question-block feedback-only" data-q="26"><div class="correct-answer-text" id="ca-26"></div></div>
+            </div>
+
+            <!-- Section 3 questions -->
+            <div data-section="3" style="display:none;">
+              <div class="instruction-block">
+                <p><strong>READING PASSAGE 3: Questions 27-40</strong></p>
+                <p>Complete the summary using the list of phrases, A-J, below.</p>
+                <p>Write the correct letter, A-J, in boxes 27-31 on your answer sheet.</p>
+              </div>
+              <div class="summary-options-box">
+                <div class="summary-options-grid">
+                  <div>A military innovation</div>
+                  <div>B large reward</div>
+                  <div>C widespread conspiracy</div>
+                  <div>D relative safety</div>
+                  <div>E new government</div>
+                  <div>F decisive victory</div>
+                  <div>G political debate</div>
+                  <div>H strategic alliance</div>
+                  <div>I popular solution</div>
+                  <div>J religious conviction</div>
+                </div>
+              </div>
+              <div class="summary-box">
+                <div class="summary-box-title">The story behind the hunt for Charles II</div>
+                <p>
+                  Charles II’s father was executed by the Parliamentarian forces in 1649. Charles II then formed a 27 <span class="summary-gap inline-answer" data-q="27"><select name="q27"><option value="">Select phrase</option><option value="A">A</option><option value="B">B</option><option value="C">C</option><option value="D">D</option><option value="E">E</option><option value="F">F</option><option value="G">G</option><option value="H">H</option><option value="I">I</option><option value="J">J</option></select></span> with the Scots, and in order to become King of Scots, he abandoned an important 28 <span class="summary-gap inline-answer" data-q="28"><select name="q28"><option value="">Select phrase</option><option value="A">A</option><option value="B">B</option><option value="C">C</option><option value="D">D</option><option value="E">E</option><option value="F">F</option><option value="G">G</option><option value="H">H</option><option value="I">I</option><option value="J">J</option></select></span> that was held by his father and had contributed to his father’s death. The opposing sides then met outside Worcester in 1651. The battle led to a 29 <span class="summary-gap inline-answer" data-q="29"><select name="q29"><option value="">Select phrase</option><option value="A">A</option><option value="B">B</option><option value="C">C</option><option value="D">D</option><option value="E">E</option><option value="F">F</option><option value="G">G</option><option value="H">H</option><option value="I">I</option><option value="J">J</option></select></span> for the Parliamentarians and Charles had to flee for his life. A 30 <span class="summary-gap inline-answer" data-q="30"><select name="q30"><option value="">Select phrase</option><option value="A">A</option><option value="B">B</option><option value="C">C</option><option value="D">D</option><option value="E">E</option><option value="F">F</option><option value="G">G</option><option value="H">H</option><option value="I">I</option><option value="J">J</option></select></span> was offered for Charles’s capture, but after six weeks spent in hiding, he eventually managed to reach the 31 <span class="summary-gap inline-answer" data-q="31"><select name="q31"><option value="">Select phrase</option><option value="A">A</option><option value="B">B</option><option value="C">C</option><option value="D">D</option><option value="E">E</option><option value="F">F</option><option value="G">G</option><option value="H">H</option><option value="I">I</option><option value="J">J</option></select></span> of continental Europe.
+                </p>
+                <div class="summary-feedback-row">
+                  <div class="question-block feedback-only" data-q="27"><div class="correct-answer-text" id="ca-27"></div></div>
+                  <div class="question-block feedback-only" data-q="28"><div class="correct-answer-text" id="ca-28"></div></div>
+                  <div class="question-block feedback-only" data-q="29"><div class="correct-answer-text" id="ca-29"></div></div>
+                  <div class="question-block feedback-only" data-q="30"><div class="correct-answer-text" id="ca-30"></div></div>
+                  <div class="question-block feedback-only" data-q="31"><div class="correct-answer-text" id="ca-31"></div></div>
+                </div>
+              </div>
+
+              <div class="instruction-block">
+                <p><strong>Questions 32-35</strong></p>
+                <p>Do the following statements agree with the claims of the writer in Reading Passage 3?</p>
+                <p>In boxes 32-35 on your answer sheet, write</p>
+                <p><strong>YES</strong> if the statement agrees with the claims of the writer</p>
+                <p><strong>NO</strong> if the statement contradicts the claims of the writer</p>
+                <p><strong>NOT GIVEN</strong> if it is impossible to say what the writer thinks about this</p>
+              </div>
+              <div class="question-block" data-q="32">
+                <div class="question-text"><span class="question-number-label">32.</span> Charles chose Pepys for the task because he considered him to be trustworthy.</div>
+                <div class="options-row"><label><input type="radio" name="q32" value="YES" /> YES</label><label><input type="radio" name="q32" value="NO" /> NO</label><label><input type="radio" name="q32" value="NOT GIVEN" /> NOT GIVEN</label></div>
+                <div class="correct-answer-text" id="ca-32"></div>
+              </div>
+              <div class="question-block" data-q="33">
+                <div class="question-text"><span class="question-number-label">33.</span> Charles’s personal recollection of the escape lacked sufficient detail.</div>
+                <div class="options-row"><label><input type="radio" name="q33" value="YES" /> YES</label><label><input type="radio" name="q33" value="NO" /> NO</label><label><input type="radio" name="q33" value="NOT GIVEN" /> NOT GIVEN</label></div>
+                <div class="correct-answer-text" id="ca-33"></div>
+              </div>
+              <div class="question-block" data-q="34">
+                <div class="question-text"><span class="question-number-label">34.</span> Charles indicated to Pepys that he had planned his escape before the battle.</div>
+                <div class="options-row"><label><input type="radio" name="q34" value="YES" /> YES</label><label><input type="radio" name="q34" value="NO" /> NO</label><label><input type="radio" name="q34" value="NOT GIVEN" /> NOT GIVEN</label></div>
+                <div class="correct-answer-text" id="ca-34"></div>
+              </div>
+              <div class="question-block" data-q="35">
+                <div class="question-text"><span class="question-number-label">35.</span> The inclusion of Charles’s account is a positive aspect of the book.</div>
+                <div class="options-row"><label><input type="radio" name="q35" value="YES" /> YES</label><label><input type="radio" name="q35" value="NO" /> NO</label><label><input type="radio" name="q35" value="NOT GIVEN" /> NOT GIVEN</label></div>
+                <div class="correct-answer-text" id="ca-35"></div>
+              </div>
+
+              <div class="instruction-block">
+                <p><strong>Questions 36-40</strong></p>
+                <p>Choose the correct letter, A, B, C, or D.</p>
+                <p>Write the correct letter in boxes 36-40 on your answer sheet.</p>
+              </div>
+              <div class="question-block" data-q="36">
+                <div class="question-text"><span class="question-number-label">36.</span> What is the reviewer’s main purpose in the first paragraph?</div>
+                <div class="options-row"><label><input type="radio" name="q36" value="A" /> A to describe what happened during the Battle of Worcester</label><label><input type="radio" name="q36" value="B" /> B to give an account of the circumstances leading to Charles II’s escape</label><label><input type="radio" name="q36" value="C" /> C to provide details of the Parliamentarians’ political views</label><label><input type="radio" name="q36" value="D" /> D to compare Charles II’s beliefs with those of his father</label></div>
+                <div class="correct-answer-text" id="ca-36"></div>
+              </div>
+              <div class="question-block" data-q="37">
+                <div class="question-text"><span class="question-number-label">37.</span> Why does the reviewer include examples of the fugitives’ behaviour in the third paragraph?</div>
+                <div class="options-row"><label><input type="radio" name="q37" value="A" /> A to explain how close Charles II came to losing his life</label><label><input type="radio" name="q37" value="B" /> B to suggest that Charles II’s supporters were badly prepared</label><label><input type="radio" name="q37" value="C" /> C to illustrate how the events of the six weeks are brought to life</label><label><input type="radio" name="q37" value="D" /> D to argue that certain aspects are not as well known as they should be</label></div>
+                <div class="correct-answer-text" id="ca-37"></div>
+              </div>
+              <div class="question-block" data-q="38">
+                <div class="question-text"><span class="question-number-label">38.</span> What point does the reviewer make about Charles II in the fourth paragraph?</div>
+                <div class="options-row"><label><input type="radio" name="q38" value="A" /> A He chose to celebrate what was essentially a defeat.</label><label><input type="radio" name="q38" value="B" /> B He misunderstood the motives of his opponents.</label><label><input type="radio" name="q38" value="C" /> C He aimed to restore people’s faith in the monarchy.</label><label><input type="radio" name="q38" value="D" /> D He was driven by a desire to be popular.</label></div>
+                <div class="correct-answer-text" id="ca-38"></div>
+              </div>
+              <div class="question-block" data-q="39">
+                <div class="question-text"><span class="question-number-label">39.</span> What does the reviewer say about Charles Spencer in the fifth paragraph?</div>
+                <div class="options-row"><label><input type="radio" name="q39" value="A" /> A His decision to write the book comes as a surprise.</label><label><input type="radio" name="q39" value="B" /> B He takes an unbiased approach to the subject matter.</label><label><input type="radio" name="q39" value="C" /> C His descriptions of events would be better if they included more detail.</label><label><input type="radio" name="q39" value="D" /> D He chooses language that is suitable for a twenty-first-century audience.</label></div>
+                <div class="correct-answer-text" id="ca-39"></div>
+              </div>
+              <div class="question-block" data-q="40">
+                <div class="question-text"><span class="question-number-label">40.</span> When the reviewer says the book ‘doesn’t quite hit the mark’, she is making the point that</div>
+                <div class="options-row"><label><input type="radio" name="q40" value="A" /> A it overlooks the impact of events on ordinary people.</label><label><input type="radio" name="q40" value="B" /> B it lacks an analysis of prevalent views on monarchy.</label><label><input type="radio" name="q40" value="C" /> C it omits any references to the deceit practised by Charles II during his time in hiding.</label><label><input type="radio" name="q40" value="D" /> D it fails to address whether Charles II’s experiences had a lasting influence on him.</label></div>
+                <div class="correct-answer-text" id="ca-40"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- selection toolbar -->
+      <div id="selectionToolbar">
+        <button onclick="toggleHighlightSelection()">Highlight</button>
+        <button onclick="makeNoteForSelection()">Make note</button>
+      </div>
+    </div>
+
+    <!-- Bottom nav -->
+    <footer class="bottom-nav">
+      <div class="bottom-row bottom-row-v2">
+        <div class="bottom-left">
+          <div class="part-summary-row">
+            <div class="part-chip active" data-section-chip="1" onclick="switchSection(1)">
+              Part 1 <span class="count" id="part1Count">0 of 13</span>
+            </div>
+            <div class="part-chip unopened" data-section-chip="2" onclick="switchSection(2)">
+              Part 2 <span class="count" id="part2Count">0 of 13</span>
+            </div>
+            <div class="part-chip unopened" data-section-chip="3" onclick="switchSection(3)">
+              Part 3 <span class="count" id="part3Count">0 of 14</span>
+            </div>
+          </div>
+
+          <div id="questionNumbers"></div>
+        </div>
+
+        <div class="section-arrows">
+          <button class="arrow-btn" onclick="prevSection()" title="Previous part">←</button>
+          <button class="arrow-btn" onclick="nextSection()" title="Next part">→</button>
+          <button class="check-btn" onclick="handlePrimarySubmit()" title="Submit test and check answers">✔ Check answers</button>
+        </div>
+      </div>
+    </footer>
+  </div>
+
+
+  <div id="fullscreenLockOverlay" role="dialog" aria-modal="true" aria-live="assertive">
+    <div id="fullscreenLockPanel">
+      <h2>Test paused</h2>
+      <p>You have left full screen. Return to full screen to continue your test.</p>
+      <button class="mode-btn" type="button" onclick="returnToFullscreenAndResume()">Return to full screen</button>
+    </div>
+  </div>
+
+  <!-- Results overlay -->
+  <div id="resultsOverlay">
+    <div id="resultsPanel">
+      <h2>IELTS 17 Academic Reading Test 2</h2>
+      <p id="studentLine"></p>
+      <p id="fullScreenExitLine"></p>
+      <p id="focusViolationLine"></p>
+      <p id="totalTimeLine"></p>
+      <p id="scoreLine"></p>
+      <p id="bandLine"></p>
+      <p id="descriptorLine"></p>
+      <button style="margin-top:10px;" onclick="closeResults()">Close</button>
+    </div>
+  </div>
+
+  <div id="shortcutToast" role="status" aria-live="polite" aria-atomic="true"></div>
+
+  <script>
+    /***************
+     * GLOBAL STATE
+     ***************/
+    let mode = "test"; // "test" or "study"
+    let activeSection = 1;
+    let timerSeconds = 60 * 60;
+    let timerId = null;
+    let testSubmitted = false;
+    let pendingMode = null;
+    let studentName = "";
+    let isTestRunning = false;
+    let isTimerPaused = false;
+    let fullscreenSupported = false;
+    let fullScreenEnforcementEnabled = false;
+    let fullScreenExits = 0;
+    let focusViolations = 0;
+    const visitedSections = new Set();
+
+    const AVAILABLE_THEMES = [
+      "black-on-white",
+      "white-on-black",
+      "yellow-on-black",
+    ];
+    const DEFAULT_THEME = "black-on-white";
+    const STORAGE_KEYS = {
+      theme: "ielts-reading-theme",
+    };
+
+    function restoreThemePreference() {
+      const saved = localStorage.getItem(STORAGE_KEYS.theme);
+      const theme = AVAILABLE_THEMES.includes(saved) ? saved : DEFAULT_THEME;
+      document.body.setAttribute("data-theme", theme);
+    }
+
+    function setTheme(theme) {
+      if (!AVAILABLE_THEMES.includes(theme)) return;
+      document.body.setAttribute("data-theme", theme);
+      localStorage.setItem(STORAGE_KEYS.theme, theme);
+      updateThemeButtons();
+    }
+
+    function updateThemeButtons() {
+      const theme = document.body.getAttribute("data-theme") || DEFAULT_THEME;
+      const map = {
+        "black-on-white": "theme-black-white",
+        "white-on-black": "theme-white-black",
+        "yellow-on-black": "theme-yellow-black",
+      };
+      AVAILABLE_THEMES.forEach((t) => {
+        const id = map[t];
+        const btn = document.getElementById(id);
+        if (!btn) return;
+        if (t === theme) btn.classList.add("active");
+        else btn.classList.remove("active");
+      });
+    }
+
+    function setFontSize(size) {
+      document.body.classList.remove("font-large", "font-xlarge");
+      if (size === "large") document.body.classList.add("font-large");
+      if (size === "xlarge") document.body.classList.add("font-xlarge");
+      updateFontButtons();
+    }
+
+    function updateFontButtons() {
+      const sizeClass = document.body.classList.contains("font-xlarge")
+        ? "xlarge"
+        : document.body.classList.contains("font-large")
+        ? "large"
+        : "normal";
+      ["normal", "large", "xlarge"].forEach((s) => {
+        const btn = document.getElementById("font-" + s);
+        if (!btn) return;
+        if (s === sizeClass) btn.classList.add("active");
+        else btn.classList.remove("active");
+      });
+    }
+
+    const sectionRanges = {
+      1: { from: 1, to: 13 },
+      2: { from: 14, to: 26 },
+      3: { from: 27, to: 40 }
+    };
+
+    const answerKey = {
+      1: "population",
+      2: "suburbs",
+      3: "businessmen",
+      4: "funding",
+      5: "press",
+      6: "soil",
+      7: "FALSE",
+      8: "NOT GIVEN",
+      9: "TRUE",
+      10: "TRUE",
+      11: "FALSE",
+      12: "FALSE",
+      13: "NOT GIVEN",
+      14: "A",
+      15: "F",
+      16: "E",
+      17: "D",
+      18: "fortress",
+      19: "bullfights",
+      20: "opera",
+      21: "salt",
+      22: "shops",
+      23: ["C", "D"],
+      24: ["C", "D"],
+      25: ["B", "E"],
+      26: ["B", "E"],
+      27: "H",
+      28: "J",
+      29: "F",
+      30: "B",
+      31: "D",
+      32: "NOT GIVEN",
+      33: "NO",
+      34: "NO",
+      35: "YES",
+      36: "B",
+      37: "C",
+      38: "A",
+      39: "B",
+      40: "D"
+    };
+
+    const correctAnswerText = {
+      1: "population",
+      2: "suburbs",
+      3: "businessmen",
+      4: "funding",
+      5: "press",
+      6: "soil",
+      7: "FALSE",
+      8: "NOT GIVEN",
+      9: "TRUE",
+      10: "TRUE",
+      11: "FALSE",
+      12: "FALSE",
+      13: "NOT GIVEN",
+      14: "A",
+      15: "F",
+      16: "E",
+      17: "D",
+      18: "fortress",
+      19: "bullfights",
+      20: "opera",
+      21: "salt",
+      22: "shops",
+      23: "C / D",
+      24: "C / D",
+      25: "B / E",
+      26: "B / E",
+      27: "H",
+      28: "J",
+      29: "F",
+      30: "B",
+      31: "D",
+      32: "NOT GIVEN",
+      33: "NO",
+      34: "NO",
+      35: "YES",
+      36: "B",
+      37: "C",
+      38: "A",
+      39: "B",
+      40: "D"
+    };
+
+    /********************
+     * MODE & INITIALISE
+     ********************/
+
+    restoreThemePreference();
+
+    async function beginTimedTest() {
+      const input = document.getElementById("studentNameInput");
+      studentName = input ? input.value.trim() : "";
+      if (!studentName) {
+        alert("Please enter your name before starting test mode.");
+        if (input) input.focus();
+        return;
+      }
+
+      fullScreenExits = 0;
+      focusViolations = 0;
+      fullScreenEnforcementEnabled = false;
+      fullscreenSupported = isFullscreenApiSupported();
+      updateFullscreenSupportNote(false);
+
+      if (fullscreenSupported) {
+        const entered = await requestAppFullscreen();
+        if (entered) {
+          fullScreenEnforcementEnabled = true;
+        } else {
+          updateFullscreenSupportNote(true);
+        }
+      } else {
+        updateFullscreenSupportNote(true);
+      }
+
+      const modeScreen = document.getElementById("modeScreen");
+      const startScreen = document.getElementById("testStartScreen");
+      if (startScreen) startScreen.style.display = "none";
+      if (modeScreen) modeScreen.style.display = "none";
+      startTest("test");
+
+      isTestRunning = true;
+      isTimerPaused = false;
+      startTimer();
+      updateFullscreenButton();
+    }
+
+    function startTest(selectedMode) {
+      document.body.classList.remove("mode-screen-active");
+      mode = selectedMode;
+      const timerContainer = document.getElementById("timerContainer");
+
+      visitedSections.clear();
+      visitedSections.add(1);
+      activeSection = 1;
+      currentQuestion = 1;
+
+      if (timerId) {
+        clearInterval(timerId);
+        timerId = null;
+      }
+
+      if (mode === "test") {
+        if (timerContainer) {
+          timerContainer.style.display = "block";
+          timerContainer.setAttribute("aria-hidden", "false");
+        }
+        timerSeconds = 60 * 60;
+      } else {
+        if (timerContainer) {
+          timerContainer.style.display = "none";
+          timerContainer.setAttribute("aria-hidden", "true");
+        }
+        isTestRunning = false;
+        isTimerPaused = false;
+        fullScreenEnforcementEnabled = false;
+      }
+
+      document.getElementById("app").style.display = "block";
+      initQuestionInputs();
+      setupDragMatch();
+      buildQuestionNav();
+      setupSelectionListeners();
+      setupDividerDrag();
+      updateThemeButtons();
+      updateFontButtons();
+      window.addEventListener("beforeunload", (e) => {
+        if (!testSubmitted) {
+          e.preventDefault();
+          e.returnValue = "Are you sure you want to leave? All progress will be lost.";
+          return e.returnValue;
+        }
+      }, { capture: true });
+    }
+
+    // Expose for inline handlers and any future fallback uses.
+    window.startTest = startTest;
+    window.beginTimedTest = beginTimedTest;
+    window.toggleFullscreen = toggleFullscreen;
+    window.returnToFullscreenAndResume = returnToFullscreenAndResume;
+    window.confirmSubmit = confirmSubmit;
+    window.handlePrimarySubmit = handlePrimarySubmit;
+
+    let shortcutToastTimer = null;
+
+    function wireModeButtons() {
+      const buttons = document.querySelectorAll(".mode-btn[data-mode]");
+      const modeScreen = document.getElementById("modeScreen");
+
+      const activate = (btn) => {
+        const selected = btn.getAttribute("data-mode") || btn.dataset.mode || "test";
+        if (selected === "test") {
+          pendingMode = "test";
+          updateFullscreenSupportNote(!isFullscreenApiSupported());
+          const startScreen = document.getElementById("testStartScreen");
+          if (startScreen) startScreen.style.display = "block";
+          const input = document.getElementById("studentNameInput");
+          if (input) input.focus();
+          return;
+        }
+        const startScreen = document.getElementById("testStartScreen");
+        if (startScreen) startScreen.style.display = "none";
+        const modeScreenEl = document.getElementById("modeScreen");
+        if (modeScreenEl) modeScreenEl.style.display = "none";
+        studentName = "";
+        startTest(selected);
+      };
+
+      buttons.forEach((btn) => {
+        btn.addEventListener("click", () => activate(btn));
+        btn.addEventListener("keydown", (event) => {
+          if (event.key === "Enter" || event.key === " ") {
+            event.preventDefault();
+            activate(btn);
+          }
+        });
+      });
+
+      if (modeScreen && !modeScreen.dataset.wired) {
+        modeScreen.addEventListener("click", (event) => {
+          const btn = event.target.closest(".mode-btn[data-mode]");
+          if (!btn) return;
+          event.preventDefault();
+          activate(btn);
+        });
+        modeScreen.dataset.wired = "true";
+      }
+    }
+
+    function ensureModeWiring() {
+      if (document.readyState === "loading") {
+        document.addEventListener("DOMContentLoaded", wireModeButtons, { once: true });
+      } else {
+        wireModeButtons();
+      }
+    }
+
+    function startTimer() {
+      if (mode !== "test") return;
+      if (timerId) {
+        clearInterval(timerId);
+        timerId = null;
+      }
+      const display = document.getElementById("timerDisplay");
+      const timerContainer = document.getElementById("timerContainer");
+      const timerPrefix = document.getElementById("timerPrefix");
+      display.classList.remove("timer-warning");
+      if (timerContainer) timerContainer.classList.remove("timer-expired");
+      if (timerPrefix) timerPrefix.textContent = "Time left:";
+      display.textContent = formatDuration(timerSeconds);
+
+      timerId = setInterval(() => {
+        timerSeconds--;
+        const overdue = timerSeconds < 0;
+        display.textContent = formatDuration(timerSeconds);
+
+        if (overdue) {
+          display.classList.add("timer-warning");
+          if (timerContainer) timerContainer.classList.add("timer-expired");
+          if (timerPrefix) timerPrefix.textContent = "Time is up!";
+        } else if (timerSeconds <= 180) {
+          display.classList.add("timer-warning");
+          if (timerPrefix) timerPrefix.textContent = "Time left:";
+        } else {
+          display.classList.remove("timer-warning");
+          if (timerContainer) timerContainer.classList.remove("timer-expired");
+          if (timerPrefix) timerPrefix.textContent = "Time left:";
+        }
+      }, 1000);
+    }
+
+    function pauseTimer() {
+      if (timerId) {
+        clearInterval(timerId);
+        timerId = null;
+      }
+      isTimerPaused = true;
+    }
+
+    function resumeTimer() {
+      if (!isTestRunning || mode !== "test") return;
+      if (!isTimerPaused) return;
+      isTimerPaused = false;
+      startTimer();
+    }
+
+    function toggleOptions(show) {
+      const overlay = document.getElementById("optionsOverlay");
+      overlay.style.display = show ? "flex" : "none";
+    }
+
+    document.getElementById("optionsBtn").addEventListener("click", () => {
+      toggleOptions(true);
+    });
+
+    function isFullscreenApiSupported() {
+      const el = document.documentElement;
+      return !!(document.fullscreenEnabled && el && typeof el.requestFullscreen === "function");
+    }
+
+    function isFullscreenActive() {
+      return !!document.fullscreenElement;
+    }
+
+    function updateFullscreenSupportNote(show) {
+      const note = document.getElementById("fullscreenSupportNote");
+      if (!note) return;
+      note.style.display = show ? "block" : "none";
+    }
+
+    async function requestAppFullscreen() {
+      try {
+        if (!isFullscreenApiSupported()) return false;
+        await document.documentElement.requestFullscreen();
+        return isFullscreenActive();
+      } catch (err) {
+        return false;
+      }
+    }
+
+    async function exitAppFullscreen() {
+      try {
+        if (isFullscreenActive() && typeof document.exitFullscreen === "function") {
+          await document.exitFullscreen();
+        }
+      } catch (err) {
+        // silent by design
+      }
+    }
+
+    function showFullscreenLockOverlay() {
+      const overlay = document.getElementById("fullscreenLockOverlay");
+      if (overlay) overlay.style.display = "flex";
+      document.body.style.overflow = "hidden";
+    }
+
+    function hideFullscreenLockOverlay() {
+      const overlay = document.getElementById("fullscreenLockOverlay");
+      if (overlay) overlay.style.display = "none";
+      document.body.style.overflow = "";
+    }
+
+    function updateFullscreenButton() {
+      const btn = document.getElementById("fullscreenBtn");
+      const label = document.getElementById("fullscreenBtnLabel");
+      if (!btn || !label) return;
+
+      const isFullscreen = isFullscreenActive();
+      const locked = mode === "test" && isTestRunning && !testSubmitted && fullScreenEnforcementEnabled;
+
+      btn.classList.toggle("is-active", isFullscreen);
+      btn.disabled = false;
+
+      if (locked && isFullscreen) {
+        label.textContent = "Full screen locked";
+        btn.setAttribute("title", "Full screen locked");
+        btn.setAttribute("aria-label", "Full screen locked");
+        btn.disabled = true;
+        return;
+      }
+
+      if (isFullscreen) {
+        label.textContent = "Exit full screen";
+        btn.setAttribute("title", "Exit full screen");
+        btn.setAttribute("aria-label", "Exit full screen");
+      } else {
+        label.textContent = "Full screen";
+        btn.setAttribute("title", "Enter full screen");
+        btn.setAttribute("aria-label", "Enter full screen");
+      }
+    }
+
+    async function toggleFullscreen() {
+      const locked = mode === "test" && isTestRunning && !testSubmitted && fullScreenEnforcementEnabled;
+      if (locked && isFullscreenActive()) {
+        updateFullscreenButton();
+        return;
+      }
+
+      if (!isFullscreenActive()) {
+        await requestAppFullscreen();
+      } else {
+        await exitAppFullscreen();
+      }
+      updateFullscreenButton();
+    }
+
+    async function returnToFullscreenAndResume() {
+      const ok = await requestAppFullscreen();
+      if (ok) {
+        hideFullscreenLockOverlay();
+        resumeTimer();
+      }
+      updateFullscreenButton();
+    }
+
+    function handleFullscreenChange() {
+      const runningLockedTest = mode === "test" && isTestRunning && !testSubmitted && fullScreenEnforcementEnabled;
+      if (runningLockedTest) {
+        if (!isFullscreenActive()) {
+          fullScreenExits += 1;
+          pauseTimer();
+          showFullscreenLockOverlay();
+        } else {
+          hideFullscreenLockOverlay();
+          resumeTimer();
+        }
+      }
+      updateFullscreenButton();
+    }
+
+    document.addEventListener("fullscreenchange", handleFullscreenChange);
+
+    document.addEventListener("visibilitychange", () => {
+      if (mode === "test" && isTestRunning && !testSubmitted && document.hidden) {
+        focusViolations += 1;
+      }
+    });
+
+    window.addEventListener("blur", () => {
+      if (mode === "test" && isTestRunning && !testSubmitted) {
+        focusViolations += 1;
+      }
+    });
+
+    /*************************
+     * BUILD REMAINING QUESTIONS
+     *************************/
+    let questionsBuilt = false;
+    let currentQuestion = 1;
+
+    function buildRemainingQuestions() {
+      return;
+    }
+
+    function stampInlineInputNumbers() {
+      document.querySelectorAll(".question-block[data-q]").forEach((block) => {
+        const qNum = block.getAttribute("data-q");
+        block.querySelectorAll(".inline-input").forEach((w) => {
+          w.setAttribute("data-q", qNum);
+        });
+      });
+    }
+
+    let dragMatchReady = false;
+
+    function setupDragMatch() {
+      if (dragMatchReady) return;
+      dragMatchReady = true;
+      let picked = "";
+      const nameByLetter = { A: "Susan Jebb", B: "Kim Roberts", C: "Janice Burberry", D: "Seema Kennedy" };
+      document.querySelectorAll(".drag-item").forEach((item) => {
+        item.addEventListener("dragstart", (e) => {
+          e.dataTransfer.setData("text/plain", item.dataset.value);
+          e.dataTransfer.effectAllowed = "copy";
+        });
+        item.addEventListener("click", () => {
+          const isAlreadySelected = item.classList.contains("selected");
+          document
+            .querySelectorAll(".drag-item")
+            .forEach((i) => i.classList.remove("selected"));
+          if (isAlreadySelected) {
+            picked = "";
+            return;
+          }
+          item.classList.add("selected");
+          picked = item.dataset.value;
+        });
+      });
+
+      function apply(zone, val) {
+        if (!/^[ABCD]$/.test(val)) return;
+        const qName = zone.dataset.for;
+        const sel = document.querySelector('select[name="' + qName + '"]');
+        if (sel) {
+          sel.value = val;
+          sel.dispatchEvent(new Event("change", { bubbles: true }));
+        }
+        zone.textContent = nameByLetter[val] || val;
+        zone.classList.add("filled");
+      }
+
+      function clear(zone) {
+        const qName = zone.dataset.for;
+        const sel = document.querySelector('select[name="' + qName + '"]');
+        if (sel) {
+          sel.value = "";
+          sel.dispatchEvent(new Event("change", { bubbles: true }));
+        }
+        zone.textContent = "Drop here";
+        zone.classList.remove("filled");
+      }
+
+      document.querySelectorAll(".drop-zone").forEach((zone) => {
+        zone.addEventListener("dragover", (e) => {
+          e.preventDefault();
+          zone.classList.add("over");
+        });
+        zone.addEventListener("dragleave", () => zone.classList.remove("over"));
+        zone.addEventListener("drop", (e) => {
+          e.preventDefault();
+          zone.classList.remove("over");
+          const val = e.dataTransfer.getData("text/plain");
+          apply(zone, val);
+        });
+        zone.addEventListener("click", () => {
+          if (picked) {
+            if (zone.classList.contains("filled")) {
+              const sel = document.querySelector('select[name="' + zone.dataset.for + '"]');
+              if (sel && sel.value === picked) {
+                clear(zone);
+                return;
+              }
+            }
+            apply(zone, picked);
+            return;
+          }
+          if (zone.classList.contains("filled")) clear(zone);
+        });
+        zone.addEventListener("keydown", (e) => {
+          if (e.key === "Backspace" || e.key === "Delete") clear(zone);
+          if (/^[abcdABCD]$/.test(e.key)) apply(zone, e.key.toUpperCase());
+        });
+        zone.addEventListener("dblclick", () => clear(zone));
+      });
+
+      document.querySelectorAll(".drop-zone").forEach((zone) => {
+        const qName = zone.dataset.for;
+        const sel = document.querySelector('select[name="' + qName + '"]');
+        if (sel && sel.value) {
+          apply(zone, sel.value);
+        }
+      });
+
+      document.querySelectorAll(".clear-drop-btn").forEach((btn) => {
+        btn.addEventListener("click", () => {
+          const qName = btn.dataset.clearFor;
+          const zone = document.querySelector('.drop-zone[data-for="' + qName + '"]');
+          if (zone) clear(zone);
+        });
+      });
+    }
+
+
+    function enableRadioToggleOff() {
+      document.querySelectorAll('input[type="radio"]').forEach((radio) => {
+        radio.addEventListener("pointerdown", () => {
+          radio.dataset.wasChecked = radio.checked ? "1" : "0";
+        });
+        radio.addEventListener("click", () => {
+          if (radio.dataset.wasChecked === "1") {
+            radio.checked = false;
+            radio.dispatchEvent(new Event("change", { bubbles: true }));
+          }
+        });
+      });
+    }
+// Build all questions immediately after DOM loads (script is at the end)
+    buildRemainingQuestions();
+    stampInlineInputNumbers();
+    setupDragMatch();
+    enableRadioToggleOff();
+
+    /***********************
+     * INPUT & NAV HANDLING
+     ***********************/
+
+    function enforceChooseTwoLimit(groupName) {
+      const boxes = document.querySelectorAll("input[type='checkbox'][name='" + groupName + "']");
+      boxes.forEach((box) => {
+        box.addEventListener("change", () => {
+          const checked = Array.from(boxes).filter((b) => b.checked);
+          if (checked.length > 2) {
+            box.checked = false;
+            return;
+          }
+          onAnswerChange({ target: box });
+        });
+      });
+    }
+
+    function initQuestionInputs() {
+      const qPane = document.getElementById("questionContent");
+      if (!qPane) return;
+
+      stampInlineInputNumbers();
+      enforceChooseTwoLimit("q10_11");
+      enforceChooseTwoLimit("q12_13");
+      enforceChooseTwoLimit("q23_24");
+      enforceChooseTwoLimit("q25_26");
+
+      // Listen to changes on all inputs/selects/radios
+      qPane
+        .querySelectorAll("select, input[type='text'], input[type='radio']")
+        .forEach((el) => {
+          el.addEventListener("change", onAnswerChange);
+          if (el.type === "text") {
+            el.addEventListener("input", onAnswerChange);
+          }
+        });
+
+      qPane.addEventListener("focusin", setCurrentQuestionFromElement);
+      qPane.addEventListener("click", setCurrentQuestionFromElement);
+
+      // Start on section 1, question 1
+      switchSection(1);
+      highlightCurrentQuestion(1);
+      updateCounts();
+      buildQuestionNav();
+    }
+
+    function setCurrentQuestionFromElement(e) {
+      const target = e.target.closest("[data-q]");
+      if (!target || target.classList.contains("feedback-only")) return;
+      const num = parseInt(target.getAttribute("data-q"), 10);
+      if (isNaN(num)) return;
+      currentQuestion = num;
+      buildQuestionNav();
+      highlightCurrentQuestion(currentQuestion);
+    }
+
+    function onAnswerChange(e) {
+      const name = e.target.name || "";
+      if (name.startsWith("q")) {
+        const num = parseInt(name.substring(1), 10);
+        if (!isNaN(num)) currentQuestion = num;
+      }
+      updateCounts();
+      buildQuestionNav();
+      highlightCurrentQuestion(currentQuestion);
+    }
+
+    function isAnswered(qNum) {
+      if (qNum === 10 || qNum === 11) {
+        const pairedCheckboxes = document.querySelectorAll("input[type='checkbox'][name='q10_11']");
+        if (pairedCheckboxes.length > 0) {
+          return document.querySelectorAll("input[type='checkbox'][name='q10_11']:checked").length > (qNum - 10);
+        }
+      }
+      if (qNum === 12 || qNum === 13) {
+        const pairedCheckboxes = document.querySelectorAll("input[type='checkbox'][name='q12_13']");
+        if (pairedCheckboxes.length > 0) {
+          return document.querySelectorAll("input[type='checkbox'][name='q12_13']:checked").length > (qNum - 12);
+        }
+      }
+      if (qNum === 23 || qNum === 24) {
+        const pairedCheckboxes = document.querySelectorAll("input[type='checkbox'][name='q23_24']");
+        if (pairedCheckboxes.length > 0) {
+          return document.querySelectorAll("input[type='checkbox'][name='q23_24']:checked").length > (qNum - 23);
+        }
+      }
+      if (qNum === 25 || qNum === 26) {
+        const pairedCheckboxes = document.querySelectorAll("input[type='checkbox'][name='q25_26']");
+        if (pairedCheckboxes.length > 0) {
+          return document.querySelectorAll("input[type='checkbox'][name='q25_26']:checked").length > (qNum - 25);
+        }
+      }
+      const name = "q" + qNum;
+      const radios = document.querySelectorAll(
+        "input[type='radio'][name='" + name + "']"
+      );
+      if (radios.length > 0) {
+        return Array.from(radios).some((r) => r.checked);
+      }
+      const input = document.querySelector("input[type='text'][name='" + name + "']");
+      if (input) {
+        return input.value.trim().length > 0;
+      }
+      const select = document.querySelector("select[name='" + name + "']");
+      if (select) {
+        return select.value.trim().length > 0;
+      }
+      return false;
+    }
+
+    function updateCounts() {
+      const totals = { 1: 13, 2: 13, 3: 14 };
+      const answered = { 1: 0, 2: 0, 3: 0 };
+
+      [1, 2, 3].forEach((sec) => {
+        const range = sectionRanges[sec];
+        for (let q = range.from; q <= range.to; q++) {
+          if (isAnswered(q)) answered[sec]++;
+        }
+      });
+
+      // Update chip counts and status classes
+      [1, 2, 3].forEach((sec) => {
+        const chip = document.querySelector(
+          '.part-chip[data-section-chip="' + sec + '"]'
+        );
+        const span = document.getElementById("part" + sec + "Count");
+        const countText = answered[sec] + " of " + totals[sec];
+
+        if (!chip || !span) return;
+
+        chip.classList.remove("complete", "partial", "unopened");
+        if (answered[sec] === totals[sec]) {
+          chip.classList.add("complete");
+          span.textContent = "✓";
+          span.setAttribute("aria-label", "Part " + sec + " complete");
+        } else {
+          span.textContent = countText;
+          span.removeAttribute("aria-label");
+          if (visitedSections.has(sec)) {
+            chip.classList.add("partial");
+          } else {
+            chip.classList.add("unopened");
+          }
+        }
+      });
+
+      // Also update header for active section with answered count
+      const range = sectionRanges[activeSection];
+      const secAnswered = answered[activeSection];
+      const total = totals[activeSection];
+
+      const qHeader = document.getElementById("questionHeader");
+      if (qHeader && range) {
+        qHeader.textContent =
+          "Questions " +
+          range.from +
+          "–" +
+          range.to +
+          " (" +
+          secAnswered +
+          " of " +
+          total +
+          " answered)";
+      }
+
+      const pHeader = document.getElementById("passageHeader");
+      if (pHeader) {
+        if (activeSection === 1) {
+          pHeader.textContent =
+            "Part 1 – Read the text and answer questions 1–13.";
+        } else if (activeSection === 2) {
+          pHeader.textContent =
+            "Part 2 – Read the text and answer questions 14–26.";
+        } else {
+          pHeader.textContent =
+            "Part 3 – Read the text and answer questions 27–40.";
+        }
+      }
+    }
+
+    function buildQuestionNav() {
+      const nav = document.getElementById("questionNumbers");
+      if (!nav) return;
+      nav.innerHTML = "";
+
+      const range = sectionRanges[activeSection];
+      if (!range) return;
+
+      for (let q = range.from; q <= range.to; q++) {
+        const div = document.createElement("div");
+        div.className = "qnav";
+        if (isAnswered(q)) div.classList.add("answered");
+        else div.classList.add("unanswered");
+        if (q === currentQuestion) div.classList.add("current");
+        div.textContent = q;
+        div.addEventListener("click", () => {
+          currentQuestion = q;
+          highlightCurrentQuestion(q);
+          buildQuestionNav();
+          scrollToQuestion(q);
+        });
+        nav.appendChild(div);
+      }
+    }
+
+    function getQuestionTarget(qNum) {
+      return (
+        document.querySelector('.inline-answer[data-q="' + qNum + '"]') ||
+        document.querySelector('.question-block[data-q="' + qNum + '"]:not(.feedback-only)') ||
+        document.querySelector('.question-block[data-pair-targets~="' + qNum + '"]') ||
+        document.querySelector('.question-block[data-q="' + qNum + '"]')
+      );
+    }
+
+    function highlightCurrentQuestion(qNum) {
+      document
+        .querySelectorAll(".question-block, .inline-answer")
+        .forEach((el) => el.classList.remove("current-question"));
+      const block = getQuestionTarget(qNum);
+      if (block && !block.classList.contains("feedback-only")) {
+        block.classList.add("current-question");
+      }
+    }
+
+    function scrollToQuestion(qNum) {
+      const block = getQuestionTarget(qNum);
+      const qPane = document.getElementById("questionPane");
+      if (block && qPane) {
+        block.scrollIntoView({ behavior: "smooth", block: "center" });
+      }
+    }
+
+    /*****************
+     * SECTION SWITCH
+     *****************/
+    function switchSection(section) {
+      if (![1, 2, 3].includes(section)) return;
+      activeSection = section;
+      visitedSections.add(section);
+
+      // Passages
+      document
+        .querySelectorAll(".passage-section")
+        .forEach((el) => (el.style.display = "none"));
+      const pass = document.querySelector(
+        '.passage-section[data-section="' + section + '"]'
+      );
+      if (pass) pass.style.display = "block";
+
+      // Questions
+      document
+        .querySelectorAll("#questionContent > div[data-section]")
+        .forEach((el) => (el.style.display = "none"));
+      const qSec = document.querySelector(
+        '#questionContent > div[data-section="' + section + '"]'
+      );
+      if (qSec) qSec.style.display = "block";
+
+      // Chips active state
+      document
+        .querySelectorAll(".part-chip")
+        .forEach((el) => el.classList.remove("active"));
+      const chip = document.querySelector(
+        '.part-chip[data-section-chip="' + section + '"]'
+      );
+      if (chip) chip.classList.add("active");
+
+      // Set current question to first in this section if outside range
+      const range = sectionRanges[section];
+      if (currentQuestion < range.from || currentQuestion > range.to) {
+        currentQuestion = range.from;
+      }
+
+      updateCounts();
+      highlightCurrentQuestion(currentQuestion);
+      buildQuestionNav();
+    }
+
+    function prevSection() {
+      if (activeSection > 1) switchSection(activeSection - 1);
+    }
+
+    function nextSection() {
+      if (activeSection < 3) switchSection(activeSection + 1);
+    }
+
+    /***************
+     * SUBMIT & SCORE
+     ***************/
+    const bandDescriptors = {
+      9: {
+        level: "Expert user",
+        description:
+          "Has fully operational command of the language: appropriate, accurate and fluent with complete understanding.",
+      },
+      8: {
+        level: "Very good user",
+        description:
+          "Has fully operational command of the language with only occasional unsystematic inaccuracies and inappropriacies. Misunderstandings may occur in unfamiliar situations.",
+      },
+      7: {
+        level: "Good user",
+        description:
+          "Has operational command of the language, though with occasional inaccuracies, inappropriacies and misunderstandings in some situations. Generally handles complex language well and understands detailed reasoning.",
+      },
+      6: {
+        level: "Competent user",
+        description:
+          "Has generally effective command of the language despite some inaccuracies, inappropriacies and misunderstandings. Can use and understand fairly complex language, particularly in familiar situations.",
+      },
+      5: {
+        level: "Modest user",
+        description:
+          "Has partial command of the language, coping with overall meaning in most situations, though likely to make many mistakes. Should be able to handle basic communication in own field.",
+      },
+      4: {
+        level: "Limited user",
+        description:
+          "Basic competence is limited to familiar situations. Has frequent problems in understanding and expression. Is not able to use complex language.",
+      },
+      3: {
+        level: "Extremely limited user",
+        description:
+          "Conveys and understands only general meaning in very familiar situations. Frequent breakdowns in communication occur.",
+      },
+      2: {
+        level: "Intermittent user",
+        description:
+          "No real communication is possible except for the most basic information using isolated words or short formulae in familiar situations and to meet immediate needs.",
+      },
+      1: {
+        level: "Non-user",
+        description:
+          "Essentially has no ability to use the language beyond possibly a few isolated words.",
+      },
+      0: {
+        level: "Did not attempt test",
+        description: "No assessable information provided.",
+      },
+    };
+
+    function getBandDescriptor(band) {
+      if (bandDescriptors[band]) return bandDescriptors[band];
+
+      const halfBandDescriptors = {
+        8.5: {
+          level: "Very good user developing towards Expert user",
+          description:
+            "This result is stronger than a typical Band 8, but it has not yet reached Band 9. It suggests very strong reading ability, with only occasional difficulty in highly complex or detailed texts.",
+        },
+        7.5: {
+          level: "Good user developing towards Very good user",
+          description:
+            "This result is stronger than a typical Band 7, but it has not yet reached Band 8. It suggests strong reading ability, with occasional difficulty in complex passages, detail, or inference.",
+        },
+        6.5: {
+          level: "Competent user developing towards Good user",
+          description:
+            "This result is stronger than a typical Band 6, but it has not yet reached Band 7. It suggests generally effective reading ability, though detail, paraphrasing, and complex ideas may still cause some problems.",
+        },
+        5.5: {
+          level: "Modest user developing towards Competent user",
+          description:
+            "This result is stronger than a typical Band 5, but it has not yet reached Band 6. It suggests you can understand the general meaning of many reading texts, but details, synonyms, and longer passages may still be difficult.",
+        },
+        4.5: {
+          level: "Limited user developing towards Modest user",
+          description:
+            "This result is stronger than a typical Band 4, but it has not yet reached Band 5. It suggests you can understand some familiar reading tasks, but you may still have frequent problems with detail, paraphrasing, and unfamiliar vocabulary.",
+        },
+        3.5: {
+          level: "Extremely limited user developing towards Limited user",
+          description:
+            "This result is stronger than a typical Band 3, but it has not yet reached Band 4. It suggests you may understand basic information in familiar contexts, but many reading tasks are still difficult.",
+        },
+        2.5: {
+          level: "Intermittent user developing towards Extremely limited user",
+          description:
+            "This result is stronger than a typical Band 2, but it has not yet reached Band 3. It suggests only basic or isolated information is understood at this stage.",
+        },
+      };
+
+      if (halfBandDescriptors[band]) return halfBandDescriptors[band];
+
+      const lower = Math.floor(band);
+      const upper = Math.ceil(band);
+      const lowerDesc = bandDescriptors[lower];
+      const upperDesc = bandDescriptors[upper];
+
+      if (lowerDesc && upperDesc) {
+        return {
+          level: "Between " + lowerDesc.level + " and " + upperDesc.level,
+          description:
+            "This half band sits between Band " +
+            lower +
+            " (" +
+            lowerDesc.level +
+            ") and Band " +
+            upper +
+            " (" +
+            upperDesc.level +
+            ").",
+        };
+      }
+
+      return bandDescriptors[0];
+    }
+
+    function getUserAnswer(qNum) {
+      if (qNum === 10 || qNum === 11) {
+        const pairedCheckboxes = document.querySelectorAll("input[type='checkbox'][name='q10_11']");
+        if (pairedCheckboxes.length > 0) {
+          return Array.from(document.querySelectorAll("input[type='checkbox'][name='q10_11']:checked")).map((c) => c.value).join(",");
+        }
+      }
+      if (qNum === 12 || qNum === 13) {
+        const pairedCheckboxes = document.querySelectorAll("input[type='checkbox'][name='q12_13']");
+        if (pairedCheckboxes.length > 0) {
+          return Array.from(document.querySelectorAll("input[type='checkbox'][name='q12_13']:checked")).map((c) => c.value).join(",");
+        }
+      }
+      if (qNum === 23 || qNum === 24) {
+        const pairedCheckboxes = document.querySelectorAll("input[type='checkbox'][name='q23_24']");
+        if (pairedCheckboxes.length > 0) {
+          return Array.from(document.querySelectorAll("input[type='checkbox'][name='q23_24']:checked")).map((c) => c.value).join(",");
+        }
+      }
+      if (qNum === 25 || qNum === 26) {
+        const pairedCheckboxes = document.querySelectorAll("input[type='checkbox'][name='q25_26']");
+        if (pairedCheckboxes.length > 0) {
+          return Array.from(document.querySelectorAll("input[type='checkbox'][name='q25_26']:checked")).map((c) => c.value).join(",");
+        }
+      }
+      const name = "q" + qNum;
+      const radios = document.querySelectorAll(
+        "input[type='radio'][name='" + name + "']"
+      );
+      if (radios.length > 0) {
+        const checked = Array.from(radios).find((r) => r.checked);
+        return checked ? checked.value.trim() : "";
+      }
+      const input = document.querySelector("input[type='text'][name='" + name + "']");
+      if (input) return input.value.trim();
+      const select = document.querySelector("select[name='" + name + "']");
+      if (select) return select.value.trim();
+      return "";
+    }
+
+    function evaluateQuestions() {
+      let correctCount = 0;
+
+      for (let q = 1; q <= 40; q++) {
+        const user = getUserAnswer(q);
+        const key = answerKey[q];
+        let isCorrect = false;
+
+        if (!user) {
+          isCorrect = false;
+        } else if (Array.isArray(key)) {
+          if (q === 10 || q === 11 || q === 12 || q === 13 || q === 23 || q === 24 || q === 25 || q === 26) {
+            const picked = user ? user.split(",").map((x) => x.trim()).filter(Boolean).sort().join(",") : "";
+            const expected = key.map((x) => String(x).trim()).sort().join(",");
+            isCorrect = picked === expected;
+          } else {
+            isCorrect = key.some((k) => user.toLowerCase() === String(k).toLowerCase());
+          }
+        } else if (typeof key === "string") {
+          if (/^(TRUE|FALSE|NOT GIVEN)$/.test(key)) {
+            isCorrect = user.toUpperCase() === key;
+          } else if (key.length === 1) {
+            isCorrect = user.toUpperCase() === key.toUpperCase();
+          } else {
+            isCorrect = user.toLowerCase() === key.toLowerCase();
+          }
+        }
+
+        const block = getQuestionTarget(q);
+        const feedbackBlock = document.querySelector(
+          '.question-block.feedback-only[data-q="' + q + '"]'
+        );
+        [block, feedbackBlock].forEach((el) => {
+          if (el) el.classList.remove("correct", "incorrect");
+        });
+        if (block) {
+          if (isCorrect) {
+            block.classList.add("correct");
+            correctCount++;
+          } else if (user) {
+            block.classList.add("incorrect");
+          }
+        }
+
+        const ca = document.getElementById("ca-" + q);
+        if (ca) {
+          const txt = correctAnswerText[q];
+          if (txt) {
+            ca.textContent = "Correct answer: " + txt;
+          }
+        }
+      }
+
+      return correctCount;
+    }
+
+    function computeBandScore(correct) {
+      /*
+       * IELTS Academic Reading raw score to band conversion
+       * 40-39 = 9
+       * 38-37 = 8.5
+       * 36-35 = 8
+       * 34-33 = 7.5
+       * 32-30 = 7
+       * 29-27 = 6.5
+       * 26-23 = 6
+       * 22-19 = 5.5
+       * 18-15 = 5
+       * 14-13 = 4.5
+       * 12-10 = 4
+       * 9-8 = 3.5
+       * 7-6 = 3
+       * 5-4 = 2.5
+       */
+
+      if (correct >= 39) return 9;
+      if (correct >= 37) return 8.5;
+      if (correct >= 35) return 8;
+      if (correct >= 33) return 7.5;
+      if (correct >= 30) return 7;
+      if (correct >= 27) return 6.5;
+      if (correct >= 23) return 6;
+      if (correct >= 19) return 5.5;
+      if (correct >= 15) return 5;
+      if (correct >= 13) return 4.5;
+      if (correct >= 10) return 4;
+      if (correct >= 8) return 3.5;
+      if (correct >= 6) return 3;
+      if (correct >= 4) return 2.5;
+      if (correct === 0) return 0;
+      return 1;
+    }
+
+
+
+    function formatDuration(totalSeconds) {
+      const sign = totalSeconds < 0 ? "-" : "";
+      const abs = Math.abs(totalSeconds);
+      const m = Math.floor(abs / 60).toString().padStart(2, "0");
+      const sec = (abs % 60).toString().padStart(2, "0");
+      return `${sign}${m}:${sec}`;
+    }
+
+    function showShortcutToast(message) {
+      const toast = document.getElementById("shortcutToast");
+      if (!toast) return;
+
+      toast.textContent = message;
+      toast.classList.add("visible");
+
+      if (shortcutToastTimer) {
+        clearTimeout(shortcutToastTimer);
+      }
+
+      shortcutToastTimer = setTimeout(() => {
+        toast.classList.remove("visible");
+      }, 1800);
+    }
+
+    function handlePrimarySubmit() {
+      if (mode === "test" && isTestRunning && !testSubmitted) {
+        confirmSubmit();
+        return;
+      }
+      submitTest();
+    }
+
+    document.addEventListener("keydown", (event) => {
+      const isFindShortcut =
+        (event.ctrlKey || event.metaKey) &&
+        String(event.key).toLowerCase() === "f";
+
+      if (!isFindShortcut) return;
+      if (!(mode === "test" && isTestRunning && !testSubmitted)) return;
+
+      event.preventDefault();
+      showShortcutToast("Find (CTRL + F) is disabled in Test mode.");
+    }, true);
+
+
+        // IELTS Pabs animated logo
+    function initAnimatedLogo() {
+      const logoNodes = document.querySelectorAll('.logo.home-link, .logo-link .logo');
+      if (!logoNodes.length) return;
+      const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+      logoNodes.forEach((logoNode) => {
+        const rawText = (logoNode.textContent || '').trim();
+        if (rawText !== 'IELTS Pabs') return;
+
+        logoNode.setAttribute('aria-label', 'IELTS Pabs');
+
+        const fragment = document.createDocumentFragment();
+        Array.from(rawText).forEach((char, index) => {
+          const span = document.createElement('span');
+          span.className = 'logo-char';
+          span.setAttribute('aria-hidden', 'true');
+          span.style.setProperty('--logo-char-index', String(index));
+          span.textContent = char === ' ' ? ' ' : char;
+          fragment.appendChild(span);
+        });
+
+        logoNode.textContent = '';
+        logoNode.appendChild(fragment);
+
+        if (reducedMotion) {
+          logoNode.classList.remove('is-animating');
+          return;
+        }
+
+        logoNode.addEventListener('mouseenter', () => {
+          logoNode.classList.remove('is-animating');
+          void logoNode.offsetWidth;
+          logoNode.classList.add('is-animating');
+        });
+
+        logoNode.addEventListener('mouseleave', () => {
+          logoNode.classList.remove('is-animating');
+        });
+      });
+    }
+
+
+    initAnimatedLogo();
+
+    function confirmGoHome() {
+      const ok = window.confirm("Are you sure you want to leave this test and return to the home page? Your current answers may not be saved.");
+      if (ok) window.location.href = "../../../index.html";
+    }
+
+    function confirmSubmit() {
+      const ok = window.confirm("Are you sure you want to submit your test now? You will not be able to continue answering in Test mode.");
+      if (!ok) return;
+      submitTest();
+    }
+
+    function submitTest() {
+      const correctCount = evaluateQuestions();
+
+      // In both modes, show correct answer text
+      Object.keys(correctAnswerText).forEach((q) => {
+        const el = document.getElementById("ca-" + q);
+        if (el) el.style.display = "block";
+      });
+
+      updateCounts();
+      buildQuestionNav();
+
+      const band = computeBandScore(correctCount);
+      const desc = getBandDescriptor(band);
+
+      const studentLine = document.getElementById("studentLine");
+      const fullScreenExitLine = document.getElementById("fullScreenExitLine");
+      const focusViolationLine = document.getElementById("focusViolationLine");
+      const totalTimeLine = document.getElementById("totalTimeLine");
+      const scoreLine = document.getElementById("scoreLine");
+      const bandLine = document.getElementById("bandLine");
+      const descriptorLine = document.getElementById("descriptorLine");
+      const resultsOverlay = document.getElementById("resultsOverlay");
+
+      if (studentLine) {
+        studentLine.textContent = studentName
+          ? "Student: " + studentName
+          : "Student: Not provided";
+      }
+      if (fullScreenExitLine) {
+        fullScreenExitLine.textContent = "Full screen exits: " + fullScreenExits;
+      }
+      if (focusViolationLine) {
+        focusViolationLine.textContent = "Tab switches / focus losses: " + focusViolations;
+      }
+      if (totalTimeLine) {
+        const elapsedSeconds = 60 * 60 - timerSeconds;
+        totalTimeLine.textContent = "Total time when submitted: " + formatDuration(elapsedSeconds);
+      }
+
+      if (scoreLine)
+        scoreLine.textContent =
+          "You answered " + correctCount + " out of 40 questions correctly.";
+      if (bandLine)
+        bandLine.textContent =
+          "Estimated IELTS Academic Reading band: " +
+          band +
+          ". Skill level: " +
+          desc.level;
+      if (descriptorLine) descriptorLine.textContent = desc.description;
+
+      if (resultsOverlay) resultsOverlay.style.display = "flex";
+
+      if (mode === "test") {
+        testSubmitted = true;
+        isTestRunning = false;
+        isTimerPaused = false;
+        hideFullscreenLockOverlay();
+        if (timerId) {
+          clearInterval(timerId);
+          timerId = null;
+        }
+        exitAppFullscreen();
+        // Disable further changes in test mode
+        document
+          .querySelectorAll("#questionContent select, #questionContent input")
+          .forEach((el) => (el.disabled = true));
+      }
+
+      // Close options overlay if open
+      toggleOptions(false);
+    }
+
+    function closeResults() {
+      const overlay = document.getElementById("resultsOverlay");
+      const studentLine = document.getElementById("studentLine");
+      const fullScreenExitLine = document.getElementById("fullScreenExitLine");
+      const focusViolationLine = document.getElementById("focusViolationLine");
+      const totalTimeLine = document.getElementById("totalTimeLine");
+      if (studentLine) studentLine.textContent = "";
+      if (fullScreenExitLine) fullScreenExitLine.textContent = "";
+      if (focusViolationLine) focusViolationLine.textContent = "";
+      if (totalTimeLine) totalTimeLine.textContent = "";
+      if (overlay) overlay.style.display = "none";
+    }
+
+    /**********************
+     * HIGHLIGHT & NOTES
+     **********************/
+    let currentNoteId = 0;
+    const notesStore = {}; // noteId -> { text }
+    let isAdjustingSelection = false;
+
+    function setupSelectionListeners() {
+      const toolbar = document.getElementById("selectionToolbar");
+      if (!toolbar) return;
+      toolbar.style.position = "fixed";
+
+      function updateToolbarPosition() {
+        const sel = window.getSelection();
+        if (!sel || sel.rangeCount === 0 || sel.isCollapsed) {
+          hideSelectionToolbar();
+          return;
+        }
+        const range = sel.getRangeAt(0);
+        const rect = range.getBoundingClientRect();
+        if (!rect || (rect.width === 0 && rect.height === 0)) {
+          hideSelectionToolbar();
+          return;
+        }
+        toolbar.style.left = rect.left + rect.width / 2 + "px";
+        toolbar.style.top = Math.max(56, rect.top - 32) + "px";
+        toolbar.style.display = "flex";
+      }
+
+      document.addEventListener("mouseup", () => {
+        setTimeout(updateToolbarPosition, 0);
+      });
+
+      document.addEventListener("keyup", (e) => {
+        if (
+          e.key === "Shift" ||
+          e.key === "ArrowLeft" ||
+          e.key === "ArrowRight" ||
+          e.key === "ArrowUp" ||
+          e.key === "ArrowDown"
+        ) {
+          setTimeout(updateToolbarPosition, 0);
+        }
+      });
+
+      document.addEventListener("mousedown", (e) => {
+        if (!toolbar.contains(e.target)) {
+          hideSelectionToolbar();
+        }
+      });
+
+      document.addEventListener("selectionchange", clipLivePassageSelection);
+    }
+
+    function hideSelectionToolbar() {
+      const toolbar = document.getElementById("selectionToolbar");
+      if (toolbar) toolbar.style.display = "none";
+    }
+
+    function findAncestorWithClass(node, className) {
+      let n = node;
+      while (n && n !== document) {
+        if (n.nodeType === 1 && n.classList.contains(className)) return n;
+        n = n.parentNode;
+      }
+      return null;
+    }
+
+    function getSelectedTextOffsets(range, textNode) {
+      if (!textNode || textNode.nodeType !== Node.TEXT_NODE) return null;
+      const length = textNode.nodeValue.length;
+      if (!length) return null;
+
+      const textRange = document.createRange();
+      textRange.selectNodeContents(textNode);
+
+      const endsBeforeTextStarts =
+        range.compareBoundaryPoints(Range.END_TO_START, textRange) <= 0;
+      const startsAfterTextEnds =
+        range.compareBoundaryPoints(Range.START_TO_END, textRange) >= 0;
+
+      textRange.detach();
+
+      if (endsBeforeTextStarts || startsAfterTextEnds) return null;
+
+      let start = 0;
+      let end = length;
+
+      if (range.startContainer === textNode) {
+        start = range.startOffset;
+      }
+      if (range.endContainer === textNode) {
+        end = range.endOffset;
+      }
+
+      if (start >= end) return null;
+      return { start, end };
+    }
+
+    function wrapTextNodePortion(textNode, start, end, className) {
+      let selectedNode = textNode;
+
+      if (end < selectedNode.nodeValue.length) {
+        selectedNode.splitText(end);
+      }
+      if (start > 0) {
+        selectedNode = selectedNode.splitText(start);
+      }
+      if (!selectedNode.nodeValue) return null;
+
+      const span = document.createElement("span");
+      span.className = className;
+      selectedNode.parentNode.insertBefore(span, selectedNode);
+      span.appendChild(selectedNode);
+      return span;
+    }
+
+    function highlightRangePreservingStructure(range) {
+      const textSelections = [];
+      const root = range.commonAncestorContainer;
+
+      if (root.nodeType === Node.TEXT_NODE) {
+        const offsets = getSelectedTextOffsets(range, root);
+        if (offsets) {
+          textSelections.push({
+            node: root,
+            start: offsets.start,
+            end: offsets.end,
+          });
+        }
+      } else {
+        const walker = document.createTreeWalker(
+          root,
+          NodeFilter.SHOW_TEXT,
+          {
+            acceptNode(node) {
+              if (!node.nodeValue.trim()) return NodeFilter.FILTER_REJECT;
+              return getSelectedTextOffsets(range, node)
+                ? NodeFilter.FILTER_ACCEPT
+                : NodeFilter.FILTER_REJECT;
+            },
+          }
+        );
+
+        let node = walker.nextNode();
+        while (node) {
+          const offsets = getSelectedTextOffsets(range, node);
+          if (offsets) {
+            textSelections.push({
+              node,
+              start: offsets.start,
+              end: offsets.end,
+            });
+          }
+          node = walker.nextNode();
+        }
+      }
+
+      textSelections.reverse().forEach(({ node, start, end }) => {
+        wrapTextNodePortion(node, start, end, "highlighted");
+      });
+    }
+
+    function getHighlightBlock(node) {
+      const passagePane = document.getElementById("passagePane");
+      if (!passagePane) return null;
+
+      let n = node;
+      if (n && n.nodeType === Node.TEXT_NODE) n = n.parentNode;
+
+      while (n && n !== passagePane && n !== document) {
+        if (
+          n.nodeType === Node.ELEMENT_NODE &&
+          n.matches("p, li, h2, h3, h4, td, th") &&
+          passagePane.contains(n)
+        ) {
+          return n;
+        }
+        n = n.parentNode;
+      }
+
+      return null;
+    }
+
+    function isForwardSelection(selection) {
+      if (selection.anchorNode === selection.focusNode) {
+        return selection.anchorOffset <= selection.focusOffset;
+      }
+
+      const anchorRange = document.createRange();
+      const focusRange = document.createRange();
+      anchorRange.setStart(selection.anchorNode, selection.anchorOffset);
+      focusRange.setStart(selection.focusNode, selection.focusOffset);
+      anchorRange.collapse(true);
+      focusRange.collapse(true);
+      const isForward =
+        anchorRange.compareBoundaryPoints(Range.START_TO_START, focusRange) <= 0;
+      anchorRange.detach();
+      focusRange.detach();
+      return isForward;
+    }
+
+    function setSelectionExtent(
+      selection,
+      anchorNode,
+      anchorOffset,
+      focusNode,
+      focusOffset
+    ) {
+      if (typeof selection.setBaseAndExtent === "function") {
+        selection.setBaseAndExtent(
+          anchorNode,
+          anchorOffset,
+          focusNode,
+          focusOffset
+        );
+        return;
+      }
+
+      if (typeof selection.extend === "function") {
+        const range = document.createRange();
+        range.setStart(anchorNode, anchorOffset);
+        range.collapse(true);
+        selection.removeAllRanges();
+        selection.addRange(range);
+        selection.extend(focusNode, focusOffset);
+        return;
+      }
+
+      const anchorRange = document.createRange();
+      const focusRange = document.createRange();
+      anchorRange.setStart(anchorNode, anchorOffset);
+      focusRange.setStart(focusNode, focusOffset);
+      anchorRange.collapse(true);
+      focusRange.collapse(true);
+
+      const range = document.createRange();
+      if (
+        anchorRange.compareBoundaryPoints(Range.START_TO_START, focusRange) <= 0
+      ) {
+        range.setStart(anchorNode, anchorOffset);
+        range.setEnd(focusNode, focusOffset);
+      } else {
+        range.setStart(focusNode, focusOffset);
+        range.setEnd(anchorNode, anchorOffset);
+      }
+      anchorRange.detach();
+      focusRange.detach();
+      selection.removeAllRanges();
+      selection.addRange(range);
+    }
+
+    function clipLivePassageSelection() {
+      if (isAdjustingSelection) return;
+
+      const passagePane = document.getElementById("passagePane");
+      const selection = window.getSelection();
+      if (
+        !passagePane ||
+        !selection ||
+        selection.rangeCount === 0 ||
+        selection.isCollapsed ||
+        !selection.anchorNode ||
+        !selection.focusNode ||
+        !passagePane.contains(selection.anchorNode)
+      ) {
+        return;
+      }
+
+      const anchorBlock = getHighlightBlock(selection.anchorNode);
+      const focusBlock = getHighlightBlock(selection.focusNode);
+      if (!anchorBlock || anchorBlock === focusBlock) return;
+
+      const clipForward = isForwardSelection(selection);
+      const clipNode = anchorBlock;
+      const clipOffset = clipForward ? anchorBlock.childNodes.length : 0;
+
+      isAdjustingSelection = true;
+      try {
+        setSelectionExtent(
+          selection,
+          selection.anchorNode,
+          selection.anchorOffset,
+          clipNode,
+          clipOffset
+        );
+      } finally {
+        isAdjustingSelection = false;
+      }
+    }
+
+    function applyHighlightToRange(range) {
+      if (!range.toString().trim()) return;
+
+      const span = document.createElement("span");
+      span.className = "highlighted";
+      try {
+        range.surroundContents(span);
+      } catch (e) {
+        highlightRangePreservingStructure(range);
+      }
+    }
+
+    function toggleHighlightSelection() {
+      const sel = window.getSelection();
+      if (!sel || sel.rangeCount === 0 || sel.isCollapsed) return;
+      const range = sel.getRangeAt(0);
+      if (!range.toString().trim()) return;
+
+      const startHighlight = findAncestorWithClass(
+        range.startContainer,
+        "highlighted"
+      );
+      const endHighlight = findAncestorWithClass(
+        range.endContainer,
+        "highlighted"
+      );
+
+      if (startHighlight && startHighlight === endHighlight) {
+        // Remove the whole highlight span
+        const span = startHighlight;
+        const parent = span.parentNode;
+        while (span.firstChild) {
+          parent.insertBefore(span.firstChild, span);
+        }
+        parent.removeChild(span);
+      } else {
+        const startBlock = getHighlightBlock(range.startContainer);
+        const endBlock = getHighlightBlock(range.endContainer);
+        let rangeToHighlight = range;
+
+        if (startBlock && startBlock !== endBlock) {
+          rangeToHighlight = document.createRange();
+          rangeToHighlight.setStart(range.startContainer, range.startOffset);
+          rangeToHighlight.setEnd(startBlock, startBlock.childNodes.length);
+        }
+
+        applyHighlightToRange(rangeToHighlight);
+      }
+
+      sel.removeAllRanges();
+      hideSelectionToolbar();
+    }
+
+    function makeNoteForSelection() {
+      const sel = window.getSelection();
+      if (!sel || sel.rangeCount === 0 || sel.isCollapsed) return;
+      const range = sel.getRangeAt(0);
+      if (!range.toString().trim()) return;
+
+      const noteId = "note-" + ++currentNoteId;
+
+      const span = document.createElement("span");
+      span.className = "note-anchor";
+      span.dataset.noteId = noteId;
+
+      try {
+        range.surroundContents(span);
+      } catch (e) {
+        span.textContent = range.toString();
+        range.deleteContents();
+        range.insertNode(span);
+      }
+
+      // Delete button
+      const del = document.createElement("button");
+      del.className = "note-delete";
+      del.textContent = "×";
+      del.addEventListener("click", (ev) => {
+        ev.stopPropagation();
+        deleteNote(noteId);
+      });
+      span.appendChild(del);
+
+      span.addEventListener("click", (ev) => {
+        // avoid re-opening when clicking delete
+        if ((ev.target).classList && (ev.target).classList.contains("note-delete"))
+          return;
+        openNoteWindow(noteId, span);
+      });
+
+      notesStore[noteId] = { text: "" };
+      openNoteWindow(noteId, span);
+      hideSelectionToolbar();
+      sel.removeAllRanges();
+    }
+
+    function openNoteWindow(noteId, anchorEl) {
+      // Remove existing note window for this note
+      const existing = document.querySelector(
+        '.note-window[data-note-id="' + noteId + '"]'
+      );
+      if (existing) existing.remove();
+
+      const rect = anchorEl.getBoundingClientRect();
+      const note = document.createElement("div");
+      note.className = "note-window";
+      note.dataset.noteId = noteId;
+      note.style.top = rect.bottom + 8 + "px";
+      note.style.left = rect.left + "px";
+
+      note.innerHTML = `
+        <div class="note-header">
+          <span>Note</span>
+          <button title="Close">×</button>
+        </div>
+        <div class="note-body">
+          <textarea></textarea>
+        </div>
+        <div class="note-footer">
+          <button>Done</button>
+        </div>
+      `;
+
+      document.body.appendChild(note);
+
+      const header = note.querySelector(".note-header");
+      const closeBtn = header.querySelector("button");
+      const textarea = note.querySelector("textarea");
+      const doneBtn = note.querySelector(".note-footer button");
+
+      if (notesStore[noteId] && notesStore[noteId].text) {
+        textarea.value = notesStore[noteId].text;
+      }
+
+      closeBtn.addEventListener("click", () => {
+        notesStore[noteId].text = textarea.value;
+        note.remove();
+      });
+
+      doneBtn.addEventListener("click", () => {
+        notesStore[noteId].text = textarea.value;
+        note.remove();
+      });
+
+      makeNoteDraggable(note, header);
+    }
+
+    function deleteNote(noteId) {
+      const anchor = document.querySelector(
+        '.note-anchor[data-note-id="' + noteId + '"]'
+      );
+      if (anchor) {
+        const parent = anchor.parentNode;
+        // move children except delete button
+        while (anchor.firstChild) {
+          const child = anchor.firstChild;
+          if (
+            child.nodeType === 1 &&
+            child.classList.contains("note-delete")
+          ) {
+            anchor.removeChild(child);
+          } else {
+            parent.insertBefore(child, anchor);
+          }
+        }
+        parent.removeChild(anchor);
+      }
+      const noteWin = document.querySelector(
+        '.note-window[data-note-id="' + noteId + '"]'
+      );
+      if (noteWin) noteWin.remove();
+      delete notesStore[noteId];
+    }
+
+    function makeNoteDraggable(noteEl, handleEl) {
+      let isDragging = false;
+      let startX = 0;
+      let startY = 0;
+      let startLeft = 0;
+      let startTop = 0;
+
+      handleEl.addEventListener("mousedown", (e) => {
+        e.preventDefault();
+        isDragging = true;
+        startX = e.clientX;
+        startY = e.clientY;
+        const rect = noteEl.getBoundingClientRect();
+        startLeft = rect.left;
+        startTop = rect.top;
+        document.addEventListener("mousemove", onMove);
+        document.addEventListener("mouseup", onUp);
+      });
+
+      function onMove(e) {
+        if (!isDragging) return;
+        const dx = e.clientX - startX;
+        const dy = e.clientY - startY;
+        noteEl.style.left = startLeft + dx + "px";
+        noteEl.style.top = startTop + dy + "px";
+      }
+
+      function onUp() {
+        isDragging = false;
+        document.removeEventListener("mousemove", onMove);
+        document.removeEventListener("mouseup", onUp);
+      }
+    }
+
+    /***********************
+     * RESIZABLE DIVIDER
+     ***********************/
+    function setupDividerDrag() {
+      const divider = document.getElementById("divider");
+      const mainInner = document.querySelector(".main-inner");
+      const leftPane = document.getElementById("passagePane");
+      const rightPane = document.getElementById("questionPane");
+      if (!divider || !mainInner || !leftPane || !rightPane) return;
+
+      let dragging = false;
+      let startX = 0;
+      let startWidthLeft = 0;
+      let totalWidth = 0;
+
+      function beginDrag(clientX) {
+        dragging = true;
+        const rect = mainInner.getBoundingClientRect();
+        totalWidth = rect.width;
+        startX = clientX;
+        const leftRect = leftPane.getBoundingClientRect();
+        startWidthLeft = leftRect.width;
+        document.body.style.cursor = "col-resize";
+      }
+
+      function updateDrag(clientX) {
+        if (!dragging) return;
+        const dx = clientX - startX;
+        let newLeftWidth = startWidthLeft + dx;
+        const min = Math.max(260, totalWidth * 0.2);
+        const max = Math.min(totalWidth - 260, totalWidth * 0.8);
+        if (newLeftWidth < min) newLeftWidth = min;
+        if (newLeftWidth > max) newLeftWidth = max;
+        const leftPct = (newLeftWidth / totalWidth) * 100;
+        leftPane.style.flex = "0 0 " + leftPct + "%";
+        rightPane.style.flex = "0 0 " + (100 - leftPct) + "%";
+      }
+
+      function endDrag() {
+        if (!dragging) return;
+        dragging = false;
+        document.body.style.cursor = "default";
+      }
+
+      divider.addEventListener("mousedown", (e) => {
+        e.preventDefault();
+        beginDrag(e.clientX);
+      });
+
+      divider.addEventListener("touchstart", (e) => {
+        const touch = e.touches && e.touches[0];
+        if (!touch) return;
+        e.preventDefault();
+        beginDrag(touch.clientX);
+      }, { passive: false });
+
+      document.addEventListener("mousemove", (e) => updateDrag(e.clientX));
+      document.addEventListener("touchmove", (e) => {
+        const touch = e.touches && e.touches[0];
+        if (!touch) return;
+        if (dragging) e.preventDefault();
+        updateDrag(touch.clientX);
+      }, { passive: false });
+
+      document.addEventListener("mouseup", endDrag);
+      document.addEventListener("touchend", endDrag);
+      document.addEventListener("touchcancel", endDrag);
+    }
+
+    // Ensure option buttons reflect the current theme and font selections on load.
+    updateThemeButtons();
+    updateFontButtons();
+    ensureModeWiring();
+    initAnimatedLogo();
+  </script>
+</body>
+</html>
