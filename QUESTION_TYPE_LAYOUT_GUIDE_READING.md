@@ -340,8 +340,21 @@ For spelling alternatives or singular/plural alternatives in normal text-input q
 
 For paired choose-two checkbox questions:
 - Only use sorted-set or complete-set array logic when the question layout is actually a paired checkbox group that asks students to choose two letters or options.
-- Score the pair in either order for that paired checkbox group.
-- Do not apply paired sorted-set logic to normal text-input spelling alternatives.
+- Do not treat choose-two checkbox groups as complete sorted-set all-or-nothing answers. Sorted-set comparison is useful for recognising the correct pair in either order, but scoring must still award one mark per distinct correct selected letter.
+- Each correct selected letter is worth one mark, up to the number of marks assigned to the group. Incorrect selected letters must not cancel correct selected letters.
+- The checkbox group should still limit the student to two selections. If two options are already selected and the student clicks a third, prevent the third selection while still allowing students to untick and change their answers.
+- Example scoring when the correct answers are `B` and `C`:
+  - `B + C` = 2 marks
+  - `C + B` = 2 marks
+  - `B + E` = 1 mark
+  - `C + E` = 1 mark
+  - `A + E` = 0 marks
+  - `B` only = 1 mark
+  - `C` only = 1 mark
+  - `E` only = 0 marks
+  - No selection = 0 marks
+- Example lesson: IELTS 17 Academic Reading Test 3 Q21-Q22 use a shared choose-two checkbox group. The correct answers are `B` and `C`, and scoring must count distinct correct selected letters, up to 2 marks. Q24 remains a normal text-input alternatives question and must not be treated as a choose-two pair.
+- Do not apply paired sorted-set logic to normal text-input spelling alternatives. Text-input spelling alternatives, such as Q24 orangutan alternatives, accept any one valid answer and must not be treated as paired choose-two answers.
 
 ## Matching sentence endings
 
