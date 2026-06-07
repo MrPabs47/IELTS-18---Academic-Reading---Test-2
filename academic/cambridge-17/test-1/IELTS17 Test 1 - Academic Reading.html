@@ -577,6 +577,12 @@
       background: rgba(67,160,71,0.08);
     }
 
+    .question-block.partial-correct,
+    .inline-answer.partial-correct {
+      border-color: #f9a825;
+      background: rgba(249,168,37,0.08);
+    }
+
     .question-block.incorrect,
     .inline-answer.incorrect {
       border-color: var(--incorrect);
@@ -604,6 +610,7 @@
 
     .feedback-only.current-question,
     .feedback-only.correct,
+    .feedback-only.partial-correct,
     .feedback-only.incorrect {
       border: 0;
       background: transparent;
@@ -2913,10 +2920,68 @@
       return "";
     }
 
+    function getChooseTwoCorrectCount(groupName, correctLetters) {
+      const selected = new Set(
+        Array.from(document.querySelectorAll("input[type='checkbox'][name='" + groupName + "']:checked"))
+          .map((checkbox) => String(checkbox.value).trim().toUpperCase())
+          .filter(Boolean)
+      );
+      const correct = new Set(correctLetters.map((letter) => String(letter).trim().toUpperCase()));
+      return Array.from(selected).filter((letter) => correct.has(letter)).length;
+    }
+
+    function setQuestionFeedback(q, state) {
+      const block = getQuestionTarget(q);
+      const feedbackBlock = document.querySelector(
+        '.question-block.feedback-only[data-q="' + q + '"]'
+      );
+      [block, feedbackBlock].forEach((el) => {
+        if (!el) return;
+        el.classList.remove("correct", "partial-correct", "incorrect");
+        if (state) el.classList.add(state);
+      });
+
+      const ca = document.getElementById("ca-" + q);
+      if (ca) {
+        const txt = correctAnswerText[q];
+        if (txt) {
+          ca.textContent = "Correct answer: " + txt;
+        }
+      }
+    }
+
     function evaluateQuestions() {
       let correctCount = 0;
+      const chooseTwoGroups = {
+        23: { groupName: "q23_24", questions: [23, 24], correctLetters: ["C", "D"] },
+        25: { groupName: "q25_26", questions: [25, 26], correctLetters: ["B", "E"] }
+      };
+      const groupedQuestions = new Set(
+        Object.values(chooseTwoGroups).flatMap((group) => group.questions)
+      );
 
       for (let q = 1; q <= 40; q++) {
+        const chooseTwoGroup = chooseTwoGroups[q];
+        if (chooseTwoGroup) {
+          const groupCorrectCount = getChooseTwoCorrectCount(
+            chooseTwoGroup.groupName,
+            chooseTwoGroup.correctLetters
+          );
+          correctCount += groupCorrectCount;
+          const state = groupCorrectCount === 2
+            ? "correct"
+            : groupCorrectCount === 1
+              ? "partial-correct"
+              : getUserAnswer(q)
+                ? "incorrect"
+                : "";
+          chooseTwoGroup.questions.forEach((questionNumber) => setQuestionFeedback(questionNumber, state));
+          continue;
+        }
+        if (groupedQuestions.has(q)) {
+          continue;
+        }
+
         const user = getUserAnswer(q);
         const key = answerKey[q];
         let isCorrect = false;
@@ -2924,13 +2989,7 @@
         if (!user) {
           isCorrect = false;
         } else if (Array.isArray(key)) {
-          if (q === 10 || q === 11 || q === 12 || q === 13 || q === 23 || q === 24 || q === 25 || q === 26) {
-            const picked = user ? user.split(",").map((x) => x.trim()).filter(Boolean).sort().join(",") : "";
-            const expected = key.map((x) => String(x).trim()).sort().join(",");
-            isCorrect = picked === expected;
-          } else {
-            isCorrect = key.some((k) => user.toLowerCase() === String(k).toLowerCase());
-          }
+          isCorrect = key.some((k) => user.toLowerCase() === String(k).toLowerCase());
         } else if (typeof key === "string") {
           if (/^(TRUE|FALSE|NOT GIVEN)$/.test(key)) {
             isCorrect = user.toUpperCase() === key;
@@ -2941,28 +3000,13 @@
           }
         }
 
-        const block = getQuestionTarget(q);
-        const feedbackBlock = document.querySelector(
-          '.question-block.feedback-only[data-q="' + q + '"]'
-        );
-        [block, feedbackBlock].forEach((el) => {
-          if (el) el.classList.remove("correct", "incorrect");
-        });
-        if (block) {
-          if (isCorrect) {
-            block.classList.add("correct");
-            correctCount++;
-          } else if (user) {
-            block.classList.add("incorrect");
-          }
-        }
-
-        const ca = document.getElementById("ca-" + q);
-        if (ca) {
-          const txt = correctAnswerText[q];
-          if (txt) {
-            ca.textContent = "Correct answer: " + txt;
-          }
+        if (isCorrect) {
+          correctCount++;
+          setQuestionFeedback(q, "correct");
+        } else if (user) {
+          setQuestionFeedback(q, "incorrect");
+        } else {
+          setQuestionFeedback(q, "");
         }
       }
 
