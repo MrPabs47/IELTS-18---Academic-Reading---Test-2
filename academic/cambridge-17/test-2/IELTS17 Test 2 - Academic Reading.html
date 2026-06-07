@@ -1134,7 +1134,7 @@
     .summary-gap { display:inline-flex; align-items:center; gap:6px; margin:0 2px; }
     .summary-gap select { min-width:80px; width:auto; font-family: inherit; font-size: 0.95rem; }
     .inline-input input { font-family: inherit; font-size: 0.95rem; }
-    .summary-options-box { border:1px solid var(--line); border-radius:10px; padding:12px; margin:10px 0 14px; }
+    .summary-options-box { border:1px solid var(--border); border-radius:10px; padding:12px; margin:10px 0 14px; background:var(--bg); }
     .summary-options-grid { display:grid; grid-template-columns:repeat(2,minmax(180px,1fr)); gap:6px 14px; }
     .summary-feedback-row { margin-top:8px; display:grid; gap:4px; }
 /* Results overlay */
@@ -1499,13 +1499,13 @@
                 <p><strong>Discovery</strong></p>
                 <p><strong>Qumran, 1946/7</strong></p>
                 <p>– three Bedouin shepherds in their teens were near an opening on side of cliff</p>
-                <p>– heard a noise of breaking when one teenager threw a <span class="question-number-label">1</span> <span class="inline-input inline-answer no-gap-number" data-q="1"><input type="text" name="q1" /></span></p>
-                <p>– teenagers went into the <span class="question-number-label">2</span> <span class="inline-input inline-answer no-gap-number" data-q="2"><input type="text" name="q2" /></span> and found a number of containers made of <span class="question-number-label">3</span> <span class="inline-input inline-answer no-gap-number" data-q="3"><input type="text" name="q3" /></span></p>
+                <p>– heard a noise of breaking when one teenager threw a <span class="inline-input inline-answer" data-q="1"><input type="text" name="q1" /></span></p>
+                <p>– teenagers went into the <span class="inline-input inline-answer" data-q="2"><input type="text" name="q2" /></span> and found a number of containers made of <span class="inline-input inline-answer" data-q="3"><input type="text" name="q3" /></span></p>
 
                 <p><strong>The scrolls</strong></p>
                 <p>– date from between 150 BCE and 70 CE</p>
-                <p>– thought to have been written by group of people known as the <span class="question-number-label">4</span> <span class="inline-input inline-answer no-gap-number" data-q="4"><input type="text" name="q4" /></span></p>
-                <p>– written mainly in the <span class="question-number-label">5</span> <span class="inline-input inline-answer no-gap-number" data-q="5"><input type="text" name="q5" /></span> language</p>
+                <p>– thought to have been written by group of people known as the <span class="inline-input inline-answer" data-q="4"><input type="text" name="q4" /></span></p>
+                <p>– written mainly in the <span class="inline-input inline-answer" data-q="5"><input type="text" name="q5" /></span> language</p>
                 <p>– most are on religious topics, written using ink on parchment or papyrus</p>
                 <div class="question-block feedback-only" data-q="1"><div class="correct-answer-text" id="ca-1"></div></div>
                 <div class="question-block feedback-only" data-q="2"><div class="correct-answer-text" id="ca-2"></div></div>
@@ -1642,14 +1642,12 @@
                 <div class="correct-answer-text" id="ca-23"></div>
               </div>
 
-              <div class="summary-options-box">
-                <div><strong>List of Researchers</strong></div>
-                <div class="summary-options-grid">
-                  <div>A Jorg Kudla</div>
-                  <div>B Caixia Gao</div>
-                  <div>C Joyce Van Eck</div>
-                  <div>D Jonathan Jones</div>
-                </div>
+              <div class="people-box">
+                <div class="people-box-title">List of Researchers</div>
+                <div class="people-list-line">A Jorg Kudla</div>
+                <div class="people-list-line">B Caixia Gao</div>
+                <div class="people-list-line">C Joyce Van Eck</div>
+                <div class="people-list-line">D Jonathan Jones</div>
               </div>
 
               <div class="instruction-block">
