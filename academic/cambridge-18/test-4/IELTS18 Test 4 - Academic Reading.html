@@ -161,6 +161,12 @@
       display: none;
     }
 
+    body.mode-screen-active .top-bar,
+    body.mode-screen-active .main-area,
+    body.mode-screen-active .bottom-nav {
+      display: none !important;
+    }
+
     /* Top bar */
     .top-bar {
       position: fixed;
@@ -1273,7 +1279,7 @@
     }
   </style>
 </head>
-<body data-theme="black-on-white">
+<body data-theme="black-on-white" class="mode-screen-active">
   <!-- Mode selection -->
   <div id="modeScreen">
     <div id="modeScreenInner">
@@ -2033,6 +2039,7 @@
     }
 
     function startTest(selectedMode) {
+      document.body.classList.remove("mode-screen-active");
       mode = selectedMode;
       const timerContainer = document.getElementById("timerContainer");
 
