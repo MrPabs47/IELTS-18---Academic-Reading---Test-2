@@ -1913,89 +1913,89 @@
     };
 
     const answerKey = {
-      1: "carnivorous",
-      2: "scent",
-      3: "pouch",
-      4: "fossil",
-      5: "habitat",
+      1: "FALSE",
+      2: "FALSE",
+      3: "NOT GIVEN",
+      4: "TRUE",
+      5: "NOT GIVEN",
       6: "TRUE",
-      7: "FALSE",
-      8: "NOT GIVEN",
-      9: "FALSE",
-      10: "NOT GIVEN",
-      11: "FALSE",
-      12: "TRUE",
-      13: "NOT GIVEN",
-      14: "F",
-      15: "G",
-      16: "A",
-      17: "H",
-      18: "B",
-      19: "E",
-      20: "C",
-      21: ["B", "C"],
-      22: ["B", "C"],
-      23: "solid",
-      24: ["orangutan", "Sumatran orangutan", "orang-utan", "Sumatran orang-utan"],
-      25: "carbon stocks",
-      26: "biodiversity",
+      7: "droppings",
+      8: "coffee",
+      9: "mosquitoes",
+      10: "protein",
+      11: "unclean",
+      12: "culture",
+      13: "houses",
+      14: "E",
+      15: "A",
+      16: "D",
+      17: "F",
+      18: "C",
+      19: "descendants",
+      20: "sermon",
+      21: "fine",
+      22: "innovation",
+      23: ["B", "E"],
+      24: ["B", "E"],
+      25: ["B", "D"],
+      26: ["B", "D"],
       27: "D",
-      28: "B",
-      29: "C",
-      30: "D",
-      31: "C",
-      32: "NO",
-      33: "YES",
+      28: "E",
+      29: "F",
+      30: "B",
+      31: "H",
+      32: "E",
+      33: "FALSE",
       34: "NOT GIVEN",
-      35: "NO",
-      36: "H",
-      37: "D",
-      38: "I",
-      39: "B",
-      40: "F"
+      35: "NOT GIVEN",
+      36: "TRUE",
+      37: "memory",
+      38: "numbers",
+      39: "communication",
+      40: "visual"
     };
 
     const correctAnswerText = {
-      1: "carnivorous",
-      2: "scent",
-      3: "pouch",
-      4: "fossil",
-      5: "habitat",
+      1: "FALSE",
+      2: "FALSE",
+      3: "NOT GIVEN",
+      4: "TRUE",
+      5: "NOT GIVEN",
       6: "TRUE",
-      7: "FALSE",
-      8: "NOT GIVEN",
-      9: "FALSE",
-      10: "NOT GIVEN",
-      11: "FALSE",
-      12: "TRUE",
-      13: "NOT GIVEN",
-      14: "F",
-      15: "G",
-      16: "A",
-      17: "H",
-      18: "B",
-      19: "E",
-      20: "C",
-      21: "B / C",
-      22: "B / C",
-      23: "solid",
-      24: "orangutan / Sumatran orangutan / orang-utan / Sumatran orang-utan",
-      25: "carbon stocks",
-      26: "biodiversity",
+      7: "droppings",
+      8: "coffee",
+      9: "mosquitoes",
+      10: "protein",
+      11: "unclean",
+      12: "culture",
+      13: "houses",
+      14: "E",
+      15: "A",
+      16: "D",
+      17: "F",
+      18: "C",
+      19: "descendants",
+      20: "sermon",
+      21: "fine",
+      22: "innovation",
+      23: "B / E",
+      24: "B / E",
+      25: "B / D",
+      26: "B / D",
       27: "D",
-      28: "B",
-      29: "C",
-      30: "D",
-      31: "C",
-      32: "NO",
-      33: "YES",
+      28: "E",
+      29: "F",
+      30: "B",
+      31: "H",
+      32: "E",
+      33: "FALSE",
       34: "NOT GIVEN",
-      35: "NO",
-      36: "H",
-      37: "D",
-      38: "I",
-      39: "B",
-      40: "F"
+      35: "NOT GIVEN",
+      36: "TRUE",
+      37: "memory",
+      38: "numbers",
+      39: "communication",
+      40: "visual"
     };
 
     /********************
@@ -2874,10 +2874,16 @@
     }
 
     function getUserAnswer(qNum) {
-      if (qNum === 21 || qNum === 22) {
-        const pairedCheckboxes = document.querySelectorAll("input[type='checkbox'][name='q21_22']");
+      if (qNum === 23 || qNum === 24) {
+        const pairedCheckboxes = document.querySelectorAll("input[type='checkbox'][name='q23_24']");
         if (pairedCheckboxes.length > 0) {
-          return Array.from(document.querySelectorAll("input[type='checkbox'][name='q21_22']:checked")).map((c) => c.value).join(",");
+          return Array.from(document.querySelectorAll("input[type='checkbox'][name='q23_24']:checked")).map((c) => c.value).join(",");
+        }
+      }
+      if (qNum === 25 || qNum === 26) {
+        const pairedCheckboxes = document.querySelectorAll("input[type='checkbox'][name='q25_26']");
+        if (pairedCheckboxes.length > 0) {
+          return Array.from(document.querySelectorAll("input[type='checkbox'][name='q25_26']:checked")).map((c) => c.value).join(",");
         }
       }
       const name = "q" + qNum;
@@ -2896,32 +2902,72 @@
     }
 
     function getChooseTwoCorrectCount(groupName, correctLetters) {
-      const correctSet = new Set(correctLetters.map((letter) => String(letter).trim().toUpperCase()));
-      const selectedLetters = new Set(
+      const selected = new Set(
         Array.from(document.querySelectorAll("input[type='checkbox'][name='" + groupName + "']:checked"))
           .map((checkbox) => String(checkbox.value).trim().toUpperCase())
           .filter(Boolean)
       );
-      let correctSelections = 0;
-      selectedLetters.forEach((letter) => {
-        if (correctSet.has(letter)) correctSelections++;
+      const correct = new Set(correctLetters.map((letter) => String(letter).trim().toUpperCase()));
+      return Array.from(selected).filter((letter) => correct.has(letter)).length;
+    }
+
+    function setQuestionFeedback(q, state) {
+      const block = getQuestionTarget(q);
+      const feedbackBlock = document.querySelector(
+        '.question-block.feedback-only[data-q="' + q + '"]'
+      );
+      [block, feedbackBlock].forEach((el) => {
+        if (!el) return;
+        el.classList.remove("correct", "partial-correct", "incorrect");
+        if (state) el.classList.add(state);
       });
-      return Math.min(correctSelections, correctSet.size);
+
+      const ca = document.getElementById("ca-" + q);
+      if (ca) {
+        const txt = correctAnswerText[q];
+        if (txt) {
+          ca.textContent = "Correct answer: " + txt;
+        }
+      }
     }
 
     function evaluateQuestions() {
       let correctCount = 0;
+      const chooseTwoGroups = {
+        23: { groupName: "q23_24", questions: [23, 24], correctLetters: ["B", "E"] },
+        25: { groupName: "q25_26", questions: [25, 26], correctLetters: ["B", "D"] }
+      };
+      const groupedQuestions = new Set(
+        Object.values(chooseTwoGroups).flatMap((group) => group.questions)
+      );
 
       for (let q = 1; q <= 40; q++) {
+        const chooseTwoGroup = chooseTwoGroups[q];
+        if (chooseTwoGroup) {
+          const groupCorrectCount = getChooseTwoCorrectCount(
+            chooseTwoGroup.groupName,
+            chooseTwoGroup.correctLetters
+          );
+          correctCount += groupCorrectCount;
+          const state = groupCorrectCount === 2
+            ? "correct"
+            : groupCorrectCount === 1
+              ? "partial-correct"
+              : getUserAnswer(q)
+                ? "incorrect"
+                : "";
+          chooseTwoGroup.questions.forEach((questionNumber) => setQuestionFeedback(questionNumber, state));
+          continue;
+        }
+        if (groupedQuestions.has(q)) {
+          continue;
+        }
+
         const user = getUserAnswer(q);
         const key = answerKey[q];
         let isCorrect = false;
-        const isChooseTwoPair = q === 21 || q === 22;
 
-        if (isChooseTwoPair) {
-          const correctSelections = getChooseTwoCorrectCount("q21_22", key);
-          isCorrect = correctSelections > q - 21;
-        } else if (!user) {
+        if (!user) {
           isCorrect = false;
         } else if (Array.isArray(key)) {
           isCorrect = key.some((k) => user.toLowerCase() === String(k).toLowerCase());
@@ -2935,43 +2981,13 @@
           }
         }
 
-        const block = getQuestionTarget(q);
-        const feedbackBlock = document.querySelector(
-          '.question-block.feedback-only[data-q="' + q + '"]'
-        );
-        if (isChooseTwoPair) {
-          if (q === 21 && block) {
-            block.classList.remove("correct", "incorrect", "partial-correct");
-            const correctSelections = getChooseTwoCorrectCount("q21_22", key);
-            if (correctSelections === 2) {
-              block.classList.add("correct");
-            } else if (correctSelections === 1) {
-              block.classList.add("partial-correct");
-            } else if (user) {
-              block.classList.add("incorrect");
-            }
-          }
-          if (isCorrect) correctCount++;
+        if (isCorrect) {
+          correctCount++;
+          setQuestionFeedback(q, "correct");
+        } else if (user) {
+          setQuestionFeedback(q, "incorrect");
         } else {
-          [block, feedbackBlock].forEach((el) => {
-            if (el) el.classList.remove("correct", "incorrect");
-          });
-          if (block) {
-            if (isCorrect) {
-              block.classList.add("correct");
-              correctCount++;
-            } else if (user) {
-              block.classList.add("incorrect");
-            }
-          }
-        }
-
-        const ca = document.getElementById("ca-" + q);
-        if (ca) {
-          const txt = correctAnswerText[q];
-          if (txt) {
-            ca.textContent = "Correct answer: " + txt;
-          }
+          setQuestionFeedback(q, "");
         }
       }
 
