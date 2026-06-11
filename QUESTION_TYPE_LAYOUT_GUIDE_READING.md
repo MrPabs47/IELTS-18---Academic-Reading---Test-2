@@ -128,6 +128,10 @@ Implementation rule for future tests:
 - For notes completion, summary completion, and sentence completion where the answer blank appears inside a sentence or note, prefer the numbered inline-answer style when the stable shell supports it: the question number is visually attached to the left side of the blank and the input remains inside the sentence or note line.
 - Numbered inline-answer blanks must preserve the original input name such as `name="q1"`, the wrapper `data-q` value, the matching feedback container such as `ca-1`, inline-answer current-question targeting, and feedback-only behaviour when a separate visible question block would create blank highlight panels.
 - Numbered inline-answer blanks must avoid duplicate visible question numbers and must not create large blank highlighted panels below the summary, sentence, or notes only to hold feedback.
+- Numbered inline text inputs can use the normal numbered inline-answer pattern: a visible wrapper carries `data-q`, the number is visually attached to the left side of the text input, and the text input preserves its `name="q#"`.
+- Numbered inline dropdowns must not use the same overlay-only pattern as text inputs. Native selects can render selected text differently from text inputs, especially in Chrome/Windows.
+- For numbered inline dropdowns, use an `inline-select-answer` pattern: the wrapper is `inline-flex`, the question number is a separate left segment, and the native `select` is a separate right segment. The selected letter must remain visible in the closed dropdown state, and the dropdown arrow must remain usable.
+- Do not rely only on `padding-left` inside a native select to make room for an overlaid question number; this can fail in Chrome/Windows and hide the selected letter. Treat this as a layout/display issue, not a scoring issue.
 - If a completion sentence already has a separate visible leading question number, do not also show the number inside the blank; choose one clean numbering style and keep the blank inline.
 - Bottom navigation part chips and counts must stay on one line. Use `white-space: nowrap`, `inline-flex`, suitable spacing, and horizontal overflow for question buttons if needed.
 - When a GT section has two texts, the question pane must clearly say which questions belong to which text. Add the heading style `Read “Text title” and answer Questions X to Y.` before each question group linked to a separate GT text.
@@ -239,12 +243,15 @@ Layout:
 - Show the question number before each dropdown.
 - Below the summary, create a separate bordered options box for the source word or phrase list.
 - Dropdowns should show both letter and phrase where possible.
+- For summary word-list dropdowns such as A-G, A-J, or A-C inside a sentence, the selected answer must be visibly readable before and after checking answers.
+- Use the `inline-select-answer` pattern for numbered inline word-list dropdowns: an `inline-flex` wrapper, a separate number segment, and a separate select segment. Do not use a text-input-style overlaid number on top of the native select.
+- Preserve the dropdown `name`, `data-q`, option values, and feedback-only `ca-#` containers.
 - Do not create large empty visible question blocks below the summary only to hold feedback.
 - If feedback containers are needed for `ca-*` IDs, they may be feedback-only and should not create visible blank panels.
 - Current-question highlighting should target the visible inline dropdown wrapper, not an empty feedback-only block.
 - Empty feedback-only containers should not receive current-question, correct, or incorrect styling that creates blank blue, green, or red areas.
 - Summary boxes should not have unnecessary blank vertical space or large minimum height unless required by the source layout.
-- Example lesson: IELTS 18 Academic Reading Test 3 Q5-Q8, Q24-Q26, and Q31-Q35 needed inline answer wrappers and feedback-only containers so selection and answer checking did not create blank highlighted areas. IELTS 17 Academic Reading Test 2 Q37-Q40 needed the A-G word list preserved in a bordered options box.
+- Example lesson: IELTS 18 Academic Reading Test 3 Q5-Q8, Q24-Q26, and Q31-Q35 needed inline answer wrappers and feedback-only containers so selection and answer checking did not create blank highlighted areas. IELTS 17 Academic Reading Test 2 Q37-Q40 needed the A-G word list preserved in a bordered options box. IELTS 16 Academic Reading Test 1 Q31-Q34 is now the preferred Academic Reading shell reference for numbered inline dropdowns: the summary title is `The ‘algorithmication’ of jobs`, the answers are inline A-G dropdowns, and the successful fix was the compact `inline-select-answer` pattern. Preserve `name="q31"` through `name="q34"`, matching `data-q` values, A-G options, and feedback-only `ca-31` through `ca-34` containers.
 
 ## Sentence completion
 
