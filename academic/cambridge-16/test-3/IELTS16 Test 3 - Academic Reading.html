@@ -1978,88 +1978,88 @@
 
     const answerKey = {
       1: "FALSE",
-      2: "FALSE",
-      3: "NOT GIVEN",
+      2: "NOT GIVEN",
+      3: "FALSE",
       4: "TRUE",
       5: "TRUE",
-      6: "FALSE",
-      7: "TRUE",
-      8: "violent",
-      9: "tool",
-      10: "meat",
-      11: "photographer",
-      12: "game",
-      13: "frustration",
-      14: "iv",
-      15: "vii",
-      16: "ii",
-      17: "v",
-      18: "i",
-      19: "viii",
-      20: "vi",
-      21: "city",
-      22: "priests",
-      23: "trench",
-      24: "location",
-      25: ["B", "D"],
-      26: ["B", "D"],
-      27: "B",
-      28: "D",
-      29: "C",
-      30: "D",
-      31: "G",
-      32: "E",
-      33: "C",
-      34: "F",
-      35: "B",
-      36: "A",
-      37: "C",
-      38: "A",
-      39: "B",
-      40: "C"
+      6: "lightweight",
+      7: "bronze",
+      8: "levels",
+      9: "hull",
+      10: "triangular",
+      11: "music",
+      12: "grain",
+      13: "towboats",
+      14: "D",
+      15: "C",
+      16: "F",
+      17: "H",
+      18: "G",
+      19: "B",
+      20: ["microorganisms", "micro-organisms"],
+      21: "reindeer",
+      22: "insects",
+      23: ["B", "C"],
+      24: ["B", "C"],
+      25: ["A", "C"],
+      26: ["A", "C"],
+      27: "NOT GIVEN",
+      28: "TRUE",
+      29: "TRUE",
+      30: "NOT GIVEN",
+      31: "FALSE",
+      32: "FALSE",
+      33: "H",
+      34: "D",
+      35: "G",
+      36: "C",
+      37: "A",
+      38: ["warm", "warm winter"],
+      39: "summer",
+      40: ["mustard", "mustard plant", "mustard plants"]
     };
 
     const correctAnswerText = {
       1: "FALSE",
-      2: "FALSE",
-      3: "NOT GIVEN",
+      2: "NOT GIVEN",
+      3: "FALSE",
       4: "TRUE",
       5: "TRUE",
-      6: "FALSE",
-      7: "TRUE",
-      8: "violent",
-      9: "tool",
-      10: "meat",
-      11: "photographer",
-      12: "game",
-      13: "frustration",
-      14: "iv",
-      15: "vii",
-      16: "ii",
-      17: "v",
-      18: "i",
-      19: "viii",
-      20: "vi",
-      21: "city",
-      22: "priests",
-      23: "trench",
-      24: "location",
-      25: "B / D",
-      26: "B / D",
-      27: "B",
-      28: "D",
-      29: "C",
-      30: "D",
-      31: "G",
-      32: "E",
-      33: "C",
-      34: "F",
-      35: "B",
-      36: "A",
-      37: "C",
-      38: "A",
-      39: "B",
-      40: "C"
+      6: "lightweight",
+      7: "bronze",
+      8: "levels",
+      9: "hull",
+      10: "triangular",
+      11: "music",
+      12: "grain",
+      13: "towboats",
+      14: "D",
+      15: "C",
+      16: "F",
+      17: "H",
+      18: "G",
+      19: "B",
+      20: "microorganisms / micro-organisms",
+      21: "reindeer",
+      22: "insects",
+      23: "B",
+      24: "C",
+      25: "A",
+      26: "C",
+      27: "NOT GIVEN",
+      28: "TRUE",
+      29: "TRUE",
+      30: "NOT GIVEN",
+      31: "FALSE",
+      32: "FALSE",
+      33: "H",
+      34: "D",
+      35: "G",
+      36: "C",
+      37: "A",
+      38: "warm / warm winter",
+      39: "summer",
+      40: "mustard / mustard plant(s)"
     };
 
     /********************
@@ -2938,10 +2938,17 @@
     }
 
     function getUserAnswer(qNum) {
-      if (qNum === 25 || qNum === 26) {
-        const pairedCheckboxes = document.querySelectorAll("input[type='checkbox'][name='q25_26']");
+      const chooseTwoGroupNames = {
+        23: "q23_24",
+        24: "q23_24",
+        25: "q25_26",
+        26: "q25_26"
+      };
+      if (chooseTwoGroupNames[qNum]) {
+        const groupName = chooseTwoGroupNames[qNum];
+        const pairedCheckboxes = document.querySelectorAll("input[type='checkbox'][name='" + groupName + "']");
         if (pairedCheckboxes.length > 0) {
-          return Array.from(document.querySelectorAll("input[type='checkbox'][name='q25_26']:checked")).map((c) => c.value).join(",");
+          return Array.from(document.querySelectorAll("input[type='checkbox'][name='" + groupName + "']:checked")).map((c) => c.value).join(",");
         }
       }
       const name = "q" + qNum;
@@ -2992,7 +2999,8 @@
     function evaluateQuestions() {
       let correctCount = 0;
       const chooseTwoGroups = {
-        25: { groupName: "q25_26", questions: [25, 26], correctLetters: ["B", "D"] }
+        23: { groupName: "q23_24", questions: [23, 24], correctLetters: ["B", "C"] },
+        25: { groupName: "q25_26", questions: [25, 26], correctLetters: ["A", "C"] }
       };
       const groupedQuestions = new Set(
         Object.values(chooseTwoGroups).flatMap((group) => group.questions)
