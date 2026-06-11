@@ -2122,89 +2122,102 @@ E     many        F     hard                      G     combined            H   
     };
 
     const answerKey = {
-      1: "FALSE",
-      2: "NOT GIVEN",
-      3: "FALSE",
-      4: "TRUE",
-      5: "TRUE",
-      6: "lightweight",
-      7: "bronze",
-      8: "levels",
-      9: "hull",
-      10: "triangular",
-      11: "music",
-      12: "grain",
-      13: "towboats",
-      14: "D",
-      15: "C",
-      16: "F",
-      17: "H",
-      18: "G",
-      19: "B",
-      20: ["microorganisms", "micro-organisms"],
-      21: "reindeer",
-      22: "insects",
-      23: ["B", "C"],
-      24: ["B", "C"],
-      25: ["A", "C"],
-      26: ["A", "C"],
-      27: "NOT GIVEN",
-      28: "TRUE",
-      29: "TRUE",
-      30: "NOT GIVEN",
-      31: "FALSE",
-      32: "FALSE",
-      33: "H",
-      34: "D",
-      35: "G",
-      36: "C",
-      37: "A",
-      38: ["warm", "warm winter"],
-      39: "summer",
-      40: ["mustard", "mustard plant", "mustard plants"]
+      1: "posts",
+      2: "canal",
+      3: "ventilation",
+      4: "lid",
+      5: "weight",
+      6: "climbing",
+      7: "FALSE",
+      8: "NOT GIVEN",
+      9: "FALSE",
+      10: "TRUE",
+      11: "gold",
+      12: [
+        "architect",
+        "the architect",
+        "architect name",
+        "the architect name",
+        "architect's",
+        "the architect's",
+        "architect’s",
+        "the architect’s",
+        "architect's name",
+        "the architect's name",
+        "architect’s name",
+        "the architect’s name"
+      ],
+      13: ["harbour", "the harbour", "harbor", "the harbor"],
+      14: "A",
+      15: "B",
+      16: "D",
+      17: "B",
+      18: "D",
+      19: "H",
+      20: "F",
+      21: "B",
+      22: "C",
+      23: "YES",
+      24: "NO",
+      25: "NOT GIVEN",
+      26: "YES",
+      27: "iii",
+      28: "vi",
+      29: "ii",
+      30: "i",
+      31: "vii",
+      32: "v",
+      33: "C",
+      34: "B",
+      35: "A",
+      36: "NO",
+      37: "NOT GIVEN",
+      38: "YES",
+      39: "NO",
+      40: "YES"
     };
 
     const correctAnswerText = {
-      1: "FALSE",
-      2: "NOT GIVEN",
-      3: "FALSE",
-      4: "TRUE",
-      5: "TRUE",
-      6: "lightweight",
-      7: "bronze",
-      8: "levels",
-      9: "hull",
-      10: "triangular",
-      11: "music",
-      12: "grain",
-      13: "towboats",
-      14: "D",
-      15: "C",
-      16: "F",
-      17: "H",
-      18: "G",
-      19: "B",
-      20: "microorganisms / micro-organisms",
-      21: "reindeer",
-      22: "insects",
-      23: "B",
-      24: "C",
-      25: "A",
-      26: "C",
-      27: "NOT GIVEN",
-      28: "TRUE",
-      29: "TRUE",
-      30: "NOT GIVEN",
-      31: "FALSE",
-      32: "FALSE",
-      33: "H",
-      34: "D",
-      35: "G",
-      36: "C",
-      37: "A",
-      38: "warm / warm winter",
-      39: "summer",
-      40: "mustard / mustard plant(s)"
+      1: "posts",
+      2: "canal",
+      3: "ventilation",
+      4: "lid",
+      5: "weight",
+      6: "climbing",
+      7: "FALSE",
+      8: "NOT GIVEN",
+      9: "FALSE",
+      10: "TRUE",
+      11: "gold",
+      12: "architect / architect’s name",
+      13: "harbour / harbor",
+      14: "A",
+      15: "B",
+      16: "D",
+      17: "B",
+      18: "D",
+      19: "H",
+      20: "F",
+      21: "B",
+      22: "C",
+      23: "YES",
+      24: "NO",
+      25: "NOT GIVEN",
+      26: "YES",
+      27: "iii",
+      28: "vi",
+      29: "ii",
+      30: "i",
+      31: "vii",
+      32: "v",
+      33: "C",
+      34: "B",
+      35: "A",
+      36: "NO",
+      37: "NOT GIVEN",
+      38: "YES",
+      39: "NO",
+      40: "YES"
     };
 
     /********************
@@ -2710,9 +2723,6 @@ E     many        F     hard                      G     combined            H   
       if (!qPane) return;
 
       stampInlineInputNumbers();
-      enforceChooseTwoLimit("q23_24");
-      enforceChooseTwoLimit("q25_26");
-
       // Listen to changes on all inputs/selects/radios
       qPane
         .querySelectorAll("select, input[type='text'], input[type='radio']")
@@ -3083,12 +3093,7 @@ E     many        F     hard                      G     combined            H   
     }
 
     function getUserAnswer(qNum) {
-      const chooseTwoGroupNames = {
-        23: "q23_24",
-        24: "q23_24",
-        25: "q25_26",
-        26: "q25_26"
-      };
+      const chooseTwoGroupNames = {};
       if (chooseTwoGroupNames[qNum]) {
         const groupName = chooseTwoGroupNames[qNum];
         const pairedCheckboxes = document.querySelectorAll("input[type='checkbox'][name='" + groupName + "']");
@@ -3143,10 +3148,7 @@ E     many        F     hard                      G     combined            H   
 
     function evaluateQuestions() {
       let correctCount = 0;
-      const chooseTwoGroups = {
-        23: { groupName: "q23_24", questions: [23, 24], correctLetters: ["B", "C"] },
-        25: { groupName: "q25_26", questions: [25, 26], correctLetters: ["A", "C"] }
-      };
+      const chooseTwoGroups = {};
       const groupedQuestions = new Set(
         Object.values(chooseTwoGroups).flatMap((group) => group.questions)
       );
