@@ -1206,7 +1206,7 @@
 
     .diagram-answer-row {
       display: grid;
-      grid-template-columns: minmax(44px, auto) minmax(220px, 1fr) minmax(130px, 180px) minmax(120px, auto);
+      grid-template-columns: minmax(44px, auto) minmax(220px, 1fr) minmax(120px, auto);
       align-items: center;
       gap: 10px;
       margin: 0;
@@ -1217,10 +1217,13 @@
       line-height: 1.45;
     }
 
-    .diagram-answer-row input {
-      width: 100%;
+    .diagram-answer-prompt input {
+      width: 12em;
+      max-width: 100%;
+      margin: 0 4px;
       font-family: inherit;
       font-size: 0.95rem;
+      vertical-align: baseline;
     }
 
     .word-bank-grid {
@@ -1246,7 +1249,6 @@
       .diagram-answer-row {
         grid-template-columns: minmax(36px, auto) 1fr;
       }
-      .diagram-answer-row input,
       .diagram-answer-row .correct-answer-text {
         grid-column: 2 / -1;
       }
@@ -1616,38 +1618,32 @@
               <div class="diagram-answer-prompts" aria-label="Answers for Questions 1 to 6">
                 <div class="question-block diagram-answer-row" data-q="1">
                   <span class="question-number-label">1</span>
-                  <label class="diagram-answer-prompt" for="q1-input">______ to direct the tunnelling</label>
-                  <input id="q1-input" type="text" name="q1" />
+                  <label class="diagram-answer-prompt" for="q1-input"><input id="q1-input" type="text" name="q1" /> to direct the tunnelling</label>
                   <div class="correct-answer-text" id="ca-1"></div>
                 </div>
                 <div class="question-block diagram-answer-row" data-q="2">
                   <span class="question-number-label">2</span>
-                  <label class="diagram-answer-prompt" for="q2-input">water runs into a ______ used by local people</label>
-                  <input id="q2-input" type="text" name="q2" />
+                  <label class="diagram-answer-prompt" for="q2-input">water runs into a <input id="q2-input" type="text" name="q2" /> used by local people</label>
                   <div class="correct-answer-text" id="ca-2"></div>
                 </div>
                 <div class="question-block diagram-answer-row" data-q="3">
                   <span class="question-number-label">3</span>
-                  <label class="diagram-answer-prompt" for="q3-input">vertical shafts to remove earth and for ______</label>
-                  <input id="q3-input" type="text" name="q3" />
+                  <label class="diagram-answer-prompt" for="q3-input">vertical shafts to remove earth and for <input id="q3-input" type="text" name="q3" /></label>
                   <div class="correct-answer-text" id="ca-3"></div>
                 </div>
                 <div class="question-block diagram-answer-row" data-q="4">
                   <span class="question-number-label">4</span>
-                  <label class="diagram-answer-prompt" for="q4-input">______ made of wood or stone</label>
-                  <input id="q4-input" type="text" name="q4" />
+                  <label class="diagram-answer-prompt" for="q4-input"><input id="q4-input" type="text" name="q4" /> made of wood or stone</label>
                   <div class="correct-answer-text" id="ca-4"></div>
                 </div>
                 <div class="question-block diagram-answer-row" data-q="5">
                   <span class="question-number-label">5</span>
-                  <label class="diagram-answer-prompt" for="q5-input">______ attached to the plumb line</label>
-                  <input id="q5-input" type="text" name="q5" />
+                  <label class="diagram-answer-prompt" for="q5-input"><input id="q5-input" type="text" name="q5" /> attached to the plumb line</label>
                   <div class="correct-answer-text" id="ca-5"></div>
                 </div>
                 <div class="question-block diagram-answer-row" data-q="6">
                   <span class="question-number-label">6</span>
-                  <label class="diagram-answer-prompt" for="q6-input">handholds and footholds used for ______</label>
-                  <input id="q6-input" type="text" name="q6" />
+                  <label class="diagram-answer-prompt" for="q6-input">handholds and footholds used for <input id="q6-input" type="text" name="q6" /></label>
                   <div class="correct-answer-text" id="ca-6"></div>
                 </div>
               </div>
