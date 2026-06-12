@@ -1269,10 +1269,64 @@
     function buildFooter(){ footerMain.innerHTML=''; Object.entries(sectionRanges).forEach(([sec,range])=>{ const part=document.createElement('div'); part.className='part-group'; part.dataset.section=sec; part.innerHTML=`<div class="part-progress"><div class="part-progress-fill" id="progress-${sec}"></div></div><div class="part-top"><span class="part-label">${range.label}</span><span class="count" id="count-${sec}">0 of ${range.to-range.from+1}</span><span class="tick" id="tick-${sec}">✓</span><div class="question-nav-row" id="nav-${sec}"></div></div>`; part.addEventListener('click',(event)=>{ if(event.target.closest('.qnav')) return; switchSection(Number(sec)); }); footerMain.appendChild(part); const navRow=part.querySelector(`#nav-${sec}`); for(let q=range.from;q<=range.to;q+=1){ const btn=document.createElement('button'); btn.type='button'; btn.className='qnav'; btn.dataset.q=q; btn.textContent=q; btn.addEventListener('click',()=>jumpToQuestion(q)); navRow.appendChild(btn);} }); updateFooterState(); }
     function updateFooterState(){ Object.entries(sectionRanges).forEach(([sec,range])=>{ const total=range.to-range.from+1; let answered=0; for(let q=range.from;q<=range.to;q+=1){ if(isAnswered(q)) answered+=1; const btn=footerMain.querySelector(`.qnav[data-q="${q}"]`); if(btn){ btn.classList.toggle('answered', isAnswered(q)); btn.classList.toggle('current', q===currentQuestion); } } const countEl=document.getElementById(`count-${sec}`); if(countEl) countEl.textContent=`${answered} of ${total}`; const progressEl=document.getElementById(`progress-${sec}`); if(progressEl) progressEl.style.width=`${(answered/total)*100}%`; const tickEl=document.getElementById(`tick-${sec}`); if(tickEl) tickEl.style.display = answered===total ? 'inline' : 'none'; const groupEl=footerMain.querySelector(`.part-group[data-section="${sec}"]`); if(groupEl){ groupEl.classList.toggle('active', Number(sec)===activeSection); groupEl.classList.toggle('complete', answered===total); } }); footerMain.dataset.activeSection=String(activeSection); }
     function highlightCurrentQuestion(q){ document.querySelectorAll('.question-block').forEach((block)=>block.classList.remove('current')); const group=groupedQuestionMap[q]; let block=document.querySelector(`.question-block[data-q="${q}"]`); if(!block && group) block=document.querySelector(`.question-block[data-qgroup="${group}"]`); if(block) block.classList.add('current'); }
+    function setCurrentQuestion(q){ const next=Number(q); if(!Number.isInteger(next) || next<1 || next>40) return; currentQuestion=next; updateFooterState(); highlightCurrentQuestion(currentQuestion); }
+    function getQuestionFromTarget(target){
+      if(!(target instanceof Element)) return null;
+      const clearButton=target.closest('[data-clear-q]');
+      if(clearButton) return Number(clearButton.dataset.clearQ);
+      const answerHolder=target.closest('.inline-answer[data-q], .drag-slot[data-q]');
+      if(answerHolder) return Number(answerHolder.dataset.q);
+      const namedControl=target.closest('input[name], select[name]');
+      if(namedControl){
+        const groupStarts={ q11_12:11, q13_14:13, q21_22:21, q23_24:23 };
+        if(groupStarts[namedControl.name]) return groupStarts[namedControl.name];
+        const match=namedControl.name.match(/^q(\d+)/);
+        if(match) return Number(match[1]);
+      }
+      const block=target.closest('.question-block[data-q]');
+      if(block) return Number(block.dataset.q);
+      const groupedBlock=target.closest('.question-block[data-qgroup]');
+      if(groupedBlock){
+        const match=groupedBlock.dataset.qgroup.match(/^(\d+)/);
+        if(match) return Number(match[1]);
+      }
+      return null;
+    }
+    function getQuestionFocusTarget(q){
+      const textInput=document.querySelector(`input[type="text"][name="q${q}"]`);
+      if(textInput) return textInput;
+      const dragSlot=document.querySelector(`.drag-slot[data-q="${q}"]`);
+      if(dragSlot) return dragSlot;
+      const select=document.querySelector(`select[name="q${q}"]:not(.sr-only)`);
+      if(select) return select;
+      const radioChecked=document.querySelector(`input[type="radio"][name="q${q}"]:checked`);
+      if(radioChecked) return radioChecked;
+      const radioFirst=document.querySelector(`input[type="radio"][name="q${q}"]`);
+      if(radioFirst) return radioFirst;
+      const twoAnswerGroup=getTwoAnswerGroupForQuestion(q);
+      if(twoAnswerGroup) return document.querySelector(`.question-block[data-qgroup="${twoAnswerGroup.numbers[0]}-${twoAnswerGroup.numbers[1]}"]`);
+      const group=groupedQuestionMap[q];
+      if(group) return document.querySelector(`.question-block[data-qgroup="${group}"]`);
+      return document.querySelector(`.question-block[data-q="${q}"]`);
+    }
     function switchSection(section){ activeSection=section; document.querySelectorAll('.section-panel').forEach((panel)=>panel.classList.toggle('active', Number(panel.dataset.section)===section)); const range=sectionRanges[section]; if(currentQuestion<range.from || currentQuestion>range.to) currentQuestion=range.from; updateSectionAudio(); updateFooterState(); highlightCurrentQuestion(currentQuestion); prevSectionBtn.disabled = section===1; nextSectionBtn.disabled = section===4; }
-    function jumpToQuestion(q){ const section=getSectionForQuestion(q); switchSection(section); currentQuestion=q; updateFooterState(); highlightCurrentQuestion(q); const group=groupedQuestionMap[q]; let selector=`.question-block[data-q="${q}"]`; if(group) selector=`.question-block[data-qgroup="${group}"]`; const block=document.querySelector(selector); if(block) block.scrollIntoView({behavior:'smooth', block:'start'}); }
-    function bindInputs(){ document.querySelectorAll('input[type="text"], select, input[type="radio"], input[type="checkbox"]').forEach((el)=>{ el.addEventListener('change', onAnswerChange); if(el.type==='text') el.addEventListener('input', onAnswerChange); }); ['q11_12','q13_14','q21_22','q23_24'].forEach((groupName)=>{ document.querySelectorAll(`input[name="${groupName}"]`).forEach((el)=>{ el.addEventListener('change', ()=>{ const checked=getTwoAnswerSelection(groupName); if(checked.length>2) el.checked=false; onAnswerChange(); }); }); }); }
-    function onAnswerChange(evt){ if(evt && evt.target && evt.target.name){ const name=evt.target.name; if(name==='q11_12') currentQuestion=11; else if(name==='q13_14') currentQuestion=13; else if(name==='q21_22') currentQuestion=21; else if(name==='q23_24') currentQuestion=23; else if(name.startsWith('q')){ const n=parseInt(name.replace(/\D/g,''),10); if(!isNaN(n)) currentQuestion=n; } } updateFooterState(); highlightCurrentQuestion(currentQuestion); }
+    function jumpToQuestion(q){ const section=getSectionForQuestion(q); switchSection(section); setCurrentQuestion(q); const target=getQuestionFocusTarget(q); if(target){ const scrollTarget=target.closest('.drag-question-row, .checkbox-option, .radio-option') || target; scrollTarget.scrollIntoView({behavior:'smooth', block:'center'}); if(typeof target.focus==='function' && !target.classList.contains('sr-only')) target.focus({preventScroll:true}); } }
+    function bindInputs(){
+      document.querySelectorAll('input[type="text"], select, input[type="radio"], input[type="checkbox"]').forEach((el)=>{
+        const syncCurrent=(event)=>{ const q=getQuestionFromTarget(event.target); if(q) setCurrentQuestion(q); };
+        el.addEventListener('focus', syncCurrent);
+        el.addEventListener('click', syncCurrent);
+        el.addEventListener('change', onAnswerChange);
+        if(el.type==='text') el.addEventListener('input', onAnswerChange);
+      });
+      ['q11_12','q13_14','q21_22','q23_24'].forEach((groupName)=>{ document.querySelectorAll(`input[name="${groupName}"]`).forEach((el)=>{ el.addEventListener('change', (event)=>{ const checked=getTwoAnswerSelection(groupName); if(checked.length>2) el.checked=false; onAnswerChange(event); }); }); });
+      document.querySelectorAll('.drag-slot, .drag-clear').forEach((el)=>{
+        const syncCurrent=(event)=>{ const q=getQuestionFromTarget(event.target); if(q) setCurrentQuestion(q); };
+        el.addEventListener('focus', syncCurrent);
+        el.addEventListener('click', syncCurrent);
+      });
+    }
+    function onAnswerChange(evt){ const q=evt ? getQuestionFromTarget(evt.target) : null; if(q) setCurrentQuestion(q); else { updateFooterState(); highlightCurrentQuestion(currentQuestion); } }
     function setupWheelFallback(){
       document.addEventListener('wheel',(event)=>{
         if(event.defaultPrevented || event.ctrlKey || Math.abs(event.deltaY) < 1) return;
