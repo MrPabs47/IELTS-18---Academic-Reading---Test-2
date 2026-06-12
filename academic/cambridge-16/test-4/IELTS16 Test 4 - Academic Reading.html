@@ -1198,7 +1198,7 @@
       background: var(--bg);
     }
 
-    .diagram-answer-table {
+    .diagram-answer-prompts {
       display: grid;
       gap: 8px;
       margin: 12px 0 18px;
@@ -1206,11 +1206,15 @@
 
     .diagram-answer-row {
       display: grid;
-      grid-template-columns: minmax(44px, auto) minmax(130px, 220px) 1fr;
+      grid-template-columns: minmax(44px, auto) minmax(220px, 1fr) minmax(130px, 180px) minmax(120px, auto);
       align-items: center;
       gap: 10px;
       margin: 0;
       padding: 8px 10px;
+    }
+
+    .diagram-answer-prompt {
+      line-height: 1.45;
     }
 
     .diagram-answer-row input {
@@ -1219,12 +1223,32 @@
       font-size: 0.95rem;
     }
 
+    .word-bank-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+      gap: 8px 12px;
+      margin: 14px 0 16px;
+      padding: 12px;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      background: var(--bg);
+    }
+
+    .word-bank-item {
+      padding: 6px 8px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: var(--bg-secondary);
+      line-height: 1.35;
+    }
+
     @media (max-width: 640px) {
       .diagram-answer-row {
         grid-template-columns: minmax(36px, auto) 1fr;
       }
+      .diagram-answer-row input,
       .diagram-answer-row .correct-answer-text {
-        grid-column: 1 / -1;
+        grid-column: 2 / -1;
       }
     }
 /* Results overlay */
@@ -1589,34 +1613,40 @@
                 <img class="question-diagram" src="./q4-6-roman-qanat-shaft.png" alt="Cross-section of a Roman Qanat Shaft diagram for Questions 4-6" />
               </figure>
 
-              <div class="diagram-answer-table" aria-label="Answers for Questions 1 to 6">
+              <div class="diagram-answer-prompts" aria-label="Answers for Questions 1 to 6">
                 <div class="question-block diagram-answer-row" data-q="1">
-                  <label for="q1-input"><span class="question-number-label">1</span></label>
+                  <span class="question-number-label">1</span>
+                  <label class="diagram-answer-prompt" for="q1-input">______ to direct the tunnelling</label>
                   <input id="q1-input" type="text" name="q1" />
                   <div class="correct-answer-text" id="ca-1"></div>
                 </div>
                 <div class="question-block diagram-answer-row" data-q="2">
-                  <label for="q2-input"><span class="question-number-label">2</span></label>
+                  <span class="question-number-label">2</span>
+                  <label class="diagram-answer-prompt" for="q2-input">water runs into a ______ used by local people</label>
                   <input id="q2-input" type="text" name="q2" />
                   <div class="correct-answer-text" id="ca-2"></div>
                 </div>
                 <div class="question-block diagram-answer-row" data-q="3">
-                  <label for="q3-input"><span class="question-number-label">3</span></label>
+                  <span class="question-number-label">3</span>
+                  <label class="diagram-answer-prompt" for="q3-input">vertical shafts to remove earth and for ______</label>
                   <input id="q3-input" type="text" name="q3" />
                   <div class="correct-answer-text" id="ca-3"></div>
                 </div>
                 <div class="question-block diagram-answer-row" data-q="4">
-                  <label for="q4-input"><span class="question-number-label">4</span></label>
+                  <span class="question-number-label">4</span>
+                  <label class="diagram-answer-prompt" for="q4-input">______ made of wood or stone</label>
                   <input id="q4-input" type="text" name="q4" />
                   <div class="correct-answer-text" id="ca-4"></div>
                 </div>
                 <div class="question-block diagram-answer-row" data-q="5">
-                  <label for="q5-input"><span class="question-number-label">5</span></label>
+                  <span class="question-number-label">5</span>
+                  <label class="diagram-answer-prompt" for="q5-input">______ attached to the plumb line</label>
                   <input id="q5-input" type="text" name="q5" />
                   <div class="correct-answer-text" id="ca-5"></div>
                 </div>
                 <div class="question-block diagram-answer-row" data-q="6">
-                  <label for="q6-input"><span class="question-number-label">6</span></label>
+                  <span class="question-number-label">6</span>
+                  <label class="diagram-answer-prompt" for="q6-input">handholds and footholds used for ______</label>
                   <input id="q6-input" type="text" name="q6" />
                   <div class="correct-answer-text" id="ca-6"></div>
                 </div>
@@ -1758,9 +1788,16 @@
               <div class="summary-box">
                 <div class="summary-box-title">Studies on digital screen use</div>
                 <p>There have been many studies on digital screen use, showing some <span class="inline-input inline-select-answer" data-q="18"><select class="matching-select" name="q18"><option value=""></option><option value="A">A</option><option value="B">B</option><option value="C">C</option><option value="D">D</option><option value="E">E</option><option value="F">F</option><option value="G">G</option><option value="H">H</option></select></span> trends. Psychologist Anne Mangen gave high-school students a short story to read, half using digital and half using print mediums. Her team then used a question-and-answer technique to find out how <span class="inline-input inline-select-answer" data-q="19"><select class="matching-select" name="q19"><option value=""></option><option value="A">A</option><option value="B">B</option><option value="C">C</option><option value="D">D</option><option value="E">E</option><option value="F">F</option><option value="G">G</option><option value="H">H</option></select></span> each group’s understanding of the plot was. The findings showed a clear pattern in the responses, with those who read screens finding the order of information <span class="inline-input inline-select-answer" data-q="20"><select class="matching-select" name="q20"><option value=""></option><option value="A">A</option><option value="B">B</option><option value="C">C</option><option value="D">D</option><option value="E">E</option><option value="F">F</option><option value="G">G</option><option value="H">H</option></select></span> to recall. Studies by Ziming Liu show that students are tending to read <span class="inline-input inline-select-answer" data-q="21"><select class="matching-select" name="q21"><option value=""></option><option value="A">A</option><option value="B">B</option><option value="C">C</option><option value="D">D</option><option value="E">E</option><option value="F">F</option><option value="G">G</option><option value="H">H</option></select></span> words and phrases in a text to save time. This approach, she says, gives the reader a superficial understanding of the <span class="inline-input inline-select-answer" data-q="22"><select class="matching-select" name="q22"><option value=""></option><option value="A">A</option><option value="B">B</option><option value="C">C</option><option value="D">D</option><option value="E">E</option><option value="F">F</option><option value="G">G</option><option value="H">H</option></select></span> content of material, leaving no time for thought.</p>
-                <div style="white-space: pre-wrap; margin-top: 10px;">A     fast           B     isolated                C     emotional            D     worrying
-
-E     many        F     hard                      G     combined            H     thorough</div>
+              </div>
+              <div class="word-bank-grid" aria-label="Word bank for Questions 18 to 22">
+                <div class="word-bank-item">A fast</div>
+                <div class="word-bank-item">B isolated</div>
+                <div class="word-bank-item">C emotional</div>
+                <div class="word-bank-item">D worrying</div>
+                <div class="word-bank-item">E many</div>
+                <div class="word-bank-item">F hard</div>
+                <div class="word-bank-item">G combined</div>
+                <div class="word-bank-item">H thorough</div>
               </div>
               <div class="question-block feedback-only" data-q="18"><div class="correct-answer-text" id="ca-18"></div></div>
               <div class="question-block feedback-only" data-q="19"><div class="correct-answer-text" id="ca-19"></div></div>
