@@ -1,0 +1,73 @@
+1   DW30 7YZ
+
+2   24(th) April
+
+3   dentist
+
+4   parking
+
+5   Claxby
+
+6   late
+
+7   evening
+
+8   supermarket
+
+9   pollution
+
+10   storage
+
+11   C
+
+12   A
+
+13   A
+
+14&15   B, E
+
+16   B
+
+17   G
+
+18   D
+
+19   A
+
+20   F
+
+21   A
+
+22   B
+
+23   A
+
+24   C
+
+25   B
+
+26   A
+
+27&28   B, E
+
+29&30   A, C
+
+31   fences
+
+32   family
+
+33   helicopters
+
+34   stress
+
+35   sides
+
+36   breathing
+
+37   feet
+
+38   employment
+
+39   weapons
+
+40   tourism
