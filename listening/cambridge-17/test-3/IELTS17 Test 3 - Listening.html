@@ -1,0 +1,1651 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>IELTS Pabs Listening Test 3 – IELTS 17</title>
+  <style>
+    :root {
+      --bg: #ffffff;
+      --bg-secondary: #f5f5f5;
+      --panel: #ffffff;
+      --text: #111111;
+      --text-soft: #555555;
+      --accent: #0057b8;
+      --accent-soft: #e5f0ff;
+      --border: #dddddd;
+      --correct: #1b5e20;
+      --incorrect: #b71c1c;
+      --shadow-soft: 0 2px 10px rgba(0,0,0,0.08);
+      --font-size-base: 15px;
+      --footer-h: 72px;
+      --header-h: 66px;
+    }
+    * { box-sizing: border-box; }
+    html, body {
+      overflow-x: hidden;
+      overflow-y: auto;
+      height: auto;
+    }
+    body {
+      margin: 0;
+      font-family: Arial, Helvetica, system-ui, -apple-system, "Segoe UI", sans-serif;
+      font-size: var(--font-size-base);
+      background: var(--bg);
+      color: var(--text);
+      overscroll-behavior-x: none;
+      overscroll-behavior-y: auto;
+    }
+    body.font-large { --font-size-base: 17px; }
+    body.font-xlarge { --font-size-base: 19px; }
+    body[data-theme="white-on-black"] {
+      --bg: #000000;
+      --bg-secondary: #111111;
+      --panel: #0b0b0b;
+      --text: #ffffff;
+      --text-soft: #dddddd;
+      --accent: #9fd0ff;
+      --accent-soft: #12213f;
+      --border: #333333;
+      --correct: #7dd97d;
+      --incorrect: #ff8a80;
+      --shadow-soft: 0 2px 12px rgba(0,0,0,0.45);
+    }
+    body[data-theme="yellow-on-black"] {
+      --bg: #000000;
+      --bg-secondary: #111111;
+      --panel: #0b0b0b;
+      --text: #fff36a;
+      --text-soft: #fff7ae;
+      --accent: #fff36a;
+      --accent-soft: #3a3600;
+      --border: #55512a;
+      --correct: #a7ff83;
+      --incorrect: #ffb3a7;
+      --shadow-soft: 0 2px 12px rgba(0,0,0,0.45);
+    }
+    body[data-theme="white-on-black"] .notes-panel,
+    body[data-theme="white-on-black"] .table-panel,
+    body[data-theme="white-on-black"] .flow-step,
+    body[data-theme="white-on-black"] .word-box,
+    body[data-theme="white-on-black"] .radio-option,
+    body[data-theme="white-on-black"] .checkbox-option,
+    body[data-theme="white-on-black"] .drag-choice,
+    body[data-theme="white-on-black"] .drag-slot,
+    body[data-theme="white-on-black"] .inline-answer input,
+    body[data-theme="white-on-black"] select,
+    body[data-theme="white-on-black"] #studentNameInput,
+    body[data-theme="white-on-black"] #sectionAudio,
+    body[data-theme="yellow-on-black"] .notes-panel,
+    body[data-theme="yellow-on-black"] .table-panel,
+    body[data-theme="yellow-on-black"] .flow-step,
+    body[data-theme="yellow-on-black"] .word-box,
+    body[data-theme="yellow-on-black"] .radio-option,
+    body[data-theme="yellow-on-black"] .checkbox-option,
+    body[data-theme="yellow-on-black"] .drag-choice,
+    body[data-theme="yellow-on-black"] .drag-slot,
+    body[data-theme="yellow-on-black"] .inline-answer input,
+    body[data-theme="yellow-on-black"] select,
+    body[data-theme="yellow-on-black"] #studentNameInput,
+    body[data-theme="yellow-on-black"] #sectionAudio {
+      background: #111111;
+      color: var(--text);
+      border-color: var(--border);
+    }
+    body[data-theme="white-on-black"] .notes-panel .title-row,
+    body[data-theme="white-on-black"] .table-panel .title-row,
+    body[data-theme="yellow-on-black"] .notes-panel .title-row,
+    body[data-theme="yellow-on-black"] .table-panel .title-row {
+      background: #1a1a1a;
+      color: var(--text);
+      border-color: var(--border);
+    }
+    body[data-theme="white-on-black"] .inline-answer::before,
+    body[data-theme="yellow-on-black"] .inline-answer::before {
+      background: #1b1b1b;
+      color: var(--text-soft);
+      border-color: var(--border);
+    }
+    .sr-only {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      padding: 0;
+      margin: -1px;
+      overflow: hidden;
+      clip: rect(0,0,0,0);
+      white-space: nowrap;
+      border: 0;
+    }
+    #modeScreen, #resultsOverlay, #optionsOverlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.58);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 2000;
+    }
+    #resultsOverlay, #optionsOverlay { display: none; }
+    .dialog {
+      background: var(--panel);
+      color: var(--text);
+      width: min(540px, 95vw);
+      padding: 24px 28px;
+      border-radius: 14px;
+      box-shadow: var(--shadow-soft);
+      border: 1px solid var(--border);
+    }
+    .dialog h1, .dialog h2 { margin: 0 0 10px; font-size: 1.4rem; }
+    .dialog p { margin: 0 0 12px; color: var(--text-soft); line-height: 1.5; }
+    .mode-buttons { display: flex; gap: 12px; flex-wrap: wrap; margin-top: 10px; }
+    .mode-btn {
+      flex: 1 1 160px;
+      padding: 10px 14px;
+      border-radius: 999px;
+      border: 1px solid var(--accent);
+      background: var(--accent-soft);
+      color: var(--accent);
+      font-weight: 700;
+      cursor: pointer;
+      text-align: center;
+    }
+    .mode-btn.secondary { background: transparent; }
+    #testStartScreen {
+      display: none;
+      margin-top: 14px;
+      padding-top: 14px;
+      border-top: 1px solid var(--border);
+    }
+    #studentNameInput {
+      width: 100%;
+      max-width: 360px;
+      padding: 8px 10px;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      font-size: 0.95rem;
+      margin-bottom: 10px;
+      background: var(--panel);
+      color: var(--text);
+    }
+    #app { display: none; }
+    .top-bar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: var(--header-h);
+      background: var(--bg-secondary);
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      padding: 0 16px;
+      z-index: 1000;
+    }
+    .top-left {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      min-width: 0;
+      flex: 1;
+    }
+    .logo-link {
+      text-decoration: none;
+      color: inherit;
+      flex-shrink: 0;
+    }
+    .logo {
+      font-weight: 800;
+      font-size: 1.35rem;
+      letter-spacing: 0.06em;
+      white-space: nowrap;
+    }
+
+    /* IELTS Pabs animated logo */
+    .logo.home-link,
+    .logo-link .logo {
+      transition: color 0.2s ease, opacity 0.2s ease;
+    }
+
+    .logo.home-link:hover,
+    .home-link:hover,
+    .logo-link:hover .logo {
+      color: #e31837;
+      opacity: 1;
+    }
+
+    .logo-char {
+      display: inline-block;
+      opacity: 1;
+      transform: none;
+      filter: none;
+      will-change: transform, opacity, filter;
+    }
+
+    .logo.is-animating .logo-char {
+      animation: logoReveal 0.45s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+      animation-delay: calc(var(--logo-char-index) * 200ms);
+    }
+
+    @keyframes logoReveal {
+      from {
+        opacity: 0;
+        transform: translateY(8px);
+        filter: blur(4px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+        filter: blur(0);
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .logo-char {
+        opacity: 1;
+        transform: none;
+        filter: none;
+        animation: none;
+      }
+    }
+    .info-strip {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      min-width: 0;
+      flex-wrap: wrap;
+      row-gap: 2px;
+      color: var(--text-soft);
+      font-size: 0.93rem;
+    }
+    .info-strip strong { color: var(--text); font-weight: 700; }
+    .info-pill { white-space: nowrap; }
+    .top-right {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      flex-shrink: 0;
+      white-space: nowrap;
+    }
+    #timerContainer { display: none; font-weight: 700; }
+    .timer-warning { color: #c62828; }
+    .icon-group { display: flex; align-items: center; gap: 8px; }
+    .icon, .icon-button {
+      width: 28px;
+      height: 28px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--text-soft);
+      background: none;
+      border: none;
+      cursor: pointer;
+      padding: 0;
+      flex-shrink: 0;
+    }
+    .icon svg, .icon-button svg {
+      width: 22px;
+      height: 22px;
+      stroke: currentColor;
+      fill: none;
+      stroke-width: 1.9;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+    .icon-button:hover, .logo-link:hover .logo { color: var(--accent); }
+    #fullscreenBtn.is-active { color: var(--accent); }
+    #fullscreenBtn:disabled { opacity: 0.6; cursor: not-allowed; }
+    .icon-button.with-label {
+      gap: 6px;
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      padding: 6px 10px;
+      font-size: 0.82rem;
+      line-height: 1;
+    }
+    #fullscreenBtn {
+      padding: 4px 6px;
+      border: 1px solid var(--border);
+    }
+    #fullscreenBtnLabel { display: none; }
+    #fullscreenBtn svg {
+      width: 18px;
+      height: 18px;
+    }
+    #fullscreenSupportNote {
+      display: none;
+      margin-top: 8px;
+      font-size: 0.82rem;
+      color: var(--text-soft);
+    }
+    #fullscreenLockOverlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.72);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 2100;
+      pointer-events: all;
+    }
+    #fullscreenLockPanel {
+      width: min(520px, 92vw);
+      background: var(--panel);
+      color: var(--text);
+      border-radius: 12px;
+      padding: 20px 22px;
+      box-shadow: var(--shadow-soft);
+      text-align: center;
+      border: 1px solid var(--border);
+    }
+    #fullscreenLockPanel h2 { margin: 0 0 8px; }
+    #fullscreenLockPanel p { margin: 0 0 14px; color: var(--text-soft); }
+    #optionsPanel {
+      background: var(--panel);
+      color: var(--text);
+      width: min(520px, 95vw);
+      padding: 22px 26px;
+      border-radius: 12px;
+      box-shadow: var(--shadow-soft);
+      position: relative;
+      border: 1px solid var(--border);
+    }
+    .options-close {
+      position: absolute;
+      top: 8px;
+      right: 12px;
+      border: none;
+      background: none;
+      font-size: 1.4rem;
+      cursor: pointer;
+      color: var(--text-soft);
+    }
+    .options-section { margin-top: 12px; border-top: 1px solid var(--border); padding-top: 10px; }
+    .options-section h3 { margin: 4px 0 8px; font-size: 0.95rem; letter-spacing: 0.04em; text-transform: uppercase; color: var(--text-soft); }
+    .options-list button {
+      width: 100%;
+      text-align: left;
+      padding: 8px 10px;
+      border-radius: 8px;
+      border: 1px solid transparent;
+      background: transparent;
+      color: var(--text);
+      cursor: pointer;
+      margin-bottom: 6px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 0.95rem;
+    }
+    .options-list button:hover,
+    .options-list button.active {
+      border-color: var(--accent);
+      background: var(--accent-soft);
+      font-weight: 700;
+    }
+    .submit-button {
+      width: 100%;
+      padding: 10px 14px;
+      border-radius: 999px;
+      border: none;
+      background: #d32f2f;
+      color: #fff;
+      font-weight: 700;
+      cursor: pointer;
+      margin-bottom: 10px;
+      font-size: 1rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+    .submit-button:hover { background: #b71c1c; }
+    .main {
+      padding-top: var(--header-h);
+      padding-bottom: var(--footer-h);
+      min-height: 100vh;
+    }
+    .page {
+      width: min(1500px, calc(100vw - 10px));
+      margin: 0 auto;
+      padding: 10px 8px 12px;
+    }
+    .content-shell {
+      background: var(--bg);
+      min-height: calc(100vh - var(--header-h) - var(--footer-h) - 20px);
+    }
+    .main,
+    .page,
+    .content-shell,
+    .section-panel,
+    .drag-layout,
+    .drag-bank {
+      overflow-y: visible;
+    }
+    .audio-bar {
+      display: none;
+      padding: 10px 12px;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      background: var(--bg-secondary);
+      margin-bottom: 8px;
+    }
+    .audio-bar.visible { display: block; }
+    #sectionAudio { width: 100%; }
+    .audio-note { margin-top: 6px; color: var(--text-soft); font-size: 0.85rem; }
+    .section-panel { display: none; padding: 4px 6px 10px; }
+    .section-panel.active { display: block; }
+    .instruction-heading { font-size: 1.05rem; font-weight: 700; margin: 8px 0 10px; }
+    .instruction-copy { margin: 0 0 6px; line-height: 1.45; }
+    .question-block {
+      margin-bottom: 12px;
+      padding: 4px 0;
+      border-radius: 8px;
+      background: transparent;
+      scroll-margin-top: calc(var(--header-h) + 20px);
+    }
+    .question-block.current {
+      padding-left: 6px;
+      box-shadow: inset 2px 0 0 var(--accent), 0 0 0 1px var(--accent-soft);
+      background: linear-gradient(90deg, var(--accent-soft), transparent 76%);
+    }
+    .question-block.correct { outline: 2px solid var(--correct); outline-offset: 2px; }
+    .question-block.partial { outline: 2px solid #b7791f; outline-offset: 2px; }
+    .question-block.incorrect { outline: 2px solid var(--incorrect); outline-offset: 2px; }
+    .question-block.correct.current,
+    .question-block.partial.current,
+    .question-block.incorrect.current {
+      box-shadow: inset 2px 0 0 var(--accent);
+    }
+    .notes-panel, .table-panel { width: min(1220px, 100%); border: 1.5px solid #666; background: #fff; color: #111; }
+    .notes-panel .title-row, .table-panel .title-row {
+      border-bottom: 1px solid #666;
+      text-align: center;
+      padding: 7px 10px;
+      font-weight: 700;
+      font-size: 1.05rem;
+      background: #fafafa;
+    }
+    .notes-panel .body { padding: 10px 14px 12px; }
+    .notes-section-title { font-weight: 700; margin: 10px 0 4px; }
+    .dash-list, .bullet-list { list-style: none; padding: 0 0 0 18px; margin: 0; }
+    .dash-list li, .bullet-list li { position: relative; margin: 8px 0; line-height: 1.65; }
+    .dash-list li::before { content: "–"; position: absolute; left: -18px; top: 0; }
+    .bullet-list li::before { content: "•"; position: absolute; left: -18px; top: 0; font-size: 1.2rem; line-height: 1.2; }
+    .bullet-list li.sub-note { margin-left: 18px; }
+    .bullet-list li.sub-note::before { content: ""; }
+    .note-dash { display: inline-block; margin-right: 6px; }
+    .inline-answer { position: relative; display: inline-block; min-width: 120px; max-width: 220px; vertical-align: middle; }
+    .inline-answer::before {
+      content: attr(data-q);
+      position: absolute;
+      left: 1px;
+      top: 1px;
+      bottom: 1px;
+      width: 34px;
+      background: #f4f4f4;
+      border-right: 1px solid #ddd;
+      border-radius: 7px 0 0 7px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #444;
+      font-weight: 700;
+      pointer-events: none;
+      font-size: 0.92rem;
+    }
+    .inline-answer input {
+      width: 100%;
+      height: 36px;
+      border: 1px solid #858585;
+      border-radius: 8px;
+      padding: 6px 10px 6px 46px;
+      font-size: 1rem;
+      background: inherit;
+      color: inherit;
+    }
+    .inline-answer input:focus, select:focus { outline: 2px solid var(--accent); outline-offset: 1px; }
+    .radio-group { display: grid; gap: 8px; max-width: 760px; }
+    .radio-option, .checkbox-option {
+      display: flex;
+      gap: 10px;
+      align-items: flex-start;
+      padding: 8px 10px;
+      border-radius: 10px;
+      border: 1px solid var(--border);
+      background: var(--panel);
+    }
+    .radio-option input, .checkbox-option input { margin-top: 2px; transform: scale(1.05); }
+    .small-heading { margin: 16px 0 6px; font-size: 1.02rem; font-weight: 700; }
+    .word-box { width: min(420px, 100%); border: 1px solid #777; padding: 10px 16px; background: var(--panel); margin: 12px 0 16px; }
+    .word-box h4 { text-align: center; margin: 2px 0 12px; font-size: 1rem; }
+    .word-box .row { display: grid; grid-template-columns: 26px 1fr; gap: 10px; margin: 8px 0; align-items: center; }
+    .matching-item { display: grid; grid-template-columns: 34px minmax(180px,260px) minmax(220px,320px); gap: 10px; align-items: center; margin: 10px 0; }
+    .matching-num { font-weight: 700; font-size: 1.02rem; }
+    select { max-width: 320px; height: 38px; border-radius: 8px; border: 1px solid #888; padding: 6px 10px; font-size: 0.98rem; background: var(--panel); color: var(--text); }
+    .flowchart-panel { padding: 10px 12px; border: none; background: transparent; width: min(760px, 100%); }
+    .flowchart-title { font-weight: 700; font-size: 1.05rem; margin: 0 0 12px; text-align: center; }
+    .flow-step { border: 1.5px solid #666; background: var(--panel); padding: 12px 14px; min-height: 58px; line-height: 1.55; position: relative; }
+    .flow-arrow { text-align: center; font-size: 2.1rem; line-height: 1; color: inherit; margin: 4px 0; }
+    .table-panel table { width: 100%; border-collapse: collapse; font-size: 0.98rem; }
+    .table-panel th, .table-panel td { border: 1px solid #666; padding: 8px 8px; vertical-align: middle; }
+    .two-answer-wrap { display: grid; gap: 10px; max-width: 720px; }
+    .warning-text { color: var(--incorrect); font-size: 0.92rem; font-weight: 700; min-height: 1.2em; }
+    .correct-answer { display: none; margin-top: 8px; color: var(--correct); font-size: 0.92rem; font-weight: 700; }
+    .map-qa-layout {
+      display: grid;
+      grid-template-columns: minmax(340px, 1.2fr) minmax(260px, 0.9fr);
+      gap: 14px;
+      align-items: start;
+      max-width: 1100px;
+    }
+    .map-crop-frame {
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      background: var(--panel);
+      padding: 6px;
+    }
+    .map-crop-frame img {
+      width: 100%;
+      max-width: 100%;
+      height: auto;
+      display: block;
+    }
+    .map-answer-list .body > div { margin: 8px 0; line-height: 1.6; }
+    .map-answer-list .inline-answer { min-width: 92px; max-width: 120px; }
+    .map-answer-list .inline-answer input { text-transform: uppercase; }
+    @media (max-width: 900px) {
+      .map-qa-layout { grid-template-columns: 1fr; }
+      .map-crop-frame { padding: 4px; }
+    }
+
+    .drag-layout {
+      display: grid;
+      grid-template-columns: minmax(320px, 1fr) minmax(260px, 360px);
+      gap: 18px;
+      align-items: start;
+      max-width: 1000px;
+    }
+    .drag-bank {
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      background: var(--bg-secondary);
+      padding: 12px;
+      display: grid;
+      gap: 10px;
+      position: sticky;
+      top: calc(var(--header-h) + 10px);
+    }
+    .drag-bank h4 { margin: 0; font-size: 0.98rem; }
+    .drag-choice {
+      display: grid;
+      grid-template-columns: 34px 1fr;
+      gap: 10px;
+      align-items: start;
+      padding: 8px 10px;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      background: var(--panel);
+      cursor: grab;
+      user-select: none;
+    }
+    .drag-choice strong {
+      width: 34px;
+      height: 34px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 8px;
+      background: var(--accent-soft);
+      color: var(--accent);
+    }
+    .drag-choice.selected { outline: 2px solid var(--accent); outline-offset: 1px; }
+    .drag-choice.used { opacity: 0.35; pointer-events: none; }
+    .drag-question-row {
+      display: grid;
+      grid-template-columns: 34px minmax(180px, 1fr) 160px 34px;
+      gap: 10px;
+      align-items: center;
+      margin-bottom: 12px;
+      max-width: 760px;
+    }
+    .drag-slot {
+      min-height: 38px;
+      border-radius: 10px;
+      border: 1px dashed var(--border);
+      background: var(--panel);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 4px 8px;
+      font-weight: 700;
+      text-align: center;
+    }
+    .drag-slot.filled {
+      border-style: solid;
+      border-color: var(--accent);
+      background: var(--accent-soft);
+      color: var(--accent);
+    }
+    .drag-slot.over { border-color: var(--accent); }
+    .drag-clear {
+      width: 34px;
+      height: 34px;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      background: var(--panel);
+      color: var(--text-soft);
+      cursor: pointer;
+      font-weight: 700;
+    }
+    .drag-help { font-size: 0.88rem; color: var(--text-soft); margin-bottom: 10px; }
+    .floating-nav {
+      position: fixed;
+      right: 16px;
+      bottom: calc(var(--footer-h) + 16px);
+      display: flex;
+      gap: 4px;
+      z-index: 950;
+    }
+    .nav-arrow {
+      width: 54px;
+      height: 54px;
+      border: none;
+      cursor: pointer;
+      font-size: 2rem;
+      line-height: 1;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 6px;
+      background: #111;
+      color: #fff;
+      box-shadow: var(--shadow-soft);
+    }
+    .nav-arrow.prev { background: #777; }
+    .nav-arrow:disabled { opacity: 0.4; cursor: default; }
+    .footer-bar {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: var(--footer-h);
+      background: var(--bg-secondary);
+      border-top: 1px solid var(--border);
+      display: flex;
+      align-items: stretch;
+      z-index: 900;
+    }
+    .footer-main {
+      flex: 1;
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      min-width: 0;
+    }
+    .footer-main[data-active-section="1"] { grid-template-columns: 1.9fr 0.7fr 0.7fr 0.7fr; }
+    .footer-main[data-active-section="2"] { grid-template-columns: 0.7fr 1.9fr 0.7fr 0.7fr; }
+    .footer-main[data-active-section="3"] { grid-template-columns: 0.7fr 0.7fr 1.9fr 0.7fr; }
+    .footer-main[data-active-section="4"] { grid-template-columns: 0.7fr 0.7fr 0.7fr 1.9fr; }
+    .part-group {
+      border-right: 1px solid var(--border);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      padding: 6px 10px 5px;
+      min-width: 0;
+      cursor: pointer;
+      gap: 4px;
+    }
+    .part-group:last-child { border-right: none; }
+    .part-group:hover { background: rgba(0,0,0,0.03); }
+    .part-progress { height: 3px; background: #d8dde5; border-radius: 999px; overflow: hidden; margin-bottom: 3px; }
+    .part-progress-fill { height: 100%; width: 0; background: var(--correct); }
+    .part-top {
+      display: flex;
+      justify-content: flex-start;
+      align-items: center;
+      gap: 7px;
+      font-weight: 700;
+      min-height: 24px;
+      white-space: nowrap;
+      min-width: 0;
+      overflow: hidden;
+    }
+    .part-top .part-label { flex-shrink: 0; }
+    .part-top .count { color: var(--text-soft); font-weight: 400; }
+    .part-top .tick {
+      display: none;
+      color: var(--correct);
+      font-size: 1rem;
+      font-weight: 800;
+    }
+    .part-group.complete .tick { display: inline; }
+    .question-nav-row {
+      display: none;
+      align-items: center;
+      gap: 4px;
+      margin-left: 2px;
+      white-space: nowrap;
+      min-width: 0;
+    }
+    .part-group.active .question-nav-row { display: inline-flex; }
+    .qnav {
+      min-width: 24px;
+      padding: 2px 5px;
+      border-radius: 6px;
+      text-align: center;
+      border: 1px solid var(--border);
+      background: var(--panel);
+      cursor: pointer;
+      font-size: 0.82rem;
+      font-weight: 700;
+      line-height: 1.2;
+      flex-shrink: 0;
+      color: var(--text);
+    }
+    .qnav.current {
+      border-color: var(--accent);
+      background: var(--accent-soft);
+      box-shadow: 0 0 0 2px var(--accent);
+    }
+    .qnav.answered { border-color: var(--correct); background: rgba(67,160,71,0.18); }
+    .qnav.answered.current {
+      border-color: var(--accent);
+      background: var(--accent-soft);
+      box-shadow: 0 0 0 2px var(--accent), inset 0 -3px 0 var(--correct);
+    }
+    .submit-corner {
+      width: 64px;
+      border-left: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: var(--bg-secondary);
+    }
+    .submit-corner button {
+      width: 44px;
+      height: 44px;
+      border: none;
+      background: transparent;
+      color: var(--text-soft);
+      cursor: pointer;
+      font-size: 1.55rem;
+      font-weight: 900;
+    }
+    @media (max-width: 1180px) {
+      .drag-layout { grid-template-columns: 1fr; }
+      .drag-bank { position: static; }
+      .top-bar {
+        height: auto;
+        min-height: var(--header-h);
+        padding-top: 8px;
+        padding-bottom: 8px;
+        flex-wrap: wrap;
+      }
+      .main { padding-top: calc(var(--header-h) + 14px); }
+    }
+    @media (max-width: 980px) {
+      .footer-main { grid-template-columns: 1fr 1fr; }
+      .footer-bar { height: auto; min-height: var(--footer-h); }
+      .main { padding-bottom: 170px; }
+    }
+    @media (max-width: 760px) {
+      .info-strip { gap: 8px; }
+      .drag-question-row { grid-template-columns: 28px 1fr; }
+      .drag-slot, .drag-clear { grid-column: 2 / 3; }
+      .drag-clear { width: 80px; }
+      .footer-main { grid-template-columns: 1fr; }
+      .main { padding-bottom: 300px; }
+      .top-right { width: 100%; justify-content: space-between; }
+    }
+  </style>
+</head>
+<body data-theme="black-on-white">
+  <div id="modeScreen">
+    <div class="dialog">
+      <h1>IELTS Listening Simulation</h1>
+      <p>Select how you want to use this test.</p>
+      <div class="mode-buttons">
+        <button class="mode-btn" data-mode="test" type="button">Test mode (exam conditions)</button>
+        <button class="mode-btn secondary" data-mode="study" type="button">Study mode (show feedback)</button>
+      </div>
+      <p style="font-size:0.82rem;margin-top:10px;color:var(--text-soft);">In test mode the audio starts when you start the test and continues through Parts 1 to 4 automatically. In study mode the audio player is visible for the section you are viewing.</p>
+      <div id="testStartScreen">
+        <label for="studentNameInput">Your name (for test mode results)</label>
+        <input type="text" id="studentNameInput" placeholder="Enter your full name" maxlength="80" />
+        <button class="mode-btn" type="button" id="startTestBtn">Start the test now</button>
+        <p id="fullscreenSupportNote">Full screen enforcement is limited on this device.</p>
+      </div>
+    </div>
+  </div>
+
+  <div id="optionsOverlay">
+    <div id="optionsPanel">
+      <button class="options-close" type="button" id="closeOptionsBtn">✕</button>
+      <h2>Options</h2>
+      <button class="submit-button" type="button" id="menuSubmitBtn">✔ Submit test &amp; check answers</button>
+      <div class="options-section">
+        <h3>Contrast</h3>
+        <div class="options-list">
+          <button id="theme-black-white" type="button"><span>Black on white</span><span>✓</span></button>
+          <button id="theme-white-black" type="button"><span>White on black</span><span>✓</span></button>
+          <button id="theme-yellow-black" type="button"><span>Yellow on black</span><span>✓</span></button>
+        </div>
+      </div>
+      <div class="options-section">
+        <h3>Text size</h3>
+        <div class="options-list">
+          <button id="font-normal" type="button"><span>Normal</span><span>✓</span></button>
+          <button id="font-large" type="button"><span>Large</span><span>✓</span></button>
+          <button id="font-xlarge" type="button"><span>Extra large</span><span>✓</span></button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div id="resultsOverlay">
+    <div class="dialog" id="resultsPanel">
+      <h2>IELTS Listening Score Board</h2>
+      <p id="studentLine"></p>
+      <p id="timeLine"></p>
+      <p id="scoreLine"></p>
+      <p id="bandLine"></p>
+      <p id="integrityLine"></p>
+      <p id="descriptorLine"></p>
+      <button class="mode-btn" type="button" id="closeResultsBtn">Close</button>
+    </div>
+  </div>
+
+  <div id="app">
+    <header class="top-bar">
+      <div class="top-left">
+        <a class="logo-link" href="#" id="homeLink"><div class="logo home-link">IELTS Pabs</div></a>
+        <div class="info-strip">
+          <span class="info-pill" id="candidateLine">Candidate:</span>
+          <span class="info-pill"><strong>IELTS 17 - Listening Test 3</strong></span>
+          <span class="info-pill audio-status hidden" id="audioStatus">🔊 <span id="audioStatusText">Audio is playing: Part 1</span></span>
+        </div>
+      </div>
+      <div class="top-right">
+        <div id="timerContainer" role="status" aria-live="polite" aria-atomic="true" aria-hidden="true">Time left: <span id="timerDisplay">30:00</span></div>
+        <div class="icon-group">
+          <span class="icon" title="Connection status"><span class="sr-only">Connection status</span><svg viewBox="0 0 24 24"><path d="M4.93 9.93a10.5 10.5 0 0 1 14.14 0"/><path d="M7.76 12.76a6.5 6.5 0 0 1 8.48 0"/><path d="M10.59 15.59a2.5 2.5 0 0 1 2.82 0"/><path d="M12 18h.01"/></svg></span>
+          <span class="icon" title="Notifications"><span class="sr-only">Notifications</span><svg viewBox="0 0 24 24"><path d="M15 17h5l-1.4-1.4A2 2 0 0 1 18 14.17V11a6 6 0 1 0-12 0v3.17a2 2 0 0 1-.59 1.43L4 17h5"/><path d="M9 17a3 3 0 0 0 6 0"/></svg></span>
+          <button id="fullscreenBtn" class="icon-button with-label" title="Enter full screen" aria-label="Enter full screen">
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <polyline points="8 3 3 3 3 8"></polyline>
+              <line x1="3" y1="3" x2="9" y2="9"></line>
+              <polyline points="16 21 21 21 21 16"></polyline>
+              <line x1="15" y1="15" x2="21" y2="21"></line>
+              <polyline points="21 8 21 3 16 3"></polyline>
+              <line x1="15" y1="9" x2="21" y2="3"></line>
+              <polyline points="3 16 3 21 8 21"></polyline>
+              <line x1="3" y1="21" x2="9" y2="15"></line>
+            </svg><span id="fullscreenBtnLabel">Full screen</span>
+          </button>
+          <button id="optionsBtn" class="icon-button" title="Options menu" aria-label="Options menu"><svg viewBox="0 0 24 24"><line x1="4" y1="7" x2="20" y2="7"/><line x1="4" y1="12" x2="20" y2="12"/><line x1="4" y1="17" x2="16" y2="17"/></svg></button>
+        </div>
+      </div>
+    </header>
+
+    <main class="main">
+      <div class="page">
+        <div class="content-shell">
+          <div class="audio-bar" id="audioBar">
+            <label for="sectionAudio">Section audio</label>
+            <audio id="sectionAudio" controls preload="metadata"><source id="sectionAudioSource" src="" type="audio/mpeg" />Your browser does not support the audio element.</audio>
+            <div class="audio-note">In study mode the player follows the section you are viewing. In test mode the audio continues automatically through the full test.</div>
+          </div>
+
+          <section class="section-panel active" data-section="1">
+            <div class="instruction-heading">Questions 1–7</div>
+            <p class="instruction-copy">Complete the notes below.</p>
+            <p class="instruction-copy">Write <strong>ONE WORD ONLY</strong> for each answer.</p>
+            <div class="question-block" data-qgroup="1-10">
+              <div class="notes-panel">
+                <div class="title-row">Opportunities for voluntary work in Southoe village</div>
+                <div class="body">
+                  <div class="notes-section-title">Library</div>
+                  <ul class="bullet-list">
+                    <li>Help with <span class="inline-answer" data-q="1"><input name="q1" type="text" /></span> books (times to be arranged)</li>
+                    <li>Help needed to keep <span class="inline-answer" data-q="2"><input name="q2" type="text" /></span> of books up to date</li>
+                    <li>Library is in the <span class="inline-answer" data-q="3"><input name="q3" type="text" /></span> Room in the village hall</li>
+                  </ul>
+                  <div class="notes-section-title">Lunch club</div>
+                  <ul class="bullet-list">
+                    <li>Help by providing <span class="inline-answer" data-q="4"><input name="q4" type="text" /></span></li>
+                    <li>Help with hobbies such as <span class="inline-answer" data-q="5"><input name="q5" type="text" /></span></li>
+                  </ul>
+                  <div class="notes-section-title">Help for individuals needed next week</div>
+                  <ul class="bullet-list">
+                    <li>Taking Mrs Carroll to <span class="inline-answer" data-q="6"><input name="q6" type="text" /></span></li>
+                    <li>Work in the <span class="inline-answer" data-q="7"><input name="q7" type="text" /></span> at Mr Selsbury’s house</li>
+                  </ul>
+                </div>
+              </div>
+
+              <div class="instruction-heading" style="margin-top:24px;">Questions 8-10</div>
+              <p class="instruction-copy">Complete the table below.</p>
+              <p class="instruction-copy">Write <strong>ONE WORD ONLY</strong> for each answer.</p>
+              <div class="table-panel">
+                <div class="title-row">Village social events</div>
+                <table>
+                  <thead>
+                    <tr>
+                      <th>Date</th>
+                      <th>Event</th>
+                      <th>Location</th>
+                      <th>Help needed</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td>19 Oct</td>
+                      <td><span class="inline-answer" data-q="8"><input name="q8" type="text" /></span></td>
+                      <td>Village hall</td>
+                      <td>providing refreshments</td>
+                    </tr>
+                    <tr>
+                      <td>18 Nov</td>
+                      <td>dance</td>
+                      <td>Village hall</td>
+                      <td>checking <span class="inline-answer" data-q="9"><input name="q9" type="text" /></span></td>
+                    </tr>
+                    <tr>
+                      <td>31 Dec</td>
+                      <td>New Year’s Eve party</td>
+                      <td>Mountfort Hotel</td>
+                      <td>designing the <span class="inline-answer" data-q="10"><input name="q10" type="text" /></span></td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+              <div class="correct-answer" id="ca-1-10"></div>
+            </div>
+          </section>
+
+          <section class="section-panel" data-section="2">
+            <div class="instruction-heading">Questions 11–14</div>
+            <p class="instruction-copy">Choose the correct letter, <strong>A, B or C</strong>.</p>
+            <div class="small-heading">Oniton Hall</div>
+            <div class="question-block" data-q="11">
+              <div class="small-heading">11. Many past owners made changes to</div>
+              <div class="radio-group">
+                <label class="radio-option"><input type="radio" name="q11" value="A" /> <span><strong>A.</strong> the gardens.</span></label>
+                <label class="radio-option"><input type="radio" name="q11" value="B" /> <span><strong>B.</strong> the house.</span></label>
+                <label class="radio-option"><input type="radio" name="q11" value="C" /> <span><strong>C.</strong> the farm.</span></label>
+              </div>
+              <div class="correct-answer" id="ca-11"></div>
+            </div>
+            <div class="question-block" data-q="12">
+              <div class="small-heading">12. Sir Edward Downes built Oniton Hall because he wanted</div>
+              <div class="radio-group">
+                <label class="radio-option"><input type="radio" name="q12" value="A" /> <span><strong>A.</strong> a place for discussing politics.</span></label>
+                <label class="radio-option"><input type="radio" name="q12" value="B" /> <span><strong>B.</strong> a place to display his wealth.</span></label>
+                <label class="radio-option"><input type="radio" name="q12" value="C" /> <span><strong>C.</strong> a place for artists and writers.</span></label>
+              </div>
+              <div class="correct-answer" id="ca-12"></div>
+            </div>
+            <div class="question-block" data-q="13">
+              <div class="small-heading">13. Visitors can learn about the work of servants in the past from</div>
+              <div class="radio-group">
+                <label class="radio-option"><input type="radio" name="q13" value="A" /> <span><strong>A.</strong> audio guides.</span></label>
+                <label class="radio-option"><input type="radio" name="q13" value="B" /> <span><strong>B.</strong> photographs.</span></label>
+                <label class="radio-option"><input type="radio" name="q13" value="C" /> <span><strong>C.</strong> people in costume.</span></label>
+              </div>
+              <div class="correct-answer" id="ca-13"></div>
+            </div>
+            <div class="question-block" data-q="14">
+              <div class="small-heading">14. What is new for children at Oniton Hall?</div>
+              <div class="radio-group">
+                <label class="radio-option"><input type="radio" name="q14" value="A" /> <span><strong>A.</strong> clothes for dressing up</span></label>
+                <label class="radio-option"><input type="radio" name="q14" value="B" /> <span><strong>B.</strong> mini tractors</span></label>
+                <label class="radio-option"><input type="radio" name="q14" value="C" /> <span><strong>C.</strong> the adventure playground</span></label>
+              </div>
+              <div class="correct-answer" id="ca-14"></div>
+            </div>
+
+            <div class="instruction-heading" style="margin-top:24px;">Questions 15-20</div>
+            <p class="instruction-copy">Which activity is offered at each of the following locations on the farm?</p>
+            <p class="instruction-copy">Choose <strong>SIX</strong> answers from the box and write the correct letter, <strong>A-H</strong>, next to Questions 15-20.</p>
+            <div class="question-block" data-qgroup="15-20">
+              <div class="drag-help">Activities</div>
+              <div class="drag-layout">
+                <div>
+                  <div class="small-heading">Locations on the farm</div>
+                  <div class="drag-question-row">
+                    <div class="matching-num">15</div>
+                    <div>dairy</div>
+                    <div class="drag-slot" data-q="15" tabindex="0">Drop here</div>
+                    <button class="drag-clear" type="button" data-clear-q="15">×</button>
+                  </div>
+                  <select class="sr-only" name="q15">
+                    <option value=""></option>
+                    <option value="A">A</option>
+                    <option value="B">B</option>
+                    <option value="C">C</option>
+                    <option value="D">D</option>
+                    <option value="E">E</option>
+                    <option value="F">F</option>
+                    <option value="G">G</option>
+                    <option value="H">H</option>
+                  </select>
+                  <div class="drag-question-row">
+                    <div class="matching-num">16</div>
+                    <div>large barn</div>
+                    <div class="drag-slot" data-q="16" tabindex="0">Drop here</div>
+                    <button class="drag-clear" type="button" data-clear-q="16">×</button>
+                  </div>
+                  <select class="sr-only" name="q16">
+                    <option value=""></option>
+                    <option value="A">A</option>
+                    <option value="B">B</option>
+                    <option value="C">C</option>
+                    <option value="D">D</option>
+                    <option value="E">E</option>
+                    <option value="F">F</option>
+                    <option value="G">G</option>
+                    <option value="H">H</option>
+                  </select>
+                  <div class="drag-question-row">
+                    <div class="matching-num">17</div>
+                    <div>small barn</div>
+                    <div class="drag-slot" data-q="17" tabindex="0">Drop here</div>
+                    <button class="drag-clear" type="button" data-clear-q="17">×</button>
+                  </div>
+                  <select class="sr-only" name="q17">
+                    <option value=""></option>
+                    <option value="A">A</option>
+                    <option value="B">B</option>
+                    <option value="C">C</option>
+                    <option value="D">D</option>
+                    <option value="E">E</option>
+                    <option value="F">F</option>
+                    <option value="G">G</option>
+                    <option value="H">H</option>
+                  </select>
+                  <div class="drag-question-row">
+                    <div class="matching-num">18</div>
+                    <div>stables</div>
+                    <div class="drag-slot" data-q="18" tabindex="0">Drop here</div>
+                    <button class="drag-clear" type="button" data-clear-q="18">×</button>
+                  </div>
+                  <select class="sr-only" name="q18">
+                    <option value=""></option>
+                    <option value="A">A</option>
+                    <option value="B">B</option>
+                    <option value="C">C</option>
+                    <option value="D">D</option>
+                    <option value="E">E</option>
+                    <option value="F">F</option>
+                    <option value="G">G</option>
+                    <option value="H">H</option>
+                  </select>
+                  <div class="drag-question-row">
+                    <div class="matching-num">19</div>
+                    <div>shed</div>
+                    <div class="drag-slot" data-q="19" tabindex="0">Drop here</div>
+                    <button class="drag-clear" type="button" data-clear-q="19">×</button>
+                  </div>
+                  <select class="sr-only" name="q19">
+                    <option value=""></option>
+                    <option value="A">A</option>
+                    <option value="B">B</option>
+                    <option value="C">C</option>
+                    <option value="D">D</option>
+                    <option value="E">E</option>
+                    <option value="F">F</option>
+                    <option value="G">G</option>
+                    <option value="H">H</option>
+                  </select>
+                  <div class="drag-question-row">
+                    <div class="matching-num">20</div>
+                    <div>parkland</div>
+                    <div class="drag-slot" data-q="20" tabindex="0">Drop here</div>
+                    <button class="drag-clear" type="button" data-clear-q="20">×</button>
+                  </div>
+                  <select class="sr-only" name="q20">
+                    <option value=""></option>
+                    <option value="A">A</option>
+                    <option value="B">B</option>
+                    <option value="C">C</option>
+                    <option value="D">D</option>
+                    <option value="E">E</option>
+                    <option value="F">F</option>
+                    <option value="G">G</option>
+                    <option value="H">H</option>
+                  </select>
+                </div>
+                <div class="drag-bank" id="dragBank15to20">
+                  <h4>Activities</h4>
+                  <div class="drag-choice" draggable="true" data-value="A"><strong>A</strong><span>shopping</span></div>
+                  <div class="drag-choice" draggable="true" data-value="B"><strong>B</strong><span>watching cows being milked</span></div>
+                  <div class="drag-choice" draggable="true" data-value="C"><strong>C</strong><span>seeing old farming equipment</span></div>
+                  <div class="drag-choice" draggable="true" data-value="D"><strong>D</strong><span>eating and drinking</span></div>
+                  <div class="drag-choice" draggable="true" data-value="E"><strong>E</strong><span>starting a trip</span></div>
+                  <div class="drag-choice" draggable="true" data-value="F"><strong>F</strong><span>seeing rare breeds of animals</span></div>
+                  <div class="drag-choice" draggable="true" data-value="G"><strong>G</strong><span>helping to look after animals</span></div>
+                  <div class="drag-choice" draggable="true" data-value="H"><strong>H</strong><span>using farming tools</span></div>
+                </div>
+              </div>
+              <div class="correct-answer" id="ca-15-20"></div>
+            </div>
+          </section>
+
+          <section class="section-panel" data-section="3">
+            <div class="instruction-heading">Questions 21 and 22</div>
+            <p class="instruction-copy">Choose <strong>TWO</strong> letters, <strong>A-E</strong>.</p>
+            <div class="question-block" data-qgroup="21-22">
+              <div class="small-heading">Which TWO things do the students agree they need to include in their review of Romeo and Juliet?</div>
+              <div class="two-answer-wrap" id="twoAnswerWrap21to22">
+                <label class="checkbox-option"><input type="checkbox" name="q21_22" value="A" /><span><strong>A.</strong> analysis of the text</span></label>
+                <label class="checkbox-option"><input type="checkbox" name="q21_22" value="B" /><span><strong>B.</strong> a summary of the plot</span></label>
+                <label class="checkbox-option"><input type="checkbox" name="q21_22" value="C" /><span><strong>C.</strong> a description of the theatre</span></label>
+                <label class="checkbox-option"><input type="checkbox" name="q21_22" value="D" /><span><strong>D.</strong> a personal reaction</span></label>
+                <label class="checkbox-option"><input type="checkbox" name="q21_22" value="E" /><span><strong>E.</strong> a reference to particular scenes</span></label>
+              </div>
+              <div class="warning-text" id="twoAnswerWarning21to22"></div>
+              <div class="correct-answer" id="ca-21-22"></div>
+            </div>
+
+            <div class="instruction-heading" style="margin-top:24px;">Questions 23-27</div>
+            <p class="instruction-copy">Which opinion do the speakers give about each of the following aspects of The Emporium’s production of Romeo and Juliet?</p>
+            <p class="instruction-copy">Choose <strong>FIVE</strong> answers from the box and write the correct letter, <strong>A-G</strong>, next to Questions 23-27</p>
+            <div class="question-block" data-qgroup="23-27">
+              <div class="drag-help">Opinions</div>
+              <div class="drag-layout">
+                <div>
+                  <div class="small-heading">Aspects</div>
+                  <div class="drag-question-row">
+                    <div class="matching-num">23</div>
+                    <div>the set</div>
+                    <div class="drag-slot" data-q="23" tabindex="0">Drop here</div>
+                    <button class="drag-clear" type="button" data-clear-q="23">×</button>
+                  </div>
+                  <select class="sr-only" name="q23">
+                    <option value=""></option>
+                    <option value="A">A</option>
+                    <option value="B">B</option>
+                    <option value="C">C</option>
+                    <option value="D">D</option>
+                    <option value="E">E</option>
+                    <option value="F">F</option>
+                    <option value="G">G</option>
+                  </select>
+                  <div class="drag-question-row">
+                    <div class="matching-num">24</div>
+                    <div>the lighting</div>
+                    <div class="drag-slot" data-q="24" tabindex="0">Drop here</div>
+                    <button class="drag-clear" type="button" data-clear-q="24">×</button>
+                  </div>
+                  <select class="sr-only" name="q24">
+                    <option value=""></option>
+                    <option value="A">A</option>
+                    <option value="B">B</option>
+                    <option value="C">C</option>
+                    <option value="D">D</option>
+                    <option value="E">E</option>
+                    <option value="F">F</option>
+                    <option value="G">G</option>
+                  </select>
+                  <div class="drag-question-row">
+                    <div class="matching-num">25</div>
+                    <div>the costume design</div>
+                    <div class="drag-slot" data-q="25" tabindex="0">Drop here</div>
+                    <button class="drag-clear" type="button" data-clear-q="25">×</button>
+                  </div>
+                  <select class="sr-only" name="q25">
+                    <option value=""></option>
+                    <option value="A">A</option>
+                    <option value="B">B</option>
+                    <option value="C">C</option>
+                    <option value="D">D</option>
+                    <option value="E">E</option>
+                    <option value="F">F</option>
+                    <option value="G">G</option>
+                  </select>
+                  <div class="drag-question-row">
+                    <div class="matching-num">26</div>
+                    <div>the music</div>
+                    <div class="drag-slot" data-q="26" tabindex="0">Drop here</div>
+                    <button class="drag-clear" type="button" data-clear-q="26">×</button>
+                  </div>
+                  <select class="sr-only" name="q26">
+                    <option value=""></option>
+                    <option value="A">A</option>
+                    <option value="B">B</option>
+                    <option value="C">C</option>
+                    <option value="D">D</option>
+                    <option value="E">E</option>
+                    <option value="F">F</option>
+                    <option value="G">G</option>
+                  </select>
+                  <div class="drag-question-row">
+                    <div class="matching-num">27</div>
+                    <div>the actors’ delivery</div>
+                    <div class="drag-slot" data-q="27" tabindex="0">Drop here</div>
+                    <button class="drag-clear" type="button" data-clear-q="27">×</button>
+                  </div>
+                  <select class="sr-only" name="q27">
+                    <option value=""></option>
+                    <option value="A">A</option>
+                    <option value="B">B</option>
+                    <option value="C">C</option>
+                    <option value="D">D</option>
+                    <option value="E">E</option>
+                    <option value="F">F</option>
+                    <option value="G">G</option>
+                  </select>
+                </div>
+                <div class="drag-bank" id="dragBank23to27">
+                  <h4>Opinions</h4>
+                  <div class="drag-choice" draggable="true" data-value="A"><strong>A</strong><span>They both expected this to be more traditional.</span></div>
+                  <div class="drag-choice" draggable="true" data-value="B"><strong>B</strong><span>They both thought this was original.</span></div>
+                  <div class="drag-choice" draggable="true" data-value="C"><strong>C</strong><span>They agree this created the right atmosphere.</span></div>
+                  <div class="drag-choice" draggable="true" data-value="D"><strong>D</strong><span>They agree this was a major strength.</span></div>
+                  <div class="drag-choice" draggable="true" data-value="E"><strong>E</strong><span>They were both disappointed by this.</span></div>
+                  <div class="drag-choice" draggable="true" data-value="F"><strong>F</strong><span>They disagree about why this was an issue.</span></div>
+                  <div class="drag-choice" draggable="true" data-value="G"><strong>G</strong><span>They disagree about how this could be improved.</span></div>
+                </div>
+              </div>
+              <div class="correct-answer" id="ca-23-27"></div>
+            </div>
+
+            <div class="instruction-heading" style="margin-top:24px;">Questions 28-30</div>
+            <p class="instruction-copy">Choose the correct letter, <strong>A, B or C</strong>.</p>
+            <div class="question-block" data-q="28">
+              <div class="small-heading">28. The students think the story of Romeo and Juliet is still relevant for young people today because</div>
+              <div class="radio-group">
+                <label class="radio-option"><input type="radio" name="q28" value="A" /> <span><strong>A.</strong> it illustrates how easily conflict can start.</span></label>
+                <label class="radio-option"><input type="radio" name="q28" value="B" /> <span><strong>B.</strong> it deals with problems that families experience.</span></label>
+                <label class="radio-option"><input type="radio" name="q28" value="C" /> <span><strong>C.</strong> it teaches them about relationships.</span></label>
+              </div>
+              <div class="correct-answer" id="ca-28"></div>
+            </div>
+            <div class="question-block" data-q="29">
+              <div class="small-heading">29. The students found watching Romeo and Juliet in another language</div>
+              <div class="radio-group">
+                <label class="radio-option"><input type="radio" name="q29" value="A" /> <span><strong>A.</strong> frustrating.</span></label>
+                <label class="radio-option"><input type="radio" name="q29" value="B" /> <span><strong>B.</strong> demanding.</span></label>
+                <label class="radio-option"><input type="radio" name="q29" value="C" /> <span><strong>C.</strong> moving.</span></label>
+              </div>
+              <div class="correct-answer" id="ca-29"></div>
+            </div>
+            <div class="question-block" data-q="30">
+              <div class="small-heading">30. Why do the students think Shakespeare’s plays have such international appeal?</div>
+              <div class="radio-group">
+                <label class="radio-option"><input type="radio" name="q30" value="A" /> <span><strong>A.</strong> The stories are exciting.</span></label>
+                <label class="radio-option"><input type="radio" name="q30" value="B" /> <span><strong>B.</strong> There are recognisable characters.</span></label>
+                <label class="radio-option"><input type="radio" name="q30" value="C" /> <span><strong>C.</strong> They can be interpreted in many ways.</span></label>
+              </div>
+              <div class="correct-answer" id="ca-30"></div>
+            </div>
+          </section>
+
+          <section class="section-panel" data-section="4">
+            <div class="instruction-heading">Questions 31–40</div>
+            <p class="instruction-copy">Complete the notes below.</p>
+            <p class="instruction-copy">Write <strong>ONE WORD AND/OR A NUMBER</strong> for each answer.</p>
+            <div class="question-block" data-qgroup="31-40">
+              <div class="notes-panel">
+                <div class="title-row">The impact of digital technology on the Icelandic language</div>
+                <div class="body">
+                  <div class="notes-section-title">The Icelandic language</div>
+                  <ul class="bullet-list">
+                    <li>has approximately <span class="inline-answer" data-q="31"><input name="q31" type="text" /></span> speakers</li>
+                    <li>has a <span class="inline-answer" data-q="32"><input name="q32" type="text" /></span> that is still growing</li>
+                    <li>has not changed a lot over the last thousand years</li>
+                    <li>has its own words for computer-based concepts, such as web browser and <span class="inline-answer" data-q="33"><input name="q33" type="text" /></span></li>
+                  </ul>
+                  <div class="notes-section-title">Young speakers</div>
+                  <ul class="bullet-list">
+                    <li>are big users of digital technology, such as <span class="inline-answer" data-q="34"><input name="q34" type="text" /></span></li>
+                    <li>are becoming <span class="inline-answer" data-q="35"><input name="q35" type="text" /></span> very quickly</li>
+                    <li>are having discussions using only English while they are in the <span class="inline-answer" data-q="36"><input name="q36" type="text" /></span> at school</li>
+                    <li>are better able to identify the content of a <span class="inline-answer" data-q="37"><input name="q37" type="text" /></span> in English than Icelandic</li>
+                  </ul>
+                  <div class="notes-section-title">Technology and internet companies</div>
+                  <ul class="bullet-list">
+                    <li>write very little in Icelandic because of the small number of speakers and because of how complicated its <span class="inline-answer" data-q="38"><input name="q38" type="text" /></span> is</li>
+                  </ul>
+                  <div class="notes-section-title">The Icelandic government</div>
+                  <ul class="bullet-list">
+                    <li>has set up a fund to support the production of more digital content in the language</li>
+                    <li>believes that Icelandic has a secure future</li>
+                    <li>is worried that young Icelanders may lose their <span class="inline-answer" data-q="39"><input name="q39" type="text" /></span> as Icelanders</li>
+                    <li>is worried about the consequences of children not being <span class="inline-answer" data-q="40"><input name="q40" type="text" /></span> in either Icelandic or English</li>
+                  </ul>
+                </div>
+              </div>
+              <div class="correct-answer" id="ca-31-40"></div>
+            </div>
+          </section>
+        </div>
+      </div>
+    </main>
+
+    <div class="floating-nav"><button type="button" class="nav-arrow prev" id="prevSectionBtn" aria-label="Previous section">←</button><button type="button" class="nav-arrow" id="nextSectionBtn" aria-label="Next section">→</button></div>
+    <footer class="footer-bar"><div class="footer-main" id="footerMain"></div><div class="submit-corner"><button type="button" id="footerSubmitBtn" aria-label="Submit test">✓</button></div></footer>
+  </div>
+  <div id="fullscreenLockOverlay" role="dialog" aria-modal="true" aria-live="assertive">
+    <div id="fullscreenLockPanel">
+      <h2>Full screen required</h2>
+      <p>You have left full screen. Return to full screen to continue your test.</p>
+      <button class="mode-btn" type="button" id="returnFullscreenBtn">Return to full screen</button>
+    </div>
+  </div>
+
+  <script>
+    const audioSources = { 1: './IELTS 17 - T3 - part 1.mp3', 2: './IELTS 17 - T3 - part 2.mp3', 3: './IELTS 17 - T3 - part 3.mp3', 4: './IELTS 17 - T3 - part 4.mp3' };
+    const sectionRanges = { 1:{from:1,to:10,label:'Part 1'}, 2:{from:11,to:20,label:'Part 2'}, 3:{from:21,to:30,label:'Part 3'}, 4:{from:31,to:40,label:'Part 4'} };
+    const answerKey = {1:['collecting'],2:['records'],3:['West'],4:['transport'],5:['art'],6:['hospital'],7:['garden'],8:['quiz'],9:['tickets'],10:['poster'],11:['B'],12:['C'],13:['C'],14:['B'],15:['D'],16:['C'],17:['G'],18:['A'],19:['E'],20:['F'],21:['D'],22:['E'],23:['D'],24:['C'],25:['A'],26:['E'],27:['F'],28:['B'],29:['C'],30:['C'],31:['321,000'],32:['vocabulary'],33:['podcast'],34:['smartphones'],35:['bilingual'],36:['playground'],37:['picture'],38:['grammar'],39:['identity'],40:['fluent']};
+    const displayAnswers = {1:'collecting',2:'records',3:'West',4:'transport',5:'art',6:'hospital',7:'garden',8:'quiz',9:'tickets',10:'poster',11:'B',12:'C',13:'C',14:'B',15:'D',16:'C',17:'G',18:'A',19:'E',20:'F',21:'D',22:'E',23:'D',24:'C',25:'A',26:'E',27:'F',28:'B',29:'C',30:'C',31:'321,000',32:'vocabulary',33:'podcast',34:'smartphones',35:'bilingual',36:'playground',37:'picture',38:'grammar',39:'identity',40:'fluent'};
+    const listeningBands = [{min:39,band:9,level:'Expert user',description:'Has fully operational command of the language: accurate, appropriate and fluent with complete understanding.'},{min:37,band:8.5,level:'Very good user',description:'Has fully operational command with only occasional unsystematic inaccuracies.'},{min:35,band:8,level:'Very good user',description:'Understands detailed listening well and handles a wide range of language successfully.'},{min:32,band:7.5,level:'Good user',description:'Shows strong listening ability with only occasional lapses.'},{min:30,band:7,level:'Good user',description:'Has operational command of the language, though with occasional misunderstandings.'},{min:26,band:6.5,level:'Competent user',description:'Generally effective listening in a range of familiar and less familiar situations.'},{min:23,band:6,level:'Competent user',description:'Can understand main ideas and much detail, despite some inaccuracies.'},{min:18,band:5.5,level:'Modest user',description:'Can cope with overall meaning in most situations, but errors still affect performance.'},{min:16,band:5,level:'Modest user',description:'Partial command of the language with noticeable limits in understanding.'},{min:13,band:4.5,level:'Limited user',description:'Basic competence is limited to more familiar situations.'},{min:11,band:4,level:'Limited user',description:'Frequent problems occur in understanding.'},{min:9,band:3.5,level:'Extremely limited user',description:'Conveys and understands only general meaning in very familiar situations.'},{min:7,band:3,level:'Extremely limited user',description:'Very limited understanding beyond familiar language.'},{min:5,band:2.5,level:'Intermittent user',description:'Only the most basic information is understood.'},{min:0,band:0,level:'Did not attempt test',description:'No assessable information provided.'}];
+    const groupedQuestionMap = {1:'1-10',2:'1-10',3:'1-10',4:'1-10',5:'1-10',6:'1-10',7:'1-10',8:'1-10',9:'1-10',10:'1-10',15:'15-20',16:'15-20',17:'15-20',18:'15-20',19:'15-20',20:'15-20',21:'21-22',22:'21-22',23:'23-27',24:'23-27',25:'23-27',26:'23-27',27:'23-27',31:'31-40',32:'31-40',33:'31-40',34:'31-40',35:'31-40',36:'31-40',37:'31-40',38:'31-40',39:'31-40',40:'31-40'};
+    let mode = 'test', activeSection = 1, playbackSection = 1, timerSeconds = 30*60, timerId = null, submitted = false, studentName = '', currentQuestion = 1, selectedDragChoice = '';
+    let fullscreenSupported = false, fullScreenEnforcementEnabled = false, fullScreenExits = 0, focusLosses = 0, fullscreenTimerPaused = false, lastFocusLossAt = 0;
+    const dragAssignments = {15:'',16:'',17:'',18:'',19:'',20:'',23:'',24:'',25:'',26:'',27:''};
+    const AVAILABLE_THEMES = ['black-on-white','white-on-black','yellow-on-black'];
+    const DEFAULT_THEME = 'black-on-white';
+    const STORAGE_KEYS = { theme:'ielts-listening-theme' };
+    const modeButtons = document.querySelectorAll('.mode-btn[data-mode]');
+    const modeScreen = document.getElementById('modeScreen');
+    const testStartScreen = document.getElementById('testStartScreen');
+    const startTestBtn = document.getElementById('startTestBtn');
+    const fullscreenSupportNote = document.getElementById('fullscreenSupportNote');
+    const studentNameInput = document.getElementById('studentNameInput');
+    const app = document.getElementById('app');
+    const audioBar = document.getElementById('audioBar');
+    const sectionAudio = document.getElementById('sectionAudio');
+    const sectionAudioSource = document.getElementById('sectionAudioSource');
+    const audioStatus = document.getElementById('audioStatus');
+    const audioStatusText = document.getElementById('audioStatusText');
+    const candidateLine = document.getElementById('candidateLine');
+    const footerMain = document.getElementById('footerMain');
+    const prevSectionBtn = document.getElementById('prevSectionBtn');
+    const nextSectionBtn = document.getElementById('nextSectionBtn');
+    const optionsBtn = document.getElementById('optionsBtn');
+    const fullscreenBtn = document.getElementById('fullscreenBtn');
+    const fullscreenBtnLabel = document.getElementById('fullscreenBtnLabel');
+    const optionsOverlay = document.getElementById('optionsOverlay');
+    const closeOptionsBtn = document.getElementById('closeOptionsBtn');
+    const menuSubmitBtn = document.getElementById('menuSubmitBtn');
+    const footerSubmitBtn = document.getElementById('footerSubmitBtn');
+    const resultsOverlay = document.getElementById('resultsOverlay');
+    const fullscreenLockOverlay = document.getElementById('fullscreenLockOverlay');
+    const returnFullscreenBtn = document.getElementById('returnFullscreenBtn');
+    const closeResultsBtn = document.getElementById('closeResultsBtn');
+    const homeLink = document.getElementById('homeLink');
+
+    function fullscreenElement(){ return document.fullscreenElement || document.webkitFullscreenElement || document.msFullscreenElement || null; }
+    function fullscreenEnabled(){ return Boolean(document.fullscreenEnabled || document.webkitFullscreenEnabled || document.msFullscreenEnabled); }
+    function isFullscreenApiSupported(){
+      const el=document.documentElement;
+      if(!el) return false;
+      return Boolean(
+        fullscreenEnabled() ||
+        typeof el.requestFullscreen==='function' ||
+        typeof el.webkitRequestFullscreen==='function' ||
+        typeof el.msRequestFullscreen==='function'
+      );
+    }
+    function isFullscreenActive(){ return !!fullscreenElement(); }
+    function updateFullscreenSupportNote(show){ if(fullscreenSupportNote) fullscreenSupportNote.style.display = show ? 'block' : 'none'; }
+    async function requestAppFullscreen(){
+      try{
+        if(!isFullscreenApiSupported()) return false;
+        const el=document.documentElement;
+        const request = el.requestFullscreen || el.webkitRequestFullscreen || el.msRequestFullscreen;
+        if(typeof request!=='function') return false;
+        const result = request.call(el);
+        if(result && typeof result.then==='function') await result;
+        return isFullscreenActive();
+      } catch(_) { return false; }
+    }
+    async function exitAppFullscreen(){
+      try{
+        if(!isFullscreenActive()) return;
+        const exit = document.exitFullscreen || document.webkitExitFullscreen || document.msExitFullscreen;
+        if(typeof exit!=='function') return;
+        const result = exit.call(document);
+        if(result && typeof result.then==='function') await result;
+      } catch(_) {}
+    }
+    function showFullscreenLockOverlay(){ if(fullscreenLockOverlay) fullscreenLockOverlay.style.display='flex'; }
+    function hideFullscreenLockOverlay(){ if(fullscreenLockOverlay) fullscreenLockOverlay.style.display='none'; }
+    function updateFullscreenButton(){
+      if(!fullscreenBtn || !fullscreenBtnLabel) return;
+      const isFullscreen=isFullscreenActive();
+      const locked=mode==='test' && app.style.display==='block' && !submitted && fullScreenEnforcementEnabled;
+      fullscreenBtn.classList.toggle('is-active', isFullscreen);
+      fullscreenBtn.disabled=false;
+      if(locked && isFullscreen){
+        fullscreenBtnLabel.textContent='Full screen locked';
+        fullscreenBtn.setAttribute('title','Full screen locked');
+        fullscreenBtn.setAttribute('aria-label','Full screen locked');
+        fullscreenBtn.disabled=true;
+        return;
+      }
+      fullscreenBtnLabel.textContent = isFullscreen ? 'Exit full screen' : 'Full screen';
+      fullscreenBtn.setAttribute('title', isFullscreen ? 'Exit full screen' : 'Enter full screen');
+      fullscreenBtn.setAttribute('aria-label', isFullscreen ? 'Exit full screen' : 'Enter full screen');
+    }
+    async function toggleFullscreen(){
+      const locked=mode==='test' && app.style.display==='block' && !submitted && fullScreenEnforcementEnabled;
+      if(locked && isFullscreenActive()){ updateFullscreenButton(); return; }
+      if(!isFullscreenActive()) await requestAppFullscreen();
+      else await exitAppFullscreen();
+      updateFullscreenButton();
+    }
+    async function returnToFullscreenAndResume(){
+      const ok = await requestAppFullscreen();
+      if(ok) hideFullscreenLockOverlay();
+      updateFullscreenButton();
+    }
+    function pauseTimerForFullscreenLock(){
+      if(timerId){ clearInterval(timerId); timerId=null; }
+      fullscreenTimerPaused = true;
+    }
+    function resumeTimerAfterFullscreenLock(){
+      if(!fullscreenTimerPaused || mode!=='test' || submitted) return;
+      fullscreenTimerPaused = false;
+      const timerDisplay=document.getElementById('timerDisplay');
+      timerDisplay.textContent=formatDuration(timerSeconds);
+      if(timerSeconds<=180) timerDisplay.classList.add('timer-warning');
+      if(timerId) clearInterval(timerId);
+      timerId=setInterval(()=>{ timerSeconds-=1; timerDisplay.textContent=formatDuration(timerSeconds); if(timerSeconds<=180) timerDisplay.classList.add('timer-warning'); },1000);
+    }
+    function handleFullscreenChange(){
+      const runningLockedTest = mode==='test' && app.style.display==='block' && !submitted && fullScreenEnforcementEnabled;
+      if(runningLockedTest){
+        if(!isFullscreenActive()){ fullScreenExits += 1; pauseTimerForFullscreenLock(); showFullscreenLockOverlay(); }
+        else { hideFullscreenLockOverlay(); resumeTimerAfterFullscreenLock(); }
+      } else { hideFullscreenLockOverlay(); fullscreenTimerPaused=false; }
+      updateFullscreenButton();
+    }
+    function recordFocusLoss(){
+      const runningTest = mode==='test' && app.style.display==='block' && !submitted;
+      if(!runningTest) return;
+      const now=Date.now();
+      if(now-lastFocusLossAt<500) return;
+      lastFocusLossAt=now;
+      focusLosses += 1;
+    }
+
+    function restoreThemePreference() { const saved = localStorage.getItem(STORAGE_KEYS.theme); const theme = AVAILABLE_THEMES.includes(saved) ? saved : DEFAULT_THEME; document.body.setAttribute('data-theme', theme); }
+    function setTheme(theme) { if (!AVAILABLE_THEMES.includes(theme)) return; document.body.setAttribute('data-theme', theme); localStorage.setItem(STORAGE_KEYS.theme, theme); updateThemeButtons(); }
+    function updateThemeButtons() { const theme = document.body.getAttribute('data-theme') || DEFAULT_THEME; const ids = {'black-on-white':'theme-black-white','white-on-black':'theme-white-black','yellow-on-black':'theme-yellow-black'}; AVAILABLE_THEMES.forEach((t)=>{ const btn=document.getElementById(ids[t]); if(btn) btn.classList.toggle('active', t===theme); }); }
+    function setFontSize(size) { document.body.classList.remove('font-large','font-xlarge'); if(size==='large') document.body.classList.add('font-large'); if(size==='xlarge') document.body.classList.add('font-xlarge'); updateFontButtons(); }
+    function updateFontButtons() { const sizeClass = document.body.classList.contains('font-xlarge') ? 'xlarge' : document.body.classList.contains('font-large') ? 'large' : 'normal'; ['normal','large','xlarge'].forEach((s)=>{ const btn=document.getElementById('font-'+s); if(btn) btn.classList.toggle('active', s===sizeClass); }); }
+    function updateCandidateLine(){ candidateLine.textContent = studentName ? `Candidate: ${studentName}` : 'Candidate:'; }
+    function updateAudioStatusLabel(){ audioStatusText.textContent = `Audio is playing: Part ${playbackSection}`; }
+    function formatDuration(totalSeconds){ const sign = totalSeconds < 0 ? '-' : ''; const abs=Math.abs(totalSeconds); return `${sign}${String(Math.floor(abs/60)).padStart(2,'0')}:${String(abs%60).padStart(2,'0')}`; }
+    function startTimer(){ const timerContainer=document.getElementById('timerContainer'); const timerDisplay=document.getElementById('timerDisplay'); fullscreenTimerPaused=false; if(mode==='test'){ timerContainer.style.display='block'; timerContainer.setAttribute('aria-hidden','false'); } else { timerContainer.style.display='none'; timerContainer.setAttribute('aria-hidden','true'); if(timerId) clearInterval(timerId); timerId=null; return; } timerSeconds=30*60; timerDisplay.textContent=formatDuration(timerSeconds); timerDisplay.classList.remove('timer-warning'); if(timerId) clearInterval(timerId); timerId=setInterval(()=>{ timerSeconds-=1; timerDisplay.textContent=formatDuration(timerSeconds); if(timerSeconds<=180) timerDisplay.classList.add('timer-warning'); },1000); }
+    function openOptions(show){ optionsOverlay.style.display = show ? 'flex' : 'none'; }
+    function getSectionForQuestion(q){ if(q<=10) return 1; if(q<=20) return 2; if(q<=30) return 3; return 4; }
+    function normalizeAnswer(value){ return String(value || '').trim().toLowerCase().replace(/\s+/g,' '); }
+    function getTwoAnswerSelection(name){ return Array.from(document.querySelectorAll(`input[name="${name}"]:checked`)).map((el)=>el.value).sort(); }
+    function getTwoAnswerGroupForQuestion(q){ if(q===21||q===22) return { name:'q21_22', numbers:[21,22] }; return null; }
+    function getUserAnswer(q){ const twoAnswerGroup=getTwoAnswerGroupForQuestion(q); if(twoAnswerGroup){ const picked=getTwoAnswerSelection(twoAnswerGroup.name); return picked[twoAnswerGroup.numbers.indexOf(q)] || ''; } const text=document.querySelector(`input[type="text"][name="q${q}"]`); if(text) return text.value.trim(); const select=document.querySelector(`select[name="q${q}"]`); if(select) return select.value.trim(); const radios=Array.from(document.querySelectorAll(`input[type="radio"][name="q${q}"]`)); const chosen=radios.find((r)=>r.checked); return chosen ? chosen.value : ''; }
+    function isCorrect(q){ const user=normalizeAnswer(getUserAnswer(q)); if(!user) return false; return answerKey[q].some((ans)=>normalizeAnswer(ans)===user); }
+    function isAnswered(q){ const twoAnswerGroup=getTwoAnswerGroupForQuestion(q); if(twoAnswerGroup) return getTwoAnswerSelection(twoAnswerGroup.name).length >= twoAnswerGroup.numbers.indexOf(q)+1; return String(getUserAnswer(q)).trim().length>0; }
+    function scoreTwoAnswerGroup(groupName, questionNumbers){ const selected=new Set(getTwoAnswerSelection(groupName).map((answer)=>normalizeAnswer(answer))); return questionNumbers.reduce((score,q)=>score + (answerKey[q].some((answer)=>selected.has(normalizeAnswer(answer))) ? 1 : 0), 0); }
+    function playCurrentSectionAudio(){ updateAudioStatusLabel(); const p=sectionAudio.play(); if(p && typeof p.catch === 'function') p.catch(()=>{}); }
+    function updateSectionAudio(){ const shouldShow = mode==='study' || submitted; audioBar.classList.toggle('visible', shouldShow); const sectionForAudio = shouldShow ? activeSection : playbackSection; const src = audioSources[sectionForAudio] || ''; if(sectionAudioSource.getAttribute('src') !== src){ sectionAudio.pause(); sectionAudioSource.setAttribute('src', src); sectionAudio.load(); } if(mode==='test' && !submitted && sectionAudio.paused){ playCurrentSectionAudio(); } }
+    function buildFooter(){ footerMain.innerHTML=''; Object.entries(sectionRanges).forEach(([sec,range])=>{ const part=document.createElement('div'); part.className='part-group'; part.dataset.section=sec; part.innerHTML=`<div class="part-progress"><div class="part-progress-fill" id="progress-${sec}"></div></div><div class="part-top"><span class="part-label">${range.label}</span><span class="count" id="count-${sec}">0 of ${range.to-range.from+1}</span><span class="tick" id="tick-${sec}">✓</span><div class="question-nav-row" id="nav-${sec}"></div></div>`; part.addEventListener('click',(event)=>{ if(event.target.closest('.qnav')) return; switchSection(Number(sec)); }); footerMain.appendChild(part); const navRow=part.querySelector(`#nav-${sec}`); for(let q=range.from;q<=range.to;q+=1){ const btn=document.createElement('button'); btn.type='button'; btn.className='qnav'; btn.dataset.q=q; btn.textContent=q; btn.addEventListener('click',()=>jumpToQuestion(q)); navRow.appendChild(btn);} }); updateFooterState(); }
+    function updateFooterState(){ Object.entries(sectionRanges).forEach(([sec,range])=>{ const total=range.to-range.from+1; let answered=0; for(let q=range.from;q<=range.to;q+=1){ if(isAnswered(q)) answered+=1; const btn=footerMain.querySelector(`.qnav[data-q="${q}"]`); if(btn){ btn.classList.toggle('answered', isAnswered(q)); btn.classList.toggle('current', q===currentQuestion); } } const countEl=document.getElementById(`count-${sec}`); if(countEl) countEl.textContent=`${answered} of ${total}`; const progressEl=document.getElementById(`progress-${sec}`); if(progressEl) progressEl.style.width=`${(answered/total)*100}%`; const tickEl=document.getElementById(`tick-${sec}`); if(tickEl) tickEl.style.display = answered===total ? 'inline' : 'none'; const groupEl=footerMain.querySelector(`.part-group[data-section="${sec}"]`); if(groupEl){ groupEl.classList.toggle('active', Number(sec)===activeSection); groupEl.classList.toggle('complete', answered===total); } }); footerMain.dataset.activeSection=String(activeSection); }
+    function highlightCurrentQuestion(q){ document.querySelectorAll('.question-block').forEach((block)=>block.classList.remove('current')); const group=groupedQuestionMap[q]; let block=document.querySelector(`.question-block[data-q="${q}"]`); if(!block && group) block=document.querySelector(`.question-block[data-qgroup="${group}"]`); if(block) block.classList.add('current'); }
+    function setCurrentQuestion(q){ const next=Number(q); if(!Number.isInteger(next) || next<1 || next>40) return; currentQuestion=next; updateFooterState(); highlightCurrentQuestion(currentQuestion); }
+    function getQuestionFromTarget(target){
+      if(!(target instanceof Element)) return null;
+      const clearButton=target.closest('[data-clear-q]');
+      if(clearButton) return Number(clearButton.dataset.clearQ);
+      const answerHolder=target.closest('.inline-answer[data-q], .drag-slot[data-q]');
+      if(answerHolder) return Number(answerHolder.dataset.q);
+      const namedControl=target.closest('input[name], select[name]');
+      if(namedControl){
+        const groupStarts={ q21_22:21 };
+        if(groupStarts[namedControl.name]) return groupStarts[namedControl.name];
+        const match=namedControl.name.match(/^q(\d+)/);
+        if(match) return Number(match[1]);
+      }
+      const block=target.closest('.question-block[data-q]');
+      if(block) return Number(block.dataset.q);
+      const groupedBlock=target.closest('.question-block[data-qgroup]');
+      if(groupedBlock){
+        const match=groupedBlock.dataset.qgroup.match(/^(\d+)/);
+        if(match) return Number(match[1]);
+      }
+      return null;
+    }
+    function getQuestionFocusTarget(q){
+      const textInput=document.querySelector(`input[type="text"][name="q${q}"]`);
+      if(textInput) return textInput;
+      const dragSlot=document.querySelector(`.drag-slot[data-q="${q}"]`);
+      if(dragSlot) return dragSlot;
+      const select=document.querySelector(`select[name="q${q}"]:not(.sr-only)`);
+      if(select) return select;
+      const radioChecked=document.querySelector(`input[type="radio"][name="q${q}"]:checked`);
+      if(radioChecked) return radioChecked;
+      const radioFirst=document.querySelector(`input[type="radio"][name="q${q}"]`);
+      if(radioFirst) return radioFirst;
+      const twoAnswerGroup=getTwoAnswerGroupForQuestion(q);
+      if(twoAnswerGroup) return document.querySelector(`.question-block[data-qgroup="${twoAnswerGroup.numbers[0]}-${twoAnswerGroup.numbers[1]}"]`);
+      const group=groupedQuestionMap[q];
+      if(group) return document.querySelector(`.question-block[data-qgroup="${group}"]`);
+      return document.querySelector(`.question-block[data-q="${q}"]`);
+    }
+    function switchSection(section){ activeSection=section; document.querySelectorAll('.section-panel').forEach((panel)=>panel.classList.toggle('active', Number(panel.dataset.section)===section)); const range=sectionRanges[section]; if(currentQuestion<range.from || currentQuestion>range.to) currentQuestion=range.from; updateSectionAudio(); updateFooterState(); highlightCurrentQuestion(currentQuestion); prevSectionBtn.disabled = section===1; nextSectionBtn.disabled = section===4; }
+    function jumpToQuestion(q){ const section=getSectionForQuestion(q); switchSection(section); setCurrentQuestion(q); const target=getQuestionFocusTarget(q); if(target){ const scrollTarget=target.closest('.drag-question-row, .checkbox-option, .radio-option') || target; scrollTarget.scrollIntoView({behavior:'smooth', block:'center'}); if(typeof target.focus==='function' && !target.classList.contains('sr-only')) target.focus({preventScroll:true}); } }
+    function bindInputs(){
+      document.querySelectorAll('input[type="text"], select, input[type="radio"], input[type="checkbox"]').forEach((el)=>{
+        const syncCurrent=(event)=>{ const q=getQuestionFromTarget(event.target); if(q) setCurrentQuestion(q); };
+        el.addEventListener('focus', syncCurrent);
+        el.addEventListener('click', syncCurrent);
+        el.addEventListener('change', onAnswerChange);
+        if(el.type==='text') el.addEventListener('input', onAnswerChange);
+      });
+      ['q21_22'].forEach((groupName)=>{ document.querySelectorAll(`input[name="${groupName}"]`).forEach((el)=>{ el.addEventListener('change', (event)=>{ const checked=getTwoAnswerSelection(groupName); if(checked.length>2) el.checked=false; onAnswerChange(event); }); }); });
+      document.querySelectorAll('.drag-slot, .drag-clear').forEach((el)=>{
+        const syncCurrent=(event)=>{ const q=getQuestionFromTarget(event.target); if(q) setCurrentQuestion(q); };
+        el.addEventListener('focus', syncCurrent);
+        el.addEventListener('click', syncCurrent);
+      });
+    }
+    function onAnswerChange(evt){ const q=evt ? getQuestionFromTarget(evt.target) : null; if(q) setCurrentQuestion(q); else { updateFooterState(); highlightCurrentQuestion(currentQuestion); } }
+    function setupWheelFallback(){
+      document.addEventListener('wheel',(event)=>{
+        if(event.defaultPrevented || event.ctrlKey || Math.abs(event.deltaY) < 1) return;
+        if(modeScreen.style.display !== 'none' || resultsOverlay.style.display !== 'none' || optionsOverlay.style.display !== 'none') return;
+        const target = event.target instanceof Element ? event.target : null;
+        if(!target || !target.closest('.main')) return;
+        if(target.closest('.question-nav-row')) return;
+        window.scrollBy({ top: event.deltaY, left: 0, behavior: 'auto' });
+        event.preventDefault();
+      }, { passive: false });
+    }
+    function correctAnswerRangeText(from,to){ const parts=[]; for(let q=from;q<=to;q+=1) parts.push(`${q} ${displayAnswers[q]}`); return parts.join('; '); }
+    function showCorrectAnswer(id,text){ const el=document.getElementById(id); if(!el) return; el.style.display='block'; el.textContent=`Correct answer: ${text}`; }
+    function markBlock(q,correctState){ const group=groupedQuestionMap[q]; let block=document.querySelector(`.question-block[data-q="${q}"]`); if(!block && group) block=document.querySelector(`.question-block[data-qgroup="${group}"]`); if(!block) return; block.classList.remove('correct','incorrect','partial'); if(correctState===true){ block.classList.add('correct'); } else if(correctState===false){ block.classList.add('incorrect'); } else if(correctState==='partial'){ block.classList.add('partial'); } }
+    function markTwoAnswerGroup(groupName, questionNumbers){ const score=scoreTwoAnswerGroup(groupName, questionNumbers); const answered=getTwoAnswerSelection(groupName).length>0; if(answered) markBlock(questionNumbers[0], score===questionNumbers.length ? true : score>0 ? 'partial' : false); return score; }
+    function evaluateAll(){ let totalCorrect=0; const twoAnswerQuestions=new Set([21,22]); for(let q=1;q<=40;q+=1){ if(twoAnswerQuestions.has(q)) continue; const answered=isAnswered(q); const correct=answered ? isCorrect(q) : false; if(correct) totalCorrect+=1; if(answered) markBlock(q, correct); } totalCorrect+=markTwoAnswerGroup('q21_22',[21,22]); showCorrectAnswer('ca-1-10',correctAnswerRangeText(1,10)); for(let q=11;q<=14;q+=1) showCorrectAnswer(`ca-${q}`, displayAnswers[q]); showCorrectAnswer('ca-15-20',correctAnswerRangeText(15,20)); showCorrectAnswer('ca-21-22',correctAnswerRangeText(21,22)); showCorrectAnswer('ca-23-27',correctAnswerRangeText(23,27)); for(let q=28;q<=30;q+=1) showCorrectAnswer(`ca-${q}`, displayAnswers[q]); showCorrectAnswer('ca-31-40',correctAnswerRangeText(31,40)); return totalCorrect; }
+    function bandFromScore(score){ return listeningBands.find((row)=>score>=row.min) || listeningBands[listeningBands.length-1]; }
+    function submitTest(){ const totalCorrect=evaluateAll(); submitted=true; fullScreenEnforcementEnabled=false; fullscreenTimerPaused=false; hideFullscreenLockOverlay(); updateFullscreenButton(); updateSectionAudio(); if(mode==='test'){ document.querySelectorAll('input, select').forEach((el)=>{ el.disabled=true; }); if(timerId){ clearInterval(timerId); timerId=null; } } const bandInfo=bandFromScore(totalCorrect); document.getElementById('studentLine').innerHTML=`<strong>Candidate:</strong> ${studentName || 'Not provided'}`; document.getElementById('timeLine').innerHTML=`<strong>Total time:</strong> ${formatDuration((30*60)-timerSeconds)}`; document.getElementById('scoreLine').innerHTML=`<strong>Score:</strong> ${totalCorrect} out of 40`; document.getElementById('bandLine').innerHTML=`<strong>Estimated IELTS Listening band:</strong> ${bandInfo.band} (${bandInfo.level})`; document.getElementById('integrityLine').innerHTML=`<strong>Test integrity:</strong> Full-screen exits: ${fullScreenExits}; focus losses / tab switches: ${focusLosses}`; document.getElementById('descriptorLine').textContent=bandInfo.description; resultsOverlay.style.display='flex'; openOptions(false); }
+    function confirmSubmit(){ const ok=window.confirm('Are you sure you want to submit your test now? You will not be able to continue answering in Test mode.'); if(!ok) return; submitTest(); }
+    function handlePrimarySubmit(){ if(mode==='test' && !submitted){ confirmSubmit(); return; } submitTest(); }
+    function startApp(selectedMode){ mode=selectedMode; submitted=false; activeSection=1; playbackSection=1; modeScreen.style.display='none'; testStartScreen.style.display='none'; app.style.display='block'; updateCandidateLine(); buildFooter(); bindInputs(); setupDragMatch(); switchSection(1); startTimer(); updateThemeButtons(); updateFontButtons(); }
+    function getDragGroupForQuestion(q){ if(q>=15 && q<=20) return { numbers:[15,16,17,18,19,20] }; if(q>=23 && q<=27) return { numbers:[23,24,25,26,27] }; return null; }
+    function setupDragMatch(){ document.querySelectorAll('.drag-bank').forEach((bank)=>{ bank.querySelectorAll('.drag-choice').forEach((choice)=>{ if(choice.dataset.bound==='yes') return; choice.dataset.bound='yes'; choice.addEventListener('dragstart',(e)=>{ e.dataTransfer.setData('text/plain', choice.dataset.value); }); choice.addEventListener('click',()=>{ document.querySelectorAll('.drag-choice').forEach((c)=>c.classList.remove('selected')); choice.classList.add('selected'); selectedDragChoice = choice.dataset.value; }); }); }); document.querySelectorAll('.drag-slot').forEach((slot)=>{ if(slot.dataset.bound==='yes') return; slot.dataset.bound='yes'; slot.addEventListener('dragover',(e)=>{ e.preventDefault(); slot.classList.add('over'); }); slot.addEventListener('dragleave',()=>slot.classList.remove('over')); slot.addEventListener('drop',(e)=>{ e.preventDefault(); slot.classList.remove('over'); const val=e.dataTransfer.getData('text/plain'); if(val) setDragAssignment(Number(slot.dataset.q), val); }); slot.addEventListener('click',()=>{ if(selectedDragChoice) setDragAssignment(Number(slot.dataset.q), selectedDragChoice); }); }); document.querySelectorAll('.drag-clear').forEach((btn)=>{ if(btn.dataset.bound==='yes') return; btn.dataset.bound='yes'; btn.addEventListener('click',()=>clearDragAssignment(Number(btn.dataset.clearQ))); }); renderDragAssignments(); }
+    function setDragAssignment(questionNumber, value){ const group=getDragGroupForQuestion(questionNumber); if(group){ group.numbers.forEach((q)=>{ if(dragAssignments[q]===value) dragAssignments[q]=''; }); } dragAssignments[questionNumber]=value; const select=document.querySelector(`select[name="q${questionNumber}"]`); if(select){ select.value=value; select.dispatchEvent(new Event('change',{bubbles:true})); } selectedDragChoice=''; document.querySelectorAll('.drag-choice').forEach((c)=>c.classList.remove('selected')); renderDragAssignments(); }
+    function clearDragAssignment(questionNumber){ dragAssignments[questionNumber]=''; const select=document.querySelector(`select[name="q${questionNumber}"]`); if(select){ select.value=''; select.dispatchEvent(new Event('change',{bubbles:true})); } renderDragAssignments(); }
+    function renderDragAssignments(){ document.querySelectorAll('.drag-slot').forEach((slot)=>{ const q=Number(slot.dataset.q); const val=dragAssignments[q]; slot.textContent = val || 'Drop here'; slot.classList.toggle('filled', Boolean(val)); }); document.querySelectorAll('.drag-bank').forEach((bank)=>{ const numbers=Array.from(bank.closest('.question-block')?.querySelectorAll('.drag-slot') || []).map((slot)=>Number(slot.dataset.q)); bank.querySelectorAll('.drag-choice').forEach((choice)=>{ const used=numbers.some((q)=>dragAssignments[q]===choice.dataset.value); choice.classList.toggle('used', used); }); }); }
+
+
+    setupWheelFallback();
+    modeButtons.forEach((btn)=>{ btn.addEventListener('click',()=>{ const selected=btn.dataset.mode; if(selected==='test'){ testStartScreen.style.display='block'; studentNameInput.focus(); return; } studentName=''; startApp('study'); }); });
+    startTestBtn.addEventListener('click',async ()=>{ const value=studentNameInput.value.trim(); if(!value){ alert('Please enter your name before starting test mode.'); studentNameInput.focus(); return; } studentName=value; fullscreenSupported=isFullscreenApiSupported(); fullScreenExits=0; focusLosses=0; fullscreenTimerPaused=false; fullScreenEnforcementEnabled=false; updateFullscreenSupportNote(false); if(fullscreenSupported){ const ok=await requestAppFullscreen(); if(!ok) updateFullscreenSupportNote(true); else fullScreenEnforcementEnabled=true; } else { updateFullscreenSupportNote(true); } startApp('test'); updateFullscreenButton(); });
+    optionsBtn.addEventListener('click',()=>openOptions(true));
+    fullscreenBtn.addEventListener('click',()=>{ toggleFullscreen(); });
+    returnFullscreenBtn.addEventListener('click',()=>{ returnToFullscreenAndResume(); });
+    closeOptionsBtn.addEventListener('click',()=>openOptions(false));
+    menuSubmitBtn.addEventListener('click', handlePrimarySubmit);
+    footerSubmitBtn.addEventListener('click', handlePrimarySubmit);
+    closeResultsBtn.addEventListener('click',()=>{ resultsOverlay.style.display='none'; });
+    prevSectionBtn.addEventListener('click',()=>{ if(activeSection>1) switchSection(activeSection-1); });
+    nextSectionBtn.addEventListener('click',()=>{ if(activeSection<4) switchSection(activeSection+1); });
+    sectionAudio.addEventListener('play',()=>{ updateAudioStatusLabel(); audioStatus.classList.remove('hidden'); });
+    sectionAudio.addEventListener('pause',()=>{ if(!(mode==='test' && !submitted)) audioStatus.classList.add('hidden'); });
+    sectionAudio.addEventListener('ended',()=>{ if(mode==='test' && !submitted && playbackSection<4){ playbackSection += 1; updateSectionAudio(); playCurrentSectionAudio(); return; } audioStatus.classList.add('hidden'); });
+    document.getElementById('theme-black-white').addEventListener('click',()=>setTheme('black-on-white'));
+    document.getElementById('theme-white-black').addEventListener('click',()=>setTheme('white-on-black'));
+    document.getElementById('theme-yellow-black').addEventListener('click',()=>setTheme('yellow-on-black'));
+    document.getElementById('font-normal').addEventListener('click',()=>setFontSize('normal'));
+    document.getElementById('font-large').addEventListener('click',()=>setFontSize('large'));
+    document.getElementById('font-xlarge').addEventListener('click',()=>setFontSize('xlarge'));
+    homeLink.addEventListener('click',(e)=>{ e.preventDefault(); if(window.confirm('Are you sure you want to leave this test and return to the home page? Your current answers may not be saved.')) window.location.href='../../../index.html'; });
+    window.addEventListener('beforeunload',(e)=>{ if(submitted) return; e.preventDefault(); e.returnValue='Are you sure you want to leave? Your progress will be lost.'; return e.returnValue; });
+    document.addEventListener('fullscreenchange', handleFullscreenChange);
+    document.addEventListener('webkitfullscreenchange', handleFullscreenChange);
+    document.addEventListener('MSFullscreenChange', handleFullscreenChange);
+    document.addEventListener('visibilitychange',()=>{ if(document.visibilityState==='hidden') recordFocusLoss(); });
+    window.addEventListener('blur', recordFocusLoss);
+    restoreThemePreference(); updateThemeButtons(); updateFontButtons();
+    updateFullscreenButton();
+
+    // IELTS Pabs animated logo
+    function initAnimatedLogo() {
+      const logoNodes = document.querySelectorAll('.logo.home-link, .logo-link .logo');
+      if (!logoNodes.length) return;
+      const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      logoNodes.forEach((logoNode) => {
+        const rawText = (logoNode.textContent || '').trim();
+        if (rawText !== 'IELTS Pabs') return;
+        logoNode.setAttribute('aria-label', 'IELTS Pabs');
+        const fragment = document.createDocumentFragment();
+        Array.from(rawText).forEach((char, index) => {
+          const span = document.createElement('span');
+          span.className = 'logo-char';
+          span.setAttribute('aria-hidden', 'true');
+          span.style.setProperty('--logo-char-index', String(index));
+          span.textContent = char === ' ' ? '\u00A0' : char;
+          fragment.appendChild(span);
+        });
+        logoNode.textContent = '';
+        logoNode.appendChild(fragment);
+        if (reducedMotion) return;
+        logoNode.addEventListener('mouseenter', () => {
+          logoNode.classList.remove('is-animating');
+          void logoNode.offsetWidth;
+          logoNode.classList.add('is-animating');
+        });
+        logoNode.addEventListener('mouseleave', () => logoNode.classList.remove('is-animating'));
+      });
+    }
+
+    initAnimatedLogo();
+
+  </script>
+</body>
+</html>
