@@ -1206,8 +1206,28 @@
   <script>
     const audioSources = { 1: './IELTS 18 - T4 - part 1.mp3', 2: './IELTS 18 - T4 - part 2.mp3', 3: './IELTS 18 - T4 - part 3.mp3', 4: './IELTS 18 - T4 - part 4.mp3' };
     const sectionRanges = { 1:{from:1,to:10,label:'Part 1'}, 2:{from:11,to:20,label:'Part 2'}, 3:{from:21,to:30,label:'Part 3'}, 4:{from:31,to:40,label:'Part 4'} };
-    const answerKey = {1:['Marrowfield'],2:['relative'],3:['socialise','socialize'],4:['full'],5:['Domestic Life'],6:['clouds'],7:['timing'],8:['Animal Magic'],9:['animal movement','movement'],10:['dark'],11:['B'],12:['C'],13:['B'],14:['D'],15:['C'],16:['B'],17:['B'],18:['C'],19:['A'],20:['A'],21:['A'],22:['E'],23:['B'],24:['D'],25:['G'],26:['E'],27:['B'],28:['C'],29:['F'],30:['A'],31:['technical'],32:['cheap'],33:['thousands'],34:['identification'],35:['tracking'],36:['military'],37:['location'],38:['prediction'],39:['database'],40:['trust']};
-    const displayAnswers = {1:'Marrowfield',2:'relative',3:'socialise / socialize',4:'full',5:'Domestic Life',6:'clouds',7:'timing',8:'Animal Magic',9:'(animal) movement',10:'dark',11:'B',12:'C',13:'B',14:'D',15:'C',16:'B',17:'B',18:'C',19:'A',20:'A',21:'A',22:'E',23:'B',24:'D',25:'G',26:'E',27:'B',28:'C',29:'F',30:'A',31:'technical',32:'cheap',33:'thousands',34:'identification',35:'tracking',36:'military',37:'location',38:'prediction',39:'database',40:'trust'};
+    const answerKey = {
+      1:['receptionist'], 2:['Medical'], 3:['Chastons'], 4:['appointments'], 5:['database'],
+      6:['experience'], 7:['confident'], 8:['temporary'], 9:['1.15'], 10:['parking'],
+      11:['B'], 12:['A'], 13:['A'], 14:['C'],
+      15:['F'], 16:['G'], 17:['E'], 18:['A'], 19:['C'], 20:['B'],
+      21:['B'], 22:['D'],
+      23:['D'], 24:['A'], 25:['C'], 26:['G'], 27:['F'],
+      28:['A'], 29:['B'], 30:['C'],
+      31:['plot'], 32:['poverty'], 33:['Europe'], 34:['poetry'], 35:['drawings'],
+      36:['furniture'], 37:['lamps'], 38:['harbour','harbor'], 39:['children'], 40:['relatives']
+    };
+    const displayAnswers = {
+      1:'receptionist', 2:'Medical', 3:'Chastons', 4:'appointments', 5:'database',
+      6:'experience', 7:'confident', 8:'temporary', 9:'1.15', 10:'parking',
+      11:'B', 12:'A', 13:'A', 14:'C',
+      15:'F', 16:'G', 17:'E', 18:'A', 19:'C', 20:'B',
+      21:'B', 22:'D',
+      23:'D', 24:'A', 25:'C', 26:'G', 27:'F',
+      28:'A', 29:'B', 30:'C',
+      31:'plot', 32:'poverty', 33:'Europe', 34:'poetry', 35:'drawings',
+      36:'furniture', 37:'lamps', 38:'harbour / harbor', 39:'children', 40:'relatives'
+    };
     const listeningBands = [{min:39,band:9,level:'Expert user',description:'Has fully operational command of the language: accurate, appropriate and fluent with complete understanding.'},{min:37,band:8.5,level:'Very good user',description:'Has fully operational command with only occasional unsystematic inaccuracies.'},{min:35,band:8,level:'Very good user',description:'Understands detailed listening well and handles a wide range of language successfully.'},{min:32,band:7.5,level:'Good user',description:'Shows strong listening ability with only occasional lapses.'},{min:30,band:7,level:'Good user',description:'Has operational command of the language, though with occasional misunderstandings.'},{min:26,band:6.5,level:'Competent user',description:'Generally effective listening in a range of familiar and less familiar situations.'},{min:23,band:6,level:'Competent user',description:'Can understand main ideas and much detail, despite some inaccuracies.'},{min:18,band:5.5,level:'Modest user',description:'Can cope with overall meaning in most situations, but errors still affect performance.'},{min:16,band:5,level:'Modest user',description:'Partial command of the language with noticeable limits in understanding.'},{min:13,band:4.5,level:'Limited user',description:'Basic competence is limited to more familiar situations.'},{min:11,band:4,level:'Limited user',description:'Frequent problems occur in understanding.'},{min:9,band:3.5,level:'Extremely limited user',description:'Conveys and understands only general meaning in very familiar situations.'},{min:7,band:3,level:'Extremely limited user',description:'Very limited understanding beyond familiar language.'},{min:5,band:2.5,level:'Intermittent user',description:'Only the most basic information is understood.'},{min:0,band:0,level:'Did not attempt test',description:'No assessable information provided.'}];
     const groupedQuestionMap = {1:'1-10',2:'1-10',3:'1-10',4:'1-10',5:'1-10',6:'1-10',7:'1-10',8:'1-10',9:'1-10',10:'1-10',11:'11-12',12:'11-12',13:'13-14',14:'13-14',21:'21-22',22:'21-22',23:'23-27',24:'23-27',25:'23-27',26:'23-27',27:'23-27',31:'31-40',32:'31-40',33:'31-40',34:'31-40',35:'31-40',36:'31-40',37:'31-40',38:'31-40',39:'31-40',40:'31-40'};
     let mode = 'test', activeSection = 1, playbackSection = 1, timerSeconds = 30*60, timerId = null, submitted = false, studentName = '', currentQuestion = 1, selectedDragChoice = '';
