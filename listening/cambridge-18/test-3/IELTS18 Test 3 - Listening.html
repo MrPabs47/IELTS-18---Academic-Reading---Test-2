@@ -608,13 +608,23 @@
     }
     .drag-choice.selected { outline: 2px solid var(--accent); outline-offset: 1px; }
     .drag-choice.used { opacity: 0.45; }
+    .question-block[data-qgroup="25-30"] {
+      padding: 16px;
+      margin: 12px 0 18px;
+      box-sizing: border-box;
+    }
+    .question-block[data-qgroup="25-30"].correct,
+    .question-block[data-qgroup="25-30"].partial,
+    .question-block[data-qgroup="25-30"].incorrect {
+      outline-offset: 4px;
+    }
     .drag-question-row {
       display: grid;
-      grid-template-columns: 34px minmax(180px, 1fr) 160px 34px;
+      grid-template-columns: 34px minmax(180px, 1fr) minmax(160px, auto) 34px;
       gap: 10px;
       align-items: center;
       margin-bottom: 12px;
-      max-width: 760px;
+      max-width: 800px;
     }
     .drag-slot {
       min-height: 38px;
@@ -633,6 +643,26 @@
       border-color: var(--accent);
       background: var(--accent-soft);
       color: var(--accent);
+    }
+    .drag-slot.match-correct {
+      border-style: solid;
+      border-color: var(--correct);
+      background: rgba(46, 125, 50, 0.12);
+      color: var(--correct);
+    }
+    .drag-slot.match-incorrect {
+      border-style: solid;
+      border-color: var(--incorrect);
+      background: rgba(183, 28, 28, 0.10);
+      color: var(--incorrect);
+    }
+    .drag-correction {
+      display: block;
+      margin-top: 2px;
+      font-size: 0.78rem;
+      line-height: 1.15;
+      color: var(--incorrect);
+      font-weight: 700;
     }
     .drag-slot.over { border-color: var(--accent); }
     .drag-slot:focus { outline: 2px solid var(--accent); outline-offset: 2px; }
@@ -799,6 +829,7 @@
     }
     @media (max-width: 760px) {
       .info-strip { gap: 8px; }
+      .question-block[data-qgroup="25-30"] { padding: 14px 12px; }
       .drag-question-row { grid-template-columns: 28px 1fr; }
       .drag-slot, .drag-clear { grid-column: 2 / 3; }
       .drag-clear { width: 80px; }
@@ -1399,9 +1430,9 @@
     function markBlock(q,correctState){ const group=groupedQuestionMap[q]; let block=document.querySelector(`.question-block[data-q="${q}"]`); if(!block && group) block=document.querySelector(`.question-block[data-qgroup="${group}"]`); if(!block) return; block.classList.remove('correct','incorrect','partial'); if(correctState===true){ block.classList.add('correct'); } else if(correctState===false){ block.classList.add('incorrect'); } else if(correctState==='partial'){ block.classList.add('partial'); } }
     function markTwoAnswerGroup(groupName, questionNumbers){ const score=scoreTwoAnswerGroup(groupName, questionNumbers); const answered=getTwoAnswerSelection(groupName).length>0; if(answered) markBlock(questionNumbers[0], score===questionNumbers.length ? true : score>0 ? 'partial' : false); return score; }
     function markGroupedRange(from,to){ let answered=0, correct=0; for(let q=from;q<=to;q+=1){ if(isAnswered(q)) answered+=1; if(isAnswered(q) && isCorrect(q)) correct+=1; } if(answered) markBlock(from, correct===to-from+1 ? true : correct>0 ? 'partial' : false); }
-    function evaluateAll(){ let totalCorrect=0; const twoAnswerQuestions=new Set([11,12,13,14,21,22,23,24]); for(let q=1;q<=40;q+=1){ if(twoAnswerQuestions.has(q)) continue; const answered=isAnswered(q); const correct=answered ? isCorrect(q) : false; if(correct) totalCorrect+=1; if(answered) markBlock(q, correct); } totalCorrect += markTwoAnswerGroup('q11_12',[11,12]); totalCorrect += markTwoAnswerGroup('q13_14',[13,14]); totalCorrect += markTwoAnswerGroup('q21_22',[21,22]); totalCorrect += markTwoAnswerGroup('q23_24',[23,24]); markGroupedRange(1,10); markGroupedRange(25,30); markGroupedRange(31,40); showCorrectAnswer('ca-1-10',correctAnswerRangeText(1,10)); showCorrectAnswer('ca-11-12', '11 '+displayAnswers[11]+'; 12 '+displayAnswers[12]); showCorrectAnswer('ca-13-14', '13 '+displayAnswers[13]+'; 14 '+displayAnswers[14]); for(let q=15;q<=20;q+=1) showCorrectAnswer(`ca-${q}`, displayAnswers[q]); showCorrectAnswer('ca-21-22', '21 '+displayAnswers[21]+'; 22 '+displayAnswers[22]); showCorrectAnswer('ca-23-24', '23 '+displayAnswers[23]+'; 24 '+displayAnswers[24]); showCorrectAnswer('ca-25-30', correctAnswerRangeText(25,30)); showCorrectAnswer('ca-31-40',correctAnswerRangeText(31,40)); return totalCorrect; }
+    function evaluateAll(){ let totalCorrect=0; const twoAnswerQuestions=new Set([11,12,13,14,21,22,23,24]); for(let q=1;q<=40;q+=1){ if(twoAnswerQuestions.has(q)) continue; const answered=isAnswered(q); const correct=answered ? isCorrect(q) : false; if(correct) totalCorrect+=1; if(answered) markBlock(q, correct); } totalCorrect += markTwoAnswerGroup('q11_12',[11,12]); totalCorrect += markTwoAnswerGroup('q13_14',[13,14]); totalCorrect += markTwoAnswerGroup('q21_22',[21,22]); totalCorrect += markTwoAnswerGroup('q23_24',[23,24]); markGroupedRange(1,10); markGroupedRange(25,30); markGroupedRange(31,40); showCorrectAnswer('ca-1-10',correctAnswerRangeText(1,10)); showCorrectAnswer('ca-11-12', '11 '+displayAnswers[11]+'; 12 '+displayAnswers[12]); showCorrectAnswer('ca-13-14', '13 '+displayAnswers[13]+'; 14 '+displayAnswers[14]); for(let q=15;q<=20;q+=1) showCorrectAnswer(`ca-${q}`, displayAnswers[q]); showCorrectAnswer('ca-21-22', '21 '+displayAnswers[21]+'; 22 '+displayAnswers[22]); showCorrectAnswer('ca-23-24', '23 '+displayAnswers[23]+'; 24 '+displayAnswers[24]); showCorrectAnswer('ca-25-30', correctAnswerRangeText(25,30)); showCorrectAnswer('ca-31-40',correctAnswerRangeText(31,40)); renderDragAssignments(); return totalCorrect; }
     function bandFromScore(score){ return listeningBands.find((row)=>score>=row.min) || listeningBands[listeningBands.length-1]; }
-    function submitTest(){ const totalCorrect=evaluateAll(); submitted=true; fullScreenEnforcementEnabled=false; fullscreenTimerPaused=false; hideFullscreenLockOverlay(); updateFullscreenButton(); updateSectionAudio(); if(mode==='test'){ document.querySelectorAll('input, select').forEach((el)=>{ el.disabled=true; }); if(timerId){ clearInterval(timerId); timerId=null; } } const bandInfo=bandFromScore(totalCorrect); document.getElementById('studentLine').innerHTML=`<strong>Candidate:</strong> ${studentName || 'Not provided'}`; document.getElementById('timeLine').innerHTML=`<strong>Total time:</strong> ${formatDuration((30*60)-timerSeconds)}`; document.getElementById('scoreLine').innerHTML=`<strong>Score:</strong> ${totalCorrect} out of 40`; document.getElementById('bandLine').innerHTML=`<strong>Estimated IELTS Listening band:</strong> ${bandInfo.band} (${bandInfo.level})`; document.getElementById('integrityLine').innerHTML=`<strong>Test integrity:</strong> Full-screen exits: ${fullScreenExits}; focus losses / tab switches: ${focusLosses}`; document.getElementById('descriptorLine').textContent=bandInfo.description; resultsOverlay.style.display='flex'; openOptions(false); }
+    function submitTest(){ submitted=true; const totalCorrect=evaluateAll(); fullScreenEnforcementEnabled=false; fullscreenTimerPaused=false; hideFullscreenLockOverlay(); updateFullscreenButton(); updateSectionAudio(); if(mode==='test'){ document.querySelectorAll('input, select').forEach((el)=>{ el.disabled=true; }); if(timerId){ clearInterval(timerId); timerId=null; } } const bandInfo=bandFromScore(totalCorrect); document.getElementById('studentLine').innerHTML=`<strong>Candidate:</strong> ${studentName || 'Not provided'}`; document.getElementById('timeLine').innerHTML=`<strong>Total time:</strong> ${formatDuration((30*60)-timerSeconds)}`; document.getElementById('scoreLine').innerHTML=`<strong>Score:</strong> ${totalCorrect} out of 40`; document.getElementById('bandLine').innerHTML=`<strong>Estimated IELTS Listening band:</strong> ${bandInfo.band} (${bandInfo.level})`; document.getElementById('integrityLine').innerHTML=`<strong>Test integrity:</strong> Full-screen exits: ${fullScreenExits}; focus losses / tab switches: ${focusLosses}`; document.getElementById('descriptorLine').textContent=bandInfo.description; resultsOverlay.style.display='flex'; openOptions(false); }
     function confirmSubmit(){ const ok=window.confirm('Are you sure you want to submit your test now? You will not be able to continue answering in Test mode.'); if(!ok) return; submitTest(); }
     function handlePrimarySubmit(){ if(mode==='test' && !submitted){ confirmSubmit(); return; } submitTest(); }
     function startApp(selectedMode){ mode=selectedMode; submitted=false; activeSection=1; playbackSection=1; modeScreen.style.display='none'; testStartScreen.style.display='none'; app.style.display='block'; updateCandidateLine(); buildFooter(); bindInputs(); setupDragMatch(); switchSection(1); startTimer(); updateThemeButtons(); updateFontButtons(); }
@@ -1410,7 +1441,7 @@
     function syncDragSelect(questionNumber, value){ const select=document.querySelector(`select[name="q${questionNumber}"]`); if(select){ select.value=value; select.dispatchEvent(new Event('change',{bubbles:true})); } }
     function setDragAssignment(questionNumber, value){ const group=getDragGroupForQuestion(questionNumber); if(group && !group.reusable){ group.numbers.forEach((q)=>{ if(dragAssignments[q]===value){ dragAssignments[q]=''; syncDragSelect(q, ''); } }); } dragAssignments[questionNumber]=value; syncDragSelect(questionNumber, value); selectedDragChoice=''; document.querySelectorAll('.drag-choice').forEach((c)=>c.classList.remove('selected')); renderDragAssignments(); }
     function clearDragAssignment(questionNumber){ dragAssignments[questionNumber]=''; syncDragSelect(questionNumber, ''); renderDragAssignments(); }
-    function renderDragAssignments(){ document.querySelectorAll('.drag-slot').forEach((slot)=>{ const q=Number(slot.dataset.q); const val=dragAssignments[q]; slot.textContent = val || 'Drop here'; slot.classList.toggle('filled', Boolean(val)); }); document.querySelectorAll('.drag-bank').forEach((bank)=>{ const numbers=Array.from(bank.closest('.question-block')?.querySelectorAll('.drag-slot') || []).map((slot)=>Number(slot.dataset.q)); bank.querySelectorAll('.drag-choice').forEach((choice)=>{ const reusable=bank.dataset.reusable==='true'; const used=!reusable && numbers.some((q)=>dragAssignments[q]===choice.dataset.value); choice.classList.toggle('used', used); }); }); }
+    function renderDragAssignments(){ document.querySelectorAll('.drag-slot').forEach((slot)=>{ const q=Number(slot.dataset.q); const val=dragAssignments[q]; const submittedState=submitted && q>=25 && q<=30; const correct=submittedState && isCorrect(q); slot.classList.toggle('filled', Boolean(val) && !submittedState); slot.classList.toggle('match-correct', submittedState && correct); slot.classList.toggle('match-incorrect', submittedState && !correct); slot.textContent = val || (submittedState ? 'No answer' : 'Drop here'); if(submittedState && !correct){ const correction=document.createElement('span'); correction.className='drag-correction'; correction.textContent=`Correct: ${displayAnswers[q]}`; slot.appendChild(correction); } }); document.querySelectorAll('.drag-bank').forEach((bank)=>{ const numbers=Array.from(bank.closest('.question-block')?.querySelectorAll('.drag-slot') || []).map((slot)=>Number(slot.dataset.q)); bank.querySelectorAll('.drag-choice').forEach((choice)=>{ const reusable=bank.dataset.reusable==='true'; const used=!reusable && numbers.some((q)=>dragAssignments[q]===choice.dataset.value); choice.classList.toggle('used', used); }); }); }
 
 
     setupWheelFallback();
