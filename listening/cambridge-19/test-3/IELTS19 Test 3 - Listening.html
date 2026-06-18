@@ -67,6 +67,7 @@
     body[data-theme="white-on-black"] .notes-panel,
     body[data-theme="white-on-black"] .table-panel,
     body[data-theme="white-on-black"] .flow-step,
+    body[data-theme="white-on-black"] .flowchart-box,
     body[data-theme="white-on-black"] .word-box,
     body[data-theme="white-on-black"] .radio-option,
     body[data-theme="white-on-black"] .checkbox-option,
@@ -79,6 +80,7 @@
     body[data-theme="yellow-on-black"] .notes-panel,
     body[data-theme="yellow-on-black"] .table-panel,
     body[data-theme="yellow-on-black"] .flow-step,
+    body[data-theme="yellow-on-black"] .flowchart-box,
     body[data-theme="yellow-on-black"] .word-box,
     body[data-theme="yellow-on-black"] .radio-option,
     body[data-theme="yellow-on-black"] .checkbox-option,
@@ -629,11 +631,87 @@
     }
     .drag-question-row {
       display: grid;
-      grid-template-columns: 34px minmax(180px, 1fr) minmax(160px, auto) 34px;
+      grid-template-columns: minmax(220px, 1fr) minmax(130px, auto) auto;
       gap: 10px;
       align-items: center;
       margin-bottom: 12px;
       max-width: 800px;
+    }
+    .drag-question-row > span {
+      min-width: 0;
+      line-height: 1.4;
+    }
+    .matching-workshops .drag-layout {
+      grid-template-columns: minmax(360px, 1fr) minmax(420px, 0.95fr);
+      max-width: 1040px;
+    }
+    .matching-workshops .drag-question-row {
+      grid-template-columns: minmax(210px, 1fr) minmax(120px, 140px) auto;
+      max-width: none;
+    }
+    .matching-workshops .workshop-label {
+      white-space: nowrap;
+    }
+    .flowchart-matching {
+      max-width: 820px;
+      margin-inline: auto;
+    }
+    .flowchart-matching .drag-layout {
+      display: block;
+      max-width: none;
+    }
+    .flowchart-options {
+      position: static;
+      width: min(620px, 100%);
+      margin: 0 auto 18px;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+    .flowchart-options .drag-bank-title {
+      grid-column: 1 / -1;
+      text-align: center;
+    }
+    .flowchart-box {
+      width: min(700px, 100%);
+      margin: 0 auto;
+      border: 1.5px solid #666;
+      border-radius: 8px;
+      background: var(--panel);
+      padding: 12px 14px;
+      line-height: 1.55;
+    }
+    .flowchart-answer-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      align-items: center;
+      justify-content: flex-start;
+    }
+    .flowchart-answer-row .flowchart-text {
+      flex: 1 1 360px;
+      min-width: 240px;
+    }
+    .flowchart-answer-row .drag-slot {
+      flex: 0 0 130px;
+    }
+    .flowchart-answer-row .drag-clear {
+      flex: 0 0 auto;
+    }
+    .flowchart-group {
+      display: grid;
+      gap: 10px;
+    }
+    .flowchart-line {
+      line-height: 1.55;
+    }
+    .flowchart-group .flowchart-answer-row {
+      margin-top: 2px;
+    }
+    .flowchart-arrow {
+      text-align: center;
+      font-size: 2.1rem;
+      line-height: 1;
+      color: inherit;
+      margin: 6px 0;
     }
     .drag-slot {
       min-height: 44px;
@@ -848,9 +926,17 @@
       .info-strip { gap: 8px; }
       .question-block[data-qgroup="15-20"],
     .question-block[data-qgroup="26-30"] { padding: 14px 12px; }
-      .drag-question-row { grid-template-columns: 28px 1fr; }
-      .drag-slot, .drag-clear { grid-column: 2 / 3; }
+      .drag-question-row,
+      .matching-workshops .drag-question-row {
+        grid-template-columns: 1fr;
+      }
+      .matching-workshops .workshop-label { white-space: normal; }
+      .drag-slot, .drag-clear { grid-column: auto; }
       .drag-clear { width: 80px; }
+      .flowchart-options { grid-template-columns: 1fr; }
+      .flowchart-answer-row { display: block; }
+      .flowchart-answer-row .drag-slot { margin-top: 10px; width: min(180px, 100%); }
+      .flowchart-answer-row .drag-clear { margin-top: 8px; }
       .footer-main { grid-template-columns: 1fr; }
       .main { padding-bottom: 300px; }
       .top-right { width: 100%; justify-content: space-between; }
@@ -1023,7 +1109,7 @@
             <div class="instruction-heading">Questions 11–16</div>
             <p class="instruction-copy">What information is given about each of the following festival workshops?</p>
             <p class="instruction-copy">Choose <strong>SIX</strong> answers from the box and write the correct letter, <strong>A–H</strong>, next to Questions 11–16.</p>
-            <div class="question-block listening-narrow-panel" data-qgroup="11-16">
+            <div class="question-block listening-narrow-panel matching-workshops" data-qgroup="11-16">
               <div class="drag-help">Drag an information letter to a workshop, or tap a letter and then tap a workshop slot. Each letter can be used once.</div>
               <div class="drag-layout">
                 <div class="drag-bank" data-reusable="false" aria-label="Information A to H">
@@ -1039,12 +1125,12 @@
                 </div>
                 <div class="drag-questions" aria-label="Festival workshops">
                   <div class="drag-bank-title">Festival workshops</div>
-                  <div class="drag-question-row"><span><strong>11.</strong> Superheroes</span><button class="drag-slot" type="button" data-q="11">Drop here</button><button class="drag-clear" type="button" data-clear-q="11">Clear</button><select class="sr-only" name="q11" aria-label="Question 11 answer"><option value=""></option><option>A</option><option>B</option><option>C</option><option>D</option><option>E</option><option>F</option><option>G</option><option>H</option></select></div>
-                  <div class="drag-question-row"><span><strong>12.</strong> Just do it</span><button class="drag-slot" type="button" data-q="12">Drop here</button><button class="drag-clear" type="button" data-clear-q="12">Clear</button><select class="sr-only" name="q12" aria-label="Question 12 answer"><option value=""></option><option>A</option><option>B</option><option>C</option><option>D</option><option>E</option><option>F</option><option>G</option><option>H</option></select></div>
-                  <div class="drag-question-row"><span><strong>13.</strong> Count on me</span><button class="drag-slot" type="button" data-q="13">Drop here</button><button class="drag-clear" type="button" data-clear-q="13">Clear</button><select class="sr-only" name="q13" aria-label="Question 13 answer"><option value=""></option><option>A</option><option>B</option><option>C</option><option>D</option><option>E</option><option>F</option><option>G</option><option>H</option></select></div>
-                  <div class="drag-question-row"><span><strong>14.</strong> Speak up</span><button class="drag-slot" type="button" data-q="14">Drop here</button><button class="drag-clear" type="button" data-clear-q="14">Clear</button><select class="sr-only" name="q14" aria-label="Question 14 answer"><option value=""></option><option>A</option><option>B</option><option>C</option><option>D</option><option>E</option><option>F</option><option>G</option><option>H</option></select></div>
-                  <div class="drag-question-row"><span><strong>15.</strong> Jump for joy</span><button class="drag-slot" type="button" data-q="15">Drop here</button><button class="drag-clear" type="button" data-clear-q="15">Clear</button><select class="sr-only" name="q15" aria-label="Question 15 answer"><option value=""></option><option>A</option><option>B</option><option>C</option><option>D</option><option>E</option><option>F</option><option>G</option><option>H</option></select></div>
-                  <div class="drag-question-row"><span><strong>16.</strong> Sticks and stones</span><button class="drag-slot" type="button" data-q="16">Drop here</button><button class="drag-clear" type="button" data-clear-q="16">Clear</button><select class="sr-only" name="q16" aria-label="Question 16 answer"><option value=""></option><option>A</option><option>B</option><option>C</option><option>D</option><option>E</option><option>F</option><option>G</option><option>H</option></select></div>
+                  <div class="drag-question-row"><span class="workshop-label"><strong>11.</strong> Superheroes</span><button class="drag-slot" type="button" data-q="11">Drop here</button><button class="drag-clear" type="button" data-clear-q="11">Clear</button><select class="sr-only" name="q11" aria-label="Question 11 answer"><option value=""></option><option>A</option><option>B</option><option>C</option><option>D</option><option>E</option><option>F</option><option>G</option><option>H</option></select></div>
+                  <div class="drag-question-row"><span class="workshop-label"><strong>12.</strong> Just do it</span><button class="drag-slot" type="button" data-q="12">Drop here</button><button class="drag-clear" type="button" data-clear-q="12">Clear</button><select class="sr-only" name="q12" aria-label="Question 12 answer"><option value=""></option><option>A</option><option>B</option><option>C</option><option>D</option><option>E</option><option>F</option><option>G</option><option>H</option></select></div>
+                  <div class="drag-question-row"><span class="workshop-label"><strong>13.</strong> Count on me</span><button class="drag-slot" type="button" data-q="13">Drop here</button><button class="drag-clear" type="button" data-clear-q="13">Clear</button><select class="sr-only" name="q13" aria-label="Question 13 answer"><option value=""></option><option>A</option><option>B</option><option>C</option><option>D</option><option>E</option><option>F</option><option>G</option><option>H</option></select></div>
+                  <div class="drag-question-row"><span class="workshop-label"><strong>14.</strong> Speak up</span><button class="drag-slot" type="button" data-q="14">Drop here</button><button class="drag-clear" type="button" data-clear-q="14">Clear</button><select class="sr-only" name="q14" aria-label="Question 14 answer"><option value=""></option><option>A</option><option>B</option><option>C</option><option>D</option><option>E</option><option>F</option><option>G</option><option>H</option></select></div>
+                  <div class="drag-question-row"><span class="workshop-label"><strong>15.</strong> Jump for joy</span><button class="drag-slot" type="button" data-q="15">Drop here</button><button class="drag-clear" type="button" data-clear-q="15">Clear</button><select class="sr-only" name="q15" aria-label="Question 15 answer"><option value=""></option><option>A</option><option>B</option><option>C</option><option>D</option><option>E</option><option>F</option><option>G</option><option>H</option></select></div>
+                  <div class="drag-question-row"><span class="workshop-label"><strong>16.</strong> Sticks and stones</span><button class="drag-slot" type="button" data-q="16">Drop here</button><button class="drag-clear" type="button" data-clear-q="16">Clear</button><select class="sr-only" name="q16" aria-label="Question 16 answer"><option value=""></option><option>A</option><option>B</option><option>C</option><option>D</option><option>E</option><option>F</option><option>G</option><option>H</option></select></div>
                 </div>
               </div>
               <div class="correct-answer" id="ca-11-16"></div>
@@ -1132,10 +1218,10 @@
             <div class="instruction-heading" style="margin-top:24px;">Questions 26–30</div>
             <p class="instruction-copy">Complete the flowchart below.</p>
             <p class="instruction-copy">Choose <strong>FIVE</strong> answers from the box and write the correct letter, <strong>A–H</strong>, next to Questions 26–30.</p>
-            <div class="question-block listening-narrow-panel" data-qgroup="26-30">
+            <div class="question-block listening-narrow-panel flowchart-matching" data-qgroup="26-30">
               <div class="drag-help">Drag an answer letter to a flowchart slot, or tap a letter and then tap a slot. Each letter can be used once.</div>
               <div class="drag-layout">
-                <div class="drag-bank" data-reusable="false" aria-label="Options A to H">
+                <div class="drag-bank flowchart-options" data-reusable="false" aria-label="Options A to H">
                   <div class="drag-bank-title">Options</div>
                   <button class="drag-choice" type="button" draggable="true" data-value="A"><strong>A</strong> size</button>
                   <button class="drag-choice" type="button" draggable="true" data-value="B"><strong>B</strong> escape</button>
@@ -1147,18 +1233,22 @@
                   <button class="drag-choice" type="button" draggable="true" data-value="H"><strong>H</strong> colour</button>
                 </div>
                 <div class="drag-questions" aria-label="Flowchart for Questions 26 to 30">
-                  <div class="drag-question-row"><span><strong>26.</strong> Choose mice which are all the same ___</span><button class="drag-slot" type="button" data-q="26">Drop here</button><button class="drag-clear" type="button" data-clear-q="26">Clear</button><select class="sr-only" name="q26" aria-label="Question 26 answer"><option value=""></option><option>A</option><option>B</option><option>C</option><option>D</option><option>E</option><option>F</option><option>G</option><option>H</option></select></div>
-                  <div class="flow-arrow" aria-hidden="true">↓</div>
-                  <div class="drag-question-row"><span><strong>27.</strong> Divide the mice into two groups, each with a different ___</span><button class="drag-slot" type="button" data-q="27">Drop here</button><button class="drag-clear" type="button" data-clear-q="27">Clear</button><select class="sr-only" name="q27" aria-label="Question 27 answer"><option value=""></option><option>A</option><option>B</option><option>C</option><option>D</option><option>E</option><option>F</option><option>G</option><option>H</option></select></div>
-                  <div class="flow-arrow" aria-hidden="true">↓</div>
-                  <div class="flow-step">Put each group in a separate cage.</div>
-                  <div class="flow-step">Feed group A commercial mouse food.</div>
-                  <div class="drag-question-row"><span><strong>28.</strong> Feed group B the same, but also sugar contained in ___</span><button class="drag-slot" type="button" data-q="28">Drop here</button><button class="drag-clear" type="button" data-clear-q="28">Clear</button><select class="sr-only" name="q28" aria-label="Question 28 answer"><option value=""></option><option>A</option><option>B</option><option>C</option><option>D</option><option>E</option><option>F</option><option>G</option><option>H</option></select></div>
-                  <div class="flow-arrow" aria-hidden="true">↓</div>
-                  <div class="flow-step">Take measurements using an electronic scale.</div>
-                  <div class="drag-question-row"><span><strong>29.</strong> Place them in a weighing chamber to prevent ___</span><button class="drag-slot" type="button" data-q="29">Drop here</button><button class="drag-clear" type="button" data-clear-q="29">Clear</button><select class="sr-only" name="q29" aria-label="Question 29 answer"><option value=""></option><option>A</option><option>B</option><option>C</option><option>D</option><option>E</option><option>F</option><option>G</option><option>H</option></select></div>
-                  <div class="flow-arrow" aria-hidden="true">↓</div>
-                  <div class="drag-question-row"><span><strong>30.</strong> Do all necessary ___</span><button class="drag-slot" type="button" data-q="30">Drop here</button><button class="drag-clear" type="button" data-clear-q="30">Clear</button><select class="sr-only" name="q30" aria-label="Question 30 answer"><option value=""></option><option>A</option><option>B</option><option>C</option><option>D</option><option>E</option><option>F</option><option>G</option><option>H</option></select></div>
+                  <div class="flowchart-box flowchart-answer-row"><span class="flowchart-text"><strong>26.</strong> Choose mice which are all the same ___</span><button class="drag-slot" type="button" data-q="26">Drop here</button><button class="drag-clear" type="button" data-clear-q="26">Clear</button><select class="sr-only" name="q26" aria-label="Question 26 answer"><option value=""></option><option>A</option><option>B</option><option>C</option><option>D</option><option>E</option><option>F</option><option>G</option><option>H</option></select></div>
+                  <div class="flowchart-arrow" aria-hidden="true">↓</div>
+                  <div class="flowchart-box flowchart-answer-row"><span class="flowchart-text"><strong>27.</strong> Divide the mice into two groups, each with a different ___</span><button class="drag-slot" type="button" data-q="27">Drop here</button><button class="drag-clear" type="button" data-clear-q="27">Clear</button><select class="sr-only" name="q27" aria-label="Question 27 answer"><option value=""></option><option>A</option><option>B</option><option>C</option><option>D</option><option>E</option><option>F</option><option>G</option><option>H</option></select></div>
+                  <div class="flowchart-arrow" aria-hidden="true">↓</div>
+                  <div class="flowchart-box flowchart-group">
+                    <div class="flowchart-line">Put each group in a separate cage.</div>
+                    <div class="flowchart-line">Feed group A commercial mouse food.</div>
+                    <div class="flowchart-answer-row"><span class="flowchart-text"><strong>28.</strong> Feed group B the same, but also sugar contained in ___</span><button class="drag-slot" type="button" data-q="28">Drop here</button><button class="drag-clear" type="button" data-clear-q="28">Clear</button><select class="sr-only" name="q28" aria-label="Question 28 answer"><option value=""></option><option>A</option><option>B</option><option>C</option><option>D</option><option>E</option><option>F</option><option>G</option><option>H</option></select></div>
+                  </div>
+                  <div class="flowchart-arrow" aria-hidden="true">↓</div>
+                  <div class="flowchart-box flowchart-group">
+                    <div class="flowchart-line">Take measurements using an electronic scale.</div>
+                    <div class="flowchart-answer-row"><span class="flowchart-text"><strong>29.</strong> Place them in a weighing chamber to prevent ___</span><button class="drag-slot" type="button" data-q="29">Drop here</button><button class="drag-clear" type="button" data-clear-q="29">Clear</button><select class="sr-only" name="q29" aria-label="Question 29 answer"><option value=""></option><option>A</option><option>B</option><option>C</option><option>D</option><option>E</option><option>F</option><option>G</option><option>H</option></select></div>
+                  </div>
+                  <div class="flowchart-arrow" aria-hidden="true">↓</div>
+                  <div class="flowchart-box flowchart-answer-row"><span class="flowchart-text"><strong>30.</strong> Do all necessary ___</span><button class="drag-slot" type="button" data-q="30">Drop here</button><button class="drag-clear" type="button" data-clear-q="30">Clear</button><select class="sr-only" name="q30" aria-label="Question 30 answer"><option value=""></option><option>A</option><option>B</option><option>C</option><option>D</option><option>E</option><option>F</option><option>G</option><option>H</option></select></div>
                 </div>
               </div>
               <div class="correct-answer" id="ca-26-30"></div>
