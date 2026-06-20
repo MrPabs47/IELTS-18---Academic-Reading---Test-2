@@ -1,9 +1,9 @@
 /*
  * IELTS 16 Academic Reading Test 1 — Study feedback data
  *
- * Feedback content loaded by the standalone test page for Passage 1 Study Mode
- * and post-submit Review UI. Questions 1–7 are True / False / Not Given;
- * Questions 8–13 are ONE WORD ONLY note completion.
+ * Feedback content loaded by the standalone test page for Study Mode and
+ * post-submit Review UI. Included task groups: Passage 1 Questions 1–13 and
+ * Passage 2 Questions 14–20.
  */
 
 window.IELTS16AcademicTest1StudyFeedback = {
@@ -13,7 +13,12 @@ window.IELTS16AcademicTest1StudyFeedback = {
     test: 1,
     module: "Academic Reading",
     passage: 1,
-    passageTitle: "Why we need to protect polar bears"
+    passageTitle: "Why we need to protect polar bears",
+    includedPassages: [1, 2],
+    passageTitles: {
+      1: "Why we need to protect polar bears",
+      2: "The Step Pyramid of Djoser"
+    }
   },
 
   taskStrategies: {
@@ -46,6 +51,21 @@ window.IELTS16AcademicTest1StudyFeedback = {
       ],
       commonTrap: "A correct idea can still lose the mark if it breaks the word limit or does not fit the grammar around the gap.",
       wordLimitTip: "ONE WORD ONLY means exactly one word from the passage. Hyphenated forms count as one word only when they appear that way in the source text."
+    },
+
+    matchingHeadings: {
+      label: "Matching Headings",
+      questionNumbers: [14, 15, 16, 17, 18, 19, 20],
+      orderNote: "The questions follow paragraph order here, but the headings themselves are paraphrased summaries rather than words copied from the passage.",
+      purpose: "Choose the heading that best summarises the main idea of each paragraph.",
+      steps: [
+        "Read the list of headings first. Underline the main idea in each one, rather than every individual word.",
+        "Read the whole paragraph for its central message. The first and last sentences often help, but do not choose from one matching word alone.",
+        "Match the overall meaning. A correct heading should cover most of the paragraph, not a single example or detail.",
+        "Cross out headings you have used and compare close options carefully before you decide."
+      ],
+      commonTrap: "A heading can share vocabulary with a paragraph but still be wrong if it describes only a minor detail.",
+      answerUseTip: "Each heading is used once only. Check whether your chosen heading leaves a better match for another paragraph."
     }
   },
 
@@ -178,6 +198,97 @@ window.IELTS16AcademicTest1StudyFeedback = {
       infoButtonAfter: "As for emotions, while the evidence is once again anecdotal, many bears have been seen to hit out at ice and snow – seemingly out of frustration – when they have just missed out on a kill.",
       explanation: "The passage says bears may hit ice and snow seemingly out of frustration after missing a kill. The notes describe movements suggesting ____, so frustration is the one-word answer.",
       skillFocus: "After “suggesting”, look for a noun. Do not add an article to an uncountable noun such as frustration."
+    },
+
+    14: {
+      taskType: "matchingHeadings",
+      passage: 2,
+      paragraph: "A",
+      answer: "iv",
+      answerLabel: "A single certainty among other less definite facts",
+      marks: 1,
+      evidence: "The evolution of the pyramid form has been written and argued about for centuries. However, there is no question that, as far as Egypt is concerned, it began with one monument to one king designed by one brilliant architect: the Step Pyramid of Djoser at Saqqara.",
+      infoButtonAfter: "The evolution of the pyramid form has been written and argued about for centuries. However, there is no question that, as far as Egypt is concerned, it began with one monument to one king designed by one brilliant architect: the Step Pyramid of Djoser at Saqqara.",
+      explanation: "Paragraph A says the development of pyramids has been debated for centuries. However, one fact is certain: in Egypt, the pyramid began with Djoser’s Step Pyramid. This matches heading iv.",
+      skillFocus: "Look for the paragraph’s central contrast. Here, “however” introduces the one certain fact after several less definite ideas."
+    },
+
+    15: {
+      taskType: "matchingHeadings",
+      passage: 2,
+      paragraph: "B",
+      answer: "vii",
+      answerLabel: "An idea for changing the design of burial structures",
+      marks: 1,
+      evidence: "For reasons which remain unclear, Djoser’s main official, whose name was Imhotep, conceived of building a taller, more impressive tomb for his king by stacking stone slabs on top of one another, progressively making them smaller, to form the shape now known as the Step Pyramid.",
+      infoButtonAfter: "For reasons which remain unclear, Djoser’s main official, whose name was Imhotep, conceived of building a taller, more impressive tomb for his king by stacking stone slabs on top of one another, progressively making them smaller, to form the shape now known as the Step Pyramid.",
+      explanation: "Paragraph B explains Imhotep’s new idea for creating a taller tomb by stacking stone slabs. This was a change from earlier rectangular clay-brick tombs, so heading vii is the best summary.",
+      skillFocus: "Match the main development, not a background fact. The paragraph focuses on a new design for a tomb."
+    },
+
+    16: {
+      taskType: "matchingHeadings",
+      passage: 2,
+      paragraph: "C",
+      answer: "ii",
+      answerLabel: "A difficult task for those involved",
+      marks: 1,
+      evidence: "The weight of the enormous mass was a challenge for the builders, who placed the stones at an inward incline in order to prevent the monument breaking up.",
+      infoButtonAfter: "The weight of the enormous mass was a challenge for the builders, who placed the stones at an inward incline in order to prevent the monument breaking up.",
+      explanation: "Paragraph C describes experimentation during construction and the difficulty of supporting the pyramid’s enormous weight. This matches heading ii, a difficult task for the builders.",
+      skillFocus: "For headings, check whether the heading explains the whole paragraph. Here, experimentation and the construction challenge belong to the same main idea."
+    },
+
+    17: {
+      taskType: "matchingHeadings",
+      passage: 2,
+      paragraph: "D",
+      answer: "v",
+      answerLabel: "An overview of the external buildings and areas",
+      marks: 1,
+      evidence: "The complex in which it was built was the size of a city in ancient Egypt and included a temple, courtyards, shrines, and living quarters for the priests.",
+      infoButtonAfter: "The complex in which it was built was the size of a city in ancient Egypt and included a temple, courtyards, shrines, and living quarters for the priests.",
+      explanation: "Paragraph D gives an overview of the large complex around the pyramid, including buildings, accommodation, a wall and a trench. This matches heading v.",
+      skillFocus: "Separate the pyramid from its surroundings. This paragraph is mainly about the external complex, not the inside of the pyramid."
+    },
+
+    18: {
+      taskType: "matchingHeadings",
+      passage: 2,
+      paragraph: "E",
+      answer: "i",
+      answerLabel: "The areas and artefacts within the pyramid itself",
+      marks: 1,
+      evidence: "The burial chamber of the tomb, where the king’s body was laid to rest, was dug beneath the base of the pyramid, surrounded by a vast maze of long tunnels that had rooms off them to discourage robbers. One of the most mysterious discoveries found inside the pyramid was a large number of stone vessels.",
+      infoButtonAfter: "The burial chamber of the tomb, where the king’s body was laid to rest, was dug beneath the base of the pyramid, surrounded by a vast maze of long tunnels that had rooms off them to discourage robbers. One of the most mysterious discoveries found inside the pyramid was a large number of stone vessels.",
+      explanation: "Paragraph E describes places inside the pyramid, such as the burial chamber and tunnels, as well as objects found there, especially stone vessels. This matches heading i.",
+      skillFocus: "Notice when a heading has two parts. This paragraph covers both internal areas and artefacts found inside them."
+    },
+
+    19: {
+      taskType: "matchingHeadings",
+      passage: 2,
+      paragraph: "F",
+      answer: "viii",
+      answerLabel: "An incredible experience despite the few remains",
+      marks: 1,
+      evidence: "Djoser’s grave goods, and even his body, were stolen at some point in the past and all archaeologists found were a small number of his valuables overlooked by the thieves. There was enough left throughout the pyramid and its complex, however, to astonish and amaze the archaeologists who excavated it.",
+      infoButtonAfter: "Djoser’s grave goods, and even his body, were stolen at some point in the past and all archaeologists found were a small number of his valuables overlooked by the thieves. There was enough left throughout the pyramid and its complex, however, to astonish and amaze the archaeologists who excavated it.",
+      explanation: "Paragraph F says most of the tomb’s contents were stolen, but the remaining finds still amazed the archaeologists. This contrast matches heading viii.",
+      skillFocus: "Follow contrast words such as “however”. They often connect a problem with the paragraph’s main conclusion."
+    },
+
+    20: {
+      taskType: "matchingHeadings",
+      passage: 2,
+      paragraph: "G",
+      answer: "vi",
+      answerLabel: "A pyramid design that others copied",
+      marks: 1,
+      evidence: "The Step Pyramid was a revolutionary advance in architecture and became the archetype which all the other great pyramid builders of Egypt would follow.",
+      infoButtonAfter: "The Step Pyramid was a revolutionary advance in architecture and became the archetype which all the other great pyramid builders of Egypt would follow.",
+      explanation: "Paragraph G says the Step Pyramid became an archetype that later pyramid builders followed. This directly matches heading vi, a design that others copied.",
+      skillFocus: "Use strong summary words. “Archetype” means an original model that others follow or copy."
     }
   }
 };
