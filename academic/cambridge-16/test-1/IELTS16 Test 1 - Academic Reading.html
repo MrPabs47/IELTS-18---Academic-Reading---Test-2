@@ -652,6 +652,20 @@
       box-shadow: 0 0 0 3px var(--accent-soft);
     }
 
+    #tfngStrategyButton {
+      border-color: color-mix(in srgb, var(--accent) 62%, var(--border));
+      background: color-mix(in srgb, var(--accent) 18%, var(--bg));
+      color: color-mix(in srgb, var(--accent) 82%, var(--text));
+      box-shadow: 0 1px 3px color-mix(in srgb, var(--accent) 18%, transparent);
+    }
+
+    #tfngStrategyButton:hover,
+    #tfngStrategyButton:focus-visible {
+      border-color: var(--accent);
+      background: color-mix(in srgb, var(--accent) 26%, var(--bg));
+      color: color-mix(in srgb, var(--accent) 88%, var(--text));
+    }
+
     .study-icon-btn[hidden],
     .tfng-study-panel[hidden],
     .tfng-feedback-area[hidden] {
@@ -766,12 +780,9 @@
       color: color-mix(in srgb, var(--correct) 78%, var(--text));
     }
 
-    .tfng-feedback-card dt.label-why {
-      color: color-mix(in srgb, var(--accent) 72%, var(--text));
-    }
-
+    .tfng-feedback-card dt.label-why,
     .tfng-feedback-card dt.label-skill {
-      color: color-mix(in srgb, var(--correct) 72%, var(--text));
+      color: color-mix(in srgb, var(--accent) 72%, var(--text));
     }
 
     .tfng-feedback-card dd {
@@ -3569,7 +3580,8 @@
     }
 
     function revealTfngEvidence(questionNumber) {
-      focusTfngPassageClue(questionNumber, true, true);
+      const allCluesVisible = tfngCluesVisible && tfngSingleClueQuestion === null;
+      focusTfngPassageClue(questionNumber, true, !allCluesVisible);
     }
 
     function getTfngUserAnswer(questionNumber) {
@@ -3599,16 +3611,17 @@
         const item = data.questions[q];
         const user = getTfngUserAnswer(q);
         const isCorrect = user && user === item.answer;
-        const statusText = user ? (isCorrect ? "✓ Correct" : "× Incorrect") : "— Not answered";
-        const statusClass = user ? (isCorrect ? "correct-status" : "incorrect-status") : "unanswered-status";
+        const marks = item.marks || 1;
+        const pointsText = isCorrect ? "+" + marks + " point" + (marks === 1 ? "" : "s") : "0 points";
+        const answerStatusClass = user ? (isCorrect ? "correct-status" : "incorrect-status") : "unanswered-status";
+        const answerStatusText = user ? (isCorrect ? "✓ " + user + " · " + pointsText : "× " + user + " · " + pointsText) : "— Not answered · " + pointsText;
         const card = document.createElement("section");
         card.className = "tfng-feedback-card";
         card.setAttribute("aria-labelledby", "tfng-feedback-title-" + q);
         card.innerHTML = '<h3 id="tfng-feedback-title-' + q + '">Question ' + q + '</h3>' +
           '<dl>' +
-          '<dt class="label-your-answer">Your answer</dt><dd>' + (user || "Not answered") + '</dd>' +
+          '<dt class="label-your-answer">Your answer</dt><dd class="feedback-status ' + answerStatusClass + '">' + answerStatusText + '</dd>' +
           '<dt class="label-correct-answer">Correct answer</dt><dd>' + item.answer + '</dd>' +
-          '<dt>Status</dt><dd class="feedback-status ' + statusClass + '">' + statusText + ' <span class="feedback-points">' + (isCorrect ? "+" + (item.marks || 1) + " point" + ((item.marks || 1) === 1 ? "" : "s") : "0 points") + '</span></dd>' +
           '<dt class="label-why">Why</dt><dd>' + item.explanation + '</dd>' +
           '<dt class="label-skill">Skill</dt><dd>' + item.skillFocus + '</dd>' +
           '</dl>' +

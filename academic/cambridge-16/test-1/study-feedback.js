@@ -39,8 +39,8 @@ window.IELTS16AcademicTest1StudyFeedback = {
       answer: "FALSE",
       evidence: "Yet the polar bear experiences no such consequences.",
       infoButtonAfter: "Humans with comparative levels of adipose tissue would be considered obese and would be likely to suffer from diabetes and heart disease. Yet the polar bear experiences no such consequences.",
-      explanation: "The statement says that fat causes polar bears health problems. The passage says humans with similar fat levels may suffer diabetes and heart disease, but polar bears experience “no such consequences”. This is the opposite, so the answer is FALSE.",
-      skillFocus: "Notice contrast. ‘Yet’ introduces the opposite idea: humans may suffer these consequences, whereas polar bears do not."
+      explanation: "The statement says fat causes polar bears health problems. The passage says polar bears experience “no such consequences”, so the meaning is opposite.",
+      skillFocus: "Look for contrast words such as “yet”. Compare both sides before you decide."
     },
 
     2: {
@@ -48,8 +48,8 @@ window.IELTS16AcademicTest1StudyFeedback = {
       answer: "FALSE",
       evidence: "They compared the genetic structure of polar bears with that of their closest relatives from a warmer climate, the brown bears.",
       infoButtonAfter: "They compared the genetic structure of polar bears with that of their closest relatives from a warmer climate, the brown bears.",
-      explanation: "The statement says Liu compared different groups of polar bears. The passage says he compared polar bears with brown bears, which are a different species. That contradicts the statement, so the answer is FALSE.",
-      skillFocus: "Read noun phrases precisely. ‘Different groups of polar bears’ is not the same as ‘polar bears and brown bears’."
+      explanation: "The statement says Liu compared different groups of polar bears. The passage says he compared polar bears with brown bears, a different species, so the meaning is opposite.",
+      skillFocus: "Check exactly who or what is being compared. Do not treat different species as different groups of one species."
     },
 
     3: {
@@ -57,8 +57,8 @@ window.IELTS16AcademicTest1StudyFeedback = {
       answer: "NOT GIVEN",
       evidence: "They compared the genetic structure of polar bears with that of their closest relatives from a warmer climate, the brown bears.",
       infoButtonAfter: "They compared the genetic structure of polar bears with that of their closest relatives from a warmer climate, the brown bears.",
-      explanation: "The passage confirms that Liu compared polar bears with brown bears. However, it never says that Liu and his colleagues were the first researchers to make this comparison. The extra word “first” is not confirmed or contradicted, so the answer is NOT GIVEN.",
-      skillFocus: "Words such as ‘first’, ‘only’, ‘always’ and ‘never’ need exact evidence. Do not assume them from related information."
+      explanation: "The passage confirms that Liu compared polar bears with brown bears. It never says they were the first researchers to do this, so “first” is NOT GIVEN.",
+      skillFocus: "Underline strong extra words such as “first”, “only”, “always” and “never”. Find exact proof for them."
     },
 
     4: {
@@ -66,8 +66,8 @@ window.IELTS16AcademicTest1StudyFeedback = {
       answer: "TRUE",
       evidence: "Liu and his colleagues found the polar bears had a gene known as APoB, which reduces levels of low-density lipoproteins (LDLs) – a form of ‘bad’ cholesterol.",
       infoButtonAfter: "Liu and his colleagues found the polar bears had a gene known as APoB, which reduces levels of low-density lipoproteins (LDLs) – a form of ‘bad’ cholesterol.",
-      explanation: "The passage says polar bears have a gene, APoB, that reduces LDLs, described as “bad” cholesterol. This matches the idea that they control bad cholesterol through genetics. Therefore, the answer is TRUE.",
-      skillFocus: "Recognise paraphrasing: ‘by genetic means’ means through a gene, and ‘bad cholesterol’ refers to LDLs."
+      explanation: "The passage says polar bears have APoB, a gene that reduces LDLs or “bad” cholesterol. This matches controlling bad cholesterol by genetic means.",
+      skillFocus: "Match paraphrases: a genetic means = a gene; bad cholesterol = LDLs."
     },
 
     5: {
@@ -75,8 +75,8 @@ window.IELTS16AcademicTest1StudyFeedback = {
       answer: "TRUE",
       evidence: "This process results in about six months of fasting, where the female bears have to keep themselves and their cubs alive.",
       infoButtonAfter: "This process results in about six months of fasting, where the female bears have to keep themselves and their cubs alive, depleting their own calcium and calorie reserves.",
-      explanation: "The passage says female bears fast for about six months and keep themselves and their cubs alive during that time. Fasting means going without food, so this matches the statement. The answer is TRUE.",
-      skillFocus: "‘Without food’ is paraphrased as ‘fasting’. Look for a change in wording, not necessarily the same words."
+      explanation: "The passage says female bears fast for about six months while keeping themselves and their cubs alive. Fasting means going without food, so the statement matches.",
+      skillFocus: "Match meaning, not identical words. “Fasting” means going without food."
     },
 
     6: {
@@ -84,8 +84,8 @@ window.IELTS16AcademicTest1StudyFeedback = {
       answer: "FALSE",
       evidence: "Six months later, when they finally emerged from the den with their cubs, there was no evidence of significant loss of bone density.",
       infoButtonAfter: "In addition, six months later, when they finally emerged from the den with their cubs, there was no evidence of significant loss of bone density.",
-      explanation: "The statement says the bears’ bones were very weak after leaving the dens. The passage says there was “no evidence of significant loss of bone density”. That is the opposite idea, so the answer is FALSE.",
-      skillFocus: "Check for opposite meanings. ‘Very weak’ conflicts with ‘no significant loss of bone density’."
+      explanation: "The statement says the bears’ bones were very weak. The passage says there was “no evidence of significant loss of bone density”, so the meaning is opposite.",
+      skillFocus: "Check for opposite meaning. “No significant loss” does not match “very weak”."
     },
 
     7: {
@@ -93,8 +93,8 @@ window.IELTS16AcademicTest1StudyFeedback = {
       answer: "TRUE",
       evidence: "If the mechanism of bone remodelling in polar bears can be understood, many bedridden humans, and even astronauts, could potentially benefit.",
       infoButtonAfter: "If the mechanism of bone remodelling in polar bears can be understood, many bedridden humans, and even astronauts, could potentially benefit.",
-      explanation: "The passage says bedridden people and astronauts could potentially benefit if scientists understand this mechanism. This matches the idea that it could be used to help people in the future. The answer is TRUE.",
-      skillFocus: "Follow possibility language. ‘Could be used by people one day’ matches ‘could potentially benefit’."
+      explanation: "The passage says bedridden people and astronauts could potentially benefit if scientists understand the mechanism. This matches a possible future use for people.",
+      skillFocus: "Follow possibility language. “Could potentially benefit” matches a future possible use."
     }
   }
 };
