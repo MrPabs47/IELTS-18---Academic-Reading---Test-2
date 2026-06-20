@@ -686,13 +686,56 @@
       margin-bottom: 0;
     }
 
-    .tfng-study-panel ol {
-      margin: 8px 0 0 20px;
-      padding: 0;
+    .tfng-strategy-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+      gap: 8px;
+      margin-top: 8px;
     }
 
-    .tfng-study-panel li {
-      margin: 4px 0;
+    .tfng-strategy-step,
+    .tfng-strategy-watch {
+      border: 1px solid var(--border);
+      border-left: 4px solid var(--accent);
+      border-radius: 10px;
+      background: var(--bg);
+      padding: 9px;
+    }
+
+    .tfng-strategy-watch {
+      border-left-color: var(--correct);
+    }
+
+    .tfng-strategy-label {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      margin-bottom: 4px;
+      color: var(--text);
+      font-weight: 800;
+    }
+
+    .tfng-strategy-chip {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 1.55em;
+      height: 1.55em;
+      border-radius: 999px;
+      background: var(--accent-soft);
+      color: var(--accent);
+      font-size: 0.82em;
+      font-weight: 800;
+    }
+
+    .tfng-strategy-watch .tfng-strategy-chip {
+      background: color-mix(in srgb, var(--correct) 16%, var(--bg));
+      color: color-mix(in srgb, var(--correct) 78%, var(--text));
+    }
+
+    .tfng-strategy-step p,
+    .tfng-strategy-watch p {
+      margin: 0;
     }
 
     .tfng-feedback-area {
@@ -711,8 +754,24 @@
     }
 
     .tfng-feedback-card dt {
-      font-weight: 700;
+      font-weight: 800;
       color: var(--text-soft);
+    }
+
+    .tfng-feedback-card dt.label-your-answer {
+      color: var(--text-soft);
+    }
+
+    .tfng-feedback-card dt.label-correct-answer {
+      color: color-mix(in srgb, var(--correct) 78%, var(--text));
+    }
+
+    .tfng-feedback-card dt.label-why {
+      color: color-mix(in srgb, var(--accent) 72%, var(--text));
+    }
+
+    .tfng-feedback-card dt.label-skill {
+      color: color-mix(in srgb, var(--correct) 72%, var(--text));
     }
 
     .tfng-feedback-card dd {
@@ -1762,7 +1821,7 @@
               <div class="instruction-block">
                 <p><strong>READING PASSAGE 1 : Questions 1-13</strong></p>
                 <p>Do the following statements agree with the information given in Reading Passage 1?<span class="study-feedback-controls"><button type="button" id="tfngStrategyButton" class="study-icon-btn" aria-label="How to tackle True / False / Not Given" title="How to tackle this task" aria-controls="tfngStrategyPanel" hidden>ⓘ</button></span></p>
-                <button type="button" id="tfngClueToggle" class="tfng-clue-toggle" hidden>Hide passage clues</button>
+                <button type="button" id="tfngClueToggle" class="tfng-clue-toggle" hidden>Show all passage clues</button>
                 <div id="tfngStrategyPanel" class="tfng-study-panel" hidden></div>
                 <p>In boxes 1-7 on your answer sheet, write</p>
                 <p><strong>TRUE</strong> if the statement agrees with the information</p>
@@ -2356,6 +2415,14 @@
         clearInterval(timerId);
         timerId = null;
       }
+
+      testSubmitted = false;
+      tfngFeedbackSubmitted = false;
+      tfngCluesVisible = false;
+      tfngSingleClueQuestion = null;
+      removeTfngPassageClues();
+      clearTfngEvidenceHighlight();
+      closeTfngStrategyPanel(false);
 
       if (mode === "test") {
         if (timerContainer) {
@@ -3359,7 +3426,8 @@
     let activeEvidenceHighlight = null;
     let activeTfngClue = null;
     let tfngFeedbackSubmitted = false;
-    let tfngCluesVisible = true;
+    let tfngCluesVisible = false;
+    let tfngSingleClueQuestion = null;
 
     function isTfngStrategyAvailable() {
       return mode === "study" || (mode === "test" && testSubmitted);
@@ -3422,6 +3490,8 @@
       for (let q = 1; q <= 7; q++) {
         const item = data.questions[q];
         if (!item || usedPhrases.includes(item.infoButtonAfter)) continue;
+        const clueQuestions = getTfngClueQuestions(q, item.infoButtonAfter);
+        if (tfngSingleClueQuestion !== null && !clueQuestions.includes(Number(tfngSingleClueQuestion))) continue;
         const match = findExactTextNode(passageSection, item.infoButtonAfter);
         if (!match) continue;
         usedPhrases.push(item.infoButtonAfter);
@@ -3431,7 +3501,7 @@
         const mark = document.createElement("mark");
         mark.className = "tfng-passage-clue";
         mark.dataset.clueText = item.infoButtonAfter;
-        mark.dataset.clueQuestions = getTfngClueQuestions(q, item.infoButtonAfter).join(",");
+        mark.dataset.clueQuestions = clueQuestions.join(",");
         range.surroundContents(mark);
         mark.dataset.clueQuestions.split(",").forEach((question) => {
           const badge = document.createElement("button");
@@ -3452,7 +3522,7 @@
       const available = isTfngFeedbackAvailable();
       if (!toggle) return;
       toggle.hidden = !available;
-      toggle.textContent = tfngCluesVisible ? "Hide passage clues" : "Show passage clues";
+      toggle.textContent = tfngCluesVisible && tfngSingleClueQuestion === null ? "Hide all passage clues" : "Show all passage clues";
       toggle.setAttribute("aria-pressed", String(tfngCluesVisible));
     }
 
@@ -3462,10 +3532,15 @@
       updateTfngClueToggle();
     }
 
-    function focusTfngPassageClue(questionNumber, scrollToPassage = true) {
+    function focusTfngPassageClue(questionNumber, scrollToPassage = true, singleClueOnly = false) {
       if (!isTfngFeedbackAvailable()) return;
-      if (!tfngCluesVisible) {
+      if (singleClueOnly) {
+        tfngSingleClueQuestion = questionNumber;
         tfngCluesVisible = true;
+        refreshTfngPassageClues();
+      } else if (!tfngCluesVisible) {
+        tfngCluesVisible = true;
+        tfngSingleClueQuestion = null;
         refreshTfngPassageClues();
       }
       const clue = Array.from(document.querySelectorAll(".tfng-passage-clue")).find((item) => {
@@ -3494,7 +3569,7 @@
     }
 
     function revealTfngEvidence(questionNumber) {
-      focusTfngPassageClue(questionNumber, true);
+      focusTfngPassageClue(questionNumber, true, true);
     }
 
     function getTfngUserAnswer(questionNumber) {
@@ -3509,10 +3584,12 @@
       if (!strategy || !panel) return;
       panel.innerHTML = '<div class="tfng-study-panel-header"><h3>' + strategy.label + ' strategy</h3>' +
         '<button type="button" id="tfngStrategyCloseButton" class="study-icon-btn" aria-label="Close strategy" title="Close strategy">×</button></div>' +
-        '<p>' + strategy.purpose + '</p>' +
-        '<ol>' + strategy.steps.map((step) => '<li>' + step + '</li>').join('') + '</ol>' +
-        '<p><strong>Trap:</strong> ' + strategy.commonTrap + '</p>' +
-        '<p><strong>NOT GIVEN tip:</strong> ' + strategy.notGivenTip + '</p>';
+        '<div class="tfng-strategy-grid">' +
+        '<section class="tfng-strategy-step"><div class="tfng-strategy-label"><span class="tfng-strategy-chip">1</span>Find the area</div><p>Underline topic words and strong words such as <strong>first</strong>, <strong>only</strong>, <strong>always</strong> and <strong>never</strong>.</p></section>' +
+        '<section class="tfng-strategy-step"><div class="tfng-strategy-label"><span class="tfng-strategy-chip">2</span>Compare the meaning</div><p>Read the whole sentence, not one matching word.</p></section>' +
+        '<section class="tfng-strategy-step"><div class="tfng-strategy-label"><span class="tfng-strategy-chip">3</span>Decide</div><p>TRUE = match, FALSE = opposite, NOT GIVEN = the exact detail is missing.</p></section>' +
+        '<section class="tfng-strategy-watch"><div class="tfng-strategy-label"><span class="tfng-strategy-chip">!</span>Watch out</div><p>A related topic is not enough; extra words need exact proof.</p></section>' +
+        '</div>';
     }
 
     function renderTfngFeedbackCards() {
@@ -3529,11 +3606,11 @@
         card.setAttribute("aria-labelledby", "tfng-feedback-title-" + q);
         card.innerHTML = '<h3 id="tfng-feedback-title-' + q + '">Question ' + q + '</h3>' +
           '<dl>' +
-          '<dt>Your answer</dt><dd>' + (user || "Not answered") + '</dd>' +
-          '<dt>Correct answer</dt><dd>' + item.answer + '</dd>' +
-          '<dt>Status</dt><dd class="feedback-status ' + statusClass + '">' + statusText + '</dd>' +
-          '<dt>Why</dt><dd>' + item.explanation + '</dd>' +
-          '<dt>Skill</dt><dd>' + item.skillFocus + '</dd>' +
+          '<dt class="label-your-answer">Your answer</dt><dd>' + (user || "Not answered") + '</dd>' +
+          '<dt class="label-correct-answer">Correct answer</dt><dd>' + item.answer + '</dd>' +
+          '<dt>Status</dt><dd class="feedback-status ' + statusClass + '">' + statusText + ' <span class="feedback-points">' + (isCorrect ? "+" + (item.marks || 1) + " point" + ((item.marks || 1) === 1 ? "" : "s") : "0 points") + '</span></dd>' +
+          '<dt class="label-why">Why</dt><dd>' + item.explanation + '</dd>' +
+          '<dt class="label-skill">Skill</dt><dd>' + item.skillFocus + '</dd>' +
           '</dl>' +
           '<div class="evidence-action-row"><button type="button" class="study-icon-btn tfng-evidence-btn" data-evidence-q="' + q + '" aria-label="Focus this passage clue" title="Focus this passage clue"><svg aria-hidden="true" focusable="false" width="15" height="15" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" d="m15.5 15.5 4.5 4.5M10.5 17a6.5 6.5 0 1 1 0-13 6.5 6.5 0 0 1 0 13Z"/></svg></button></div>';
         const target = document.getElementById("ca-" + q);
@@ -3576,6 +3653,11 @@
 
     function initTfngStudyFeedback() {
       renderTfngStrategyPanel();
+      if (window.tfngStudyFeedbackInitialised) {
+        updateTfngStudyFeedbackVisibility();
+        return;
+      }
+      window.tfngStudyFeedbackInitialised = true;
       const strategyButton = document.getElementById("tfngStrategyButton");
       const strategyPanel = document.getElementById("tfngStrategyPanel");
       if (strategyButton && strategyPanel) {
@@ -3590,7 +3672,12 @@
       const clueToggle = document.getElementById("tfngClueToggle");
       if (clueToggle) {
         clueToggle.addEventListener("click", () => {
-          tfngCluesVisible = !tfngCluesVisible;
+          if (tfngSingleClueQuestion !== null) {
+            tfngSingleClueQuestion = null;
+            tfngCluesVisible = true;
+          } else {
+            tfngCluesVisible = !tfngCluesVisible;
+          }
           refreshTfngPassageClues();
         });
       }
@@ -3700,6 +3787,8 @@
       const correctCount = evaluateQuestions();
       tfngFeedbackSubmitted = true;
       tfngCluesVisible = true;
+      tfngSingleClueQuestion = null;
+      if (mode === "test") testSubmitted = true;
       renderTfngFeedbackCards();
 
       // In both modes, show correct answer text
@@ -3753,7 +3842,6 @@
       if (resultsOverlay) resultsOverlay.style.display = "flex";
 
       if (mode === "test") {
-        testSubmitted = true;
         isTestRunning = false;
         isTimerPaused = false;
         hideFullscreenLockOverlay();
