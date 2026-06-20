@@ -3,7 +3,7 @@
  *
  * Feedback content loaded by the standalone test page for Study Mode and
  * post-submit Review UI. Included task groups: Passage 1 Questions 1–13 and
- * Passage 2 Questions 14–20.
+ * Passage 2 Questions 14–24.
  */
 
 window.IELTS16AcademicTest1StudyFeedback = {
@@ -40,7 +40,7 @@ window.IELTS16AcademicTest1StudyFeedback = {
 
     oneWordCompletion: {
       label: "ONE WORD ONLY completion",
-      questionNumbers: [8, 9, 10, 11, 12, 13],
+      questionNumbers: [8, 9, 10, 11, 12, 13, 21, 22, 23, 24],
       orderNote: "These questions follow the order of the relevant information in the passage.",
       purpose: "Find the exact one-word answer in the passage and make sure it fits the meaning, grammar and word limit of the notes.",
       steps: [
@@ -289,6 +289,50 @@ window.IELTS16AcademicTest1StudyFeedback = {
       infoButtonAfter: "The Step Pyramid was a revolutionary advance in architecture and became the archetype which all the other great pyramid builders of Egypt would follow.",
       explanation: "Paragraph G says the Step Pyramid became an archetype that later pyramid builders followed. This directly matches heading vi, a design that others copied.",
       skillFocus: "Use strong summary words. “Archetype” means an original model that others follow or copy."
+    },
+
+    21: {
+      taskType: "oneWordCompletion",
+      passage: 2,
+      answer: "city",
+      marks: 1,
+      evidence: "The complex in which it was built was the size of a city in ancient Egypt and included a temple, courtyards, shrines, and living quarters for the priests.",
+      infoButtonAfter: "The complex in which it was built was the size of a city in ancient Egypt and included a temple, courtyards, shrines, and living quarters for the priests.",
+      explanation: "The notes say the complex was as big as an Egyptian ____. The passage says it was the size of a city in ancient Egypt, so city is the one-word answer.",
+      skillFocus: "Use the words around the gap to predict grammar. After “an Egyptian”, look for a singular countable noun."
+    },
+
+    22: {
+      taskType: "oneWordCompletion",
+      passage: 2,
+      answer: "priests",
+      marks: 1,
+      evidence: "The complex in which it was built was the size of a city in ancient Egypt and included a temple, courtyards, shrines, and living quarters for the priests.",
+      infoButtonAfter: "The complex in which it was built was the size of a city in ancient Egypt and included a temple, courtyards, shrines, and living quarters for the priests.",
+      explanation: "The notes refer to accommodation occupied by ____. The passage says there were living quarters for the priests. “Living quarters” paraphrases accommodation, so priests is the answer.",
+      skillFocus: "Expect paraphrasing in note completion. Match “accommodation” with “living quarters”, then copy the exact one-word answer."
+    },
+
+    23: {
+      taskType: "oneWordCompletion",
+      passage: 2,
+      answer: "trench",
+      marks: 1,
+      evidence: "The wall had 13 false doors cut into it with only one true entrance cut into the south-east corner; the entire wall was then ringed by a trench 750 meters long and 40 meters wide.",
+      infoButtonAfter: "The wall had 13 false doors cut into it with only one true entrance cut into the south-east corner; the entire wall was then ringed by a trench 750 meters long and 40 meters wide.",
+      explanation: "The notes say a long ____ encircled the wall. The passage says the wall was ringed by a trench. “Ringed” means encircled, so trench is the answer.",
+      skillFocus: "Match paraphrases, not only identical words. Here, “encircled” matches “was ringed by”."
+    },
+
+    24: {
+      taskType: "oneWordCompletion",
+      passage: 2,
+      answer: "location",
+      marks: 1,
+      evidence: "If someone wished to enter, he or she would have needed to know in advance how to find the location of the true opening in the wall.",
+      infoButtonAfter: "If someone wished to enter, he or she would have needed to know in advance how to find the location of the true opening in the wall.",
+      explanation: "The notes say visitors needed to know the ____ of the real entrance. The passage says they needed to find the location of the true opening, so location is the one-word answer.",
+      skillFocus: "Check grammar and collocation. After “the”, the gap needs a noun, and “the location of” is a natural phrase."
     }
   }
 };
