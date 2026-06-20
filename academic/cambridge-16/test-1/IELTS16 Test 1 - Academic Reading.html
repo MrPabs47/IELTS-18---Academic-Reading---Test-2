@@ -654,6 +654,7 @@
 
     #tfngStrategyButton,
     #oneWordStrategyButton,
+    #oneWordP2StrategyButton,
     #matchingHeadingsStrategyButton {
       border-color: color-mix(in srgb, var(--accent) 62%, var(--border));
       background: color-mix(in srgb, var(--accent) 18%, var(--bg));
@@ -665,6 +666,8 @@
     #tfngStrategyButton:focus-visible,
     #oneWordStrategyButton:hover,
     #oneWordStrategyButton:focus-visible,
+    #oneWordP2StrategyButton:hover,
+    #oneWordP2StrategyButton:focus-visible,
     #matchingHeadingsStrategyButton:hover,
     #matchingHeadingsStrategyButton:focus-visible {
       border-color: var(--accent);
@@ -675,6 +678,7 @@
     .study-icon-btn[hidden],
     .tfng-study-panel[hidden],
     .one-word-study-panel[hidden],
+    .one-word-p2-study-panel[hidden],
     .matching-headings-study-panel[hidden],
     .tfng-feedback-area[hidden] {
       display: none !important;
@@ -682,6 +686,7 @@
 
     .tfng-study-panel,
     .one-word-study-panel,
+    .one-word-p2-study-panel,
     .matching-headings-study-panel,
     .tfng-feedback-card {
       margin: 10px 0;
@@ -702,6 +707,7 @@
 
     .tfng-study-panel h3,
     .one-word-study-panel h3,
+    .one-word-p2-study-panel h3,
     .matching-headings-study-panel h3,
     .tfng-feedback-card h3 {
       margin: 0 0 8px;
@@ -824,6 +830,7 @@
 
     .tfng-passage-clue,
     .one-word-passage-clue,
+    .one-word-p2-passage-clue,
     .matching-headings-passage-clue {
       border-radius: 5px;
       background: color-mix(in srgb, #bbf7d0 58%, var(--bg));
@@ -834,6 +841,7 @@
 
     .tfng-passage-clue.focused-clue,
     .one-word-passage-clue.focused-clue,
+    .one-word-p2-passage-clue.focused-clue,
     .matching-headings-passage-clue.focused-clue {
       outline: 3px solid color-mix(in srgb, #16a34a 70%, var(--accent));
       outline-offset: 2px;
@@ -842,6 +850,7 @@
 
     .tfng-clue-badge,
     .one-word-clue-badge,
+    .one-word-p2-clue-badge,
     .matching-headings-clue-badge {
       display: inline-flex;
       align-items: center;
@@ -862,6 +871,7 @@
 
     .tfng-clue-badge:focus-visible,
     .one-word-clue-badge:focus-visible,
+    .one-word-p2-clue-badge:focus-visible,
     .matching-headings-clue-badge:focus-visible {
       outline: 2px solid var(--accent);
       outline-offset: 2px;
@@ -877,6 +887,7 @@
 
     .tfng-clue-toggle,
     .one-word-clue-toggle,
+    .one-word-p2-clue-toggle,
     .matching-headings-clue-toggle {
       margin: 8px 0 2px;
       border: 1px solid color-mix(in srgb, #15803d 55%, var(--border));
@@ -891,6 +902,7 @@
 
     .tfng-evidence-btn,
     .one-word-evidence-btn,
+    .one-word-p2-evidence-btn,
     .matching-headings-evidence-btn {
       border-color: color-mix(in srgb, #15803d 55%, var(--border));
       background: color-mix(in srgb, #dcfce7 60%, var(--bg));
@@ -907,6 +919,7 @@
 
     .tfng-passage-clue.attention-pulse,
     .one-word-passage-clue.attention-pulse,
+    .one-word-p2-passage-clue.attention-pulse,
     .matching-headings-passage-clue.attention-pulse,
     .tfng-evidence-highlight.attention-pulse {
       animation: tfngEvidencePulse 1.2s ease-out 1;
@@ -923,6 +936,7 @@
       .tfng-evidence-highlight,
       .tfng-passage-clue,
     .one-word-passage-clue,
+    .one-word-p2-passage-clue,
     .matching-headings-passage-clue {
         transition: none;
       }
@@ -934,6 +948,7 @@
 
       .tfng-passage-clue.attention-pulse,
       .one-word-passage-clue.attention-pulse,
+      .one-word-p2-passage-clue.attention-pulse,
       .tfng-evidence-highlight.attention-pulse {
         animation: none;
       }
@@ -2025,7 +2040,9 @@
               </div>
 
               <div class="instruction-block">
-                <p><strong>Questions 21-24</strong></p>
+                <p><strong>Questions 21-24</strong><span class="study-feedback-controls"><button type="button" id="oneWordP2StrategyButton" class="study-icon-btn" aria-label="How to tackle ONE WORD ONLY completion" title="How to tackle this task" aria-controls="oneWordP2StrategyPanel" hidden>ⓘ</button></span></p>
+                <button type="button" id="oneWordP2ClueToggle" class="one-word-p2-clue-toggle" hidden>Show all Q21–24 passage clues</button>
+                <div id="oneWordP2StrategyPanel" class="one-word-p2-study-panel" hidden></div>
                 <p>Complete the notes below.</p>
                 <p>Choose <strong>ONE WORD ONLY</strong> from the passage for each answer.</p>
                 <p>Write your answers in boxes 21-24 on your answer sheet.</p>
@@ -2492,17 +2509,23 @@
       oneWordFeedbackSubmitted = false;
       oneWordCluesVisible = false;
       oneWordSingleClueQuestion = null;
+      oneWordP2FeedbackSubmitted = false;
+      oneWordP2CluesVisible = false;
+      oneWordP2SingleClueQuestion = null;
       matchingHeadingsFeedbackSubmitted = false;
       matchingHeadingsCluesVisible = false;
       matchingHeadingsSingleClueQuestion = null;
       removeTfngPassageClues();
       removeOneWordPassageClues();
+      removeOneWordP2PassageClues();
       removeMatchingHeadingsPassageClues();
       clearTfngEvidenceHighlight();
       clearOneWordFocus();
+      clearOneWordP2Focus();
       clearMatchingHeadingsFocus();
       closeTfngStrategyPanel(false);
       closeOneWordStrategyPanel(false);
+      closeOneWordP2StrategyPanel(false);
       closeMatchingHeadingsStrategyPanel(false);
 
       if (mode === "test") {
@@ -3557,6 +3580,10 @@
     let oneWordFeedbackSubmitted = false;
     let oneWordCluesVisible = false;
     let oneWordSingleClueQuestion = null;
+    let activeOneWordP2Clue = null;
+    let oneWordP2FeedbackSubmitted = false;
+    let oneWordP2CluesVisible = false;
+    let oneWordP2SingleClueQuestion = null;
     let activeMatchingHeadingsClue = null;
     let matchingHeadingsFeedbackSubmitted = false;
     let matchingHeadingsCluesVisible = false;
@@ -3576,6 +3603,14 @@
 
     function isOneWordFeedbackAvailable() {
       return (mode === "study" && oneWordFeedbackSubmitted) || (mode === "test" && testSubmitted);
+    }
+
+    function isOneWordP2StrategyAvailable() {
+      return mode === "study" || (mode === "test" && testSubmitted);
+    }
+
+    function isOneWordP2FeedbackAvailable() {
+      return (mode === "study" && oneWordP2FeedbackSubmitted) || (mode === "test" && testSubmitted);
     }
 
     function isMatchingHeadingsStrategyAvailable() {
@@ -3847,6 +3882,112 @@
     }
 
 
+    function getOneWordP2ClueQuestions(questionNumber, phrase) {
+      const data = window.IELTS16AcademicTest1StudyFeedback;
+      return Object.entries(data.questions)
+        .filter(([, item]) => item.taskType === "oneWordCompletion" && item.passage === 2 && item.infoButtonAfter === phrase)
+        .map(([q]) => Number(q))
+        .filter((q) => q >= 21 && q <= 24)
+        .sort((a, b) => a - b);
+    }
+
+    function removeOneWordP2PassageClues() {
+      document.querySelectorAll(".one-word-p2-passage-clue").forEach((clue) => {
+        const parent = clue.parentNode;
+        if (!parent) return;
+        parent.replaceChild(document.createTextNode(clue.childNodes[0]?.textContent || clue.dataset.clueText || clue.textContent), clue);
+        parent.normalize();
+      });
+    }
+
+    function clearOneWordP2Focus() {
+      document.querySelectorAll(".one-word-p2-passage-clue.focused-clue, .one-word-p2-passage-clue.attention-pulse").forEach((clue) => {
+        clue.classList.remove("focused-clue", "attention-pulse");
+      });
+      activeOneWordP2Clue = null;
+    }
+
+    function showOneWordP2PassageClues() {
+      if (!isOneWordP2FeedbackAvailable()) return;
+      const data = window.IELTS16AcademicTest1StudyFeedback;
+      const passageSection = document.querySelector('.passage-section[data-section="2"]');
+      if (!data || !data.questions || !passageSection) return;
+      removeOneWordP2PassageClues();
+      const usedPhrases = [];
+      for (let q = 21; q <= 24; q++) {
+        const item = data.questions[q];
+        if (!item || usedPhrases.includes(item.infoButtonAfter)) continue;
+        const clueQuestions = getOneWordP2ClueQuestions(q, item.infoButtonAfter);
+        if (oneWordP2SingleClueQuestion !== null && !clueQuestions.includes(Number(oneWordP2SingleClueQuestion))) continue;
+        const match = findExactTextNode(passageSection, item.infoButtonAfter);
+        if (!match) continue;
+        usedPhrases.push(item.infoButtonAfter);
+        const range = document.createRange();
+        range.setStart(match.node, match.index);
+        range.setEnd(match.node, match.index + item.infoButtonAfter.length);
+        const mark = document.createElement("mark");
+        mark.className = "one-word-p2-passage-clue";
+        mark.dataset.clueText = item.infoButtonAfter;
+        mark.dataset.clueQuestions = clueQuestions.join(",");
+        range.surroundContents(mark);
+        mark.dataset.clueQuestions.split(",").forEach((question) => {
+          const badge = document.createElement("button");
+          badge.type = "button";
+          badge.className = "one-word-p2-clue-badge";
+          badge.dataset.oneWordP2ClueBadgeQ = question;
+          badge.textContent = question;
+          badge.setAttribute("aria-label", "Go to question " + question);
+          badge.title = "Go to question " + question;
+          mark.appendChild(document.createTextNode(" "));
+          mark.appendChild(badge);
+        });
+      }
+    }
+
+    function updateOneWordP2ClueToggle() {
+      const toggle = document.getElementById("oneWordP2ClueToggle");
+      const available = isOneWordP2FeedbackAvailable();
+      if (!toggle) return;
+      toggle.hidden = !available;
+      toggle.textContent = oneWordP2CluesVisible && oneWordP2SingleClueQuestion === null ? "Hide all Q21–24 passage clues" : "Show all Q21–24 passage clues";
+      toggle.setAttribute("aria-pressed", String(oneWordP2CluesVisible));
+    }
+
+    function refreshOneWordP2PassageClues() {
+      removeOneWordP2PassageClues();
+      if (isOneWordP2FeedbackAvailable() && oneWordP2CluesVisible) showOneWordP2PassageClues();
+      updateOneWordP2ClueToggle();
+    }
+
+    function focusOneWordP2PassageClue(questionNumber, scrollToPassage = true, singleClueOnly = false) {
+      if (!isOneWordP2FeedbackAvailable()) return;
+      if (singleClueOnly) {
+        oneWordP2SingleClueQuestion = questionNumber;
+        oneWordP2CluesVisible = true;
+        refreshOneWordP2PassageClues();
+      } else if (!oneWordP2CluesVisible) {
+        oneWordP2CluesVisible = true;
+        oneWordP2SingleClueQuestion = null;
+        refreshOneWordP2PassageClues();
+      }
+      const clue = Array.from(document.querySelectorAll(".one-word-p2-passage-clue")).find((item) => {
+        return (item.dataset.clueQuestions || "").split(",").includes(String(questionNumber));
+      });
+      if (!clue) return;
+      if (activeOneWordP2Clue) activeOneWordP2Clue.classList.remove("focused-clue", "attention-pulse");
+      activeOneWordP2Clue = clue;
+      clue.classList.add("focused-clue");
+      clue.setAttribute("tabindex", "-1");
+      if (scrollToPassage) clue.scrollIntoView({ behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth", block: "center" });
+      clue.focus({ preventScroll: true });
+      requestAnimationFrame(() => clue.classList.add("attention-pulse"));
+    }
+
+    function revealOneWordP2Evidence(questionNumber) {
+      const allCluesVisible = oneWordP2CluesVisible && oneWordP2SingleClueQuestion === null;
+      focusOneWordP2PassageClue(questionNumber, true, !allCluesVisible);
+    }
+
     function showMatchingHeadingsPassageClues() {
       if (!isMatchingHeadingsFeedbackAvailable()) return;
       const data = window.IELTS16AcademicTest1StudyFeedback;
@@ -3999,6 +4140,20 @@
         '</div>';
     }
 
+    function renderOneWordP2StrategyPanel() {
+      const panel = document.getElementById("oneWordP2StrategyPanel");
+      if (!panel) return;
+      panel.innerHTML = '<div class="tfng-study-panel-header"><h3>ONE WORD ONLY completion strategy</h3>' +
+        '<button type="button" id="oneWordP2StrategyCloseButton" class="study-icon-btn" aria-label="Close strategy" title="Close strategy">×</button></div>' +
+        '<div class="tfng-strategy-grid">' +
+        '<section class="tfng-strategy-step"><div class="tfng-strategy-label"><span class="tfng-strategy-chip">1</span>Predict the grammar</div><p>Use the words around the gap to predict what is needed.</p></section>' +
+        '<section class="tfng-strategy-step"><div class="tfng-strategy-label"><span class="tfng-strategy-chip">2</span>Find the paraphrase</div><p>Scan for the same meaning, not only identical words.</p></section>' +
+        '<section class="tfng-strategy-step"><div class="tfng-strategy-label"><span class="tfng-strategy-chip">3</span>Copy exactly</div><p>Write one word from the passage and respect ONE WORD ONLY.</p></section>' +
+        '<section class="tfng-strategy-step"><div class="tfng-strategy-label"><span class="tfng-strategy-chip">4</span>Check the sentence</div><p>Read the completed notes naturally; grammar and meaning must work.</p></section>' +
+        '<section class="tfng-strategy-watch"><div class="tfng-strategy-label"><span class="tfng-strategy-chip">!</span>Watch out</div><p>A correct idea can still lose the mark if it breaks the word limit or grammar.</p></section>' +
+        '</div>';
+    }
+
     function renderMatchingHeadingsStrategyPanel() {
       const panel = document.getElementById("matchingHeadingsStrategyPanel");
       if (!panel) return;
@@ -4076,6 +4231,38 @@
       }
     }
 
+    function renderOneWordP2FeedbackCards() {
+      const data = window.IELTS16AcademicTest1StudyFeedback;
+      if (!data || !data.questions) return;
+      for (let q = 21; q <= 24; q++) {
+        const item = data.questions[q];
+        const user = getTextUserAnswer(q);
+        const isCorrect = user && normalize(user) === normalize(item.answer);
+        const marks = item.marks || 1;
+        const pointsText = isCorrect ? "+" + marks + " point" + (marks === 1 ? "" : "s") : "0 points";
+        const answerStatusClass = user ? (isCorrect ? "correct-status" : "incorrect-status") : "unanswered-status";
+        const displayAnswer = user ? user : "Not answered";
+        const answerStatusText = user ? (isCorrect ? "✓ " + displayAnswer + " · " + pointsText : "× " + displayAnswer + " · " + pointsText) : "— Not answered · " + pointsText;
+        const card = document.createElement("section");
+        card.className = "tfng-feedback-card";
+        card.setAttribute("aria-labelledby", "one-word-p2-feedback-title-" + q);
+        card.innerHTML = '<h3 id="one-word-p2-feedback-title-' + q + '">Question ' + q + '</h3>' +
+          '<dl>' +
+          '<dt class="label-your-answer">Your answer</dt><dd class="feedback-status ' + answerStatusClass + '">' + answerStatusText + '</dd>' +
+          '<dt class="label-correct-answer">Correct answer</dt><dd>' + item.answer + '</dd>' +
+          '<dt class="label-why">Why</dt><dd>' + item.explanation + '</dd>' +
+          '<dt class="label-skill">Skill</dt><dd>' + item.skillFocus + '</dd>' +
+          '</dl>' +
+          '<div class="evidence-action-row"><button type="button" class="study-icon-btn one-word-p2-evidence-btn" data-one-word-p2-evidence-q="' + q + '" aria-label="Focus this passage clue" title="Focus this passage clue"><svg aria-hidden="true" focusable="false" width="15" height="15" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" d="m15.5 15.5 4.5 4.5M10.5 17a6.5 6.5 0 1 1 0-13 6.5 6.5 0 0 1 0 13Z"/></svg></button></div>';
+        const target = document.getElementById("ca-" + q);
+        if (target) {
+          target.innerHTML = "";
+          target.classList.add("tfng-local-feedback");
+          target.appendChild(card);
+        }
+      }
+    }
+
     function updateTfngStudyFeedbackVisibility() {
       const strategyAvailable = isTfngStrategyAvailable();
       const feedbackAvailable = isTfngFeedbackAvailable();
@@ -4085,6 +4272,10 @@
       const oneWordFeedbackAvailable = isOneWordFeedbackAvailable();
       const oneWordStrategyButton = document.getElementById("oneWordStrategyButton");
       const oneWordStrategyPanel = document.getElementById("oneWordStrategyPanel");
+      const oneWordP2StrategyAvailable = isOneWordP2StrategyAvailable();
+      const oneWordP2FeedbackAvailable = isOneWordP2FeedbackAvailable();
+      const oneWordP2StrategyButton = document.getElementById("oneWordP2StrategyButton");
+      const oneWordP2StrategyPanel = document.getElementById("oneWordP2StrategyPanel");
       const matchingHeadingsStrategyAvailable = isMatchingHeadingsStrategyAvailable();
       const matchingHeadingsFeedbackAvailable = isMatchingHeadingsFeedbackAvailable();
       const matchingHeadingsStrategyButton = document.getElementById("matchingHeadingsStrategyButton");
@@ -4093,6 +4284,8 @@
       if (strategyPanel) strategyPanel.hidden = !strategyAvailable || strategyPanel.dataset.open !== "true";
       if (oneWordStrategyButton) oneWordStrategyButton.hidden = !oneWordStrategyAvailable;
       if (oneWordStrategyPanel) oneWordStrategyPanel.hidden = !oneWordStrategyAvailable || oneWordStrategyPanel.dataset.open !== "true";
+      if (oneWordP2StrategyButton) oneWordP2StrategyButton.hidden = !oneWordP2StrategyAvailable;
+      if (oneWordP2StrategyPanel) oneWordP2StrategyPanel.hidden = !oneWordP2StrategyAvailable || oneWordP2StrategyPanel.dataset.open !== "true";
       if (matchingHeadingsStrategyButton) matchingHeadingsStrategyButton.hidden = !matchingHeadingsStrategyAvailable;
       if (matchingHeadingsStrategyPanel) matchingHeadingsStrategyPanel.hidden = !matchingHeadingsStrategyAvailable || matchingHeadingsStrategyPanel.dataset.open !== "true";
       for (let q = 1; q <= 7; q++) {
@@ -4102,6 +4295,10 @@
       for (let q = 8; q <= 13; q++) {
         const target = document.getElementById("ca-" + q);
         if (target) target.style.display = oneWordFeedbackAvailable ? "block" : "none";
+      }
+      for (let q = 21; q <= 24; q++) {
+        const target = document.getElementById("ca-" + q);
+        if (target) target.style.display = oneWordP2FeedbackAvailable ? "block" : "none";
       }
       for (let q = 14; q <= 20; q++) {
         const target = document.getElementById("ca-" + q);
@@ -4118,6 +4315,12 @@
       } else {
         removeOneWordPassageClues();
         clearOneWordFocus();
+      }
+      if (oneWordP2FeedbackAvailable) {
+        refreshOneWordP2PassageClues();
+      } else {
+        removeOneWordP2PassageClues();
+        clearOneWordP2Focus();
       }
       if (matchingHeadingsFeedbackAvailable) {
         refreshMatchingHeadingsPassageClues();
@@ -4137,6 +4340,16 @@
       if (returnFocus && strategyButton && !strategyButton.hidden) strategyButton.focus();
     }
 
+
+    function closeOneWordP2StrategyPanel(returnFocus = true) {
+      const strategyButton = document.getElementById("oneWordP2StrategyButton");
+      const strategyPanel = document.getElementById("oneWordP2StrategyPanel");
+      if (!strategyPanel) return;
+      strategyPanel.dataset.open = "false";
+      if (strategyButton) strategyButton.setAttribute("aria-expanded", "false");
+      updateTfngStudyFeedbackVisibility();
+      if (returnFocus && strategyButton && !strategyButton.hidden) strategyButton.focus();
+    }
 
     function closeMatchingHeadingsStrategyPanel(returnFocus = true) {
       const strategyButton = document.getElementById("matchingHeadingsStrategyButton");
@@ -4161,6 +4374,7 @@
     function initTfngStudyFeedback() {
       renderTfngStrategyPanel();
       renderOneWordStrategyPanel();
+      renderOneWordP2StrategyPanel();
       renderMatchingHeadingsStrategyPanel();
       if (window.tfngStudyFeedbackInitialised) {
         updateTfngStudyFeedbackVisibility();
@@ -4188,6 +4402,17 @@
           updateTfngStudyFeedbackVisibility();
         });
         oneWordStrategyButton.setAttribute("aria-expanded", "false");
+      }
+      const oneWordP2StrategyButton = document.getElementById("oneWordP2StrategyButton");
+      const oneWordP2StrategyPanel = document.getElementById("oneWordP2StrategyPanel");
+      if (oneWordP2StrategyButton && oneWordP2StrategyPanel) {
+        oneWordP2StrategyButton.addEventListener("click", () => {
+          const nextOpen = oneWordP2StrategyPanel.dataset.open !== "true";
+          oneWordP2StrategyPanel.dataset.open = nextOpen ? "true" : "false";
+          oneWordP2StrategyButton.setAttribute("aria-expanded", String(nextOpen));
+          updateTfngStudyFeedbackVisibility();
+        });
+        oneWordP2StrategyButton.setAttribute("aria-expanded", "false");
       }
       const matchingHeadingsStrategyButton = document.getElementById("matchingHeadingsStrategyButton");
       const matchingHeadingsStrategyPanel = document.getElementById("matchingHeadingsStrategyPanel");
@@ -4224,6 +4449,18 @@
           refreshMatchingHeadingsPassageClues();
         });
       }
+      const oneWordP2ClueToggle = document.getElementById("oneWordP2ClueToggle");
+      if (oneWordP2ClueToggle) {
+        oneWordP2ClueToggle.addEventListener("click", () => {
+          if (oneWordP2SingleClueQuestion !== null) {
+            oneWordP2SingleClueQuestion = null;
+            oneWordP2CluesVisible = true;
+          } else {
+            oneWordP2CluesVisible = !oneWordP2CluesVisible;
+          }
+          refreshOneWordP2PassageClues();
+        });
+      }
       const oneWordClueToggle = document.getElementById("oneWordClueToggle");
       if (oneWordClueToggle) {
         oneWordClueToggle.addEventListener("click", () => {
@@ -4242,6 +4479,11 @@
           focusTfngQuestion(Number(matchingHeadingsBadge.dataset.matchingHeadingsClueBadgeQ));
           return;
         }
+        const oneWordP2Badge = event.target.closest(".one-word-p2-clue-badge");
+        if (oneWordP2Badge) {
+          focusTfngQuestion(Number(oneWordP2Badge.dataset.oneWordP2ClueBadgeQ));
+          return;
+        }
         const oneWordBadge = event.target.closest(".one-word-clue-badge");
         if (oneWordBadge) {
           focusTfngQuestion(Number(oneWordBadge.dataset.oneWordClueBadgeQ));
@@ -4257,6 +4499,11 @@
           revealMatchingHeadingsEvidence(Number(matchingHeadingsEvidenceButton.dataset.matchingHeadingsEvidenceQ));
           return;
         }
+        const oneWordP2EvidenceButton = event.target.closest(".one-word-p2-evidence-btn");
+        if (oneWordP2EvidenceButton) {
+          revealOneWordP2Evidence(Number(oneWordP2EvidenceButton.dataset.oneWordP2EvidenceQ));
+          return;
+        }
         const oneWordEvidenceButton = event.target.closest(".one-word-evidence-btn");
         if (oneWordEvidenceButton) {
           revealOneWordEvidence(Number(oneWordEvidenceButton.dataset.oneWordEvidenceQ));
@@ -4270,6 +4517,11 @@
         const matchingHeadingsCloseButton = event.target.closest("#matchingHeadingsStrategyCloseButton");
         if (matchingHeadingsCloseButton) {
           closeMatchingHeadingsStrategyPanel(true);
+          return;
+        }
+        const oneWordP2CloseButton = event.target.closest("#oneWordP2StrategyCloseButton");
+        if (oneWordP2CloseButton) {
+          closeOneWordP2StrategyPanel(true);
           return;
         }
         const oneWordCloseButton = event.target.closest("#oneWordStrategyCloseButton");
@@ -4290,6 +4542,11 @@
         if (matchingHeadingsStrategyPanel && matchingHeadingsStrategyPanel.dataset.open === "true" && !matchingHeadingsStrategyPanel.hidden) {
           event.preventDefault();
           closeMatchingHeadingsStrategyPanel(true);
+        }
+        const oneWordP2StrategyPanel = document.getElementById("oneWordP2StrategyPanel");
+        if (oneWordP2StrategyPanel && oneWordP2StrategyPanel.dataset.open === "true" && !oneWordP2StrategyPanel.hidden) {
+          event.preventDefault();
+          closeOneWordP2StrategyPanel(true);
         }
         const oneWordStrategyPanel = document.getElementById("oneWordStrategyPanel");
         if (oneWordStrategyPanel && oneWordStrategyPanel.dataset.open === "true" && !oneWordStrategyPanel.hidden) {
@@ -4386,12 +4643,16 @@
       oneWordFeedbackSubmitted = true;
       oneWordCluesVisible = true;
       oneWordSingleClueQuestion = null;
+      oneWordP2FeedbackSubmitted = true;
+      oneWordP2CluesVisible = true;
+      oneWordP2SingleClueQuestion = null;
       matchingHeadingsFeedbackSubmitted = true;
       matchingHeadingsCluesVisible = true;
       matchingHeadingsSingleClueQuestion = null;
       if (mode === "test") testSubmitted = true;
       renderTfngFeedbackCards();
       renderOneWordFeedbackCards();
+      renderOneWordP2FeedbackCards();
       renderMatchingHeadingsFeedbackCards();
 
       // In both modes, show correct answer text
