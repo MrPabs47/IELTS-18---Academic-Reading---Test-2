@@ -653,7 +653,8 @@
     }
 
     #tfngStrategyButton,
-    #oneWordStrategyButton {
+    #oneWordStrategyButton,
+    #matchingHeadingsStrategyButton {
       border-color: color-mix(in srgb, var(--accent) 62%, var(--border));
       background: color-mix(in srgb, var(--accent) 18%, var(--bg));
       color: color-mix(in srgb, var(--accent) 82%, var(--text));
@@ -663,7 +664,9 @@
     #tfngStrategyButton:hover,
     #tfngStrategyButton:focus-visible,
     #oneWordStrategyButton:hover,
-    #oneWordStrategyButton:focus-visible {
+    #oneWordStrategyButton:focus-visible,
+    #matchingHeadingsStrategyButton:hover,
+    #matchingHeadingsStrategyButton:focus-visible {
       border-color: var(--accent);
       background: color-mix(in srgb, var(--accent) 26%, var(--bg));
       color: color-mix(in srgb, var(--accent) 88%, var(--text));
@@ -672,12 +675,14 @@
     .study-icon-btn[hidden],
     .tfng-study-panel[hidden],
     .one-word-study-panel[hidden],
+    .matching-headings-study-panel[hidden],
     .tfng-feedback-area[hidden] {
       display: none !important;
     }
 
     .tfng-study-panel,
     .one-word-study-panel,
+    .matching-headings-study-panel,
     .tfng-feedback-card {
       margin: 10px 0;
       padding: 12px;
@@ -697,6 +702,7 @@
 
     .tfng-study-panel h3,
     .one-word-study-panel h3,
+    .matching-headings-study-panel h3,
     .tfng-feedback-card h3 {
       margin: 0 0 8px;
       font-size: 0.98rem;
@@ -817,7 +823,8 @@
     }
 
     .tfng-passage-clue,
-    .one-word-passage-clue {
+    .one-word-passage-clue,
+    .matching-headings-passage-clue {
       border-radius: 5px;
       background: color-mix(in srgb, #bbf7d0 58%, var(--bg));
       color: var(--text);
@@ -826,14 +833,16 @@
     }
 
     .tfng-passage-clue.focused-clue,
-    .one-word-passage-clue.focused-clue {
+    .one-word-passage-clue.focused-clue,
+    .matching-headings-passage-clue.focused-clue {
       outline: 3px solid color-mix(in srgb, #16a34a 70%, var(--accent));
       outline-offset: 2px;
       box-shadow: 0 0 0 4px color-mix(in srgb, #bbf7d0 60%, transparent);
     }
 
     .tfng-clue-badge,
-    .one-word-clue-badge {
+    .one-word-clue-badge,
+    .matching-headings-clue-badge {
       display: inline-flex;
       align-items: center;
       justify-content: center;
@@ -852,7 +861,8 @@
     }
 
     .tfng-clue-badge:focus-visible,
-    .one-word-clue-badge:focus-visible {
+    .one-word-clue-badge:focus-visible,
+    .matching-headings-clue-badge:focus-visible {
       outline: 2px solid var(--accent);
       outline-offset: 2px;
     }
@@ -866,7 +876,8 @@
     }
 
     .tfng-clue-toggle,
-    .one-word-clue-toggle {
+    .one-word-clue-toggle,
+    .matching-headings-clue-toggle {
       margin: 8px 0 2px;
       border: 1px solid color-mix(in srgb, #15803d 55%, var(--border));
       border-radius: 999px;
@@ -879,7 +890,8 @@
     }
 
     .tfng-evidence-btn,
-    .one-word-evidence-btn {
+    .one-word-evidence-btn,
+    .matching-headings-evidence-btn {
       border-color: color-mix(in srgb, #15803d 55%, var(--border));
       background: color-mix(in srgb, #dcfce7 60%, var(--bg));
       color: color-mix(in srgb, #15803d 75%, var(--text));
@@ -895,6 +907,7 @@
 
     .tfng-passage-clue.attention-pulse,
     .one-word-passage-clue.attention-pulse,
+    .matching-headings-passage-clue.attention-pulse,
     .tfng-evidence-highlight.attention-pulse {
       animation: tfngEvidencePulse 1.2s ease-out 1;
     }
@@ -909,7 +922,8 @@
       .study-icon-btn,
       .tfng-evidence-highlight,
       .tfng-passage-clue,
-    .one-word-passage-clue {
+    .one-word-passage-clue,
+    .matching-headings-passage-clue {
         transition: none;
       }
 
@@ -1955,7 +1969,9 @@
               <div class="instruction-block">
                 <p><strong>READING PASSAGE 2 : Questions 14-26</strong></p>
                 <p>Reading Passage 2 has seven paragraphs, A-G.</p>
-                <p>Choose the correct heading for each paragraph from the list of headings below.</p>
+                <p>Choose the correct heading for each paragraph from the list of headings below.<span class="study-feedback-controls"><button type="button" id="matchingHeadingsStrategyButton" class="study-icon-btn" aria-label="How to tackle Matching Headings" title="How to tackle this task" aria-controls="matchingHeadingsStrategyPanel" hidden>ⓘ</button></span></p>
+                <button type="button" id="matchingHeadingsClueToggle" class="matching-headings-clue-toggle" hidden>Show all Q14–20 passage clues</button>
+                <div id="matchingHeadingsStrategyPanel" class="matching-headings-study-panel tfng-study-panel" hidden></div>
                 <p>Write the correct number, i-ix, in boxes 14-20 on your answer sheet.</p>
               </div>
 
@@ -2476,12 +2492,18 @@
       oneWordFeedbackSubmitted = false;
       oneWordCluesVisible = false;
       oneWordSingleClueQuestion = null;
+      matchingHeadingsFeedbackSubmitted = false;
+      matchingHeadingsCluesVisible = false;
+      matchingHeadingsSingleClueQuestion = null;
       removeTfngPassageClues();
       removeOneWordPassageClues();
+      removeMatchingHeadingsPassageClues();
       clearTfngEvidenceHighlight();
       clearOneWordFocus();
+      clearMatchingHeadingsFocus();
       closeTfngStrategyPanel(false);
       closeOneWordStrategyPanel(false);
+      closeMatchingHeadingsStrategyPanel(false);
 
       if (mode === "test") {
         if (timerContainer) {
@@ -3535,6 +3557,10 @@
     let oneWordFeedbackSubmitted = false;
     let oneWordCluesVisible = false;
     let oneWordSingleClueQuestion = null;
+    let activeMatchingHeadingsClue = null;
+    let matchingHeadingsFeedbackSubmitted = false;
+    let matchingHeadingsCluesVisible = false;
+    let matchingHeadingsSingleClueQuestion = null;
 
     function isTfngStrategyAvailable() {
       return mode === "study" || (mode === "test" && testSubmitted);
@@ -3550,6 +3576,14 @@
 
     function isOneWordFeedbackAvailable() {
       return (mode === "study" && oneWordFeedbackSubmitted) || (mode === "test" && testSubmitted);
+    }
+
+    function isMatchingHeadingsStrategyAvailable() {
+      return mode === "study" || (mode === "test" && testSubmitted);
+    }
+
+    function isMatchingHeadingsFeedbackAvailable() {
+      return (mode === "study" && matchingHeadingsFeedbackSubmitted) || (mode === "test" && testSubmitted);
     }
 
     function clearTfngEvidenceHighlight() {
@@ -3591,6 +3625,23 @@
         clue.classList.remove("focused-clue", "attention-pulse");
       });
       activeOneWordClue = null;
+    }
+
+    function removeMatchingHeadingsPassageClues() {
+      document.querySelectorAll(".matching-headings-passage-clue").forEach((clue) => {
+        const parent = clue.parentNode;
+        if (!parent) return;
+        parent.replaceChild(document.createTextNode(clue.dataset.clueText || clue.childNodes[0]?.textContent || clue.textContent), clue);
+        parent.normalize();
+      });
+      activeMatchingHeadingsClue = null;
+    }
+
+    function clearMatchingHeadingsFocus() {
+      document.querySelectorAll(".matching-headings-passage-clue.focused-clue, .matching-headings-passage-clue.attention-pulse").forEach((clue) => {
+        clue.classList.remove("focused-clue", "attention-pulse");
+      });
+      activeMatchingHeadingsClue = null;
     }
 
     function findExactTextNode(root, phrase) {
@@ -3795,6 +3846,83 @@
       focusOneWordPassageClue(questionNumber, true, !allCluesVisible);
     }
 
+
+    function showMatchingHeadingsPassageClues() {
+      if (!isMatchingHeadingsFeedbackAvailable()) return;
+      const data = window.IELTS16AcademicTest1StudyFeedback;
+      const passageSection = document.querySelector('.passage-section[data-section="2"]');
+      if (!data || !data.questions || !passageSection) return;
+      removeMatchingHeadingsPassageClues();
+      for (let q = 14; q <= 20; q++) {
+        const item = data.questions[q];
+        if (!item) continue;
+        if (matchingHeadingsSingleClueQuestion !== null && Number(matchingHeadingsSingleClueQuestion) !== q) continue;
+        const match = findExactTextNode(passageSection, item.infoButtonAfter);
+        if (!match) continue;
+        const range = document.createRange();
+        range.setStart(match.node, match.index);
+        range.setEnd(match.node, match.index + item.infoButtonAfter.length);
+        const mark = document.createElement("mark");
+        mark.className = "matching-headings-passage-clue";
+        mark.dataset.clueText = item.infoButtonAfter;
+        mark.dataset.clueQuestions = String(q);
+        range.surroundContents(mark);
+        const badge = document.createElement("button");
+        badge.type = "button";
+        badge.className = "matching-headings-clue-badge";
+        badge.dataset.matchingHeadingsClueBadgeQ = q;
+        badge.textContent = q;
+        badge.setAttribute("aria-label", "Go to question " + q);
+        badge.title = "Go to question " + q;
+        mark.appendChild(document.createTextNode(" "));
+        mark.appendChild(badge);
+      }
+    }
+
+    function updateMatchingHeadingsClueToggle() {
+      const toggle = document.getElementById("matchingHeadingsClueToggle");
+      const available = isMatchingHeadingsFeedbackAvailable();
+      if (!toggle) return;
+      toggle.hidden = !available;
+      toggle.textContent = matchingHeadingsCluesVisible && matchingHeadingsSingleClueQuestion === null ? "Hide all Q14–20 passage clues" : "Show all Q14–20 passage clues";
+      toggle.setAttribute("aria-pressed", String(matchingHeadingsCluesVisible));
+    }
+
+    function refreshMatchingHeadingsPassageClues() {
+      removeMatchingHeadingsPassageClues();
+      if (isMatchingHeadingsFeedbackAvailable() && matchingHeadingsCluesVisible) showMatchingHeadingsPassageClues();
+      updateMatchingHeadingsClueToggle();
+    }
+
+    function focusMatchingHeadingsPassageClue(questionNumber, scrollToPassage = true, singleClueOnly = false) {
+      if (!isMatchingHeadingsFeedbackAvailable()) return;
+      if (singleClueOnly) {
+        matchingHeadingsSingleClueQuestion = questionNumber;
+        matchingHeadingsCluesVisible = true;
+        refreshMatchingHeadingsPassageClues();
+      } else if (!matchingHeadingsCluesVisible) {
+        matchingHeadingsCluesVisible = true;
+        matchingHeadingsSingleClueQuestion = null;
+        refreshMatchingHeadingsPassageClues();
+      }
+      const clue = Array.from(document.querySelectorAll(".matching-headings-passage-clue")).find((item) => {
+        return (item.dataset.clueQuestions || "").split(",").includes(String(questionNumber));
+      });
+      if (!clue) return;
+      if (activeMatchingHeadingsClue) activeMatchingHeadingsClue.classList.remove("focused-clue", "attention-pulse");
+      activeMatchingHeadingsClue = clue;
+      clue.classList.add("focused-clue");
+      clue.setAttribute("tabindex", "-1");
+      if (scrollToPassage) clue.scrollIntoView({ behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth", block: "center" });
+      clue.focus({ preventScroll: true });
+      requestAnimationFrame(() => clue.classList.add("attention-pulse"));
+    }
+
+    function revealMatchingHeadingsEvidence(questionNumber) {
+      const allCluesVisible = matchingHeadingsCluesVisible && matchingHeadingsSingleClueQuestion === null;
+      focusMatchingHeadingsPassageClue(questionNumber, true, !allCluesVisible);
+    }
+
     function getTfngUserAnswer(questionNumber) {
       const checked = document.querySelector('input[type="radio"][name="q' + questionNumber + '"]:checked');
       return checked ? checked.value : "";
@@ -3847,6 +3975,11 @@
     }
 
 
+    function getMatchingHeadingsUserAnswer(questionNumber) {
+      const select = document.querySelector('select[name="q' + questionNumber + '"]');
+      return select ? select.value : "";
+    }
+
     function getTextUserAnswer(questionNumber) {
       const input = document.querySelector('input[name="q' + questionNumber + '"]');
       return input ? input.value.trim() : "";
@@ -3864,6 +3997,51 @@
         '<section class="tfng-strategy-step"><div class="tfng-strategy-label"><span class="tfng-strategy-chip">4</span>Check the sentence</div><p>Read the completed notes naturally; grammar and meaning must work.</p></section>' +
         '<section class="tfng-strategy-watch"><div class="tfng-strategy-label"><span class="tfng-strategy-chip">!</span>Watch out</div><p>A correct idea can still lose the mark if it breaks the word limit or grammar.</p></section>' +
         '</div>';
+    }
+
+    function renderMatchingHeadingsStrategyPanel() {
+      const panel = document.getElementById("matchingHeadingsStrategyPanel");
+      if (!panel) return;
+      panel.innerHTML = '<div class="tfng-study-panel-header"><h3>Matching Headings strategy</h3>' +
+        '<button type="button" id="matchingHeadingsStrategyCloseButton" class="study-icon-btn" aria-label="Close strategy" title="Close strategy">×</button></div>' +
+        '<div class="tfng-strategy-grid">' +
+        '<section class="tfng-strategy-step"><div class="tfng-strategy-label"><span class="tfng-strategy-chip">1</span>Read the headings first</div><p>underline the main idea in each heading.</p></section>' +
+        '<section class="tfng-strategy-step"><div class="tfng-strategy-label"><span class="tfng-strategy-chip">2</span>Read for the central message</div><p>use the whole paragraph, not one matching word.</p></section>' +
+        '<section class="tfng-strategy-step"><div class="tfng-strategy-label"><span class="tfng-strategy-chip">3</span>Match the whole meaning</div><p>the heading must summarise most of the paragraph, not one example.</p></section>' +
+        '<section class="tfng-strategy-step"><div class="tfng-strategy-label"><span class="tfng-strategy-chip">4</span>Compare close options</div><p>cross out used headings and leave the best match for each paragraph.</p></section>' +
+        '<section class="tfng-strategy-watch"><div class="tfng-strategy-label"><span class="tfng-strategy-chip">!</span>Watch out</div><p>matching vocabulary is not enough when the heading describes only a minor detail.</p></section>' +
+        '</div>';
+    }
+
+    function renderMatchingHeadingsFeedbackCards() {
+      const data = window.IELTS16AcademicTest1StudyFeedback;
+      if (!data || !data.questions) return;
+      for (let q = 14; q <= 20; q++) {
+        const item = data.questions[q];
+        const user = getMatchingHeadingsUserAnswer(q);
+        const isCorrect = user && user === item.answer;
+        const marks = item.marks || 1;
+        const pointsText = isCorrect ? "+" + marks + " point" + (marks === 1 ? "" : "s") : "0 points";
+        const answerStatusClass = user ? (isCorrect ? "correct-status" : "incorrect-status") : "unanswered-status";
+        const answerStatusText = user ? (isCorrect ? "✓ " + user + " · " + pointsText : "× " + user + " · " + pointsText) : "— Not answered · " + pointsText;
+        const card = document.createElement("section");
+        card.className = "tfng-feedback-card";
+        card.setAttribute("aria-labelledby", "matching-headings-feedback-title-" + q);
+        card.innerHTML = '<h3 id="matching-headings-feedback-title-' + q + '">Question ' + q + ' — Paragraph ' + item.paragraph + '</h3>' +
+          '<dl>' +
+          '<dt class="label-your-answer">Your answer</dt><dd class="feedback-status ' + answerStatusClass + '">' + answerStatusText + '</dd>' +
+          '<dt class="label-correct-answer">Correct answer</dt><dd>' + item.answer + ' — ' + item.answerLabel + '</dd>' +
+          '<dt class="label-why">Why</dt><dd>' + item.explanation + '</dd>' +
+          '<dt class="label-skill">Skill</dt><dd>' + item.skillFocus + '</dd>' +
+          '</dl>' +
+          '<div class="evidence-action-row"><button type="button" class="study-icon-btn matching-headings-evidence-btn" data-matching-headings-evidence-q="' + q + '" aria-label="Focus this passage clue" title="Focus this passage clue"><svg aria-hidden="true" focusable="false" width="15" height="15" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" d="m15.5 15.5 4.5 4.5M10.5 17a6.5 6.5 0 1 1 0-13 6.5 6.5 0 0 1 0 13Z"/></svg></button></div>';
+        const target = document.getElementById("ca-" + q);
+        if (target) {
+          target.innerHTML = "";
+          target.classList.add("tfng-local-feedback");
+          target.appendChild(card);
+        }
+      }
     }
 
     function renderOneWordFeedbackCards() {
@@ -3907,10 +4085,16 @@
       const oneWordFeedbackAvailable = isOneWordFeedbackAvailable();
       const oneWordStrategyButton = document.getElementById("oneWordStrategyButton");
       const oneWordStrategyPanel = document.getElementById("oneWordStrategyPanel");
+      const matchingHeadingsStrategyAvailable = isMatchingHeadingsStrategyAvailable();
+      const matchingHeadingsFeedbackAvailable = isMatchingHeadingsFeedbackAvailable();
+      const matchingHeadingsStrategyButton = document.getElementById("matchingHeadingsStrategyButton");
+      const matchingHeadingsStrategyPanel = document.getElementById("matchingHeadingsStrategyPanel");
       if (strategyButton) strategyButton.hidden = !strategyAvailable;
       if (strategyPanel) strategyPanel.hidden = !strategyAvailable || strategyPanel.dataset.open !== "true";
       if (oneWordStrategyButton) oneWordStrategyButton.hidden = !oneWordStrategyAvailable;
       if (oneWordStrategyPanel) oneWordStrategyPanel.hidden = !oneWordStrategyAvailable || oneWordStrategyPanel.dataset.open !== "true";
+      if (matchingHeadingsStrategyButton) matchingHeadingsStrategyButton.hidden = !matchingHeadingsStrategyAvailable;
+      if (matchingHeadingsStrategyPanel) matchingHeadingsStrategyPanel.hidden = !matchingHeadingsStrategyAvailable || matchingHeadingsStrategyPanel.dataset.open !== "true";
       for (let q = 1; q <= 7; q++) {
         const target = document.getElementById("ca-" + q);
         if (target) target.style.display = feedbackAvailable ? "block" : "none";
@@ -3918,6 +4102,10 @@
       for (let q = 8; q <= 13; q++) {
         const target = document.getElementById("ca-" + q);
         if (target) target.style.display = oneWordFeedbackAvailable ? "block" : "none";
+      }
+      for (let q = 14; q <= 20; q++) {
+        const target = document.getElementById("ca-" + q);
+        if (target) target.style.display = matchingHeadingsFeedbackAvailable ? "block" : "none";
       }
       if (feedbackAvailable) {
         refreshTfngPassageClues();
@@ -3930,6 +4118,12 @@
       } else {
         removeOneWordPassageClues();
         clearOneWordFocus();
+      }
+      if (matchingHeadingsFeedbackAvailable) {
+        refreshMatchingHeadingsPassageClues();
+      } else {
+        removeMatchingHeadingsPassageClues();
+        clearMatchingHeadingsFocus();
       }
     }
 
@@ -3944,6 +4138,16 @@
     }
 
 
+    function closeMatchingHeadingsStrategyPanel(returnFocus = true) {
+      const strategyButton = document.getElementById("matchingHeadingsStrategyButton");
+      const strategyPanel = document.getElementById("matchingHeadingsStrategyPanel");
+      if (!strategyPanel) return;
+      strategyPanel.dataset.open = "false";
+      if (strategyButton) strategyButton.setAttribute("aria-expanded", "false");
+      updateTfngStudyFeedbackVisibility();
+      if (returnFocus && strategyButton && !strategyButton.hidden) strategyButton.focus();
+    }
+
     function closeOneWordStrategyPanel(returnFocus = true) {
       const strategyButton = document.getElementById("oneWordStrategyButton");
       const strategyPanel = document.getElementById("oneWordStrategyPanel");
@@ -3957,6 +4161,7 @@
     function initTfngStudyFeedback() {
       renderTfngStrategyPanel();
       renderOneWordStrategyPanel();
+      renderMatchingHeadingsStrategyPanel();
       if (window.tfngStudyFeedbackInitialised) {
         updateTfngStudyFeedbackVisibility();
         return;
@@ -3984,6 +4189,17 @@
         });
         oneWordStrategyButton.setAttribute("aria-expanded", "false");
       }
+      const matchingHeadingsStrategyButton = document.getElementById("matchingHeadingsStrategyButton");
+      const matchingHeadingsStrategyPanel = document.getElementById("matchingHeadingsStrategyPanel");
+      if (matchingHeadingsStrategyButton && matchingHeadingsStrategyPanel) {
+        matchingHeadingsStrategyButton.addEventListener("click", () => {
+          const nextOpen = matchingHeadingsStrategyPanel.dataset.open !== "true";
+          matchingHeadingsStrategyPanel.dataset.open = nextOpen ? "true" : "false";
+          matchingHeadingsStrategyButton.setAttribute("aria-expanded", String(nextOpen));
+          updateTfngStudyFeedbackVisibility();
+        });
+        matchingHeadingsStrategyButton.setAttribute("aria-expanded", "false");
+      }
       const clueToggle = document.getElementById("tfngClueToggle");
       if (clueToggle) {
         clueToggle.addEventListener("click", () => {
@@ -3994,6 +4210,18 @@
             tfngCluesVisible = !tfngCluesVisible;
           }
           refreshTfngPassageClues();
+        });
+      }
+      const matchingHeadingsClueToggle = document.getElementById("matchingHeadingsClueToggle");
+      if (matchingHeadingsClueToggle) {
+        matchingHeadingsClueToggle.addEventListener("click", () => {
+          if (matchingHeadingsSingleClueQuestion !== null) {
+            matchingHeadingsSingleClueQuestion = null;
+            matchingHeadingsCluesVisible = true;
+          } else {
+            matchingHeadingsCluesVisible = !matchingHeadingsCluesVisible;
+          }
+          refreshMatchingHeadingsPassageClues();
         });
       }
       const oneWordClueToggle = document.getElementById("oneWordClueToggle");
@@ -4009,6 +4237,11 @@
         });
       }
       document.getElementById("passageContent")?.addEventListener("click", (event) => {
+        const matchingHeadingsBadge = event.target.closest(".matching-headings-clue-badge");
+        if (matchingHeadingsBadge) {
+          focusTfngQuestion(Number(matchingHeadingsBadge.dataset.matchingHeadingsClueBadgeQ));
+          return;
+        }
         const oneWordBadge = event.target.closest(".one-word-clue-badge");
         if (oneWordBadge) {
           focusTfngQuestion(Number(oneWordBadge.dataset.oneWordClueBadgeQ));
@@ -4019,6 +4252,11 @@
         focusTfngQuestion(Number(badge.dataset.clueBadgeQ));
       });
       document.getElementById("questionContent")?.addEventListener("click", (event) => {
+        const matchingHeadingsEvidenceButton = event.target.closest(".matching-headings-evidence-btn");
+        if (matchingHeadingsEvidenceButton) {
+          revealMatchingHeadingsEvidence(Number(matchingHeadingsEvidenceButton.dataset.matchingHeadingsEvidenceQ));
+          return;
+        }
         const oneWordEvidenceButton = event.target.closest(".one-word-evidence-btn");
         if (oneWordEvidenceButton) {
           revealOneWordEvidence(Number(oneWordEvidenceButton.dataset.oneWordEvidenceQ));
@@ -4027,6 +4265,11 @@
         const evidenceButton = event.target.closest(".tfng-evidence-btn");
         if (evidenceButton) {
           revealTfngEvidence(Number(evidenceButton.dataset.evidenceQ));
+          return;
+        }
+        const matchingHeadingsCloseButton = event.target.closest("#matchingHeadingsStrategyCloseButton");
+        if (matchingHeadingsCloseButton) {
+          closeMatchingHeadingsStrategyPanel(true);
           return;
         }
         const oneWordCloseButton = event.target.closest("#oneWordStrategyCloseButton");
@@ -4042,6 +4285,11 @@
         if (strategyPanel && strategyPanel.dataset.open === "true" && !strategyPanel.hidden) {
           event.preventDefault();
           closeTfngStrategyPanel(true);
+        }
+        const matchingHeadingsStrategyPanel = document.getElementById("matchingHeadingsStrategyPanel");
+        if (matchingHeadingsStrategyPanel && matchingHeadingsStrategyPanel.dataset.open === "true" && !matchingHeadingsStrategyPanel.hidden) {
+          event.preventDefault();
+          closeMatchingHeadingsStrategyPanel(true);
         }
         const oneWordStrategyPanel = document.getElementById("oneWordStrategyPanel");
         if (oneWordStrategyPanel && oneWordStrategyPanel.dataset.open === "true" && !oneWordStrategyPanel.hidden) {
@@ -4138,9 +4386,13 @@
       oneWordFeedbackSubmitted = true;
       oneWordCluesVisible = true;
       oneWordSingleClueQuestion = null;
+      matchingHeadingsFeedbackSubmitted = true;
+      matchingHeadingsCluesVisible = true;
+      matchingHeadingsSingleClueQuestion = null;
       if (mode === "test") testSubmitted = true;
       renderTfngFeedbackCards();
       renderOneWordFeedbackCards();
+      renderMatchingHeadingsFeedbackCards();
 
       // In both modes, show correct answer text
       Object.keys(correctAnswerText).forEach((q) => {
