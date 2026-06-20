@@ -3,7 +3,7 @@
  *
  * Feedback content loaded by the standalone test page for Study Mode and
  * post-submit Review UI. Included task groups: Passage 1 Questions 1–13 and
- * Passage 2 Questions 14–24.
+ * Passage 2 Questions 14–26.
  */
 
 window.IELTS16AcademicTest1StudyFeedback = {
@@ -66,6 +66,18 @@ window.IELTS16AcademicTest1StudyFeedback = {
       ],
       commonTrap: "A heading can share vocabulary with a paragraph but still be wrong if it describes only a minor detail.",
       answerUseTip: "Each heading is used once only. Check whether your chosen heading leaves a better match for another paragraph."
+    },
+
+    chooseTwoLetters: {
+      label: "Choose TWO letters",
+      questionNumbers: [25, 26],
+      steps: [
+        { title: "Read every option", detail: "underline the key claim in each statement." },
+        { title: "Find evidence separately", detail: "treat each option as its own True / False decision." },
+        { title: "Check the exact detail", detail: "names and topic words may match, while the detail is wrong." },
+        { title: "Choose exactly two", detail: "do not select a third answer just because it seems related." },
+        { title: "Watch out", detail: "the two correct options may appear in different parts of the passage." }
+      ]
     }
   },
 
@@ -333,6 +345,36 @@ window.IELTS16AcademicTest1StudyFeedback = {
       infoButtonAfter: "If someone wished to enter, he or she would have needed to know in advance how to find the location of the true opening in the wall.",
       explanation: "The notes say visitors needed to know the ____ of the real entrance. The passage says they needed to find the location of the true opening, so location is the one-word answer.",
       skillFocus: "Check grammar and collocation. After “the”, the gap needs a noun, and “the location of” is a natural phrase."
+    },
+
+    25: {
+      taskType: "chooseTwoLetters",
+      passage: 2,
+      group: "25-26",
+      correctAnswers: ["B", "D"],
+      marks: 2,
+      skillFocus: "Check each option separately. A related name or topic is not enough: the whole statement must match the passage exactly.",
+      options: {
+        B: {
+          evidence: "Djoser is thought to have reigned for 19 years, but some historians and scholars attribute a much longer time for his rule, owing to the number and size of the monuments he built.",
+          infoButtonAfter: "Djoser is thought to have reigned for 19 years, but some historians and scholars attribute a much longer time for his rule, owing to the number and size of the monuments he built.",
+          explanation: "Option B is correct because the passage gives one possible length of Djoser’s reign, then says some historians and scholars believe it was much longer. This is disagreement about its length."
+        },
+        D: {
+          evidence: "Djoser’s grave goods, and even his body, were stolen at some point in the past and all archaeologists found were a small number of his valuables overlooked by the thieves.",
+          infoButtonAfter: "Djoser’s grave goods, and even his body, were stolen at some point in the past and all archaeologists found were a small number of his valuables overlooked by the thieves.",
+          explanation: "Option D is correct because archaeologists found a small number of Djoser’s valuables that the thieves had missed. These were possessions still in the tomb."
+        }
+      }
+    },
+
+    26: {
+      taskType: "chooseTwoLetters",
+      passage: 2,
+      group: "25-26",
+      correctAnswers: ["B", "D"],
+      marks: 0,
+      sharedWith: 25
     }
   }
 };
