@@ -507,6 +507,36 @@
       font-size: 0.9rem;
     }
 
+    #passageHeader {
+      align-items: flex-start;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .passage-header-line {
+      line-height: 1.25;
+    }
+
+    .passage-clue-toolbar {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: flex-start;
+      gap: 6px;
+      width: 100%;
+    }
+
+    .passage-clue-toolbar:empty,
+    .passage-clue-toolbar:not(:has(button:not([hidden]))) {
+      display: none;
+    }
+
+    .passage-clue-toolbar button {
+      margin: 0;
+      max-width: 100%;
+      white-space: normal;
+    }
+
     .pane-content {
       flex: 1;
       padding: 14px 18px;
@@ -1830,7 +1860,13 @@
         <!-- Passage pane -->
         <div class="pane" id="passagePane">
           <div class="pane-header" id="passageHeader">
-            Part 1 <span>Read the text and answer questions 1–13.</span>
+            <div class="passage-header-line" id="passageHeaderLine">Part 1 <span>Read the text and answer questions 1–13.</span></div>
+            <div class="passage-clue-toolbar" id="passageClueToolbar" aria-label="Passage clue controls">
+              <button type="button" id="tfngClueToggle" class="tfng-clue-toggle" hidden>Show all passage clues</button>
+              <button type="button" id="oneWordClueToggle" class="one-word-clue-toggle" hidden>Show all Q8–13 passage clues</button>
+              <button type="button" id="matchingHeadingsClueToggle" class="matching-headings-clue-toggle" hidden>Show all Q14–20 passage clues</button>
+              <button type="button" id="oneWordP2ClueToggle" class="one-word-p2-clue-toggle" hidden>Show all Q21–24 passage clues</button>
+            </div>
           </div>
           <div class="pane-content" id="passageContent">
             <!-- Section 1 passage -->
@@ -1900,7 +1936,6 @@
               <div class="instruction-block">
                 <p><strong>READING PASSAGE 1 : Questions 1-13</strong></p>
                 <p>Do the following statements agree with the information given in Reading Passage 1?<span class="study-feedback-controls"><button type="button" id="tfngStrategyButton" class="study-icon-btn" aria-label="How to tackle True / False / Not Given" title="How to tackle this task" aria-controls="tfngStrategyPanel" hidden>ⓘ</button></span></p>
-                <button type="button" id="tfngClueToggle" class="tfng-clue-toggle" hidden>Show all passage clues</button>
                 <div id="tfngStrategyPanel" class="tfng-study-panel" hidden></div>
                 <p>In boxes 1-7 on your answer sheet, write</p>
                 <p><strong>TRUE</strong> if the statement agrees with the information</p>
@@ -1946,7 +1981,6 @@
 
               <div class="instruction-block">
                 <p><strong>Questions 8-13</strong><span class="study-feedback-controls"><button type="button" id="oneWordStrategyButton" class="study-icon-btn" aria-label="How to tackle ONE WORD ONLY completion" title="How to tackle this task" aria-controls="oneWordStrategyPanel" hidden>ⓘ</button></span></p>
-                <button type="button" id="oneWordClueToggle" class="one-word-clue-toggle" hidden>Show all Q8–13 passage clues</button>
                 <div id="oneWordStrategyPanel" class="one-word-study-panel tfng-study-panel" hidden></div>
                 <p>Complete the table below.</p>
                 <p>Choose <strong>ONE WORD ONLY</strong> from the passage for each answer.</p>
@@ -1985,7 +2019,6 @@
                 <p><strong>READING PASSAGE 2 : Questions 14-26</strong></p>
                 <p>Reading Passage 2 has seven paragraphs, A-G.</p>
                 <p>Choose the correct heading for each paragraph from the list of headings below.<span class="study-feedback-controls"><button type="button" id="matchingHeadingsStrategyButton" class="study-icon-btn" aria-label="How to tackle Matching Headings" title="How to tackle this task" aria-controls="matchingHeadingsStrategyPanel" hidden>ⓘ</button></span></p>
-                <button type="button" id="matchingHeadingsClueToggle" class="matching-headings-clue-toggle" hidden>Show all Q14–20 passage clues</button>
                 <div id="matchingHeadingsStrategyPanel" class="matching-headings-study-panel tfng-study-panel" hidden></div>
                 <p>Write the correct number, i-ix, in boxes 14-20 on your answer sheet.</p>
               </div>
@@ -2041,7 +2074,6 @@
 
               <div class="instruction-block">
                 <p><strong>Questions 21-24</strong><span class="study-feedback-controls"><button type="button" id="oneWordP2StrategyButton" class="study-icon-btn" aria-label="How to tackle ONE WORD ONLY completion" title="How to tackle this task" aria-controls="oneWordP2StrategyPanel" hidden>ⓘ</button></span></p>
-                <button type="button" id="oneWordP2ClueToggle" class="one-word-p2-clue-toggle" hidden>Show all Q21–24 passage clues</button>
                 <div id="oneWordP2StrategyPanel" class="one-word-p2-study-panel" hidden></div>
                 <p>Complete the notes below.</p>
                 <p>Choose <strong>ONE WORD ONLY</strong> from the passage for each answer.</p>
@@ -3125,19 +3157,20 @@
           " answered)";
       }
 
-      const pHeader = document.getElementById("passageHeader");
-      if (pHeader) {
+      const pHeaderLine = document.getElementById("passageHeaderLine");
+      if (pHeaderLine) {
         if (activeSection === 1) {
-          pHeader.textContent =
+          pHeaderLine.textContent =
             "Part 1 – Read the text and answer questions 1–13.";
         } else if (activeSection === 2) {
-          pHeader.textContent =
+          pHeaderLine.textContent =
             "Part 2 – Read the text and answer questions 14–26.";
         } else {
-          pHeader.textContent =
+          pHeaderLine.textContent =
             "Part 3 – Read the text and answer questions 27–40.";
         }
       }
+      updatePassageClueToolbarVisibility();
     }
 
     function buildQuestionNav() {
@@ -3735,9 +3768,22 @@
       }
     }
 
+    function isPassageClueToggleActiveForSection(toggleId) {
+      if (activeSection === 1) return toggleId === "tfngClueToggle" || toggleId === "oneWordClueToggle";
+      if (activeSection === 2) return toggleId === "matchingHeadingsClueToggle" || toggleId === "oneWordP2ClueToggle";
+      return false;
+    }
+
+    function updatePassageClueToolbarVisibility() {
+      updateTfngClueToggle();
+      updateOneWordClueToggle();
+      updateMatchingHeadingsClueToggle();
+      updateOneWordP2ClueToggle();
+    }
+
     function updateTfngClueToggle() {
       const toggle = document.getElementById("tfngClueToggle");
-      const available = isTfngFeedbackAvailable();
+      const available = isTfngFeedbackAvailable() && isPassageClueToggleActiveForSection("tfngClueToggle");
       if (!toggle) return;
       toggle.hidden = !available;
       toggle.textContent = tfngCluesVisible && tfngSingleClueQuestion === null ? "Hide all passage clues" : "Show all passage clues";
@@ -3839,7 +3885,7 @@
 
     function updateOneWordClueToggle() {
       const toggle = document.getElementById("oneWordClueToggle");
-      const available = isOneWordFeedbackAvailable();
+      const available = isOneWordFeedbackAvailable() && isPassageClueToggleActiveForSection("oneWordClueToggle");
       if (!toggle) return;
       toggle.hidden = !available;
       toggle.textContent = oneWordCluesVisible && oneWordSingleClueQuestion === null ? "Hide all Q8–13 passage clues" : "Show all Q8–13 passage clues";
@@ -3946,7 +3992,7 @@
 
     function updateOneWordP2ClueToggle() {
       const toggle = document.getElementById("oneWordP2ClueToggle");
-      const available = isOneWordP2FeedbackAvailable();
+      const available = isOneWordP2FeedbackAvailable() && isPassageClueToggleActiveForSection("oneWordP2ClueToggle");
       if (!toggle) return;
       toggle.hidden = !available;
       toggle.textContent = oneWordP2CluesVisible && oneWordP2SingleClueQuestion === null ? "Hide all Q21–24 passage clues" : "Show all Q21–24 passage clues";
@@ -4022,7 +4068,7 @@
 
     function updateMatchingHeadingsClueToggle() {
       const toggle = document.getElementById("matchingHeadingsClueToggle");
-      const available = isMatchingHeadingsFeedbackAvailable();
+      const available = isMatchingHeadingsFeedbackAvailable() && isPassageClueToggleActiveForSection("matchingHeadingsClueToggle");
       if (!toggle) return;
       toggle.hidden = !available;
       toggle.textContent = matchingHeadingsCluesVisible && matchingHeadingsSingleClueQuestion === null ? "Hide all Q14–20 passage clues" : "Show all Q14–20 passage clues";
