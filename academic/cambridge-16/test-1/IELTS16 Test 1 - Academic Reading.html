@@ -614,6 +614,149 @@
       background: transparent;
     }
 
+
+
+    .study-feedback-controls {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      margin-left: 6px;
+      vertical-align: middle;
+    }
+
+    .study-icon-btn {
+      width: 30px;
+      height: 30px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      background: var(--bg-secondary);
+      color: var(--text);
+      cursor: pointer;
+      font: inherit;
+      line-height: 1;
+      transition: background 0.16s ease, border-color 0.16s ease, transform 0.16s ease;
+    }
+
+    .study-icon-btn:hover,
+    .study-icon-btn:focus-visible {
+      border-color: var(--accent);
+      background: var(--accent-soft);
+      outline: 2px solid transparent;
+      transform: translateY(-1px);
+    }
+
+    .study-icon-btn:focus-visible {
+      box-shadow: 0 0 0 3px var(--accent-soft);
+    }
+
+    .study-icon-btn[hidden],
+    .tfng-study-panel[hidden],
+    .tfng-feedback-area[hidden] {
+      display: none !important;
+    }
+
+    .tfng-study-panel,
+    .tfng-feedback-card {
+      margin: 10px 0;
+      padding: 12px;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      background: var(--bg-secondary);
+      color: var(--text);
+    }
+
+    .tfng-study-panel h3,
+    .tfng-feedback-card h3 {
+      margin: 0 0 8px;
+      font-size: 0.98rem;
+    }
+
+    .tfng-study-panel ol {
+      margin: 8px 0 0 20px;
+      padding: 0;
+    }
+
+    .tfng-study-panel li {
+      margin: 4px 0;
+    }
+
+    .tfng-feedback-area {
+      margin-top: 10px;
+    }
+
+    .tfng-feedback-card dl {
+      display: grid;
+      grid-template-columns: minmax(110px, max-content) 1fr;
+      gap: 6px 10px;
+      margin: 0;
+    }
+
+    .tfng-feedback-card dt {
+      font-weight: 700;
+      color: var(--text-soft);
+    }
+
+    .tfng-feedback-card dd {
+      margin: 0;
+    }
+
+    .tfng-feedback-card .feedback-status.correct-status {
+      color: var(--correct);
+      font-weight: 700;
+    }
+
+    .tfng-feedback-card .feedback-status.incorrect-status {
+      color: var(--incorrect);
+      font-weight: 700;
+    }
+
+    .tfng-feedback-card .feedback-status.unanswered-status {
+      color: var(--text-soft);
+      font-weight: 700;
+    }
+
+    .evidence-action-row {
+      display: flex;
+      justify-content: flex-end;
+      margin-top: 10px;
+    }
+
+    .tfng-evidence-highlight {
+      border-radius: 4px;
+      background: rgba(120, 120, 120, 0.22);
+      box-shadow: 0 0 0 2px rgba(120, 120, 120, 0.18);
+      transition: background 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .tfng-evidence-highlight.attention-pulse {
+      animation: tfngEvidencePulse 1.2s ease-out 1;
+    }
+
+    @keyframes tfngEvidencePulse {
+      0% { box-shadow: 0 0 0 2px rgba(120, 120, 120, 0.2); }
+      45% { box-shadow: 0 0 0 7px rgba(120, 120, 120, 0.18); }
+      100% { box-shadow: 0 0 0 2px rgba(120, 120, 120, 0.18); }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .study-icon-btn,
+      .tfng-evidence-highlight {
+        transition: none;
+      }
+
+      .study-icon-btn:hover,
+      .study-icon-btn:focus-visible {
+        transform: none;
+      }
+
+      .tfng-evidence-highlight.attention-pulse {
+        animation: none;
+      }
+    }
+
     .matching-select {
       width: auto;
       min-width: 150px;
@@ -1535,7 +1678,8 @@
             <div data-section="1">
               <div class="instruction-block">
                 <p><strong>READING PASSAGE 1 : Questions 1-13</strong></p>
-                <p>Do the following statements agree with the information given in Reading Passage 1?</p>
+                <p>Do the following statements agree with the information given in Reading Passage 1?<span class="study-feedback-controls"><button type="button" id="tfngStrategyButton" class="study-icon-btn" aria-label="Show True / False / Not Given strategy" title="Show strategy" hidden>ⓘ</button></span></p>
+                <div id="tfngStrategyPanel" class="tfng-study-panel" hidden></div>
                 <p>In boxes 1-7 on your answer sheet, write</p>
                 <p><strong>TRUE</strong> if the statement agrees with the information</p>
                 <p><strong>FALSE</strong> if the statement contradicts the information</p>
@@ -1577,6 +1721,8 @@
                 <div class="options-row"><label><input type="radio" name="q7" value="TRUE" /> TRUE</label><label><input type="radio" name="q7" value="FALSE" /> FALSE</label><label><input type="radio" name="q7" value="NOT GIVEN" /> NOT GIVEN</label></div>
                 <div class="correct-answer-text" id="ca-7"></div>
               </div>
+
+              <div id="tfngFeedbackArea" class="tfng-feedback-area" hidden></div>
 
               <div class="instruction-block">
                 <p><strong>Questions 8-13</strong></p>
@@ -1898,6 +2044,7 @@
 
   <div id="shortcutToast" role="status" aria-live="polite" aria-atomic="true"></div>
 
+  <script src="study-feedback.js"></script>
   <script>
     /***************
      * GLOBAL STATE
@@ -2146,6 +2293,7 @@
 
       document.getElementById("app").style.display = "block";
       initQuestionInputs();
+      initTfngStudyFeedback();
       setupDragMatch();
       buildQuestionNav();
       setupSelectionListeners();
@@ -3120,6 +3268,151 @@
       }, 1800);
     }
 
+
+
+    /**********************
+     * STUDY FEEDBACK: PASSAGE 1 Q1-7 TFNG
+     **********************/
+    let activeEvidenceHighlight = null;
+    let tfngFeedbackSubmitted = false;
+
+    function isTfngStrategyAvailable() {
+      return mode === "study" || (mode === "test" && testSubmitted);
+    }
+
+    function isTfngFeedbackAvailable() {
+      return (mode === "study" && tfngFeedbackSubmitted) || (mode === "test" && testSubmitted);
+    }
+
+    function clearTfngEvidenceHighlight() {
+      if (!activeEvidenceHighlight) return;
+      const parent = activeEvidenceHighlight.parentNode;
+      if (parent) {
+        parent.replaceChild(document.createTextNode(activeEvidenceHighlight.textContent), activeEvidenceHighlight);
+        parent.normalize();
+      }
+      activeEvidenceHighlight = null;
+    }
+
+    function findExactTextNode(root, phrase) {
+      const walker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT);
+      const matches = [];
+      let node;
+      while ((node = walker.nextNode())) {
+        const index = node.nodeValue.indexOf(phrase);
+        if (index !== -1) matches.push({ node, index });
+      }
+      return matches.length === 1 ? matches[0] : null;
+    }
+
+    function revealTfngEvidence(questionNumber) {
+      if (!isTfngFeedbackAvailable()) return;
+      const data = window.IELTS16AcademicTest1StudyFeedback;
+      const item = data && data.questions && data.questions[questionNumber];
+      if (!item || !item.infoButtonAfter) return;
+      const passageSection = document.querySelector('.passage-section[data-section="1"]');
+      const passagePane = document.getElementById("passagePane");
+      if (!passageSection || !passagePane) return;
+      clearTfngEvidenceHighlight();
+      const match = findExactTextNode(passageSection, item.infoButtonAfter);
+      if (!match) {
+        window.alert("The exact evidence phrase could not be found exactly once in Passage 1.");
+        return;
+      }
+      const range = document.createRange();
+      range.setStart(match.node, match.index);
+      range.setEnd(match.node, match.index + item.infoButtonAfter.length);
+      const mark = document.createElement("mark");
+      mark.className = "tfng-evidence-highlight";
+      range.surroundContents(mark);
+      activeEvidenceHighlight = mark;
+      mark.scrollIntoView({ behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth", block: "center" });
+      requestAnimationFrame(() => mark.classList.add("attention-pulse"));
+      mark.setAttribute("tabindex", "-1");
+      mark.focus({ preventScroll: true });
+    }
+
+    function getTfngUserAnswer(questionNumber) {
+      const checked = document.querySelector('input[type="radio"][name="q' + questionNumber + '"]:checked');
+      return checked ? checked.value : "";
+    }
+
+    function renderTfngStrategyPanel() {
+      const data = window.IELTS16AcademicTest1StudyFeedback;
+      const strategy = data && data.taskStrategies && data.taskStrategies.trueFalseNotGiven;
+      const panel = document.getElementById("tfngStrategyPanel");
+      if (!strategy || !panel) return;
+      panel.innerHTML = '<h3>' + strategy.label + ' strategy</h3>' +
+        '<p>' + strategy.purpose + '</p>' +
+        '<ol>' + strategy.steps.map((step) => '<li>' + step + '</li>').join('') + '</ol>' +
+        '<p><strong>Trap:</strong> ' + strategy.commonTrap + '</p>' +
+        '<p><strong>NOT GIVEN tip:</strong> ' + strategy.notGivenTip + '</p>';
+    }
+
+    function renderTfngFeedbackCards() {
+      const data = window.IELTS16AcademicTest1StudyFeedback;
+      const area = document.getElementById("tfngFeedbackArea");
+      if (!data || !data.questions || !area) return;
+      area.innerHTML = "";
+      for (let q = 1; q <= 7; q++) {
+        const item = data.questions[q];
+        const user = getTfngUserAnswer(q);
+        const isCorrect = user && user === item.answer;
+        const statusText = user ? (isCorrect ? "✓ Correct" : "× Incorrect") : "— Not answered";
+        const statusClass = user ? (isCorrect ? "correct-status" : "incorrect-status") : "unanswered-status";
+        const card = document.createElement("section");
+        card.className = "tfng-feedback-card";
+        card.setAttribute("aria-labelledby", "tfng-feedback-title-" + q);
+        card.innerHTML = '<h3 id="tfng-feedback-title-' + q + '">Question ' + q + '</h3>' +
+          '<dl>' +
+          '<dt>Your answer</dt><dd>' + (user || "Not answered") + '</dd>' +
+          '<dt>Correct answer</dt><dd>' + item.answer + '</dd>' +
+          '<dt>Status</dt><dd class="feedback-status ' + statusClass + '">' + statusText + '</dd>' +
+          '<dt>Evidence</dt><dd>' + item.evidence + '</dd>' +
+          '<dt>Why</dt><dd>' + item.explanation + '</dd>' +
+          '<dt>Skill</dt><dd>' + item.skillFocus + '</dd>' +
+          '</dl>' +
+          '<div class="evidence-action-row"><button type="button" class="study-icon-btn tfng-evidence-btn" data-evidence-q="' + q + '" aria-label="Show evidence for Question ' + q + '" title="Show evidence">⌕</button></div>';
+        area.appendChild(card);
+      }
+    }
+
+    function updateTfngStudyFeedbackVisibility() {
+      const strategyAvailable = isTfngStrategyAvailable();
+      const feedbackAvailable = isTfngFeedbackAvailable();
+      const strategyButton = document.getElementById("tfngStrategyButton");
+      const strategyPanel = document.getElementById("tfngStrategyPanel");
+      const feedbackArea = document.getElementById("tfngFeedbackArea");
+      if (strategyButton) strategyButton.hidden = !strategyAvailable;
+      if (strategyPanel) strategyPanel.hidden = !strategyAvailable || strategyPanel.dataset.open !== "true";
+      if (feedbackArea) feedbackArea.hidden = !feedbackAvailable;
+      if (!feedbackAvailable) clearTfngEvidenceHighlight();
+    }
+
+    function initTfngStudyFeedback() {
+      renderTfngStrategyPanel();
+      const strategyButton = document.getElementById("tfngStrategyButton");
+      const strategyPanel = document.getElementById("tfngStrategyPanel");
+      const feedbackArea = document.getElementById("tfngFeedbackArea");
+      if (strategyButton && strategyPanel) {
+        strategyButton.addEventListener("click", () => {
+          const nextOpen = strategyPanel.dataset.open !== "true";
+          strategyPanel.dataset.open = nextOpen ? "true" : "false";
+          strategyButton.setAttribute("aria-expanded", String(nextOpen));
+          updateTfngStudyFeedbackVisibility();
+        });
+        strategyButton.setAttribute("aria-expanded", "false");
+      }
+      if (feedbackArea) {
+        feedbackArea.addEventListener("click", (event) => {
+          const btn = event.target.closest(".tfng-evidence-btn");
+          if (!btn) return;
+          revealTfngEvidence(Number(btn.dataset.evidenceQ));
+        });
+      }
+      updateTfngStudyFeedbackVisibility();
+    }
+
     function handlePrimarySubmit() {
       if (mode === "test" && isTestRunning && !testSubmitted) {
         confirmSubmit();
@@ -3199,6 +3492,8 @@
 
     function submitTest() {
       const correctCount = evaluateQuestions();
+      tfngFeedbackSubmitted = true;
+      renderTfngFeedbackCards();
 
       // In both modes, show correct answer text
       Object.keys(correctAnswerText).forEach((q) => {
@@ -3265,6 +3560,8 @@
           .querySelectorAll("#questionContent select, #questionContent input")
           .forEach((el) => (el.disabled = true));
       }
+
+      updateTfngStudyFeedbackVisibility();
 
       // Close options overlay if open
       toggleOptions(false);

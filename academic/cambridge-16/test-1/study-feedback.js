@@ -75,7 +75,7 @@ window.IELTS16AcademicTest1StudyFeedback = {
       taskType: "trueFalseNotGiven",
       answer: "TRUE",
       evidence: "This process results in about six months of fasting, where the female bears have to keep themselves and their cubs alive.",
-      infoButtonAfter: "keep themselves and their cubs alive.",
+      infoButtonAfter: "keep themselves and their cubs alive",
       explanation: "The statement says female polar bears can survive for about six months without food. The passage says they go through about six months of fasting while keeping themselves and their cubs alive. The meanings match.",
       skillFocus: "‘Without food’ is paraphrased as ‘fasting’. Look for a change in wording, not necessarily the same words."
     },
