@@ -2935,6 +2935,7 @@
      *****************/
     function switchSection(section) {
       if (![1, 2, 3].includes(section)) return;
+      clearTfngEvidenceHighlight();
       activeSection = section;
       visitedSections.add(section);
 
@@ -3530,6 +3531,7 @@
     }
 
     function submitTest() {
+      clearTfngEvidenceHighlight();
       const correctCount = evaluateQuestions();
       tfngFeedbackSubmitted = true;
       renderTfngFeedbackCards();
@@ -3617,6 +3619,7 @@
       if (focusViolationLine) focusViolationLine.textContent = "";
       if (totalTimeLine) totalTimeLine.textContent = "";
       if (overlay) overlay.style.display = "none";
+      clearTfngEvidenceHighlight();
     }
 
     /**********************
