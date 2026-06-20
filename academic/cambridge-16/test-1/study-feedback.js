@@ -1,9 +1,8 @@
 /*
  * IELTS 16 Academic Reading Test 1 — Study feedback data
  *
- * Content-only foundation for Reading Study Mode.
- * This file is deliberately not loaded by the test page yet, so it does not
- * change Test Mode, Study Mode, scoring, timing, highlights, or navigation.
+ * Feedback content loaded by the standalone test page for the Passage 1
+ * Questions 1–7 True / False / Not Given Study Mode and post-submit Review UI.
  */
 
 window.IELTS16AcademicTest1StudyFeedback = {
