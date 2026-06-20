@@ -652,7 +652,8 @@
       box-shadow: 0 0 0 3px var(--accent-soft);
     }
 
-    #tfngStrategyButton {
+    #tfngStrategyButton,
+    #oneWordStrategyButton {
       border-color: color-mix(in srgb, var(--accent) 62%, var(--border));
       background: color-mix(in srgb, var(--accent) 18%, var(--bg));
       color: color-mix(in srgb, var(--accent) 82%, var(--text));
@@ -660,7 +661,9 @@
     }
 
     #tfngStrategyButton:hover,
-    #tfngStrategyButton:focus-visible {
+    #tfngStrategyButton:focus-visible,
+    #oneWordStrategyButton:hover,
+    #oneWordStrategyButton:focus-visible {
       border-color: var(--accent);
       background: color-mix(in srgb, var(--accent) 26%, var(--bg));
       color: color-mix(in srgb, var(--accent) 88%, var(--text));
@@ -668,11 +671,13 @@
 
     .study-icon-btn[hidden],
     .tfng-study-panel[hidden],
+    .one-word-study-panel[hidden],
     .tfng-feedback-area[hidden] {
       display: none !important;
     }
 
     .tfng-study-panel,
+    .one-word-study-panel,
     .tfng-feedback-card {
       margin: 10px 0;
       padding: 12px;
@@ -691,6 +696,7 @@
     }
 
     .tfng-study-panel h3,
+    .one-word-study-panel h3,
     .tfng-feedback-card h3 {
       margin: 0 0 8px;
       font-size: 0.98rem;
@@ -810,7 +816,8 @@
       margin-top: 10px;
     }
 
-    .tfng-passage-clue {
+    .tfng-passage-clue,
+    .one-word-passage-clue {
       border-radius: 5px;
       background: color-mix(in srgb, #bbf7d0 58%, var(--bg));
       color: var(--text);
@@ -818,13 +825,15 @@
       padding: 1px 2px;
     }
 
-    .tfng-passage-clue.focused-clue {
+    .tfng-passage-clue.focused-clue,
+    .one-word-passage-clue.focused-clue {
       outline: 3px solid color-mix(in srgb, #16a34a 70%, var(--accent));
       outline-offset: 2px;
       box-shadow: 0 0 0 4px color-mix(in srgb, #bbf7d0 60%, transparent);
     }
 
-    .tfng-clue-badge {
+    .tfng-clue-badge,
+    .one-word-clue-badge {
       display: inline-flex;
       align-items: center;
       justify-content: center;
@@ -842,7 +851,8 @@
       user-select: none;
     }
 
-    .tfng-clue-badge:focus-visible {
+    .tfng-clue-badge:focus-visible,
+    .one-word-clue-badge:focus-visible {
       outline: 2px solid var(--accent);
       outline-offset: 2px;
     }
@@ -855,7 +865,8 @@
       border-radius: 12px;
     }
 
-    .tfng-clue-toggle {
+    .tfng-clue-toggle,
+    .one-word-clue-toggle {
       margin: 8px 0 2px;
       border: 1px solid color-mix(in srgb, #15803d 55%, var(--border));
       border-radius: 999px;
@@ -867,7 +878,8 @@
       padding: 6px 12px;
     }
 
-    .tfng-evidence-btn {
+    .tfng-evidence-btn,
+    .one-word-evidence-btn {
       border-color: color-mix(in srgb, #15803d 55%, var(--border));
       background: color-mix(in srgb, #dcfce7 60%, var(--bg));
       color: color-mix(in srgb, #15803d 75%, var(--text));
@@ -882,6 +894,7 @@
     }
 
     .tfng-passage-clue.attention-pulse,
+    .one-word-passage-clue.attention-pulse,
     .tfng-evidence-highlight.attention-pulse {
       animation: tfngEvidencePulse 1.2s ease-out 1;
     }
@@ -895,7 +908,8 @@
     @media (prefers-reduced-motion: reduce) {
       .study-icon-btn,
       .tfng-evidence-highlight,
-      .tfng-passage-clue {
+      .tfng-passage-clue,
+    .one-word-passage-clue {
         transition: none;
       }
 
@@ -905,6 +919,7 @@
       }
 
       .tfng-passage-clue.attention-pulse,
+      .one-word-passage-clue.attention-pulse,
       .tfng-evidence-highlight.attention-pulse {
         animation: none;
       }
@@ -1901,7 +1916,9 @@
               </div>
 
               <div class="instruction-block">
-                <p><strong>Questions 8-13</strong></p>
+                <p><strong>Questions 8-13</strong><span class="study-feedback-controls"><button type="button" id="oneWordStrategyButton" class="study-icon-btn" aria-label="How to tackle ONE WORD ONLY completion" title="How to tackle this task" aria-controls="oneWordStrategyPanel" hidden>ⓘ</button></span></p>
+                <button type="button" id="oneWordClueToggle" class="one-word-clue-toggle" hidden>Show all Q8–13 passage clues</button>
+                <div id="oneWordStrategyPanel" class="one-word-study-panel tfng-study-panel" hidden></div>
                 <p>Complete the table below.</p>
                 <p>Choose <strong>ONE WORD ONLY</strong> from the passage for each answer.</p>
                 <p>Write your answers in boxes 8-13 on your answer sheet.</p>
@@ -2456,9 +2473,15 @@
       tfngFeedbackSubmitted = false;
       tfngCluesVisible = false;
       tfngSingleClueQuestion = null;
+      oneWordFeedbackSubmitted = false;
+      oneWordCluesVisible = false;
+      oneWordSingleClueQuestion = null;
       removeTfngPassageClues();
+      removeOneWordPassageClues();
       clearTfngEvidenceHighlight();
+      clearOneWordFocus();
       closeTfngStrategyPanel(false);
+      closeOneWordStrategyPanel(false);
 
       if (mode === "test") {
         if (timerContainer) {
@@ -3508,6 +3531,10 @@
     let tfngFeedbackSubmitted = false;
     let tfngCluesVisible = false;
     let tfngSingleClueQuestion = null;
+    let activeOneWordClue = null;
+    let oneWordFeedbackSubmitted = false;
+    let oneWordCluesVisible = false;
+    let oneWordSingleClueQuestion = null;
 
     function isTfngStrategyAvailable() {
       return mode === "study" || (mode === "test" && testSubmitted);
@@ -3515,6 +3542,14 @@
 
     function isTfngFeedbackAvailable() {
       return (mode === "study" && tfngFeedbackSubmitted) || (mode === "test" && testSubmitted);
+    }
+
+    function isOneWordStrategyAvailable() {
+      return mode === "study" || (mode === "test" && testSubmitted);
+    }
+
+    function isOneWordFeedbackAvailable() {
+      return (mode === "study" && oneWordFeedbackSubmitted) || (mode === "test" && testSubmitted);
     }
 
     function clearTfngEvidenceHighlight() {
@@ -3539,6 +3574,23 @@
         parent.normalize();
       });
       activeTfngClue = null;
+    }
+
+    function removeOneWordPassageClues() {
+      document.querySelectorAll(".one-word-passage-clue").forEach((clue) => {
+        const parent = clue.parentNode;
+        if (!parent) return;
+        parent.replaceChild(document.createTextNode(clue.dataset.clueText || clue.childNodes[0]?.textContent || clue.textContent), clue);
+        parent.normalize();
+      });
+      activeOneWordClue = null;
+    }
+
+    function clearOneWordFocus() {
+      document.querySelectorAll(".one-word-passage-clue.focused-clue, .one-word-passage-clue.attention-pulse").forEach((clue) => {
+        clue.classList.remove("focused-clue", "attention-pulse");
+      });
+      activeOneWordClue = null;
     }
 
     function findExactTextNode(root, phrase) {
@@ -3653,6 +3705,96 @@
       focusTfngPassageClue(questionNumber, true, !allCluesVisible);
     }
 
+
+    function getOneWordClueQuestions(questionNumber, phrase) {
+      const data = window.IELTS16AcademicTest1StudyFeedback;
+      return Object.entries(data.questions)
+        .filter(([, item]) => item.taskType === "oneWordCompletion" && item.infoButtonAfter === phrase)
+        .map(([q]) => Number(q))
+        .sort((a, b) => a - b);
+    }
+
+    function showOneWordPassageClues() {
+      if (!isOneWordFeedbackAvailable()) return;
+      const data = window.IELTS16AcademicTest1StudyFeedback;
+      const passageSection = document.querySelector('.passage-section[data-section="1"]');
+      if (!data || !data.questions || !passageSection) return;
+      removeOneWordPassageClues();
+      const usedPhrases = [];
+      for (let q = 8; q <= 13; q++) {
+        const item = data.questions[q];
+        if (!item || usedPhrases.includes(item.infoButtonAfter)) continue;
+        const clueQuestions = getOneWordClueQuestions(q, item.infoButtonAfter);
+        if (oneWordSingleClueQuestion !== null && !clueQuestions.includes(Number(oneWordSingleClueQuestion))) continue;
+        const match = findExactTextNode(passageSection, item.infoButtonAfter);
+        if (!match) continue;
+        usedPhrases.push(item.infoButtonAfter);
+        const range = document.createRange();
+        range.setStart(match.node, match.index);
+        range.setEnd(match.node, match.index + item.infoButtonAfter.length);
+        const mark = document.createElement("mark");
+        mark.className = "one-word-passage-clue";
+        mark.dataset.clueText = item.infoButtonAfter;
+        mark.dataset.clueQuestions = clueQuestions.join(",");
+        range.surroundContents(mark);
+        mark.dataset.clueQuestions.split(",").forEach((question) => {
+          const badge = document.createElement("button");
+          badge.type = "button";
+          badge.className = "one-word-clue-badge";
+          badge.dataset.oneWordClueBadgeQ = question;
+          badge.textContent = question;
+          badge.setAttribute("aria-label", "Go to question " + question);
+          badge.title = "Go to question " + question;
+          mark.appendChild(document.createTextNode(" "));
+          mark.appendChild(badge);
+        });
+      }
+    }
+
+    function updateOneWordClueToggle() {
+      const toggle = document.getElementById("oneWordClueToggle");
+      const available = isOneWordFeedbackAvailable();
+      if (!toggle) return;
+      toggle.hidden = !available;
+      toggle.textContent = oneWordCluesVisible && oneWordSingleClueQuestion === null ? "Hide all Q8–13 passage clues" : "Show all Q8–13 passage clues";
+      toggle.setAttribute("aria-pressed", String(oneWordCluesVisible));
+    }
+
+    function refreshOneWordPassageClues() {
+      removeOneWordPassageClues();
+      if (isOneWordFeedbackAvailable() && oneWordCluesVisible) showOneWordPassageClues();
+      updateOneWordClueToggle();
+    }
+
+    function focusOneWordPassageClue(questionNumber, scrollToPassage = true, singleClueOnly = false) {
+      if (!isOneWordFeedbackAvailable()) return;
+      if (singleClueOnly) {
+        oneWordSingleClueQuestion = questionNumber;
+        oneWordCluesVisible = true;
+        refreshOneWordPassageClues();
+      } else if (!oneWordCluesVisible) {
+        oneWordCluesVisible = true;
+        oneWordSingleClueQuestion = null;
+        refreshOneWordPassageClues();
+      }
+      const clue = Array.from(document.querySelectorAll(".one-word-passage-clue")).find((item) => {
+        return (item.dataset.clueQuestions || "").split(",").includes(String(questionNumber));
+      });
+      if (!clue) return;
+      if (activeOneWordClue) activeOneWordClue.classList.remove("focused-clue", "attention-pulse");
+      activeOneWordClue = clue;
+      clue.classList.add("focused-clue");
+      clue.setAttribute("tabindex", "-1");
+      if (scrollToPassage) clue.scrollIntoView({ behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth", block: "center" });
+      clue.focus({ preventScroll: true });
+      requestAnimationFrame(() => clue.classList.add("attention-pulse"));
+    }
+
+    function revealOneWordEvidence(questionNumber) {
+      const allCluesVisible = oneWordCluesVisible && oneWordSingleClueQuestion === null;
+      focusOneWordPassageClue(questionNumber, true, !allCluesVisible);
+    }
+
     function getTfngUserAnswer(questionNumber) {
       const checked = document.querySelector('input[type="radio"][name="q' + questionNumber + '"]:checked');
       return checked ? checked.value : "";
@@ -3704,22 +3846,90 @@
       }
     }
 
+
+    function getTextUserAnswer(questionNumber) {
+      const input = document.querySelector('input[name="q' + questionNumber + '"]');
+      return input ? input.value.trim() : "";
+    }
+
+    function renderOneWordStrategyPanel() {
+      const panel = document.getElementById("oneWordStrategyPanel");
+      if (!panel) return;
+      panel.innerHTML = '<div class="tfng-study-panel-header"><h3>ONE WORD ONLY completion strategy</h3>' +
+        '<button type="button" id="oneWordStrategyCloseButton" class="study-icon-btn" aria-label="Close strategy" title="Close strategy">×</button></div>' +
+        '<div class="tfng-strategy-grid">' +
+        '<section class="tfng-strategy-step"><div class="tfng-strategy-label"><span class="tfng-strategy-chip">1</span>Predict the grammar</div><p>Use the words around the gap to predict what is needed.</p></section>' +
+        '<section class="tfng-strategy-step"><div class="tfng-strategy-label"><span class="tfng-strategy-chip">2</span>Find the paraphrase</div><p>Scan for the same meaning, not only identical words.</p></section>' +
+        '<section class="tfng-strategy-step"><div class="tfng-strategy-label"><span class="tfng-strategy-chip">3</span>Copy exactly</div><p>Write one word from the passage and respect ONE WORD ONLY.</p></section>' +
+        '<section class="tfng-strategy-step"><div class="tfng-strategy-label"><span class="tfng-strategy-chip">4</span>Check the sentence</div><p>Read the completed notes naturally; grammar and meaning must work.</p></section>' +
+        '<section class="tfng-strategy-watch"><div class="tfng-strategy-label"><span class="tfng-strategy-chip">!</span>Watch out</div><p>A correct idea can still lose the mark if it breaks the word limit or grammar.</p></section>' +
+        '</div>';
+    }
+
+    function renderOneWordFeedbackCards() {
+      const data = window.IELTS16AcademicTest1StudyFeedback;
+      if (!data || !data.questions) return;
+      for (let q = 8; q <= 13; q++) {
+        const item = data.questions[q];
+        const user = getTextUserAnswer(q);
+        const isCorrect = user && normalize(user) === normalize(item.answer);
+        const marks = item.marks || 1;
+        const pointsText = isCorrect ? "+" + marks + " point" + (marks === 1 ? "" : "s") : "0 points";
+        const answerStatusClass = user ? (isCorrect ? "correct-status" : "incorrect-status") : "unanswered-status";
+        const displayAnswer = user ? user : "Not answered";
+        const answerStatusText = user ? (isCorrect ? "✓ " + displayAnswer + " · " + pointsText : "× " + displayAnswer + " · " + pointsText) : "— Not answered · " + pointsText;
+        const card = document.createElement("section");
+        card.className = "tfng-feedback-card";
+        card.setAttribute("aria-labelledby", "one-word-feedback-title-" + q);
+        card.innerHTML = '<h3 id="one-word-feedback-title-' + q + '">Question ' + q + '</h3>' +
+          '<dl>' +
+          '<dt class="label-your-answer">Your answer</dt><dd class="feedback-status ' + answerStatusClass + '">' + answerStatusText + '</dd>' +
+          '<dt class="label-correct-answer">Correct answer</dt><dd>' + item.answer + '</dd>' +
+          '<dt class="label-why">Why</dt><dd>' + item.explanation + '</dd>' +
+          '<dt class="label-skill">Skill</dt><dd>' + item.skillFocus + '</dd>' +
+          '</dl>' +
+          '<div class="evidence-action-row"><button type="button" class="study-icon-btn one-word-evidence-btn" data-one-word-evidence-q="' + q + '" aria-label="Focus this passage clue" title="Focus this passage clue"><svg aria-hidden="true" focusable="false" width="15" height="15" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" d="m15.5 15.5 4.5 4.5M10.5 17a6.5 6.5 0 1 1 0-13 6.5 6.5 0 0 1 0 13Z"/></svg></button></div>';
+        const target = document.getElementById("ca-" + q);
+        if (target) {
+          target.innerHTML = "";
+          target.classList.add("tfng-local-feedback");
+          target.appendChild(card);
+        }
+      }
+    }
+
     function updateTfngStudyFeedbackVisibility() {
       const strategyAvailable = isTfngStrategyAvailable();
       const feedbackAvailable = isTfngFeedbackAvailable();
       const strategyButton = document.getElementById("tfngStrategyButton");
       const strategyPanel = document.getElementById("tfngStrategyPanel");
+      const oneWordStrategyAvailable = isOneWordStrategyAvailable();
+      const oneWordFeedbackAvailable = isOneWordFeedbackAvailable();
+      const oneWordStrategyButton = document.getElementById("oneWordStrategyButton");
+      const oneWordStrategyPanel = document.getElementById("oneWordStrategyPanel");
       if (strategyButton) strategyButton.hidden = !strategyAvailable;
       if (strategyPanel) strategyPanel.hidden = !strategyAvailable || strategyPanel.dataset.open !== "true";
+      if (oneWordStrategyButton) oneWordStrategyButton.hidden = !oneWordStrategyAvailable;
+      if (oneWordStrategyPanel) oneWordStrategyPanel.hidden = !oneWordStrategyAvailable || oneWordStrategyPanel.dataset.open !== "true";
       for (let q = 1; q <= 7; q++) {
         const target = document.getElementById("ca-" + q);
         if (target) target.style.display = feedbackAvailable ? "block" : "none";
+      }
+      for (let q = 8; q <= 13; q++) {
+        const target = document.getElementById("ca-" + q);
+        if (target) target.style.display = oneWordFeedbackAvailable ? "block" : "none";
       }
       if (feedbackAvailable) {
         refreshTfngPassageClues();
       } else {
         removeTfngPassageClues();
         clearTfngEvidenceHighlight();
+      }
+      if (oneWordFeedbackAvailable) {
+        refreshOneWordPassageClues();
+      } else {
+        removeOneWordPassageClues();
+        clearOneWordFocus();
       }
     }
 
@@ -3733,8 +3943,20 @@
       if (returnFocus && strategyButton && !strategyButton.hidden) strategyButton.focus();
     }
 
+
+    function closeOneWordStrategyPanel(returnFocus = true) {
+      const strategyButton = document.getElementById("oneWordStrategyButton");
+      const strategyPanel = document.getElementById("oneWordStrategyPanel");
+      if (!strategyPanel) return;
+      strategyPanel.dataset.open = "false";
+      if (strategyButton) strategyButton.setAttribute("aria-expanded", "false");
+      updateTfngStudyFeedbackVisibility();
+      if (returnFocus && strategyButton && !strategyButton.hidden) strategyButton.focus();
+    }
+
     function initTfngStudyFeedback() {
       renderTfngStrategyPanel();
+      renderOneWordStrategyPanel();
       if (window.tfngStudyFeedbackInitialised) {
         updateTfngStudyFeedbackVisibility();
         return;
@@ -3751,6 +3973,17 @@
         });
         strategyButton.setAttribute("aria-expanded", "false");
       }
+      const oneWordStrategyButton = document.getElementById("oneWordStrategyButton");
+      const oneWordStrategyPanel = document.getElementById("oneWordStrategyPanel");
+      if (oneWordStrategyButton && oneWordStrategyPanel) {
+        oneWordStrategyButton.addEventListener("click", () => {
+          const nextOpen = oneWordStrategyPanel.dataset.open !== "true";
+          oneWordStrategyPanel.dataset.open = nextOpen ? "true" : "false";
+          oneWordStrategyButton.setAttribute("aria-expanded", String(nextOpen));
+          updateTfngStudyFeedbackVisibility();
+        });
+        oneWordStrategyButton.setAttribute("aria-expanded", "false");
+      }
       const clueToggle = document.getElementById("tfngClueToggle");
       if (clueToggle) {
         clueToggle.addEventListener("click", () => {
@@ -3763,15 +3996,42 @@
           refreshTfngPassageClues();
         });
       }
+      const oneWordClueToggle = document.getElementById("oneWordClueToggle");
+      if (oneWordClueToggle) {
+        oneWordClueToggle.addEventListener("click", () => {
+          if (oneWordSingleClueQuestion !== null) {
+            oneWordSingleClueQuestion = null;
+            oneWordCluesVisible = true;
+          } else {
+            oneWordCluesVisible = !oneWordCluesVisible;
+          }
+          refreshOneWordPassageClues();
+        });
+      }
       document.getElementById("passageContent")?.addEventListener("click", (event) => {
+        const oneWordBadge = event.target.closest(".one-word-clue-badge");
+        if (oneWordBadge) {
+          focusTfngQuestion(Number(oneWordBadge.dataset.oneWordClueBadgeQ));
+          return;
+        }
         const badge = event.target.closest(".tfng-clue-badge");
         if (!badge) return;
         focusTfngQuestion(Number(badge.dataset.clueBadgeQ));
       });
       document.getElementById("questionContent")?.addEventListener("click", (event) => {
+        const oneWordEvidenceButton = event.target.closest(".one-word-evidence-btn");
+        if (oneWordEvidenceButton) {
+          revealOneWordEvidence(Number(oneWordEvidenceButton.dataset.oneWordEvidenceQ));
+          return;
+        }
         const evidenceButton = event.target.closest(".tfng-evidence-btn");
         if (evidenceButton) {
           revealTfngEvidence(Number(evidenceButton.dataset.evidenceQ));
+          return;
+        }
+        const oneWordCloseButton = event.target.closest("#oneWordStrategyCloseButton");
+        if (oneWordCloseButton) {
+          closeOneWordStrategyPanel(true);
           return;
         }
         const closeButton = event.target.closest("#tfngStrategyCloseButton");
@@ -3782,6 +4042,11 @@
         if (strategyPanel && strategyPanel.dataset.open === "true" && !strategyPanel.hidden) {
           event.preventDefault();
           closeTfngStrategyPanel(true);
+        }
+        const oneWordStrategyPanel = document.getElementById("oneWordStrategyPanel");
+        if (oneWordStrategyPanel && oneWordStrategyPanel.dataset.open === "true" && !oneWordStrategyPanel.hidden) {
+          event.preventDefault();
+          closeOneWordStrategyPanel(true);
         }
       });
       updateTfngStudyFeedbackVisibility();
@@ -3870,8 +4135,12 @@
       tfngFeedbackSubmitted = true;
       tfngCluesVisible = true;
       tfngSingleClueQuestion = null;
+      oneWordFeedbackSubmitted = true;
+      oneWordCluesVisible = true;
+      oneWordSingleClueQuestion = null;
       if (mode === "test") testSubmitted = true;
       renderTfngFeedbackCards();
+      renderOneWordFeedbackCards();
 
       // In both modes, show correct answer text
       Object.keys(correctAnswerText).forEach((q) => {
