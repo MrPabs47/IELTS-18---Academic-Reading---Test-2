@@ -1258,6 +1258,30 @@
       white-space: nowrap;
     }
 
+    .part-chip span.count.part-score {
+      color: var(--correct);
+      font-weight: 700;
+      letter-spacing: 0.01em;
+    }
+
+    .part-score-compact {
+      display: none;
+    }
+
+    @media (max-width: 760px) {
+      .part-chip span.count.part-score {
+        font-size: 0.8rem;
+      }
+
+      .part-score-full {
+        display: none;
+      }
+
+      .part-score-compact {
+        display: inline;
+      }
+    }
+
     .part-chip.active {
       background: var(--part-active-bg);
       border-color: var(--accent);
@@ -2428,6 +2452,7 @@
       }
 
       testSubmitted = false;
+      latestEvaluation = { total: 0, parts: { 1: 0, 2: 0, 3: 0 } };
       tfngFeedbackSubmitted = false;
       tfngCluesVisible = false;
       tfngSingleClueQuestion = null;
@@ -2970,17 +2995,41 @@
         );
         const span = document.getElementById("part" + sec + "Count");
         const countText = answered[sec] + " of " + totals[sec];
+        const showScore = shouldShowPartScores();
 
         if (!chip || !span) return;
 
         chip.classList.remove("complete", "partial", "unopened");
-        if (answered[sec] === totals[sec]) {
+        span.classList.toggle("part-score", showScore);
+
+        if (showScore) {
+          const score = getPartScore(sec);
+          const fullText = "Score: " + score + " / " + totals[sec] + " points";
+          const compactText = score + "/" + totals[sec] + " pts";
+          span.textContent = "";
+          const fullScore = document.createElement("span");
+          fullScore.className = "part-score-full";
+          fullScore.textContent = fullText;
+          const compactScore = document.createElement("span");
+          compactScore.className = "part-score-compact";
+          compactScore.textContent = compactText;
+          span.append(fullScore, compactScore);
+          span.setAttribute("aria-label", "Part " + sec + " " + fullText);
+          span.setAttribute("title", fullText);
+          if (score > 0) {
+            chip.classList.add("complete");
+          } else {
+            chip.classList.add(visitedSections.has(sec) ? "partial" : "unopened");
+          }
+        } else if (answered[sec] === totals[sec]) {
           chip.classList.add("complete");
           span.textContent = "✓";
           span.setAttribute("aria-label", "Part " + sec + " complete");
+          span.removeAttribute("title");
         } else {
           span.textContent = countText;
           span.removeAttribute("aria-label");
+          span.removeAttribute("title");
           if (visitedSections.has(sec)) {
             chip.classList.add("partial");
           } else {
@@ -3304,8 +3353,19 @@
       }
     }
 
+    let latestEvaluation = { total: 0, parts: { 1: 0, 2: 0, 3: 0 } };
+
+    function getQuestionSection(q) {
+      return q <= 13 ? 1 : q <= 26 ? 2 : 3;
+    }
+
+    function addCorrectAnswer(evaluation, q, points) {
+      evaluation.total += points;
+      evaluation.parts[getQuestionSection(q)] += points;
+    }
+
     function evaluateQuestions() {
-      let correctCount = 0;
+      const evaluation = { total: 0, parts: { 1: 0, 2: 0, 3: 0 } };
       const chooseTwoGroups = {
         25: { groupName: "q25_26", questions: [25, 26], correctLetters: ["B", "D"] }
       };
@@ -3320,7 +3380,7 @@
             chooseTwoGroup.groupName,
             chooseTwoGroup.correctLetters
           );
-          correctCount += groupCorrectCount;
+          addCorrectAnswer(evaluation, q, groupCorrectCount);
           const state = groupCorrectCount === 2
             ? "correct"
             : groupCorrectCount === 1
@@ -3354,7 +3414,7 @@
         }
 
         if (isCorrect) {
-          correctCount++;
+          addCorrectAnswer(evaluation, q, 1);
           setQuestionFeedback(q, "correct");
         } else if (user) {
           setQuestionFeedback(q, "incorrect");
@@ -3363,7 +3423,16 @@
         }
       }
 
-      return correctCount;
+      latestEvaluation = evaluation;
+      return evaluation.total;
+    }
+
+    function shouldShowPartScores() {
+      return (mode === "study" && tfngFeedbackSubmitted) || (mode === "test" && testSubmitted);
+    }
+
+    function getPartScore(section) {
+      return latestEvaluation.parts[section] || 0;
     }
 
     function computeBandScore(correct) {
