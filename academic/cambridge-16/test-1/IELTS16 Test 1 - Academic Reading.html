@@ -740,6 +740,69 @@
       margin-top: 10px;
     }
 
+    .tfng-passage-clue {
+      border-radius: 5px;
+      background: color-mix(in srgb, #bbf7d0 58%, var(--bg));
+      color: var(--text);
+      box-shadow: 0 0 0 1px color-mix(in srgb, #15803d 36%, transparent);
+      padding: 1px 2px;
+    }
+
+    .tfng-passage-clue.focused-clue {
+      outline: 3px solid color-mix(in srgb, #16a34a 70%, var(--accent));
+      outline-offset: 2px;
+      box-shadow: 0 0 0 4px color-mix(in srgb, #bbf7d0 60%, transparent);
+    }
+
+    .tfng-clue-badge {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 1.35em;
+      height: 1.35em;
+      margin-left: 4px;
+      border: 1px solid color-mix(in srgb, #14532d 76%, var(--text));
+      border-radius: 999px;
+      background: #14532d;
+      color: #fff;
+      font-weight: 700;
+      font-size: 0.78em;
+      line-height: 1;
+      cursor: pointer;
+      user-select: none;
+    }
+
+    .tfng-clue-badge:focus-visible {
+      outline: 2px solid var(--accent);
+      outline-offset: 2px;
+    }
+
+
+    .question-block.focused-question-flash,
+    .tfng-feedback-card.focused-question-flash {
+      outline: 3px solid color-mix(in srgb, var(--accent) 70%, #16a34a);
+      outline-offset: 3px;
+      border-radius: 12px;
+    }
+
+    .tfng-clue-toggle {
+      margin: 8px 0 2px;
+      border: 1px solid color-mix(in srgb, #15803d 55%, var(--border));
+      border-radius: 999px;
+      background: color-mix(in srgb, #dcfce7 52%, var(--bg));
+      color: color-mix(in srgb, #14532d 70%, var(--text));
+      cursor: pointer;
+      font: inherit;
+      font-weight: 700;
+      padding: 6px 12px;
+    }
+
+    .tfng-evidence-btn {
+      border-color: color-mix(in srgb, #15803d 55%, var(--border));
+      background: color-mix(in srgb, #dcfce7 60%, var(--bg));
+      color: color-mix(in srgb, #15803d 75%, var(--text));
+    }
+
     .tfng-evidence-highlight {
       border-radius: 4px;
       background: color-mix(in srgb, var(--highlight) 42%, var(--bg));
@@ -748,6 +811,7 @@
       transition: background 0.3s ease, box-shadow 0.3s ease;
     }
 
+    .tfng-passage-clue.attention-pulse,
     .tfng-evidence-highlight.attention-pulse {
       animation: tfngEvidencePulse 1.2s ease-out 1;
     }
@@ -760,7 +824,8 @@
 
     @media (prefers-reduced-motion: reduce) {
       .study-icon-btn,
-      .tfng-evidence-highlight {
+      .tfng-evidence-highlight,
+      .tfng-passage-clue {
         transition: none;
       }
 
@@ -769,6 +834,7 @@
         transform: none;
       }
 
+      .tfng-passage-clue.attention-pulse,
       .tfng-evidence-highlight.attention-pulse {
         animation: none;
       }
@@ -1696,6 +1762,7 @@
               <div class="instruction-block">
                 <p><strong>READING PASSAGE 1 : Questions 1-13</strong></p>
                 <p>Do the following statements agree with the information given in Reading Passage 1?<span class="study-feedback-controls"><button type="button" id="tfngStrategyButton" class="study-icon-btn" aria-label="How to tackle True / False / Not Given" title="How to tackle this task" aria-controls="tfngStrategyPanel" hidden>ⓘ</button></span></p>
+                <button type="button" id="tfngClueToggle" class="tfng-clue-toggle" hidden>Hide passage clues</button>
                 <div id="tfngStrategyPanel" class="tfng-study-panel" hidden></div>
                 <p>In boxes 1-7 on your answer sheet, write</p>
                 <p><strong>TRUE</strong> if the statement agrees with the information</p>
@@ -3290,7 +3357,9 @@
      * STUDY FEEDBACK: PASSAGE 1 Q1-7 TFNG
      **********************/
     let activeEvidenceHighlight = null;
+    let activeTfngClue = null;
     let tfngFeedbackSubmitted = false;
+    let tfngCluesVisible = true;
 
     function isTfngStrategyAvailable() {
       return mode === "study" || (mode === "test" && testSubmitted);
@@ -3301,6 +3370,10 @@
     }
 
     function clearTfngEvidenceHighlight() {
+      document.querySelectorAll(".tfng-passage-clue.focused-clue, .tfng-passage-clue.attention-pulse").forEach((clue) => {
+        clue.classList.remove("focused-clue", "attention-pulse");
+      });
+      activeTfngClue = null;
       if (!activeEvidenceHighlight) return;
       const parent = activeEvidenceHighlight.parentNode;
       if (parent) {
@@ -3308,6 +3381,16 @@
         parent.normalize();
       }
       activeEvidenceHighlight = null;
+    }
+
+    function removeTfngPassageClues() {
+      document.querySelectorAll(".tfng-passage-clue").forEach((clue) => {
+        const parent = clue.parentNode;
+        if (!parent) return;
+        parent.replaceChild(document.createTextNode(clue.dataset.clueText || clue.childNodes[0]?.textContent || clue.textContent), clue);
+        parent.normalize();
+      });
+      activeTfngClue = null;
     }
 
     function findExactTextNode(root, phrase) {
@@ -3321,31 +3404,97 @@
       return matches.length === 1 ? matches[0] : null;
     }
 
-    function revealTfngEvidence(questionNumber) {
+    function getTfngClueQuestions(questionNumber, phrase) {
+      const data = window.IELTS16AcademicTest1StudyFeedback;
+      return Object.entries(data.questions)
+        .filter(([, item]) => item.infoButtonAfter === phrase)
+        .map(([q]) => Number(q))
+        .sort((a, b) => a - b);
+    }
+
+    function showTfngPassageClues() {
       if (!isTfngFeedbackAvailable()) return;
       const data = window.IELTS16AcademicTest1StudyFeedback;
-      const item = data && data.questions && data.questions[questionNumber];
-      if (!item || !item.infoButtonAfter) return;
       const passageSection = document.querySelector('.passage-section[data-section="1"]');
-      const passagePane = document.getElementById("passagePane");
-      if (!passageSection || !passagePane) return;
-      clearTfngEvidenceHighlight();
-      const match = findExactTextNode(passageSection, item.infoButtonAfter);
-      if (!match) {
-        window.alert("The exact evidence phrase could not be found exactly once in Passage 1.");
-        return;
+      if (!data || !data.questions || !passageSection) return;
+      removeTfngPassageClues();
+      const usedPhrases = [];
+      for (let q = 1; q <= 7; q++) {
+        const item = data.questions[q];
+        if (!item || usedPhrases.includes(item.infoButtonAfter)) continue;
+        const match = findExactTextNode(passageSection, item.infoButtonAfter);
+        if (!match) continue;
+        usedPhrases.push(item.infoButtonAfter);
+        const range = document.createRange();
+        range.setStart(match.node, match.index);
+        range.setEnd(match.node, match.index + item.infoButtonAfter.length);
+        const mark = document.createElement("mark");
+        mark.className = "tfng-passage-clue";
+        mark.dataset.clueText = item.infoButtonAfter;
+        mark.dataset.clueQuestions = getTfngClueQuestions(q, item.infoButtonAfter).join(",");
+        range.surroundContents(mark);
+        mark.dataset.clueQuestions.split(",").forEach((question) => {
+          const badge = document.createElement("button");
+          badge.type = "button";
+          badge.className = "tfng-clue-badge";
+          badge.dataset.clueBadgeQ = question;
+          badge.textContent = question;
+          badge.setAttribute("aria-label", "Go to question " + question);
+          badge.title = "Go to question " + question;
+          mark.appendChild(document.createTextNode(" "));
+          mark.appendChild(badge);
+        });
       }
-      const range = document.createRange();
-      range.setStart(match.node, match.index);
-      range.setEnd(match.node, match.index + item.infoButtonAfter.length);
-      const mark = document.createElement("mark");
-      mark.className = "tfng-evidence-highlight";
-      range.surroundContents(mark);
-      activeEvidenceHighlight = mark;
-      mark.scrollIntoView({ behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth", block: "center" });
-      requestAnimationFrame(() => mark.classList.add("attention-pulse"));
-      mark.setAttribute("tabindex", "-1");
-      mark.focus({ preventScroll: true });
+    }
+
+    function updateTfngClueToggle() {
+      const toggle = document.getElementById("tfngClueToggle");
+      const available = isTfngFeedbackAvailable();
+      if (!toggle) return;
+      toggle.hidden = !available;
+      toggle.textContent = tfngCluesVisible ? "Hide passage clues" : "Show passage clues";
+      toggle.setAttribute("aria-pressed", String(tfngCluesVisible));
+    }
+
+    function refreshTfngPassageClues() {
+      removeTfngPassageClues();
+      if (isTfngFeedbackAvailable() && tfngCluesVisible) showTfngPassageClues();
+      updateTfngClueToggle();
+    }
+
+    function focusTfngPassageClue(questionNumber, scrollToPassage = true) {
+      if (!isTfngFeedbackAvailable()) return;
+      if (!tfngCluesVisible) {
+        tfngCluesVisible = true;
+        refreshTfngPassageClues();
+      }
+      const clue = Array.from(document.querySelectorAll(".tfng-passage-clue")).find((item) => {
+        return (item.dataset.clueQuestions || "").split(",").includes(String(questionNumber));
+      });
+      if (!clue) return;
+      if (activeTfngClue) activeTfngClue.classList.remove("focused-clue", "attention-pulse");
+      activeTfngClue = clue;
+      clue.classList.add("focused-clue");
+      clue.setAttribute("tabindex", "-1");
+      if (scrollToPassage) clue.scrollIntoView({ behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth", block: "center" });
+      clue.focus({ preventScroll: true });
+      requestAnimationFrame(() => clue.classList.add("attention-pulse"));
+    }
+
+    function focusTfngQuestion(questionNumber) {
+      const questionBlock = document.querySelector('.question-block[data-q="' + questionNumber + '"]');
+      const localFeedback = document.getElementById("ca-" + questionNumber);
+      const target = localFeedback?.querySelector(".tfng-feedback-card") || questionBlock;
+      if (!target) return;
+      target.setAttribute("tabindex", "-1");
+      target.scrollIntoView({ behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth", block: "center" });
+      target.focus({ preventScroll: true });
+      target.classList.add("focused-question-flash");
+      window.setTimeout(() => target.classList.remove("focused-question-flash"), 1200);
+    }
+
+    function revealTfngEvidence(questionNumber) {
+      focusTfngPassageClue(questionNumber, true);
     }
 
     function getTfngUserAnswer(questionNumber) {
@@ -3383,11 +3532,10 @@
           '<dt>Your answer</dt><dd>' + (user || "Not answered") + '</dd>' +
           '<dt>Correct answer</dt><dd>' + item.answer + '</dd>' +
           '<dt>Status</dt><dd class="feedback-status ' + statusClass + '">' + statusText + '</dd>' +
-          '<dt>Evidence</dt><dd>' + item.evidence + '</dd>' +
           '<dt>Why</dt><dd>' + item.explanation + '</dd>' +
           '<dt>Skill</dt><dd>' + item.skillFocus + '</dd>' +
           '</dl>' +
-          '<div class="evidence-action-row"><button type="button" class="study-icon-btn tfng-evidence-btn" data-evidence-q="' + q + '" aria-label="Show evidence in passage" title="Show evidence in passage"><svg aria-hidden="true" focusable="false" width="15" height="15" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" d="m15.5 15.5 4.5 4.5M10.5 17a6.5 6.5 0 1 1 0-13 6.5 6.5 0 0 1 0 13Z"/></svg></button></div>';
+          '<div class="evidence-action-row"><button type="button" class="study-icon-btn tfng-evidence-btn" data-evidence-q="' + q + '" aria-label="Focus this passage clue" title="Focus this passage clue"><svg aria-hidden="true" focusable="false" width="15" height="15" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" d="m15.5 15.5 4.5 4.5M10.5 17a6.5 6.5 0 1 1 0-13 6.5 6.5 0 0 1 0 13Z"/></svg></button></div>';
         const target = document.getElementById("ca-" + q);
         if (target) {
           target.innerHTML = "";
@@ -3408,7 +3556,12 @@
         const target = document.getElementById("ca-" + q);
         if (target) target.style.display = feedbackAvailable ? "block" : "none";
       }
-      if (!feedbackAvailable) clearTfngEvidenceHighlight();
+      if (feedbackAvailable) {
+        refreshTfngPassageClues();
+      } else {
+        removeTfngPassageClues();
+        clearTfngEvidenceHighlight();
+      }
     }
 
     function closeTfngStrategyPanel(returnFocus = true) {
@@ -3434,6 +3587,18 @@
         });
         strategyButton.setAttribute("aria-expanded", "false");
       }
+      const clueToggle = document.getElementById("tfngClueToggle");
+      if (clueToggle) {
+        clueToggle.addEventListener("click", () => {
+          tfngCluesVisible = !tfngCluesVisible;
+          refreshTfngPassageClues();
+        });
+      }
+      document.getElementById("passageContent")?.addEventListener("click", (event) => {
+        const badge = event.target.closest(".tfng-clue-badge");
+        if (!badge) return;
+        focusTfngQuestion(Number(badge.dataset.clueBadgeQ));
+      });
       document.getElementById("questionContent")?.addEventListener("click", (event) => {
         const evidenceButton = event.target.closest(".tfng-evidence-btn");
         if (evidenceButton) {
@@ -3534,6 +3699,7 @@
       clearTfngEvidenceHighlight();
       const correctCount = evaluateQuestions();
       tfngFeedbackSubmitted = true;
+      tfngCluesVisible = true;
       renderTfngFeedbackCards();
 
       // In both modes, show correct answer text
