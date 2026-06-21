@@ -3,7 +3,7 @@
  *
  * Feedback content loaded by the standalone test page for Study Mode and
  * post-submit Review UI. Included task groups: Passage 1 Questions 1–13,
- * Passage 2 Questions 14–26 and Passage 3 Questions 27–30.
+ * Passage 2 Questions 14–26 and Passage 3 Questions 27–40.
  */
 
 window.IELTS16AcademicTest1StudyFeedback = {
@@ -102,6 +102,18 @@ window.IELTS16AcademicTest1StudyFeedback = {
         { title: "Find source in order", detail: "follow the summary through the passage in the same sequence." },
         { title: "Match paraphrase", detail: "choose the option that matches the passage meaning, not just a repeated topic." },
         { title: "Check sentence", detail: "read the completed sentence to confirm grammar and meaning." }
+      ]
+    },
+
+    matchingPeople: {
+      label: "Matching statements with people",
+      questionNumbers: [35, 36, 37, 38, 39, 40],
+      steps: [
+        { title: "Read the statement first", detail: "underline the main claim and any strong words." },
+        { title: "Build a speaker map", detail: "note each person’s main view while reading." },
+        { title: "Match the paraphrase", detail: "find the same idea, not necessarily the same words." },
+        { title: "Eliminate carefully", detail: "cross out people whose view does not match the whole statement." },
+        { title: "Watch out", detail: "the questions do not follow passage order and a person may be used more than once." }
       ]
     }
   },
@@ -496,6 +508,79 @@ window.IELTS16AcademicTest1StudyFeedback = {
       infoButtonAfter: "Their objective is to make AI technologies more trustworthy and transparent, so that organisations and individuals understand how AI decisions are made.",
       explanation: "The summary says researchers want to increase users’ ____ with regard to the technology. Making AI more trustworthy and transparent would build confidence in it.",
       skillFocus: "Link the result to the aim. Transparent, trustworthy technology helps users feel confidence in the technology."
+    },
+
+    35: {
+      taskType: "matchingPeople",
+      passage: 3,
+      answer: "B",
+      answerLabel: "Hamish Low",
+      marks: 1,
+      evidence: "It assumes that the number of jobs is fixed. If in 30 years, half of 100 jobs are being carried out by robots, that doesn’t mean we are left with just 50 jobs for humans. The number of jobs will increase: we would expect there to be 150 jobs.",
+      infoButtonAfter: "It assumes that the number of jobs is fixed. If in 30 years, half of 100 jobs are being carried out by robots, that doesn’t mean we are left with just 50 jobs for humans. The number of jobs will increase: we would expect there to be 150 jobs.",
+      explanation: "Low rejects the idea that more robots automatically mean fewer jobs for people. He says the number of jobs will increase.",
+      skillFocus: "Match the conclusion, not just the topic. Low’s final claim is that employment will grow."
+    },
+
+    36: {
+      taskType: "matchingPeople",
+      passage: 3,
+      answer: "A",
+      answerLabel: "Stella Pachidi",
+      marks: 1,
+      evidence: "‘In many cases, they can outperform humans,’ says Pachidi. ‘Organisations are attracted to using algorithms because they want to make choices based on what they consider is “perfect information”, as well as to reduce costs and enhance productivity.’",
+      infoButtonAfter: "‘In many cases, they can outperform humans,’ says Pachidi. ‘Organisations are attracted to using algorithms because they want to make choices based on what they consider is “perfect information”, as well as to reduce costs and enhance productivity.’",
+      explanation: "Pachidi gives several attractions: algorithms may outperform humans, provide “perfect information”, reduce costs and improve productivity.",
+      skillFocus: "When a statement says “several reasons”, look for a list of reasons rather than one isolated detail."
+    },
+
+    37: {
+      taskType: "matchingPeople",
+      passage: 3,
+      answer: "C",
+      answerLabel: "Ewan McGaughey",
+      marks: 1,
+      evidence: "‘The promises of these new technologies are astounding. They deliver humankind the capacity to live in a way that nobody could have once imagined,’ he adds. ‘Just as the industrial revolution brought people past subsistence agriculture, and the corporate revolution enabled mass production, a third revolution has been pronounced. But it will not only be one of technology. The next revolution will be social.’",
+      infoButtonAfter: "‘The promises of these new technologies are astounding. They deliver humankind the capacity to live in a way that nobody could have once imagined,’ he adds. ‘Just as the industrial revolution brought people past subsistence agriculture, and the corporate revolution enabled mass production, a third revolution has been pronounced. But it will not only be one of technology. The next revolution will be social.’",
+      explanation: "McGaughey compares the possible impact of new technologies with the industrial and corporate revolutions.",
+      skillFocus: "Watch for comparison signals such as “just as”. They often connect the statement to an earlier historical example."
+    },
+
+    38: {
+      taskType: "matchingPeople",
+      passage: 3,
+      answer: "A",
+      answerLabel: "Stella Pachidi",
+      marks: 1,
+      evidence: "In the meantime, says Pachidi, ‘We need to make sure we fully understand the dilemmas that this new world raises regarding expertise, occupational boundaries and control.’",
+      infoButtonAfter: "In the meantime, says Pachidi, ‘We need to make sure we fully understand the dilemmas that this new world raises regarding expertise, occupational boundaries and control.’",
+      explanation: "Pachidi says we must fully understand the dilemmas raised by AI, including expertise, occupational boundaries and control.",
+      skillFocus: "Match broad summaries to examples. “Range of problems” summarises the listed dilemmas."
+    },
+
+    39: {
+      taskType: "matchingPeople",
+      passage: 3,
+      answer: "B",
+      answerLabel: "Hamish Low",
+      marks: 1,
+      evidence: "Instead, he envisages a multistage employment life: one where retraining happens across the life course, and where multiple jobs and no job happen by choice at different stages.",
+      infoButtonAfter: "Instead, he envisages a multistage employment life: one where retraining happens across the life course, and where multiple jobs and no job happen by choice at different stages.",
+      explanation: "Low predicts a multistage working life with retraining, multiple jobs and periods without work.",
+      skillFocus: "Use contrast between old and new models. The answer often paraphrases the new model described after “instead”."
+    },
+
+    40: {
+      taskType: "matchingPeople",
+      passage: 3,
+      answer: "C",
+      answerLabel: "Ewan McGaughey",
+      marks: 1,
+      evidence: "McGaughey’s findings are a call to arms to leaders of organisations, governments and banks to pre-empt the coming changes with bold new policies that guarantee full employment, fair incomes and a thriving economic democracy.",
+      infoButtonAfter: "McGaughey’s findings are a call to arms to leaders of organisations, governments and banks to pre-empt the coming changes with bold new policies that guarantee full employment, fair incomes and a thriving economic democracy.",
+      explanation: "McGaughey calls on authorities to introduce policies guaranteeing full employment and fair incomes.",
+      skillFocus: "Connect policy language to the claim. “Guarantee full employment” and “fair incomes” paraphrase adequately paid work for everyone."
     }
+
   }
 };
