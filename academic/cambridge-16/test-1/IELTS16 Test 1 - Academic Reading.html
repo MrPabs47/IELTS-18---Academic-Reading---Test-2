@@ -352,6 +352,10 @@
     .heading-placement-target.filled .heading-target-number { display: none; }
     .heading-placement-target.filled .heading-target-card { display: flex; }
 
+    .heading-target-card.is-dragging {
+      opacity: 0.72;
+    }
+
 
     .test-title,
     #candidateNameDisplay,
@@ -3377,11 +3381,18 @@
       if (selectedMatchingHeading && isMatchingHeadingsLocked()) clearMatchingHeadingSelection(false);
     }
 
-    function placeMatchingHeading(q, value, source = "") {
+    function placeMatchingHeading(q, value, source = "", sourceQ = "") {
       if (isMatchingHeadingsLocked() || !value) return;
       const targetInfo = matchingHeadingParagraphs.find((item) => item.q === Number(q));
       const data = getMatchingHeadingData(value);
       if (!targetInfo || !data) return;
+
+      const targetSelect = getMatchingHeadingSelect(q);
+      if (source === "placed-drag" && String(sourceQ) === String(q) && targetSelect && targetSelect.value === value) {
+        refreshMatchingHeadingsUI();
+        announceMatchingHeading("Heading " + value + " remains in Paragraph " + targetInfo.paragraph + ", Question " + q + ".");
+        return;
+      }
 
       let fromParagraph = "";
       let replaced = "";
@@ -3395,7 +3406,7 @@
         }
       });
 
-      const sel = getMatchingHeadingSelect(q);
+      const sel = targetSelect;
       if (sel) {
         replaced = sel.value && sel.value !== value ? sel.value : "";
         sel.value = value;
@@ -3446,6 +3457,7 @@
           }
           draggedMatchingHeading = card.dataset.headingValue || "";
           e.dataTransfer.setData("text/plain", draggedMatchingHeading);
+          e.dataTransfer.setData("application/x-matching-heading-source-q", "");
           e.dataTransfer.effectAllowed = "move";
         });
         card.addEventListener("dragend", () => { draggedMatchingHeading = ""; });
@@ -3469,6 +3481,34 @@
         });
       });
 
+      document.querySelectorAll(".heading-target-card").forEach((placedCard) => {
+        placedCard.addEventListener("dragstart", (e) => {
+          const remove = e.target.closest(".heading-remove-btn");
+          const target = placedCard.closest(".heading-placement-target");
+          const value = target ? target.dataset.headingValue || "" : "";
+          if (remove || isMatchingHeadingsLocked() || !target || !value) {
+            e.preventDefault();
+            return;
+          }
+          draggedMatchingHeading = value;
+          placedCard.classList.add("is-dragging");
+          e.dataTransfer.setData("text/plain", value);
+          e.dataTransfer.setData("application/x-matching-heading-source-q", target.dataset.q || "");
+          e.dataTransfer.effectAllowed = "move";
+        });
+        placedCard.addEventListener("dragend", () => {
+          draggedMatchingHeading = "";
+          placedCard.classList.remove("is-dragging");
+        });
+      });
+
+      document.querySelectorAll(".heading-remove-btn").forEach((remove) => {
+        remove.addEventListener("dragstart", (e) => {
+          e.preventDefault();
+          e.stopPropagation();
+        });
+      });
+
       document.querySelectorAll(".heading-placement-target").forEach((target) => {
         target.addEventListener("dragover", (e) => {
           if (isMatchingHeadingsLocked()) return;
@@ -3481,7 +3521,8 @@
           e.preventDefault();
           target.classList.remove("drag-over");
           const value = e.dataTransfer.getData("text/plain") || draggedMatchingHeading;
-          placeMatchingHeading(target.dataset.q, value, "drag");
+          const sourceQ = e.dataTransfer.getData("application/x-matching-heading-source-q") || "";
+          placeMatchingHeading(target.dataset.q, value, sourceQ ? "placed-drag" : "drag", sourceQ);
         });
         target.addEventListener("click", (e) => {
           const remove = e.target.closest(".heading-remove-btn");
