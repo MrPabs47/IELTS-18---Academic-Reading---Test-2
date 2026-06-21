@@ -2,8 +2,8 @@
  * IELTS 16 Academic Reading Test 1 — Study feedback data
  *
  * Feedback content loaded by the standalone test page for Study Mode and
- * post-submit Review UI. Included task groups: Passage 1 Questions 1–13 and
- * Passage 2 Questions 14–26.
+ * post-submit Review UI. Included task groups: Passage 1 Questions 1–13,
+ * Passage 2 Questions 14–26 and Passage 3 Questions 27–30.
  */
 
 window.IELTS16AcademicTest1StudyFeedback = {
@@ -14,10 +14,11 @@ window.IELTS16AcademicTest1StudyFeedback = {
     module: "Academic Reading",
     passage: 1,
     passageTitle: "Why we need to protect polar bears",
-    includedPassages: [1, 2],
+    includedPassages: [1, 2, 3],
     passageTitles: {
       1: "Why we need to protect polar bears",
-      2: "The Step Pyramid of Djoser"
+      2: "The Step Pyramid of Djoser",
+      3: "The future of work"
     }
   },
 
@@ -77,6 +78,18 @@ window.IELTS16AcademicTest1StudyFeedback = {
         { title: "Check the exact detail", detail: "names and topic words may match, while the detail is wrong." },
         { title: "Choose exactly two", detail: "do not select a third answer just because it seems related." },
         { title: "Watch out", detail: "the two correct options may appear in different parts of the passage." }
+      ]
+    },
+
+    multipleChoice: {
+      label: "Multiple Choice",
+      questionNumbers: [27, 28, 29, 30],
+      steps: [
+        { title: "Read the question first", detail: "identify exactly what information you need." },
+        { title: "Find the relevant area", detail: "scan for names, topic words and paraphrases." },
+        { title: "Compare every option", detail: "choose the option whose whole meaning matches." },
+        { title: "Eliminate precisely", detail: "a familiar word does not make an option correct." },
+        { title: "Watch out", detail: "all four options may mention the same topic, but only one answers the question exactly." }
       ]
     }
   },
@@ -375,6 +388,54 @@ window.IELTS16AcademicTest1StudyFeedback = {
       correctAnswers: ["B", "D"],
       marks: 0,
       sharedWith: 25
+    },
+
+    27: {
+      taskType: "multipleChoice",
+      passage: 3,
+      answer: "B",
+      answerLabel: "the extent to which AI will alter the nature of the work that people do.",
+      marks: 1,
+      evidence: "According to a leading business consultancy, 3-14% of the global workforce will need to switch to a different occupation within the next 10-15 years, and all workers will need to adapt as their occupations evolve alongside increasingly capable machines.",
+      infoButtonAfter: "According to a leading business consultancy, 3-14% of the global workforce will need to switch to a different occupation within the next 10-15 years, and all workers will need to adapt as their occupations evolve alongside increasingly capable machines.",
+      explanation: "The paragraph says some workers will need to change occupation and all workers will need to adapt as their jobs evolve. This is about how widely AI will change the nature of people’s work, so B is correct.",
+      skillFocus: "For a paragraph-summary question, choose the option that covers the overall message, not one example such as automation or a percentage."
+    },
+
+    28: {
+      taskType: "multipleChoice",
+      passage: 3,
+      answer: "D",
+      answerLabel: "It is a key factor driving current developments in the workplace.",
+      marks: 1,
+      evidence: "Dr Stella Pachidi from Cambridge Judge Business School believes that some of the most fundamental changes are happening as a result of the ‘algorithmication’ of jobs that are dependent on data rather than on production – the so-called knowledge economy.",
+      infoButtonAfter: "Dr Stella Pachidi from Cambridge Judge Business School believes that some of the most fundamental changes are happening as a result of the ‘algorithmication’ of jobs that are dependent on data rather than on production – the so-called knowledge economy.",
+      explanation: "Pachidi says some of the most fundamental workplace changes are happening in data-based jobs, or the knowledge economy. This matches D: it is a key factor driving current developments in the workplace.",
+      skillFocus: "Match paraphrases. “Some of the most fundamental changes” matches “a key factor driving current developments”."
+    },
+
+    29: {
+      taskType: "multipleChoice",
+      passage: 3,
+      answer: "C",
+      answerLabel: "staff making sure that AI produces the results that they want",
+      marks: 1,
+      evidence: "Pachidi and colleagues even observed people developing strategies to make the algorithm work to their own advantage. ‘We are seeing cases where workers feed the algorithm with false data to reach their targets,’ she reports.",
+      infoButtonAfter: "Pachidi and colleagues even observed people developing strategies to make the algorithm work to their own advantage. ‘We are seeing cases where workers feed the algorithm with false data to reach their targets,’ she reports.",
+      explanation: "Workers fed false data to the algorithm so they could reach their own targets. In other words, they were making sure AI produced the results they wanted, so C is correct.",
+      skillFocus: "Look for the action and its purpose. Here, “to reach their targets” explains why workers manipulated the data."
+    },
+
+    30: {
+      taskType: "multipleChoice",
+      passage: 3,
+      answer: "D",
+      answerLabel: "illustrates how changes in the job market can be successfully handled.",
+      marks: 1,
+      evidence: "History is clear that change can mean redundancies. But social policies can tackle this through retraining and redeployment.",
+      infoButtonAfter: "History is clear that change can mean redundancies. But social policies can tackle this through retraining and redeployment.",
+      explanation: "McGaughey accepts that change can cause redundancies, but says retraining and redeployment can deal with this. He shows how job-market changes can be handled successfully, so D is correct.",
+      skillFocus: "Follow contrast words such as “but”. The correct option often summarises the solution as well as the problem."
     }
   }
 };
