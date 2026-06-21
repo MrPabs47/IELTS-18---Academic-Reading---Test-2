@@ -686,7 +686,8 @@
     #oneWordStrategyButton,
     #oneWordP2StrategyButton,
     #chooseTwoStrategyButton,
-    #matchingHeadingsStrategyButton {
+    #matchingHeadingsStrategyButton,
+    #multipleChoiceStrategyButton {
       border-color: color-mix(in srgb, var(--accent) 62%, var(--border));
       background: color-mix(in srgb, var(--accent) 18%, var(--bg));
       color: color-mix(in srgb, var(--accent) 82%, var(--text));
@@ -702,7 +703,9 @@
     #chooseTwoStrategyButton:hover,
     #chooseTwoStrategyButton:focus-visible,
     #matchingHeadingsStrategyButton:hover,
-    #matchingHeadingsStrategyButton:focus-visible {
+    #matchingHeadingsStrategyButton:focus-visible,
+    #multipleChoiceStrategyButton:hover,
+    #multipleChoiceStrategyButton:focus-visible {
       border-color: var(--accent);
       background: color-mix(in srgb, var(--accent) 26%, var(--bg));
       color: color-mix(in srgb, var(--accent) 88%, var(--text));
@@ -2117,7 +2120,8 @@
             <div data-section="3" style="display:none;">
               <div class="instruction-block">
                 <p><strong>READING PASSAGE 3 : Questions 27-40</strong></p>
-                <p>Choose the correct letter, A, B, C or D.</p>
+                <p>Choose the correct letter, A, B, C or D.<span class="study-feedback-controls"><button type="button" id="multipleChoiceStrategyButton" class="study-icon-btn" aria-label="How to tackle multiple choice" title="How to tackle this task" aria-controls="multipleChoiceStrategyPanel" hidden>ⓘ</button></span></p>
+                <div id="multipleChoiceStrategyPanel" class="multiple-choice-study-panel tfng-study-panel" hidden></div>
                 <p>Write the correct letter in boxes 27-30 on your answer sheet.</p>
               </div>
 
@@ -2554,21 +2558,27 @@
       matchingHeadingsFeedbackSubmitted = false;
       matchingHeadingsCluesVisible = false;
       matchingHeadingsSingleClueQuestion = null;
+      multipleChoiceFeedbackSubmitted = false;
+      multipleChoiceCluesVisible = false;
+      multipleChoiceSingleClueQuestion = null;
       removeTfngPassageClues();
       removeOneWordPassageClues();
       removeOneWordP2PassageClues();
       removeChooseTwoPassageClues();
       removeMatchingHeadingsPassageClues();
+      removeMultipleChoicePassageClues();
       clearTfngEvidenceHighlight();
       clearOneWordFocus();
       clearOneWordP2Focus();
       clearChooseTwoFocus();
       clearMatchingHeadingsFocus();
+      clearMultipleChoiceFocus();
       closeTfngStrategyPanel(false);
       closeOneWordStrategyPanel(false);
       closeOneWordP2StrategyPanel(false);
       closeChooseTwoStrategyPanel(false);
       closeMatchingHeadingsStrategyPanel(false);
+      closeMultipleChoiceStrategyPanel(false);
 
       if (mode === "test") {
         if (timerContainer) {
@@ -3635,6 +3645,10 @@
     let matchingHeadingsFeedbackSubmitted = false;
     let matchingHeadingsCluesVisible = false;
     let matchingHeadingsSingleClueQuestion = null;
+    let activeMultipleChoiceClue = null;
+    let multipleChoiceFeedbackSubmitted = false;
+    let multipleChoiceCluesVisible = false;
+    let multipleChoiceSingleClueQuestion = null;
 
     function isTfngStrategyAvailable() {
       return mode === "study" || (mode === "test" && testSubmitted);
@@ -3674,6 +3688,14 @@
 
     function isMatchingHeadingsFeedbackAvailable() {
       return (mode === "study" && matchingHeadingsFeedbackSubmitted) || (mode === "test" && testSubmitted);
+    }
+
+    function isMultipleChoiceStrategyAvailable() {
+      return mode === "study" || (mode === "test" && testSubmitted);
+    }
+
+    function isMultipleChoiceFeedbackAvailable() {
+      return (mode === "study" && multipleChoiceFeedbackSubmitted) || (mode === "test" && testSubmitted);
     }
 
     function clearTfngEvidenceHighlight() {
@@ -3804,6 +3826,11 @@
           { available: isChooseTwoFeedbackAvailable, full: () => chooseTwoCluesVisible && chooseTwoSingleClueOption === null }
         ];
       }
+      if (activeSection === 3) {
+        return [
+          { available: isMultipleChoiceFeedbackAvailable, full: () => multipleChoiceCluesVisible && multipleChoiceSingleClueQuestion === null }
+        ];
+      }
       return [];
     }
 
@@ -3820,6 +3847,8 @@
         if (isMatchingHeadingsFeedbackAvailable()) { matchingHeadingsCluesVisible = visible; matchingHeadingsSingleClueQuestion = null; }
         if (isOneWordP2FeedbackAvailable()) { oneWordP2CluesVisible = visible; oneWordP2SingleClueQuestion = null; }
         if (isChooseTwoFeedbackAvailable()) { chooseTwoCluesVisible = visible; chooseTwoSingleClueOption = null; }
+      } else if (activeSection === 3) {
+        if (isMultipleChoiceFeedbackAvailable()) { multipleChoiceCluesVisible = visible; multipleChoiceSingleClueQuestion = null; }
       }
       refreshActivePassageClues();
     }
@@ -3830,6 +3859,7 @@
       refreshMatchingHeadingsPassageClues();
       refreshOneWordP2PassageClues();
       refreshChooseTwoPassageClues();
+      refreshMultipleChoicePassageClues();
       updatePassageClueToolbarVisibility();
     }
 
@@ -4525,6 +4555,151 @@
       }
     }
 
+
+
+    function removeMultipleChoicePassageClues() {
+      document.querySelectorAll(".multiple-choice-passage-clue").forEach((clue) => {
+        const parent = clue.parentNode;
+        if (!parent) return;
+        parent.replaceChild(document.createTextNode(clue.dataset.clueText || clue.childNodes[0]?.textContent || clue.textContent), clue);
+        parent.normalize();
+      });
+      activeMultipleChoiceClue = null;
+    }
+
+    function clearMultipleChoiceFocus() {
+      document.querySelectorAll(".multiple-choice-passage-clue.focused-clue, .multiple-choice-passage-clue.attention-pulse").forEach((clue) => {
+        clue.classList.remove("focused-clue", "attention-pulse");
+      });
+      activeMultipleChoiceClue = null;
+    }
+
+    function showMultipleChoicePassageClues() {
+      if (!isMultipleChoiceFeedbackAvailable()) return;
+      const data = window.IELTS16AcademicTest1StudyFeedback;
+      const passageSection = document.querySelector('.passage-section[data-section="3"]');
+      if (!data || !data.questions || !passageSection) return;
+      removeMultipleChoicePassageClues();
+      for (let q = 27; q <= 30; q++) {
+        const item = data.questions[q];
+        if (!item || !item.infoButtonAfter) continue;
+        if (multipleChoiceSingleClueQuestion !== null && Number(multipleChoiceSingleClueQuestion) !== q) continue;
+        const match = findExactTextNode(passageSection, item.infoButtonAfter);
+        if (!match) continue;
+        const range = document.createRange();
+        range.setStart(match.node, match.index);
+        range.setEnd(match.node, match.index + item.infoButtonAfter.length);
+        const mark = document.createElement("mark");
+        mark.className = "multiple-choice-passage-clue one-word-p2-passage-clue";
+        mark.dataset.clueText = item.infoButtonAfter;
+        mark.dataset.clueQuestions = String(q);
+        range.surroundContents(mark);
+        const badge = document.createElement("button");
+        badge.type = "button";
+        badge.className = "multiple-choice-clue-badge one-word-p2-clue-badge";
+        badge.dataset.multipleChoiceClueBadgeQ = String(q);
+        badge.textContent = String(q);
+        badge.setAttribute("aria-label", "Go to question " + q);
+        badge.title = "Go to question " + q;
+        mark.appendChild(document.createTextNode(" "));
+        mark.appendChild(badge);
+      }
+    }
+
+    function refreshMultipleChoicePassageClues() {
+      removeMultipleChoicePassageClues();
+      if (isMultipleChoiceFeedbackAvailable() && multipleChoiceCluesVisible) showMultipleChoicePassageClues();
+      updatePassageClueToolbarVisibility();
+    }
+
+    function focusMultipleChoicePassageClue(questionNumber, scrollToPassage = true, singleClueOnly = false) {
+      if (!isMultipleChoiceFeedbackAvailable()) return;
+      if (singleClueOnly) {
+        multipleChoiceSingleClueQuestion = questionNumber;
+        multipleChoiceCluesVisible = true;
+        refreshMultipleChoicePassageClues();
+      } else if (!multipleChoiceCluesVisible) {
+        multipleChoiceCluesVisible = true;
+        multipleChoiceSingleClueQuestion = null;
+        refreshMultipleChoicePassageClues();
+      }
+      const clue = Array.from(document.querySelectorAll(".multiple-choice-passage-clue")).find((item) => {
+        return (item.dataset.clueQuestions || "").split(",").includes(String(questionNumber));
+      });
+      if (!clue) return;
+      if (activeMultipleChoiceClue) activeMultipleChoiceClue.classList.remove("focused-clue", "attention-pulse");
+      activeMultipleChoiceClue = clue;
+      clue.classList.add("focused-clue");
+      clue.setAttribute("tabindex", "-1");
+      if (scrollToPassage) clue.scrollIntoView({ behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth", block: "center" });
+      clue.focus({ preventScroll: true });
+      requestAnimationFrame(() => clue.classList.add("attention-pulse"));
+    }
+
+    function revealMultipleChoiceEvidence(questionNumber) {
+      const allCluesVisible = activeSection === 3 && isActivePassageClueMapFullyVisible();
+      focusMultipleChoicePassageClue(questionNumber, true, !allCluesVisible);
+    }
+
+    function renderMultipleChoiceStrategyPanel() {
+      const data = window.IELTS16AcademicTest1StudyFeedback;
+      const strategy = data?.taskStrategies?.multipleChoice;
+      const panel = document.getElementById("multipleChoiceStrategyPanel");
+      if (!strategy || !panel) return;
+      panel.innerHTML = '<div class="tfng-study-panel-header"><h3>Multiple Choice strategy</h3>' +
+        '<button type="button" id="multipleChoiceStrategyCloseButton" class="study-icon-btn" aria-label="Close strategy" title="Close strategy">×</button></div>' +
+        '<div class="tfng-strategy-grid">' +
+        strategy.steps.map((step, index) => '<section class="' + (index === 4 ? 'tfng-strategy-watch' : 'tfng-strategy-step') + '"><div class="tfng-strategy-label"><span class="tfng-strategy-chip">' + (index === 4 ? '!' : index + 1) + '</span>' + step.title + '</div><p>' + step.detail + '</p></section>').join('') +
+        '</div>';
+    }
+
+    function getMultipleChoiceUserAnswer(questionNumber) {
+      const checked = document.querySelector('input[type="radio"][name="q' + questionNumber + '"]:checked');
+      return checked ? checked.value : "";
+    }
+
+    function renderMultipleChoiceFeedbackCards() {
+      const data = window.IELTS16AcademicTest1StudyFeedback;
+      if (!data || !data.questions) return;
+      for (let q = 27; q <= 30; q++) {
+        const item = data.questions[q];
+        if (!item) continue;
+        const user = getMultipleChoiceUserAnswer(q);
+        const isCorrect = user && user === item.answer;
+        const marks = item.marks || 1;
+        const pointsText = isCorrect ? "+" + marks + " point" + (marks === 1 ? "" : "s") : "0 points";
+        const answerStatusClass = user ? (isCorrect ? "correct-status" : "incorrect-status") : "unanswered-status";
+        const answerStatusText = user ? (isCorrect ? "✓ " + user + " · " + pointsText : "× " + user + " · " + pointsText) : "— Not answered · " + pointsText;
+        const card = document.createElement("section");
+        card.className = "tfng-feedback-card";
+        card.setAttribute("aria-labelledby", "multiple-choice-feedback-title-" + q);
+        card.innerHTML = '<h3 id="multiple-choice-feedback-title-' + q + '">Question ' + q + '</h3>' +
+          '<dl>' +
+          '<dt class="label-your-answer">Your answer</dt><dd class="feedback-status ' + answerStatusClass + '">' + answerStatusText + '</dd>' +
+          '<dt class="label-correct-answer">Correct answer</dt><dd>' + item.answer + ' — ' + item.answerLabel + '</dd>' +
+          '<dt class="label-why">Why</dt><dd>' + item.explanation + '</dd>' +
+          '<dt class="label-skill">Skill</dt><dd>' + item.skillFocus + '</dd>' +
+          '</dl>' +
+          '<div class="evidence-action-row"><button type="button" class="study-icon-btn multiple-choice-evidence-btn" data-multiple-choice-evidence-q="' + q + '" aria-label="Focus this passage clue" title="Focus this passage clue"><svg aria-hidden="true" focusable="false" width="15" height="15" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" d="m15.5 15.5 4.5 4.5M10.5 17a6.5 6.5 0 1 1 0-13 6.5 6.5 0 0 1 0 13Z"/></svg></button></div>';
+        const target = document.getElementById("ca-" + q);
+        if (target) {
+          target.innerHTML = "";
+          target.classList.add("tfng-local-feedback");
+          target.appendChild(card);
+        }
+      }
+    }
+
+    function closeMultipleChoiceStrategyPanel(returnFocus = true) {
+      const strategyButton = document.getElementById("multipleChoiceStrategyButton");
+      const strategyPanel = document.getElementById("multipleChoiceStrategyPanel");
+      if (!strategyPanel) return;
+      strategyPanel.dataset.open = "false";
+      if (strategyButton) strategyButton.setAttribute("aria-expanded", "false");
+      updateTfngStudyFeedbackVisibility();
+      if (returnFocus && strategyButton && !strategyButton.hidden) strategyButton.focus();
+    }
+
     function updateTfngStudyFeedbackVisibility() {
       const strategyAvailable = isTfngStrategyAvailable();
       const feedbackAvailable = isTfngFeedbackAvailable();
@@ -4546,6 +4721,10 @@
       const matchingHeadingsFeedbackAvailable = isMatchingHeadingsFeedbackAvailable();
       const matchingHeadingsStrategyButton = document.getElementById("matchingHeadingsStrategyButton");
       const matchingHeadingsStrategyPanel = document.getElementById("matchingHeadingsStrategyPanel");
+      const multipleChoiceStrategyAvailable = isMultipleChoiceStrategyAvailable();
+      const multipleChoiceFeedbackAvailable = isMultipleChoiceFeedbackAvailable();
+      const multipleChoiceStrategyButton = document.getElementById("multipleChoiceStrategyButton");
+      const multipleChoiceStrategyPanel = document.getElementById("multipleChoiceStrategyPanel");
       if (strategyButton) strategyButton.hidden = !strategyAvailable;
       if (strategyPanel) strategyPanel.hidden = !strategyAvailable || strategyPanel.dataset.open !== "true";
       if (oneWordStrategyButton) oneWordStrategyButton.hidden = !oneWordStrategyAvailable;
@@ -4556,6 +4735,8 @@
       if (chooseTwoStrategyPanel) chooseTwoStrategyPanel.hidden = !chooseTwoStrategyAvailable || chooseTwoStrategyPanel.dataset.open !== "true";
       if (matchingHeadingsStrategyButton) matchingHeadingsStrategyButton.hidden = !matchingHeadingsStrategyAvailable;
       if (matchingHeadingsStrategyPanel) matchingHeadingsStrategyPanel.hidden = !matchingHeadingsStrategyAvailable || matchingHeadingsStrategyPanel.dataset.open !== "true";
+      if (multipleChoiceStrategyButton) multipleChoiceStrategyButton.hidden = !multipleChoiceStrategyAvailable;
+      if (multipleChoiceStrategyPanel) multipleChoiceStrategyPanel.hidden = !multipleChoiceStrategyAvailable || multipleChoiceStrategyPanel.dataset.open !== "true";
       for (let q = 1; q <= 7; q++) {
         const target = document.getElementById("ca-" + q);
         if (target) target.style.display = feedbackAvailable ? "block" : "none";
@@ -4571,6 +4752,10 @@
       for (let q = 14; q <= 20; q++) {
         const target = document.getElementById("ca-" + q);
         if (target) target.style.display = matchingHeadingsFeedbackAvailable ? "block" : "none";
+      }
+      for (let q = 27; q <= 30; q++) {
+        const target = document.getElementById("ca-" + q);
+        if (target) target.style.display = multipleChoiceFeedbackAvailable ? "block" : "none";
       }
       const chooseTwoTarget = document.getElementById("ca-25");
       const chooseTwoDuplicate = document.getElementById("ca-26");
@@ -4605,6 +4790,12 @@
       } else {
         removeMatchingHeadingsPassageClues();
         clearMatchingHeadingsFocus();
+      }
+      if (multipleChoiceFeedbackAvailable) {
+        refreshMultipleChoicePassageClues();
+      } else {
+        removeMultipleChoicePassageClues();
+        clearMultipleChoiceFocus();
       }
     }
 
@@ -4665,6 +4856,7 @@
       renderOneWordP2StrategyPanel();
       renderChooseTwoStrategyPanel();
       renderMatchingHeadingsStrategyPanel();
+      renderMultipleChoiceStrategyPanel();
       if (window.tfngStudyFeedbackInitialised) {
         updateTfngStudyFeedbackVisibility();
         return;
@@ -4725,6 +4917,17 @@
         });
         matchingHeadingsStrategyButton.setAttribute("aria-expanded", "false");
       }
+      const multipleChoiceStrategyButton = document.getElementById("multipleChoiceStrategyButton");
+      const multipleChoiceStrategyPanel = document.getElementById("multipleChoiceStrategyPanel");
+      if (multipleChoiceStrategyButton && multipleChoiceStrategyPanel) {
+        multipleChoiceStrategyButton.addEventListener("click", () => {
+          const nextOpen = multipleChoiceStrategyPanel.dataset.open !== "true";
+          multipleChoiceStrategyPanel.dataset.open = nextOpen ? "true" : "false";
+          multipleChoiceStrategyButton.setAttribute("aria-expanded", String(nextOpen));
+          updateTfngStudyFeedbackVisibility();
+        });
+        multipleChoiceStrategyButton.setAttribute("aria-expanded", "false");
+      }
       const passageClueToggle = document.getElementById("passageClueToggle");
       if (passageClueToggle) {
         passageClueToggle.addEventListener("click", () => {
@@ -4732,6 +4935,11 @@
         });
       }
       document.getElementById("passageContent")?.addEventListener("click", (event) => {
+        const multipleChoiceBadge = event.target.closest(".multiple-choice-clue-badge");
+        if (multipleChoiceBadge) {
+          focusTfngQuestion(Number(multipleChoiceBadge.dataset.multipleChoiceClueBadgeQ));
+          return;
+        }
         const matchingHeadingsBadge = event.target.closest(".matching-headings-clue-badge");
         if (matchingHeadingsBadge) {
           focusTfngQuestion(Number(matchingHeadingsBadge.dataset.matchingHeadingsClueBadgeQ));
@@ -4757,6 +4965,11 @@
         focusTfngQuestion(Number(badge.dataset.clueBadgeQ));
       });
       document.getElementById("questionContent")?.addEventListener("click", (event) => {
+        const multipleChoiceEvidenceButton = event.target.closest(".multiple-choice-evidence-btn");
+        if (multipleChoiceEvidenceButton) {
+          revealMultipleChoiceEvidence(Number(multipleChoiceEvidenceButton.dataset.multipleChoiceEvidenceQ));
+          return;
+        }
         const matchingHeadingsEvidenceButton = event.target.closest(".matching-headings-evidence-btn");
         if (matchingHeadingsEvidenceButton) {
           revealMatchingHeadingsEvidence(Number(matchingHeadingsEvidenceButton.dataset.matchingHeadingsEvidenceQ));
@@ -4780,6 +4993,11 @@
         const evidenceButton = event.target.closest(".tfng-evidence-btn");
         if (evidenceButton) {
           revealTfngEvidence(Number(evidenceButton.dataset.evidenceQ));
+          return;
+        }
+        const multipleChoiceCloseButton = event.target.closest("#multipleChoiceStrategyCloseButton");
+        if (multipleChoiceCloseButton) {
+          closeMultipleChoiceStrategyPanel(true);
           return;
         }
         const matchingHeadingsCloseButton = event.target.closest("#matchingHeadingsStrategyCloseButton");
@@ -4825,6 +5043,11 @@
         if (oneWordP2StrategyPanel && oneWordP2StrategyPanel.dataset.open === "true" && !oneWordP2StrategyPanel.hidden) {
           event.preventDefault();
           closeOneWordP2StrategyPanel(true);
+        }
+        const multipleChoiceStrategyPanel = document.getElementById("multipleChoiceStrategyPanel");
+        if (multipleChoiceStrategyPanel && multipleChoiceStrategyPanel.dataset.open === "true" && !multipleChoiceStrategyPanel.hidden) {
+          event.preventDefault();
+          closeMultipleChoiceStrategyPanel(true);
         }
         const oneWordStrategyPanel = document.getElementById("oneWordStrategyPanel");
         if (oneWordStrategyPanel && oneWordStrategyPanel.dataset.open === "true" && !oneWordStrategyPanel.hidden) {
@@ -4930,12 +5153,16 @@
       matchingHeadingsFeedbackSubmitted = true;
       matchingHeadingsCluesVisible = true;
       matchingHeadingsSingleClueQuestion = null;
+      multipleChoiceFeedbackSubmitted = true;
+      multipleChoiceCluesVisible = true;
+      multipleChoiceSingleClueQuestion = null;
       if (mode === "test") testSubmitted = true;
       renderTfngFeedbackCards();
       renderOneWordFeedbackCards();
       renderOneWordP2FeedbackCards();
       renderChooseTwoFeedbackCard();
       renderMatchingHeadingsFeedbackCards();
+      renderMultipleChoiceFeedbackCards();
 
       // In both modes, show correct answer text
       Object.keys(correctAnswerText).forEach((q) => {
