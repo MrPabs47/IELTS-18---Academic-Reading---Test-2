@@ -252,16 +252,26 @@
     .passage-subtitle { font-style: italic; color: var(--text-soft); margin: 0 0 12px; }
     .paragraph-letter { font-weight: 700; display: inline-block; margin-right: 8px; }
 
+    .matching-heading-paragraph-row {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin: 14px 0 5px;
+    }
+
     .matching-heading-paragraph-label {
-      margin: 18px 0 6px;
+      flex: 0 0 24px;
+      margin: 0;
       font-size: 1.05rem;
       font-weight: 800;
+      line-height: 1.2;
       color: var(--text);
     }
 
     .heading-placement-target {
-      width: 100%;
-      margin: 12px 0 10px;
+      flex: 1 1 auto;
+      min-width: 0;
+      margin: 0;
       padding: 0;
       border: 0;
       background: transparent;
@@ -281,9 +291,9 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      min-height: 44px;
+      min-height: 30px;
       border: 1.5px dashed rgba(100, 116, 139, 0.68);
-      border-radius: 10px;
+      border-radius: 8px;
       background: color-mix(in srgb, var(--bg) 86%, var(--bg-secondary));
       transition: border-color 0.16s ease, background 0.16s ease, box-shadow 0.16s ease;
     }
@@ -292,8 +302,8 @@
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      min-width: 34px;
-      height: 28px;
+      min-width: 30px;
+      height: 22px;
       border-radius: 999px;
       border: 1px solid var(--border);
       background: var(--bg);
@@ -316,9 +326,9 @@
       justify-content: space-between;
       gap: 10px;
       width: 100%;
-      padding: 8px 10px;
+      padding: 5px 8px;
       border: 1px solid var(--accent);
-      border-radius: 10px;
+      border-radius: 8px;
       background: var(--accent-soft);
       color: var(--text);
       font-weight: 700;
@@ -335,7 +345,7 @@
       background: var(--bg);
       color: var(--text);
       border-radius: 999px;
-      padding: 4px 8px;
+      padding: 3px 7px;
       font: inherit;
       font-size: 0.8rem;
       font-weight: 800;
@@ -354,6 +364,18 @@
 
     .heading-target-card.is-dragging {
       opacity: 0.72;
+    }
+
+    @media (max-width: 560px) {
+      .matching-heading-paragraph-row {
+        align-items: flex-start;
+        gap: 8px;
+      }
+
+      .heading-target-card {
+        align-items: flex-start;
+        flex-direction: column;
+      }
     }
 
 
@@ -477,7 +499,7 @@
     .icon-button {
       border: none;
       background: none;
-      padding: 4px 8px;
+      padding: 3px 7px;
       cursor: pointer;
       color: var(--text-soft);
       font-size: 1.3rem;
@@ -879,6 +901,13 @@
       transform: translateY(-1px);
     }
 
+    .study-task-result-line[hidden] {
+      display: none !important;
+      margin: 0 !important;
+      padding: 0 !important;
+      border: 0 !important;
+    }
+
     .study-task-result-line {
       display: inline-flex;
       align-items: center;
@@ -893,7 +922,11 @@
       font-weight: 700;
     }
 
-    .study-task-result-line::before {
+    .study-task-result-line[hidden]::before {
+      content: none !important;
+    }
+
+    .study-task-result-line:not([hidden])::before {
       content: "";
       width: 8px;
       height: 8px;
@@ -1746,7 +1779,7 @@
       border: none;
       background: transparent;
       color: inherit;
-      padding: 4px 8px;
+      padding: 3px 7px;
       border-radius: 999px;
       cursor: pointer;
       font-size: 0.8rem;
@@ -1809,7 +1842,7 @@
     }
 
     .note-header {
-      padding: 4px 8px;
+      padding: 3px 7px;
       border-bottom: 1px solid var(--border);
       background: var(--bg-secondary);
       cursor: move;
@@ -2070,7 +2103,7 @@
       background: var(--bg-secondary);
       color: var(--text);
       border-radius: 6px;
-      padding: 4px 8px;
+      padding: 3px 7px;
       cursor: pointer;
       font-size: 0.82rem;
     }
@@ -2239,26 +2272,61 @@
             <!-- Section 2 passage -->
             <div class="passage-section" data-section="2" style="display:none;">
               <h2 class="passage-main-title">The Step Pyramid of Djoser</h2>
-              <h3 class="matching-heading-paragraph-label" id="paragraph-a-heading">A</h3>
-              <div role="button" tabindex="0" class="heading-placement-target" data-paragraph="A" data-q="14" aria-label="Place selected heading in Paragraph A, Question 14"><span class="heading-target-line"><span class="heading-target-number">14</span><span class="heading-target-card" draggable="true"><span class="heading-target-card-text"></span><span class="heading-remove-btn" role="button" tabindex="0" aria-label="Remove heading from Paragraph A, Question 14">Remove</span></span></span></div>
+              <div class="matching-heading-paragraph-row">
+
+                <h3 class="matching-heading-paragraph-label" id="paragraph-a-heading">A</h3>
+
+                <div role="button" tabindex="0" class="heading-placement-target" data-paragraph="A" data-q="14" aria-label="Place selected heading in Paragraph A, Question 14"><span class="heading-target-line"><span class="heading-target-number">14</span><span class="heading-target-card" draggable="true"><span class="heading-target-card-text"></span><span class="heading-remove-btn" role="button" tabindex="0" aria-label="Remove heading from Paragraph A, Question 14">Remove</span></span></span></div>
+
+              </div>
               <p>The pyramids are the most famous monuments of ancient Egypt and still hold enormous interest for people in the present day. These grand, impressive tributes to the memory of the Egyptian kings have become linked with the country even though other cultures, such as the Chinese and Mayan, also built pyramids. The evolution of the pyramid form has been written and argued about for centuries. However, there is no question that, as far as Egypt is concerned, it began with one monument to one king designed by one brilliant architect: the Step Pyramid of Djoser at Saqqara.</p>
-              <h3 class="matching-heading-paragraph-label" id="paragraph-b-heading">B</h3>
-              <div role="button" tabindex="0" class="heading-placement-target" data-paragraph="B" data-q="15" aria-label="Place selected heading in Paragraph B, Question 15"><span class="heading-target-line"><span class="heading-target-number">15</span><span class="heading-target-card" draggable="true"><span class="heading-target-card-text"></span><span class="heading-remove-btn" role="button" tabindex="0" aria-label="Remove heading from Paragraph B, Question 15">Remove</span></span></span></div>
+              <div class="matching-heading-paragraph-row">
+
+                <h3 class="matching-heading-paragraph-label" id="paragraph-b-heading">B</h3>
+
+                <div role="button" tabindex="0" class="heading-placement-target" data-paragraph="B" data-q="15" aria-label="Place selected heading in Paragraph B, Question 15"><span class="heading-target-line"><span class="heading-target-number">15</span><span class="heading-target-card" draggable="true"><span class="heading-target-card-text"></span><span class="heading-remove-btn" role="button" tabindex="0" aria-label="Remove heading from Paragraph B, Question 15">Remove</span></span></span></div>
+
+              </div>
               <p>Djoser was the first king of the Third Dynasty of Egypt and the first to build in stone. Prior to Djoser’s reign, tombs were rectangular monuments made of dried clay brick, which covered underground passages where the deceased person was buried. For reasons which remain unclear, Djoser’s main official, whose name was Imhotep, conceived of building a taller, more impressive tomb for his king by stacking stone slabs on top of one another, progressively making them smaller, to form the shape now known as the Step Pyramid. Djoser is thought to have reigned for 19 years, but some historians and scholars attribute a much longer time for his rule, owing to the number and size of the monuments he built.</p>
-              <h3 class="matching-heading-paragraph-label" id="paragraph-c-heading">C</h3>
-              <div role="button" tabindex="0" class="heading-placement-target" data-paragraph="C" data-q="16" aria-label="Place selected heading in Paragraph C, Question 16"><span class="heading-target-line"><span class="heading-target-number">16</span><span class="heading-target-card" draggable="true"><span class="heading-target-card-text"></span><span class="heading-remove-btn" role="button" tabindex="0" aria-label="Remove heading from Paragraph C, Question 16">Remove</span></span></span></div>
+              <div class="matching-heading-paragraph-row">
+
+                <h3 class="matching-heading-paragraph-label" id="paragraph-c-heading">C</h3>
+
+                <div role="button" tabindex="0" class="heading-placement-target" data-paragraph="C" data-q="16" aria-label="Place selected heading in Paragraph C, Question 16"><span class="heading-target-line"><span class="heading-target-number">16</span><span class="heading-target-card" draggable="true"><span class="heading-target-card-text"></span><span class="heading-remove-btn" role="button" tabindex="0" aria-label="Remove heading from Paragraph C, Question 16">Remove</span></span></span></div>
+
+              </div>
               <p>The Step Pyramid has been thoroughly examined and investigated over the last century, and it is now known that the building process went through many different stages. Historian Marc Van de Mieroop comments on this, writing ‘Much experimentation was involved, which is especially clear in the construction of the pyramid in the center of the complex. It had several plans … before it became the first Step Pyramid in history, piling six levels on top of one another … The weight of the enormous mass was a challenge for the builders, who placed the stones at an inward incline in order to prevent the monument breaking up.’</p>
-              <h3 class="matching-heading-paragraph-label" id="paragraph-d-heading">D</h3>
-              <div role="button" tabindex="0" class="heading-placement-target" data-paragraph="D" data-q="17" aria-label="Place selected heading in Paragraph D, Question 17"><span class="heading-target-line"><span class="heading-target-number">17</span><span class="heading-target-card" draggable="true"><span class="heading-target-card-text"></span><span class="heading-remove-btn" role="button" tabindex="0" aria-label="Remove heading from Paragraph D, Question 17">Remove</span></span></span></div>
+              <div class="matching-heading-paragraph-row">
+
+                <h3 class="matching-heading-paragraph-label" id="paragraph-d-heading">D</h3>
+
+                <div role="button" tabindex="0" class="heading-placement-target" data-paragraph="D" data-q="17" aria-label="Place selected heading in Paragraph D, Question 17"><span class="heading-target-line"><span class="heading-target-number">17</span><span class="heading-target-card" draggable="true"><span class="heading-target-card-text"></span><span class="heading-remove-btn" role="button" tabindex="0" aria-label="Remove heading from Paragraph D, Question 17">Remove</span></span></span></div>
+
+              </div>
               <p>When finally completed, the Step Pyramid rose 62 meters high and was the tallest structure of its time. The complex in which it was built was the size of a city in ancient Egypt and included a temple, courtyards, shrines, and living quarters for the priests. It covered a region of 16 hectares and was surrounded by a wall 10.5 meters high. The wall had 13 false doors cut into it with only one true entrance cut into the south-east corner; the entire wall was then ringed by a trench 750 meters long and 40 meters wide. The false doors and the trench were incorporated into the complex to discourage unwanted visitors. If someone wished to enter, he or she would have needed to know in advance how to find the location of the true opening in the wall. Djoser was so proud of his accomplishment that he broke the tradition of having only his own name on the monument and had Imhotep’s name carved on it as well.</p>
-              <h3 class="matching-heading-paragraph-label" id="paragraph-e-heading">E</h3>
-              <div role="button" tabindex="0" class="heading-placement-target" data-paragraph="E" data-q="18" aria-label="Place selected heading in Paragraph E, Question 18"><span class="heading-target-line"><span class="heading-target-number">18</span><span class="heading-target-card" draggable="true"><span class="heading-target-card-text"></span><span class="heading-remove-btn" role="button" tabindex="0" aria-label="Remove heading from Paragraph E, Question 18">Remove</span></span></span></div>
+              <div class="matching-heading-paragraph-row">
+
+                <h3 class="matching-heading-paragraph-label" id="paragraph-e-heading">E</h3>
+
+                <div role="button" tabindex="0" class="heading-placement-target" data-paragraph="E" data-q="18" aria-label="Place selected heading in Paragraph E, Question 18"><span class="heading-target-line"><span class="heading-target-number">18</span><span class="heading-target-card" draggable="true"><span class="heading-target-card-text"></span><span class="heading-remove-btn" role="button" tabindex="0" aria-label="Remove heading from Paragraph E, Question 18">Remove</span></span></span></div>
+
+              </div>
               <p>The burial chamber of the tomb, where the king’s body was laid to rest, was dug beneath the base of the pyramid, surrounded by a vast maze of long tunnels that had rooms off them to discourage robbers. One of the most mysterious discoveries found inside the pyramid was a large number of stone vessels. Over 40,000 of these vessels, of various forms and shapes, were discovered in storerooms off the pyramid’s underground passages. They are inscribed with the names of rulers from the First and Second Dynasties of Egypt and made from different kinds of stone. There is no agreement among scholars and archaeologists on why the vessels were placed in the tomb of Djoser or what they were supposed to represent. The archaeologist Jean-Philippe Lauer, who excavated most of the pyramid and complex, believes they were originally stored and then given a ‘proper burial’ by Djoser in his pyramid to honor his predecessors. There are other historians, however, who claim the vessels were dumped into the shafts as yet another attempt to prevent grave robbers from getting to the king’s burial chamber.</p>
-              <h3 class="matching-heading-paragraph-label" id="paragraph-f-heading">F</h3>
-              <div role="button" tabindex="0" class="heading-placement-target" data-paragraph="F" data-q="19" aria-label="Place selected heading in Paragraph F, Question 19"><span class="heading-target-line"><span class="heading-target-number">19</span><span class="heading-target-card" draggable="true"><span class="heading-target-card-text"></span><span class="heading-remove-btn" role="button" tabindex="0" aria-label="Remove heading from Paragraph F, Question 19">Remove</span></span></span></div>
+              <div class="matching-heading-paragraph-row">
+
+                <h3 class="matching-heading-paragraph-label" id="paragraph-f-heading">F</h3>
+
+                <div role="button" tabindex="0" class="heading-placement-target" data-paragraph="F" data-q="19" aria-label="Place selected heading in Paragraph F, Question 19"><span class="heading-target-line"><span class="heading-target-number">19</span><span class="heading-target-card" draggable="true"><span class="heading-target-card-text"></span><span class="heading-remove-btn" role="button" tabindex="0" aria-label="Remove heading from Paragraph F, Question 19">Remove</span></span></span></div>
+
+              </div>
               <p>Unfortunately, all of the precautions and intricate design of the underground network did not prevent ancient robbers from finding a way in. Djoser’s grave goods, and even his body, were stolen at some point in the past and all archaeologists found were a small number of his valuables overlooked by the thieves. There was enough left throughout the pyramid and its complex, however, to astonish and amaze the archaeologists who excavated it.</p>
-              <h3 class="matching-heading-paragraph-label" id="paragraph-g-heading">G</h3>
-              <div role="button" tabindex="0" class="heading-placement-target" data-paragraph="G" data-q="20" aria-label="Place selected heading in Paragraph G, Question 20"><span class="heading-target-line"><span class="heading-target-number">20</span><span class="heading-target-card" draggable="true"><span class="heading-target-card-text"></span><span class="heading-remove-btn" role="button" tabindex="0" aria-label="Remove heading from Paragraph G, Question 20">Remove</span></span></span></div>
+              <div class="matching-heading-paragraph-row">
+
+                <h3 class="matching-heading-paragraph-label" id="paragraph-g-heading">G</h3>
+
+                <div role="button" tabindex="0" class="heading-placement-target" data-paragraph="G" data-q="20" aria-label="Place selected heading in Paragraph G, Question 20"><span class="heading-target-line"><span class="heading-target-number">20</span><span class="heading-target-card" draggable="true"><span class="heading-target-card-text"></span><span class="heading-remove-btn" role="button" tabindex="0" aria-label="Remove heading from Paragraph G, Question 20">Remove</span></span></span></div>
+
+              </div>
               <p>Egyptologist Miroslav Verner writes, ‘Few monuments hold a place in human history as significant as that of the Step Pyramid in Saqqara … It can be said without exaggeration that this pyramid complex constitutes a milestone in the evolution of monumental stone architecture in Egypt and in the world as a whole.’ The Step Pyramid was a revolutionary advance in architecture and became the archetype which all the other great pyramid builders of Egypt would follow.</p>
             </div>
 
