@@ -687,7 +687,8 @@
     #oneWordP2StrategyButton,
     #chooseTwoStrategyButton,
     #matchingHeadingsStrategyButton,
-    #multipleChoiceStrategyButton {
+    #multipleChoiceStrategyButton,
+    #summaryCompletionStrategyButton {
       border-color: color-mix(in srgb, var(--accent) 62%, var(--border));
       background: color-mix(in srgb, var(--accent) 18%, var(--bg));
       color: color-mix(in srgb, var(--accent) 82%, var(--text));
@@ -705,7 +706,9 @@
     #matchingHeadingsStrategyButton:hover,
     #matchingHeadingsStrategyButton:focus-visible,
     #multipleChoiceStrategyButton:hover,
-    #multipleChoiceStrategyButton:focus-visible {
+    #multipleChoiceStrategyButton:focus-visible,
+    #summaryCompletionStrategyButton:hover,
+    #summaryCompletionStrategyButton:focus-visible {
       border-color: var(--accent);
       background: color-mix(in srgb, var(--accent) 26%, var(--bg));
       color: color-mix(in srgb, var(--accent) 88%, var(--text));
@@ -2170,7 +2173,8 @@
               </div>
 
               <div class="instruction-block">
-                <p><strong>Questions 31-34</strong></p>
+                <p><strong>Questions 31-34</strong><span class="study-feedback-controls"><button type="button" id="summaryCompletionStrategyButton" class="study-icon-btn" aria-label="How to tackle summary completion with a word list" title="How to tackle this task" aria-controls="summaryCompletionStrategyPanel" hidden>ⓘ</button></span></p>
+                <div id="summaryCompletionStrategyPanel" class="summary-completion-study-panel tfng-study-panel" hidden></div>
                 <p>Complete the summary using the list of words, A-G, below.</p>
                 <p>Write the correct letter, A-G, in boxes 31-34 on your answer sheet.</p>
               </div>
@@ -2561,24 +2565,30 @@
       multipleChoiceFeedbackSubmitted = false;
       multipleChoiceCluesVisible = false;
       multipleChoiceSingleClueQuestion = null;
+      summaryCompletionFeedbackSubmitted = false;
+      summaryCompletionCluesVisible = false;
+      summaryCompletionSingleClueQuestion = null;
       removeTfngPassageClues();
       removeOneWordPassageClues();
       removeOneWordP2PassageClues();
       removeChooseTwoPassageClues();
       removeMatchingHeadingsPassageClues();
       removeMultipleChoicePassageClues();
+      removeSummaryCompletionPassageClues();
       clearTfngEvidenceHighlight();
       clearOneWordFocus();
       clearOneWordP2Focus();
       clearChooseTwoFocus();
       clearMatchingHeadingsFocus();
       clearMultipleChoiceFocus();
+      clearSummaryCompletionFocus();
       closeTfngStrategyPanel(false);
       closeOneWordStrategyPanel(false);
       closeOneWordP2StrategyPanel(false);
       closeChooseTwoStrategyPanel(false);
       closeMatchingHeadingsStrategyPanel(false);
       closeMultipleChoiceStrategyPanel(false);
+      closeSummaryCompletionStrategyPanel(false);
 
       if (mode === "test") {
         if (timerContainer) {
@@ -3649,6 +3659,10 @@
     let multipleChoiceFeedbackSubmitted = false;
     let multipleChoiceCluesVisible = false;
     let multipleChoiceSingleClueQuestion = null;
+    let activeSummaryCompletionClue = null;
+    let summaryCompletionFeedbackSubmitted = false;
+    let summaryCompletionCluesVisible = false;
+    let summaryCompletionSingleClueQuestion = null;
 
     function isTfngStrategyAvailable() {
       return mode === "study" || (mode === "test" && testSubmitted);
@@ -3656,6 +3670,14 @@
 
     function isTfngFeedbackAvailable() {
       return (mode === "study" && tfngFeedbackSubmitted) || (mode === "test" && testSubmitted);
+    }
+
+    function isSummaryCompletionStrategyAvailable() {
+      return mode === "study" || (mode === "test" && testSubmitted);
+    }
+
+    function isSummaryCompletionFeedbackAvailable() {
+      return (mode === "study" && summaryCompletionFeedbackSubmitted) || (mode === "test" && testSubmitted);
     }
 
     function isOneWordStrategyAvailable() {
@@ -3828,7 +3850,8 @@
       }
       if (activeSection === 3) {
         return [
-          { available: isMultipleChoiceFeedbackAvailable, full: () => multipleChoiceCluesVisible && multipleChoiceSingleClueQuestion === null }
+          { available: isMultipleChoiceFeedbackAvailable, full: () => multipleChoiceCluesVisible && multipleChoiceSingleClueQuestion === null },
+          { available: isSummaryCompletionFeedbackAvailable, full: () => summaryCompletionCluesVisible && summaryCompletionSingleClueQuestion === null }
         ];
       }
       return [];
@@ -3849,6 +3872,7 @@
         if (isChooseTwoFeedbackAvailable()) { chooseTwoCluesVisible = visible; chooseTwoSingleClueOption = null; }
       } else if (activeSection === 3) {
         if (isMultipleChoiceFeedbackAvailable()) { multipleChoiceCluesVisible = visible; multipleChoiceSingleClueQuestion = null; }
+        if (isSummaryCompletionFeedbackAvailable()) { summaryCompletionCluesVisible = visible; summaryCompletionSingleClueQuestion = null; }
       }
       refreshActivePassageClues();
     }
@@ -3860,6 +3884,7 @@
       refreshOneWordP2PassageClues();
       refreshChooseTwoPassageClues();
       refreshMultipleChoicePassageClues();
+      refreshSummaryCompletionPassageClues();
       updatePassageClueToolbarVisibility();
     }
 
@@ -4618,6 +4643,7 @@
         multipleChoiceSingleClueQuestion = questionNumber;
         multipleChoiceCluesVisible = true;
         refreshMultipleChoicePassageClues();
+        refreshSummaryCompletionPassageClues();
       } else if (!multipleChoiceCluesVisible) {
         multipleChoiceCluesVisible = true;
         multipleChoiceSingleClueQuestion = null;
@@ -4690,6 +4716,145 @@
       }
     }
 
+
+    function removeSummaryCompletionPassageClues() {
+      document.querySelectorAll(".summary-completion-passage-clue").forEach((clue) => {
+        const parent = clue.parentNode;
+        if (!parent) return;
+        parent.replaceChild(document.createTextNode(clue.dataset.clueText || clue.childNodes[0]?.textContent || clue.textContent), clue);
+        parent.normalize();
+      });
+      activeSummaryCompletionClue = null;
+    }
+
+    function clearSummaryCompletionFocus() {
+      document.querySelectorAll(".summary-completion-passage-clue.focused-clue, .summary-completion-passage-clue.attention-pulse").forEach((clue) => {
+        clue.classList.remove("focused-clue", "attention-pulse");
+      });
+      activeSummaryCompletionClue = null;
+    }
+
+    function showSummaryCompletionPassageClues() {
+      if (!isSummaryCompletionFeedbackAvailable()) return;
+      const data = window.IELTS16AcademicTest1StudyFeedback;
+      const passageSection = document.querySelector('.passage-section[data-section="3"]');
+      if (!data || !data.questions || !passageSection) return;
+      removeSummaryCompletionPassageClues();
+      for (let q = 31; q <= 34; q++) {
+        const item = data.questions[q];
+        if (!item || !item.infoButtonAfter) continue;
+        if (summaryCompletionSingleClueQuestion !== null && Number(summaryCompletionSingleClueQuestion) !== q) continue;
+        const match = findExactTextNode(passageSection, item.infoButtonAfter);
+        if (!match) continue;
+        const range = document.createRange();
+        range.setStart(match.node, match.index);
+        range.setEnd(match.node, match.index + item.infoButtonAfter.length);
+        const mark = document.createElement("mark");
+        mark.className = "summary-completion-passage-clue one-word-p2-passage-clue";
+        mark.dataset.clueText = item.infoButtonAfter;
+        mark.dataset.clueQuestions = String(q);
+        range.surroundContents(mark);
+        const badge = document.createElement("button");
+        badge.type = "button";
+        badge.className = "summary-completion-clue-badge one-word-p2-clue-badge";
+        badge.dataset.summaryCompletionClueBadgeQ = String(q);
+        badge.textContent = String(q);
+        badge.setAttribute("aria-label", "Go to question " + q);
+        badge.title = "Go to question " + q;
+        mark.appendChild(document.createTextNode(" "));
+        mark.appendChild(badge);
+      }
+    }
+
+    function refreshSummaryCompletionPassageClues() {
+      removeSummaryCompletionPassageClues();
+      if (isSummaryCompletionFeedbackAvailable() && summaryCompletionCluesVisible) showSummaryCompletionPassageClues();
+      updatePassageClueToolbarVisibility();
+    }
+
+    function focusSummaryCompletionPassageClue(questionNumber, scrollToPassage = true, singleClueOnly = false) {
+      if (!isSummaryCompletionFeedbackAvailable()) return;
+      if (singleClueOnly) {
+        summaryCompletionSingleClueQuestion = questionNumber;
+        summaryCompletionCluesVisible = true;
+        refreshSummaryCompletionPassageClues();
+      } else if (!summaryCompletionCluesVisible) {
+        summaryCompletionCluesVisible = true;
+        summaryCompletionSingleClueQuestion = null;
+        refreshSummaryCompletionPassageClues();
+      }
+      const clue = Array.from(document.querySelectorAll(".summary-completion-passage-clue")).find((item) => {
+        return (item.dataset.clueQuestions || "").split(",").includes(String(questionNumber));
+      });
+      if (!clue) return;
+      if (activeSummaryCompletionClue) activeSummaryCompletionClue.classList.remove("focused-clue", "attention-pulse");
+      activeSummaryCompletionClue = clue;
+      clue.classList.add("focused-clue");
+      clue.setAttribute("tabindex", "-1");
+      if (scrollToPassage) clue.scrollIntoView({ behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth", block: "center" });
+      clue.focus({ preventScroll: true });
+      requestAnimationFrame(() => clue.classList.add("attention-pulse"));
+    }
+
+    function revealSummaryCompletionEvidence(questionNumber) {
+      const allCluesVisible = activeSection === 3 && isActivePassageClueMapFullyVisible();
+      focusSummaryCompletionPassageClue(questionNumber, true, !allCluesVisible);
+    }
+
+    function renderSummaryCompletionStrategyPanel() {
+      const data = window.IELTS16AcademicTest1StudyFeedback;
+      const strategy = data?.taskStrategies?.summaryCompletionWordList;
+      const panel = document.getElementById("summaryCompletionStrategyPanel");
+      if (!strategy || !panel) return;
+      panel.innerHTML = '<div class="tfng-study-panel-header"><h3>Summary completion with word list strategy</h3>' +
+        '<button type="button" id="summaryCompletionStrategyCloseButton" class="study-icon-btn" aria-label="Close strategy" title="Close strategy">×</button></div>' +
+        '<div class="tfng-strategy-grid">' +
+        strategy.steps.map((step, index) => '<section class="tfng-strategy-step"><div class="tfng-strategy-label"><span class="tfng-strategy-chip">' + (index + 1) + '</span>' + step.title + '</div><p>' + step.detail + '</p></section>').join('') +
+        '</div>';
+    }
+
+    function renderSummaryCompletionFeedbackCards() {
+      const data = window.IELTS16AcademicTest1StudyFeedback;
+      if (!data || !data.questions) return;
+      for (let q = 31; q <= 34; q++) {
+        const item = data.questions[q];
+        if (!item) continue;
+        const user = getMatchingHeadingsUserAnswer(q);
+        const isCorrect = user && user === item.answer;
+        const marks = item.marks || 1;
+        const pointsText = isCorrect ? "+" + marks + " point" + (marks === 1 ? "" : "s") : "0 points";
+        const answerStatusClass = user ? (isCorrect ? "correct-status" : "incorrect-status") : "unanswered-status";
+        const answerStatusText = user ? (isCorrect ? "✓ " + user + " — " + item.answerLabel + " · " + pointsText : "× " + user + " · " + pointsText) : "— Not answered · " + pointsText;
+        const card = document.createElement("section");
+        card.className = "tfng-feedback-card";
+        card.setAttribute("aria-labelledby", "summary-completion-feedback-title-" + q);
+        card.innerHTML = '<h3 id="summary-completion-feedback-title-' + q + '">Question ' + q + '</h3>' +
+          '<dl>' +
+          '<dt class="label-your-answer">Your answer</dt><dd class="feedback-status ' + answerStatusClass + '">' + answerStatusText + '</dd>' +
+          '<dt class="label-correct-answer">Correct answer</dt><dd>' + item.answer + ' — ' + item.answerLabel + '</dd>' +
+          '<dt class="label-why">Why</dt><dd>' + item.explanation + '</dd>' +
+          '<dt class="label-skill">Skill</dt><dd>' + item.skillFocus + '</dd>' +
+          '</dl>' +
+          '<div class="evidence-action-row"><button type="button" class="study-icon-btn summary-completion-evidence-btn" data-summary-completion-evidence-q="' + q + '" aria-label="Focus this passage clue" title="Focus this passage clue"><svg aria-hidden="true" focusable="false" width="15" height="15" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" d="m15.5 15.5 4.5 4.5M10.5 17a6.5 6.5 0 1 1 0-13 6.5 6.5 0 0 1 0 13Z"/></svg></button></div>';
+        const target = document.getElementById("ca-" + q);
+        if (target) {
+          target.innerHTML = "";
+          target.classList.add("tfng-local-feedback");
+          target.appendChild(card);
+        }
+      }
+    }
+
+    function closeSummaryCompletionStrategyPanel(returnFocus = true) {
+      const strategyButton = document.getElementById("summaryCompletionStrategyButton");
+      const strategyPanel = document.getElementById("summaryCompletionStrategyPanel");
+      if (!strategyPanel) return;
+      strategyPanel.dataset.open = "false";
+      if (strategyButton) strategyButton.setAttribute("aria-expanded", "false");
+      updateTfngStudyFeedbackVisibility();
+      if (returnFocus && strategyButton && !strategyButton.hidden) strategyButton.focus();
+    }
+
     function closeMultipleChoiceStrategyPanel(returnFocus = true) {
       const strategyButton = document.getElementById("multipleChoiceStrategyButton");
       const strategyPanel = document.getElementById("multipleChoiceStrategyPanel");
@@ -4725,6 +4890,10 @@
       const multipleChoiceFeedbackAvailable = isMultipleChoiceFeedbackAvailable();
       const multipleChoiceStrategyButton = document.getElementById("multipleChoiceStrategyButton");
       const multipleChoiceStrategyPanel = document.getElementById("multipleChoiceStrategyPanel");
+      const summaryCompletionStrategyAvailable = isSummaryCompletionStrategyAvailable();
+      const summaryCompletionFeedbackAvailable = isSummaryCompletionFeedbackAvailable();
+      const summaryCompletionStrategyButton = document.getElementById("summaryCompletionStrategyButton");
+      const summaryCompletionStrategyPanel = document.getElementById("summaryCompletionStrategyPanel");
       if (strategyButton) strategyButton.hidden = !strategyAvailable;
       if (strategyPanel) strategyPanel.hidden = !strategyAvailable || strategyPanel.dataset.open !== "true";
       if (oneWordStrategyButton) oneWordStrategyButton.hidden = !oneWordStrategyAvailable;
@@ -4737,6 +4906,8 @@
       if (matchingHeadingsStrategyPanel) matchingHeadingsStrategyPanel.hidden = !matchingHeadingsStrategyAvailable || matchingHeadingsStrategyPanel.dataset.open !== "true";
       if (multipleChoiceStrategyButton) multipleChoiceStrategyButton.hidden = !multipleChoiceStrategyAvailable;
       if (multipleChoiceStrategyPanel) multipleChoiceStrategyPanel.hidden = !multipleChoiceStrategyAvailable || multipleChoiceStrategyPanel.dataset.open !== "true";
+      if (summaryCompletionStrategyButton) summaryCompletionStrategyButton.hidden = !summaryCompletionStrategyAvailable;
+      if (summaryCompletionStrategyPanel) summaryCompletionStrategyPanel.hidden = !summaryCompletionStrategyAvailable || summaryCompletionStrategyPanel.dataset.open !== "true";
       for (let q = 1; q <= 7; q++) {
         const target = document.getElementById("ca-" + q);
         if (target) target.style.display = feedbackAvailable ? "block" : "none";
@@ -4756,6 +4927,10 @@
       for (let q = 27; q <= 30; q++) {
         const target = document.getElementById("ca-" + q);
         if (target) target.style.display = multipleChoiceFeedbackAvailable ? "block" : "none";
+      }
+      for (let q = 31; q <= 34; q++) {
+        const target = document.getElementById("ca-" + q);
+        if (target) target.style.display = summaryCompletionFeedbackAvailable ? "block" : "none";
       }
       const chooseTwoTarget = document.getElementById("ca-25");
       const chooseTwoDuplicate = document.getElementById("ca-26");
@@ -4796,6 +4971,12 @@
       } else {
         removeMultipleChoicePassageClues();
         clearMultipleChoiceFocus();
+      }
+      if (summaryCompletionFeedbackAvailable) {
+        refreshSummaryCompletionPassageClues();
+      } else {
+        removeSummaryCompletionPassageClues();
+        clearSummaryCompletionFocus();
       }
     }
 
@@ -4857,6 +5038,7 @@
       renderChooseTwoStrategyPanel();
       renderMatchingHeadingsStrategyPanel();
       renderMultipleChoiceStrategyPanel();
+      renderSummaryCompletionStrategyPanel();
       if (window.tfngStudyFeedbackInitialised) {
         updateTfngStudyFeedbackVisibility();
         return;
@@ -4928,6 +5110,17 @@
         });
         multipleChoiceStrategyButton.setAttribute("aria-expanded", "false");
       }
+      const summaryCompletionStrategyButton = document.getElementById("summaryCompletionStrategyButton");
+      const summaryCompletionStrategyPanel = document.getElementById("summaryCompletionStrategyPanel");
+      if (summaryCompletionStrategyButton && summaryCompletionStrategyPanel) {
+        summaryCompletionStrategyButton.addEventListener("click", () => {
+          const nextOpen = summaryCompletionStrategyPanel.dataset.open !== "true";
+          summaryCompletionStrategyPanel.dataset.open = nextOpen ? "true" : "false";
+          summaryCompletionStrategyButton.setAttribute("aria-expanded", String(nextOpen));
+          updateTfngStudyFeedbackVisibility();
+        });
+        summaryCompletionStrategyButton.setAttribute("aria-expanded", "false");
+      }
       const passageClueToggle = document.getElementById("passageClueToggle");
       if (passageClueToggle) {
         passageClueToggle.addEventListener("click", () => {
@@ -4935,6 +5128,11 @@
         });
       }
       document.getElementById("passageContent")?.addEventListener("click", (event) => {
+        const summaryCompletionBadge = event.target.closest(".summary-completion-clue-badge");
+        if (summaryCompletionBadge) {
+          focusTfngQuestion(Number(summaryCompletionBadge.dataset.summaryCompletionClueBadgeQ));
+          return;
+        }
         const multipleChoiceBadge = event.target.closest(".multiple-choice-clue-badge");
         if (multipleChoiceBadge) {
           focusTfngQuestion(Number(multipleChoiceBadge.dataset.multipleChoiceClueBadgeQ));
@@ -4965,6 +5163,11 @@
         focusTfngQuestion(Number(badge.dataset.clueBadgeQ));
       });
       document.getElementById("questionContent")?.addEventListener("click", (event) => {
+        const summaryCompletionEvidenceButton = event.target.closest(".summary-completion-evidence-btn");
+        if (summaryCompletionEvidenceButton) {
+          revealSummaryCompletionEvidence(Number(summaryCompletionEvidenceButton.dataset.summaryCompletionEvidenceQ));
+          return;
+        }
         const multipleChoiceEvidenceButton = event.target.closest(".multiple-choice-evidence-btn");
         if (multipleChoiceEvidenceButton) {
           revealMultipleChoiceEvidence(Number(multipleChoiceEvidenceButton.dataset.multipleChoiceEvidenceQ));
@@ -4993,6 +5196,11 @@
         const evidenceButton = event.target.closest(".tfng-evidence-btn");
         if (evidenceButton) {
           revealTfngEvidence(Number(evidenceButton.dataset.evidenceQ));
+          return;
+        }
+        const summaryCompletionCloseButton = event.target.closest("#summaryCompletionStrategyCloseButton");
+        if (summaryCompletionCloseButton) {
+          closeSummaryCompletionStrategyPanel(true);
           return;
         }
         const multipleChoiceCloseButton = event.target.closest("#multipleChoiceStrategyCloseButton");
@@ -5048,6 +5256,11 @@
         if (multipleChoiceStrategyPanel && multipleChoiceStrategyPanel.dataset.open === "true" && !multipleChoiceStrategyPanel.hidden) {
           event.preventDefault();
           closeMultipleChoiceStrategyPanel(true);
+        }
+        const summaryCompletionStrategyPanel = document.getElementById("summaryCompletionStrategyPanel");
+        if (summaryCompletionStrategyPanel && summaryCompletionStrategyPanel.dataset.open === "true" && !summaryCompletionStrategyPanel.hidden) {
+          event.preventDefault();
+          closeSummaryCompletionStrategyPanel(true);
         }
         const oneWordStrategyPanel = document.getElementById("oneWordStrategyPanel");
         if (oneWordStrategyPanel && oneWordStrategyPanel.dataset.open === "true" && !oneWordStrategyPanel.hidden) {
@@ -5156,6 +5369,9 @@
       multipleChoiceFeedbackSubmitted = true;
       multipleChoiceCluesVisible = true;
       multipleChoiceSingleClueQuestion = null;
+      summaryCompletionFeedbackSubmitted = true;
+      summaryCompletionCluesVisible = true;
+      summaryCompletionSingleClueQuestion = null;
       if (mode === "test") testSubmitted = true;
       renderTfngFeedbackCards();
       renderOneWordFeedbackCards();
@@ -5163,6 +5379,7 @@
       renderChooseTwoFeedbackCard();
       renderMatchingHeadingsFeedbackCards();
       renderMultipleChoiceFeedbackCards();
+      renderSummaryCompletionFeedbackCards();
 
       // In both modes, show correct answer text
       Object.keys(correctAnswerText).forEach((q) => {
