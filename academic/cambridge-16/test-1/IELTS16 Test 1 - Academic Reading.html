@@ -687,6 +687,7 @@
     #oneWordP2StrategyButton,
     #chooseTwoStrategyButton,
     #matchingHeadingsStrategyButton,
+    #matchingPeopleStrategyButton,
     #multipleChoiceStrategyButton,
     #summaryCompletionStrategyButton {
       border-color: color-mix(in srgb, var(--accent) 62%, var(--border));
@@ -705,6 +706,8 @@
     #chooseTwoStrategyButton:focus-visible,
     #matchingHeadingsStrategyButton:hover,
     #matchingHeadingsStrategyButton:focus-visible,
+    #matchingPeopleStrategyButton:hover,
+    #matchingPeopleStrategyButton:focus-visible,
     #multipleChoiceStrategyButton:hover,
     #multipleChoiceStrategyButton:focus-visible,
     #summaryCompletionStrategyButton:hover,
@@ -945,7 +948,8 @@
     .tfng-evidence-btn,
     .one-word-evidence-btn,
     .one-word-p2-evidence-btn,
-    .matching-headings-evidence-btn {
+    .matching-headings-evidence-btn,
+    .matching-people-evidence-btn {
       border-color: color-mix(in srgb, #15803d 55%, var(--border));
       background: color-mix(in srgb, #dcfce7 60%, var(--bg));
       color: color-mix(in srgb, #15803d 75%, var(--text));
@@ -2198,7 +2202,8 @@
               <div class="question-block feedback-only" data-q="34"><div class="correct-answer-text" id="ca-34"></div></div>
 
               <div class="instruction-block">
-                <p><strong>Questions 35-40</strong></p>
+                <p><strong>Questions 35-40</strong><span class="study-feedback-controls"><button type="button" id="matchingPeopleStrategyButton" class="study-icon-btn" aria-label="How to tackle matching statements with people" title="How to tackle this task" aria-controls="matchingPeopleStrategyPanel" hidden>ⓘ</button></span></p>
+                <div id="matchingPeopleStrategyPanel" class="matching-people-study-panel tfng-study-panel" hidden></div>
                 <p>Look at the following statements (Questions 35-40) and the list of people below.</p>
                 <p>Match each statement with the correct person, A, B or C.</p>
                 <p>Write the correct letter, A, B or C, in boxes 35-40 on your answer sheet.</p>
@@ -2568,6 +2573,9 @@
       summaryCompletionFeedbackSubmitted = false;
       summaryCompletionCluesVisible = false;
       summaryCompletionSingleClueQuestion = null;
+      matchingPeopleFeedbackSubmitted = false;
+      matchingPeopleCluesVisible = false;
+      matchingPeopleSingleClueQuestion = null;
       removeTfngPassageClues();
       removeOneWordPassageClues();
       removeOneWordP2PassageClues();
@@ -2575,6 +2583,7 @@
       removeMatchingHeadingsPassageClues();
       removeMultipleChoicePassageClues();
       removeSummaryCompletionPassageClues();
+      removeMatchingPeoplePassageClues();
       clearTfngEvidenceHighlight();
       clearOneWordFocus();
       clearOneWordP2Focus();
@@ -2582,6 +2591,7 @@
       clearMatchingHeadingsFocus();
       clearMultipleChoiceFocus();
       clearSummaryCompletionFocus();
+      clearMatchingPeopleFocus();
       closeTfngStrategyPanel(false);
       closeOneWordStrategyPanel(false);
       closeOneWordP2StrategyPanel(false);
@@ -2589,6 +2599,7 @@
       closeMatchingHeadingsStrategyPanel(false);
       closeMultipleChoiceStrategyPanel(false);
       closeSummaryCompletionStrategyPanel(false);
+      closeMatchingPeopleStrategyPanel(false);
 
       if (mode === "test") {
         if (timerContainer) {
@@ -3663,6 +3674,10 @@
     let summaryCompletionFeedbackSubmitted = false;
     let summaryCompletionCluesVisible = false;
     let summaryCompletionSingleClueQuestion = null;
+    let activeMatchingPeopleClue = null;
+    let matchingPeopleFeedbackSubmitted = false;
+    let matchingPeopleCluesVisible = false;
+    let matchingPeopleSingleClueQuestion = null;
 
     function isTfngStrategyAvailable() {
       return mode === "study" || (mode === "test" && testSubmitted);
@@ -3710,6 +3725,14 @@
 
     function isMatchingHeadingsFeedbackAvailable() {
       return (mode === "study" && matchingHeadingsFeedbackSubmitted) || (mode === "test" && testSubmitted);
+    }
+
+    function isMatchingPeopleStrategyAvailable() {
+      return mode === "study" || (mode === "test" && testSubmitted);
+    }
+
+    function isMatchingPeopleFeedbackAvailable() {
+      return (mode === "study" && matchingPeopleFeedbackSubmitted) || (mode === "test" && testSubmitted);
     }
 
     function isMultipleChoiceStrategyAvailable() {
@@ -3851,7 +3874,8 @@
       if (activeSection === 3) {
         return [
           { available: isMultipleChoiceFeedbackAvailable, full: () => multipleChoiceCluesVisible && multipleChoiceSingleClueQuestion === null },
-          { available: isSummaryCompletionFeedbackAvailable, full: () => summaryCompletionCluesVisible && summaryCompletionSingleClueQuestion === null }
+          { available: isSummaryCompletionFeedbackAvailable, full: () => summaryCompletionCluesVisible && summaryCompletionSingleClueQuestion === null },
+          { available: isMatchingPeopleFeedbackAvailable, full: () => matchingPeopleCluesVisible && matchingPeopleSingleClueQuestion === null }
         ];
       }
       return [];
@@ -3873,6 +3897,7 @@
       } else if (activeSection === 3) {
         if (isMultipleChoiceFeedbackAvailable()) { multipleChoiceCluesVisible = visible; multipleChoiceSingleClueQuestion = null; }
         if (isSummaryCompletionFeedbackAvailable()) { summaryCompletionCluesVisible = visible; summaryCompletionSingleClueQuestion = null; }
+        if (isMatchingPeopleFeedbackAvailable()) { matchingPeopleCluesVisible = visible; matchingPeopleSingleClueQuestion = null; }
       }
       refreshActivePassageClues();
     }
@@ -3885,6 +3910,7 @@
       refreshChooseTwoPassageClues();
       refreshMultipleChoicePassageClues();
       refreshSummaryCompletionPassageClues();
+      refreshMatchingPeoplePassageClues();
       updatePassageClueToolbarVisibility();
     }
 
@@ -4845,6 +4871,149 @@
       }
     }
 
+
+    function removeMatchingPeoplePassageClues() {
+      document.querySelectorAll(".matching-people-passage-clue").forEach((clue) => {
+        const parent = clue.parentNode;
+        if (!parent) return;
+        parent.replaceChild(document.createTextNode(clue.dataset.clueText || clue.childNodes[0]?.textContent || clue.textContent), clue);
+        parent.normalize();
+      });
+      activeMatchingPeopleClue = null;
+    }
+
+    function clearMatchingPeopleFocus() {
+      document.querySelectorAll(".matching-people-passage-clue.focused-clue, .matching-people-passage-clue.attention-pulse").forEach((clue) => {
+        clue.classList.remove("focused-clue", "attention-pulse");
+      });
+      activeMatchingPeopleClue = null;
+    }
+
+    function showMatchingPeoplePassageClues() {
+      if (!isMatchingPeopleFeedbackAvailable()) return;
+      const data = window.IELTS16AcademicTest1StudyFeedback;
+      const passageSection = document.querySelector('.passage-section[data-section="3"]');
+      if (!data || !data.questions || !passageSection) return;
+      removeMatchingPeoplePassageClues();
+      for (let q = 35; q <= 40; q++) {
+        const item = data.questions[q];
+        if (!item || !item.infoButtonAfter) continue;
+        if (matchingPeopleSingleClueQuestion !== null && Number(matchingPeopleSingleClueQuestion) !== q) continue;
+        const match = findExactTextNode(passageSection, item.infoButtonAfter);
+        if (!match) continue;
+        const range = document.createRange();
+        range.setStart(match.node, match.index);
+        range.setEnd(match.node, match.index + item.infoButtonAfter.length);
+        const mark = document.createElement("mark");
+        mark.className = "matching-people-passage-clue one-word-p2-passage-clue";
+        mark.dataset.clueText = item.infoButtonAfter;
+        mark.dataset.clueQuestions = String(q);
+        range.surroundContents(mark);
+        const badge = document.createElement("button");
+        badge.type = "button";
+        badge.className = "matching-people-clue-badge one-word-p2-clue-badge";
+        badge.dataset.matchingPeopleClueBadgeQ = String(q);
+        badge.textContent = String(q);
+        badge.setAttribute("aria-label", "Go to question " + q);
+        badge.title = "Go to question " + q;
+        mark.appendChild(document.createTextNode(" "));
+        mark.appendChild(badge);
+      }
+    }
+
+    function refreshMatchingPeoplePassageClues() {
+      removeMatchingPeoplePassageClues();
+      if (isMatchingPeopleFeedbackAvailable() && matchingPeopleCluesVisible) showMatchingPeoplePassageClues();
+      updatePassageClueToolbarVisibility();
+    }
+
+    function focusMatchingPeoplePassageClue(questionNumber, scrollToPassage = true, singleClueOnly = false) {
+      if (!isMatchingPeopleFeedbackAvailable()) return;
+      if (singleClueOnly) {
+        matchingPeopleSingleClueQuestion = questionNumber;
+        matchingPeopleCluesVisible = true;
+        refreshMatchingPeoplePassageClues();
+      } else if (!matchingPeopleCluesVisible) {
+        matchingPeopleCluesVisible = true;
+        matchingPeopleSingleClueQuestion = null;
+        refreshMatchingPeoplePassageClues();
+      }
+      const clue = Array.from(document.querySelectorAll(".matching-people-passage-clue")).find((item) => (item.dataset.clueQuestions || "").split(",").includes(String(questionNumber)));
+      if (!clue) return;
+      if (activeMatchingPeopleClue) activeMatchingPeopleClue.classList.remove("focused-clue", "attention-pulse");
+      activeMatchingPeopleClue = clue;
+      clue.classList.add("focused-clue");
+      clue.setAttribute("tabindex", "-1");
+      if (scrollToPassage) clue.scrollIntoView({ behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth", block: "center" });
+      clue.focus({ preventScroll: true });
+      requestAnimationFrame(() => clue.classList.add("attention-pulse"));
+    }
+
+    function revealMatchingPeopleEvidence(questionNumber) {
+      const allCluesVisible = activeSection === 3 && isActivePassageClueMapFullyVisible();
+      focusMatchingPeoplePassageClue(questionNumber, true, !allCluesVisible);
+    }
+
+    function renderMatchingPeopleStrategyPanel() {
+      const data = window.IELTS16AcademicTest1StudyFeedback;
+      const strategy = data?.taskStrategies?.matchingPeople;
+      const panel = document.getElementById("matchingPeopleStrategyPanel");
+      if (!strategy || !panel) return;
+      panel.innerHTML = '<div class="tfng-study-panel-header"><h3>Matching statements with people</h3>' +
+        '<button type="button" id="matchingPeopleStrategyCloseButton" class="study-icon-btn" aria-label="Close strategy" title="Close strategy">×</button></div>' +
+        '<div class="tfng-strategy-grid">' +
+        strategy.steps.map((step, index) => '<section class="' + (index === 4 ? 'tfng-strategy-watch' : 'tfng-strategy-step') + '"><div class="tfng-strategy-label"><span class="tfng-strategy-chip">' + (index === 4 ? '!' : index + 1) + '</span>' + step.title + '</div><p>' + step.detail + '</p></section>').join('') +
+        '</div>';
+    }
+
+    function getMatchingPeopleUserAnswer(questionNumber) {
+      const select = document.querySelector('select[name="q' + questionNumber + '"]');
+      return select ? select.value : "";
+    }
+
+    function renderMatchingPeopleFeedbackCards() {
+      const data = window.IELTS16AcademicTest1StudyFeedback;
+      if (!data || !data.questions) return;
+      for (let q = 35; q <= 40; q++) {
+        const item = data.questions[q];
+        if (!item) continue;
+        const user = getMatchingPeopleUserAnswer(q);
+        const isCorrect = user && user === item.answer;
+        const marks = item.marks || 1;
+        const pointsText = isCorrect ? "+" + marks + " point" + (marks === 1 ? "" : "s") : "0 points";
+        const userLabel = user && data.questions[q] ? (user === "A" ? "Stella Pachidi" : user === "B" ? "Hamish Low" : user === "C" ? "Ewan McGaughey" : "") : "";
+        const answerStatusClass = user ? (isCorrect ? "correct-status" : "incorrect-status") : "unanswered-status";
+        const answerStatusText = user ? (isCorrect ? "✓ " + user + " — " + userLabel + " · " + pointsText : "× " + user + " — " + userLabel + " · " + pointsText) : "— Not answered · " + pointsText;
+        const card = document.createElement("section");
+        card.className = "tfng-feedback-card";
+        card.setAttribute("aria-labelledby", "matching-people-feedback-title-" + q);
+        card.innerHTML = '<h3 id="matching-people-feedback-title-' + q + '">Question ' + q + '</h3>' +
+          '<dl>' +
+          '<dt class="label-your-answer">Your answer</dt><dd class="feedback-status ' + answerStatusClass + '">' + answerStatusText + '</dd>' +
+          '<dt class="label-correct-answer">Correct answer</dt><dd>' + item.answer + ' — ' + item.answerLabel + '</dd>' +
+          '<dt class="label-why">Why</dt><dd>' + item.explanation + '</dd>' +
+          '<dt class="label-skill">Skill</dt><dd>' + item.skillFocus + '</dd>' +
+          '</dl>' +
+          '<div class="evidence-action-row"><button type="button" class="study-icon-btn matching-people-evidence-btn" data-matching-people-evidence-q="' + q + '" aria-label="Focus this passage clue" title="Focus this passage clue"><svg aria-hidden="true" focusable="false" width="15" height="15" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" d="m15.5 15.5 4.5 4.5M10.5 17a6.5 6.5 0 1 1 0-13 6.5 6.5 0 0 1 0 13Z"/></svg></button></div>';
+        const target = document.getElementById("ca-" + q);
+        if (target) {
+          target.innerHTML = "";
+          target.classList.add("tfng-local-feedback");
+          target.appendChild(card);
+        }
+      }
+    }
+
+    function closeMatchingPeopleStrategyPanel(returnFocus = true) {
+      const strategyButton = document.getElementById("matchingPeopleStrategyButton");
+      const strategyPanel = document.getElementById("matchingPeopleStrategyPanel");
+      if (!strategyPanel) return;
+      strategyPanel.dataset.open = "false";
+      if (strategyButton) strategyButton.setAttribute("aria-expanded", "false");
+      updateTfngStudyFeedbackVisibility();
+      if (returnFocus && strategyButton && !strategyButton.hidden) strategyButton.focus();
+    }
+
     function closeSummaryCompletionStrategyPanel(returnFocus = true) {
       const strategyButton = document.getElementById("summaryCompletionStrategyButton");
       const strategyPanel = document.getElementById("summaryCompletionStrategyPanel");
@@ -4894,6 +5063,10 @@
       const summaryCompletionFeedbackAvailable = isSummaryCompletionFeedbackAvailable();
       const summaryCompletionStrategyButton = document.getElementById("summaryCompletionStrategyButton");
       const summaryCompletionStrategyPanel = document.getElementById("summaryCompletionStrategyPanel");
+      const matchingPeopleStrategyAvailable = isMatchingPeopleStrategyAvailable();
+      const matchingPeopleFeedbackAvailable = isMatchingPeopleFeedbackAvailable();
+      const matchingPeopleStrategyButton = document.getElementById("matchingPeopleStrategyButton");
+      const matchingPeopleStrategyPanel = document.getElementById("matchingPeopleStrategyPanel");
       if (strategyButton) strategyButton.hidden = !strategyAvailable;
       if (strategyPanel) strategyPanel.hidden = !strategyAvailable || strategyPanel.dataset.open !== "true";
       if (oneWordStrategyButton) oneWordStrategyButton.hidden = !oneWordStrategyAvailable;
@@ -4908,6 +5081,8 @@
       if (multipleChoiceStrategyPanel) multipleChoiceStrategyPanel.hidden = !multipleChoiceStrategyAvailable || multipleChoiceStrategyPanel.dataset.open !== "true";
       if (summaryCompletionStrategyButton) summaryCompletionStrategyButton.hidden = !summaryCompletionStrategyAvailable;
       if (summaryCompletionStrategyPanel) summaryCompletionStrategyPanel.hidden = !summaryCompletionStrategyAvailable || summaryCompletionStrategyPanel.dataset.open !== "true";
+      if (matchingPeopleStrategyButton) matchingPeopleStrategyButton.hidden = !matchingPeopleStrategyAvailable;
+      if (matchingPeopleStrategyPanel) matchingPeopleStrategyPanel.hidden = !matchingPeopleStrategyAvailable || matchingPeopleStrategyPanel.dataset.open !== "true";
       for (let q = 1; q <= 7; q++) {
         const target = document.getElementById("ca-" + q);
         if (target) target.style.display = feedbackAvailable ? "block" : "none";
@@ -4931,6 +5106,10 @@
       for (let q = 31; q <= 34; q++) {
         const target = document.getElementById("ca-" + q);
         if (target) target.style.display = summaryCompletionFeedbackAvailable ? "block" : "none";
+      }
+      for (let q = 35; q <= 40; q++) {
+        const target = document.getElementById("ca-" + q);
+        if (target) target.style.display = matchingPeopleFeedbackAvailable ? "block" : "none";
       }
       const chooseTwoTarget = document.getElementById("ca-25");
       const chooseTwoDuplicate = document.getElementById("ca-26");
@@ -4977,6 +5156,12 @@
       } else {
         removeSummaryCompletionPassageClues();
         clearSummaryCompletionFocus();
+      }
+      if (matchingPeopleFeedbackAvailable) {
+        refreshMatchingPeoplePassageClues();
+      } else {
+        removeMatchingPeoplePassageClues();
+        clearMatchingPeopleFocus();
       }
     }
 
@@ -5039,6 +5224,7 @@
       renderMatchingHeadingsStrategyPanel();
       renderMultipleChoiceStrategyPanel();
       renderSummaryCompletionStrategyPanel();
+      renderMatchingPeopleStrategyPanel();
       if (window.tfngStudyFeedbackInitialised) {
         updateTfngStudyFeedbackVisibility();
         return;
@@ -5121,6 +5307,17 @@
         });
         summaryCompletionStrategyButton.setAttribute("aria-expanded", "false");
       }
+      const matchingPeopleStrategyButton = document.getElementById("matchingPeopleStrategyButton");
+      const matchingPeopleStrategyPanel = document.getElementById("matchingPeopleStrategyPanel");
+      if (matchingPeopleStrategyButton && matchingPeopleStrategyPanel) {
+        matchingPeopleStrategyButton.addEventListener("click", () => {
+          const nextOpen = matchingPeopleStrategyPanel.dataset.open !== "true";
+          matchingPeopleStrategyPanel.dataset.open = nextOpen ? "true" : "false";
+          matchingPeopleStrategyButton.setAttribute("aria-expanded", String(nextOpen));
+          updateTfngStudyFeedbackVisibility();
+        });
+        matchingPeopleStrategyButton.setAttribute("aria-expanded", "false");
+      }
       const passageClueToggle = document.getElementById("passageClueToggle");
       if (passageClueToggle) {
         passageClueToggle.addEventListener("click", () => {
@@ -5128,6 +5325,11 @@
         });
       }
       document.getElementById("passageContent")?.addEventListener("click", (event) => {
+        const matchingPeopleBadge = event.target.closest(".matching-people-clue-badge");
+        if (matchingPeopleBadge) {
+          focusTfngQuestion(Number(matchingPeopleBadge.dataset.matchingPeopleClueBadgeQ));
+          return;
+        }
         const summaryCompletionBadge = event.target.closest(".summary-completion-clue-badge");
         if (summaryCompletionBadge) {
           focusTfngQuestion(Number(summaryCompletionBadge.dataset.summaryCompletionClueBadgeQ));
@@ -5163,6 +5365,11 @@
         focusTfngQuestion(Number(badge.dataset.clueBadgeQ));
       });
       document.getElementById("questionContent")?.addEventListener("click", (event) => {
+        const matchingPeopleEvidenceButton = event.target.closest(".matching-people-evidence-btn");
+        if (matchingPeopleEvidenceButton) {
+          revealMatchingPeopleEvidence(Number(matchingPeopleEvidenceButton.dataset.matchingPeopleEvidenceQ));
+          return;
+        }
         const summaryCompletionEvidenceButton = event.target.closest(".summary-completion-evidence-btn");
         if (summaryCompletionEvidenceButton) {
           revealSummaryCompletionEvidence(Number(summaryCompletionEvidenceButton.dataset.summaryCompletionEvidenceQ));
@@ -5196,6 +5403,11 @@
         const evidenceButton = event.target.closest(".tfng-evidence-btn");
         if (evidenceButton) {
           revealTfngEvidence(Number(evidenceButton.dataset.evidenceQ));
+          return;
+        }
+        const matchingPeopleCloseButton = event.target.closest("#matchingPeopleStrategyCloseButton");
+        if (matchingPeopleCloseButton) {
+          closeMatchingPeopleStrategyPanel(true);
           return;
         }
         const summaryCompletionCloseButton = event.target.closest("#summaryCompletionStrategyCloseButton");
@@ -5261,6 +5473,11 @@
         if (summaryCompletionStrategyPanel && summaryCompletionStrategyPanel.dataset.open === "true" && !summaryCompletionStrategyPanel.hidden) {
           event.preventDefault();
           closeSummaryCompletionStrategyPanel(true);
+        }
+        const matchingPeopleStrategyPanel = document.getElementById("matchingPeopleStrategyPanel");
+        if (matchingPeopleStrategyPanel && matchingPeopleStrategyPanel.dataset.open === "true" && !matchingPeopleStrategyPanel.hidden) {
+          event.preventDefault();
+          closeMatchingPeopleStrategyPanel(true);
         }
         const oneWordStrategyPanel = document.getElementById("oneWordStrategyPanel");
         if (oneWordStrategyPanel && oneWordStrategyPanel.dataset.open === "true" && !oneWordStrategyPanel.hidden) {
@@ -5372,6 +5589,9 @@
       summaryCompletionFeedbackSubmitted = true;
       summaryCompletionCluesVisible = true;
       summaryCompletionSingleClueQuestion = null;
+      matchingPeopleFeedbackSubmitted = true;
+      matchingPeopleCluesVisible = true;
+      matchingPeopleSingleClueQuestion = null;
       if (mode === "test") testSubmitted = true;
       renderTfngFeedbackCards();
       renderOneWordFeedbackCards();
@@ -5380,6 +5600,7 @@
       renderMatchingHeadingsFeedbackCards();
       renderMultipleChoiceFeedbackCards();
       renderSummaryCompletionFeedbackCards();
+      renderMatchingPeopleFeedbackCards();
 
       // In both modes, show correct answer text
       Object.keys(correctAnswerText).forEach((q) => {
