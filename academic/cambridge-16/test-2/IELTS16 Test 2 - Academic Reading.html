@@ -1181,10 +1181,12 @@
     .study-mode-pill { display:none; align-items:center; gap:6px; border:1px solid #b7d4ff; background:#eaf3ff; color:#0b4a8b; border-radius:999px; padding:5px 10px; font-weight:700; font-size:.85rem; }
     .study-toolbar { display:none; gap:10px; align-items:center; flex-wrap:wrap; padding:10px 14px; border-bottom:1px solid var(--border); background:var(--bg-secondary); }
     .study-timer { font-weight:700; }
-    .score-guide-btn, .study-check-all, .study-task-toggle { border:1px solid var(--border); background:var(--bg); color:var(--text); border-radius:8px; padding:7px 10px; cursor:pointer; font-weight:700; }
+    .score-guide-btn, .study-check-all, .study-task-toggle, .study-strategy-toggle { border:1px solid var(--border); background:var(--bg); color:var(--text); border-radius:8px; padding:7px 10px; cursor:pointer; font-weight:700; }
     .study-check-all { background:#0b5cab; color:#fff; border-color:#0b5cab; }
     .study-task-panel { border:1px solid #d7e3f5; border-radius:12px; background:#f8fbff; padding:12px; margin:12px 0; }
     .study-task-panel h3 { margin:0 0 6px; font-size:1rem; }
+    .study-strategy-content { display:none; margin-top:8px; }
+    .study-strategy-content.is-open { display:block; }
     .study-task-panel ol { margin:8px 0 8px 22px; }
     .study-task-actions { display:flex; align-items:center; gap:10px; flex-wrap:wrap; margin-top:10px; }
     .study-task-result { display:none; font-weight:700; color:#0b4a8b; }
@@ -2826,6 +2828,8 @@
       document.querySelectorAll(".study-feedback-card").forEach((el) => el.remove());
       document.querySelectorAll(".study-task-result").forEach((el) => { el.textContent = ""; el.style.display = "none"; });
       document.querySelectorAll(".study-task-toggle").forEach((btn) => { btn.textContent = "Show feedback"; btn.setAttribute("aria-expanded", "false"); });
+      document.querySelectorAll(".study-strategy-toggle").forEach((btn) => { btn.textContent = "Strategy"; btn.setAttribute("aria-expanded", "false"); });
+      document.querySelectorAll(".study-strategy-content").forEach((el) => el.classList.remove("is-open"));
       clearStudyEvidenceHighlights();
       Object.keys(correctAnswerText).forEach((q) => { const el = document.getElementById("ca-" + q); if (el) { el.textContent = ""; el.style.display = "none"; } });
       document.querySelectorAll(".question-block").forEach((el) => el.classList.remove("correct", "incorrect"));
@@ -2845,16 +2849,23 @@
         panel.dataset.groupId = group.id;
         panel.style.display = mode === "study" || testSubmitted ? "block" : "none";
         panel.innerHTML = '<h3>' + escapeHtml(group.label) + ' strategy</h3>' +
+          '<div class="study-task-actions"><button type="button" class="study-strategy-toggle" data-strategy-group="' + group.id + '" aria-expanded="false" aria-controls="study-strategy-' + group.id + '">Strategy</button><button type="button" class="study-task-toggle" data-study-group="' + group.id + '" aria-expanded="false">Show feedback</button><span class="study-task-result" id="study-result-' + group.id + '"></span></div>' +
+          '<div class="study-strategy-content" id="study-strategy-' + group.id + '">' +
           '<p>' + escapeHtml(strategy.purpose || "Review this question group and compare your answer with the passage evidence.") + '</p>' +
           '<ol>' + (strategy.steps || []).map((step) => '<li>' + escapeHtml(step) + '</li>').join("") + '</ol>' +
           (strategy.commonTrap ? '<p><strong>Common trap:</strong> ' + escapeHtml(strategy.commonTrap) + '</p>' : '') +
-          '<div class="study-task-actions"><button type="button" class="study-task-toggle" data-study-group="' + group.id + '" aria-expanded="false">Show feedback</button><span class="study-task-result" id="study-result-' + group.id + '"></span></div>';
+          '</div>';
         firstBlock.parentNode.insertBefore(panel, firstBlock);
       });
       document.querySelectorAll(".study-task-toggle").forEach((btn) => {
         if (btn.dataset.bound) return;
         btn.dataset.bound = "true";
         btn.addEventListener("click", () => toggleStudyGroup(btn.dataset.studyGroup));
+      });
+      document.querySelectorAll(".study-strategy-toggle").forEach((btn) => {
+        if (btn.dataset.bound) return;
+        btn.dataset.bound = "true";
+        btn.addEventListener("click", () => toggleStudyStrategy(btn.dataset.strategyGroup));
       });
       buildScoreGuideRows(null);
     }
@@ -2872,6 +2883,24 @@
       document.querySelectorAll(".study-task-panel").forEach((el) => el.style.display = (show || testSubmitted) ? "block" : "none");
     }
 
+    function toggleStudyStrategy(groupId) {
+      const content = document.getElementById("study-strategy-" + groupId);
+      const btn = document.querySelector('[data-strategy-group="' + groupId + '"]');
+      if (!content) return;
+      const isOpen = content.classList.toggle("is-open");
+      if (btn) {
+        btn.textContent = isOpen ? "Hide strategy" : "Strategy";
+        btn.setAttribute("aria-expanded", isOpen ? "true" : "false");
+      }
+    }
+
+    function clearCorrectAnswerPlaceholders(questions) {
+      questions.forEach((q) => {
+        const el = document.getElementById("ca-" + q);
+        if (el) { el.textContent = ""; el.style.display = "none"; }
+      });
+    }
+
     function toggleStudyGroup(groupId) {
       if (revealedStudyTaskGroups.has(groupId)) hideStudyGroup(groupId);
       else showStudyGroup(groupId);
@@ -2887,7 +2916,7 @@
       const btn = document.querySelector('[data-study-group="' + group.id + '"]');
       if (btn) { btn.textContent = "Hide feedback"; btn.setAttribute("aria-expanded", "true"); }
       group.questionNumbers.forEach(renderStudyFeedbackCard);
-      renderCorrectAnswerTextForQuestions(group.questionNumbers);
+      clearCorrectAnswerPlaceholders(group.questionNumbers);
       renderStudyEvidenceForGroup(group);
     }
 
@@ -2898,9 +2927,7 @@
       group.questionNumbers.forEach((q) => {
         const card = document.getElementById("study-feedback-" + q);
         if (card) card.remove();
-        if (mode === "study") {
-          const ca = document.getElementById("ca-" + q); if (ca) { ca.textContent = ""; ca.style.display = "none"; }
-        }
+        const ca = document.getElementById("ca-" + q); if (ca) { ca.textContent = ""; ca.style.display = "none"; }
       });
       const result = document.getElementById("study-result-" + group.id);
       if (result) { result.textContent = ""; result.style.display = "none"; }
@@ -2928,13 +2955,6 @@
         '</dl><button type="button" class="study-clue-btn" data-clue-q="' + q + '">Show passage clue</button>';
       block.appendChild(card);
       card.querySelector(".study-clue-btn").addEventListener("click", () => focusStudyEvidence(q));
-    }
-
-    function renderCorrectAnswerTextForQuestions(questions) {
-      questions.forEach((q) => {
-        const el = document.getElementById("ca-" + q);
-        if (el) { el.textContent = "Correct answer: " + (correctAnswerText[q] || ""); el.style.display = "block"; }
-      });
     }
 
     function clearStudyEvidenceHighlights() {
@@ -3112,11 +3132,7 @@
       const correctCount = evaluateQuestions();
       lastRawScore = correctCount;
 
-      // In both modes, show correct answer text
-      Object.keys(correctAnswerText).forEach((q) => {
-        const el = document.getElementById("ca-" + q);
-        if (el) el.style.display = "block";
-      });
+      clearCorrectAnswerPlaceholders(Object.keys(correctAnswerText));
 
       updateCounts();
       buildQuestionNav();
