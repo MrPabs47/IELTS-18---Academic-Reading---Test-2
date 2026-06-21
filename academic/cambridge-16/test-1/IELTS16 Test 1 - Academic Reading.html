@@ -187,6 +187,10 @@
       display: flex;
       align-items: baseline;
       gap: 16px;
+      min-width: 0;
+      flex: 1 1 auto;
+      white-space: nowrap;
+      overflow: hidden;
     }
 
     .logo {
@@ -249,16 +253,75 @@
     .paragraph-letter { font-weight: 700; display: inline-block; margin-right: 8px; }
 
 
-    .test-title {
+    .test-title,
+    #candidateNameDisplay,
+    #topBarScoreStatus {
       font-size: 0.95rem;
       color: var(--text-soft);
+      min-width: 0;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .test-title {
+      flex: 0 1 auto;
+    }
+
+    #candidateNameDisplay {
+      display: none;
+      max-width: min(24vw, 260px);
+      flex: 0 1 auto;
+    }
+
+    #topBarScoreStatus {
+      display: none;
+      flex: 0 0 auto;
+      font-weight: 700;
+      color: var(--text);
     }
 
     .top-right {
       display: flex;
       align-items: center;
-      gap: 16px;
+      gap: 12px;
       font-size: 0.9rem;
+      min-width: 0;
+      flex: 0 0 auto;
+      white-space: nowrap;
+    }
+
+    #studyModePill {
+      display: none;
+      border: 1px solid rgba(37, 99, 235, 0.45);
+      background: rgba(37, 99, 235, 0.08);
+      color: #1d4ed8;
+      border-radius: 999px;
+      padding: 4px 10px;
+      font-weight: 700;
+      line-height: 1.2;
+    }
+
+    .score-guide-button {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      border: 1px solid var(--border);
+      background: var(--bg);
+      color: var(--text);
+      border-radius: 999px;
+      padding: 5px 10px;
+      font: inherit;
+      font-weight: 700;
+      cursor: pointer;
+      white-space: nowrap;
+    }
+
+    .score-guide-button:hover,
+    .score-guide-button:focus-visible {
+      border-color: var(--accent);
+      outline: 2px solid transparent;
+      box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.18);
     }
 
     #timerContainer {
@@ -1650,6 +1713,72 @@
       opacity: 1;
     }
 
+
+    .score-guide-overlay {
+      position: fixed;
+      inset: 0;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      background: rgba(15, 23, 42, 0.62);
+      z-index: 1700;
+      padding: 18px;
+    }
+
+    .score-guide-panel {
+      background: var(--bg);
+      color: var(--text);
+      border-radius: 14px;
+      box-shadow: var(--shadow-soft);
+      border: 1px solid var(--border);
+      width: min(520px, 96vw);
+      max-height: 88vh;
+      overflow: auto;
+      padding: 22px;
+    }
+
+    .score-guide-header {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 16px;
+      margin-bottom: 12px;
+    }
+
+    .score-guide-header h2 { margin: 0 0 4px; font-size: 1.25rem; }
+    .score-guide-subtitle, .score-guide-helper { color: var(--text-soft); margin: 0 0 12px; }
+    .score-guide-summary { font-weight: 800; margin: 0 0 12px; color: var(--text); }
+    .score-guide-close {
+      border: 1px solid var(--border);
+      background: var(--bg-secondary);
+      color: var(--text);
+      border-radius: 999px;
+      width: 32px;
+      height: 32px;
+      font-size: 1.2rem;
+      cursor: pointer;
+    }
+
+    .score-guide-close:focus-visible,
+    .score-guide-table:focus-visible {
+      outline: 3px solid rgba(37, 99, 235, 0.45);
+      outline-offset: 2px;
+    }
+
+    .score-guide-table { width: 100%; border-collapse: collapse; font-size: 0.95rem; }
+    .score-guide-table th, .score-guide-table td { padding: 9px 10px; border-bottom: 1px solid var(--border); text-align: left; }
+    .score-guide-table th { background: var(--bg-secondary); font-weight: 800; }
+    .score-guide-table tr.current-score-row td { background: rgba(34, 197, 94, 0.14); border-bottom-color: rgba(34, 197, 94, 0.45); }
+    .current-score-label { display: inline-block; margin-left: 8px; padding: 2px 7px; border-radius: 999px; background: rgba(22, 101, 52, 0.12); color: #166534; font-size: 0.75rem; font-weight: 800; }
+
+    @media (max-width: 980px) {
+      .top-bar { padding: 0 12px; }
+      .top-left { gap: 10px; }
+      .top-right { gap: 8px; }
+      #candidateNameDisplay { max-width: 18vw; }
+      .score-guide-button { padding-inline: 8px; }
+    }
+
     /* Utility */
     .sr-only {
       position: absolute;
@@ -1785,8 +1914,12 @@
         <div class="test-title">
           IELTS 16 Academic Reading Test 1
         </div>
+        <div id="candidateNameDisplay"></div>
+        <div id="topBarScoreStatus" role="status" aria-live="polite"></div>
       </div>
       <div class="top-right">
+        <div id="studyModePill" role="status" aria-label="Study mode is active">Study mode</div>
+        <button type="button" id="scoreGuideButton" class="score-guide-button" aria-haspopup="dialog" aria-controls="scoreGuideOverlay" onclick="openScoreGuide()">📊 <span>Score guide</span></button>
         <div id="timerContainer" role="status" aria-live="polite" aria-atomic="true" aria-hidden="true"><span id="timerPrefix">Time left:</span> <span id="timerDisplay">60:00</span></div>
         <div class="icon-group">
           <span class="icon" title="Connection status">
@@ -2317,6 +2450,24 @@
     </div>
   </div>
 
+  <div id="scoreGuideOverlay" class="score-guide-overlay" role="dialog" aria-modal="true" aria-labelledby="scoreGuideTitle" aria-describedby="scoreGuideSubtitle" aria-hidden="true">
+    <div class="score-guide-panel">
+      <div class="score-guide-header">
+        <div>
+          <h2 id="scoreGuideTitle">IELTS Academic Reading score guide</h2>
+          <p id="scoreGuideSubtitle" class="score-guide-subtitle">Correct answers out of 40</p>
+        </div>
+        <button type="button" id="scoreGuideClose" class="score-guide-close" aria-label="Close score guide" onclick="closeScoreGuide()">×</button>
+      </div>
+      <p id="scoreGuideSummary" class="score-guide-summary" hidden></p>
+      <p id="scoreGuideHelper" class="score-guide-helper">Complete the full test to see your current score highlighted.</p>
+      <table class="score-guide-table" aria-label="IELTS Academic Reading raw score conversion">
+        <thead><tr><th>Correct answers</th><th>Estimated band</th></tr></thead>
+        <tbody id="scoreGuideTableBody"></tbody>
+      </table>
+    </div>
+  </div>
+
   <div id="shortcutToast" role="status" aria-live="polite" aria-atomic="true"></div>
 
   <script src="study-feedback.js"></script>
@@ -2337,6 +2488,9 @@
     let fullScreenEnforcementEnabled = false;
     let fullScreenExits = 0;
     let focusViolations = 0;
+    let fullTestScoreAvailable = false;
+    let fullTestCorrectCount = null;
+    let lastScoreGuideOpener = null;
     const visitedSections = new Set();
 
     const AVAILABLE_THEMES = [
@@ -2550,6 +2704,7 @@
         timerId = null;
       }
 
+      resetTopBarAttemptState();
       testSubmitted = false;
       latestEvaluation = { total: 0, parts: { 1: 0, 2: 0, 3: 0 } };
       tfngFeedbackSubmitted = false;
@@ -2607,6 +2762,7 @@
           timerContainer.setAttribute("aria-hidden", "false");
         }
         timerSeconds = 60 * 60;
+        updateCandidateDisplay();
       } else {
         if (timerContainer) {
           timerContainer.style.display = "none";
@@ -2616,6 +2772,7 @@
         isTimerPaused = false;
         fullScreenEnforcementEnabled = false;
       }
+      updateStudyModePill();
 
       document.getElementById("app").style.display = "block";
       initQuestionInputs();
@@ -3419,6 +3576,13 @@
 
       if (halfBandDescriptors[band]) return halfBandDescriptors[band];
 
+      if (band === "Below Band 2.5") {
+        return {
+          level: "Below Band 2.5",
+          description: "This result is below the lowest mapped Academic Reading band range shown in this score guide.",
+        };
+      }
+
       const lower = Math.floor(band);
       const upper = Math.ceil(band);
       const lowerDesc = bandDescriptors[lower];
@@ -3577,6 +3741,23 @@
       return latestEvaluation.parts[section] || 0;
     }
 
+    const academicReadingBandRows = [
+      { min: 39, max: 40, band: 9, range: "39–40" },
+      { min: 37, max: 38, band: 8.5, range: "37–38" },
+      { min: 35, max: 36, band: 8, range: "35–36" },
+      { min: 33, max: 34, band: 7.5, range: "33–34" },
+      { min: 30, max: 32, band: 7, range: "30–32" },
+      { min: 27, max: 29, band: 6.5, range: "27–29" },
+      { min: 23, max: 26, band: 6, range: "23–26" },
+      { min: 19, max: 22, band: 5.5, range: "19–22" },
+      { min: 15, max: 18, band: 5, range: "15–18" },
+      { min: 13, max: 14, band: 4.5, range: "13–14" },
+      { min: 10, max: 12, band: 4, range: "10–12" },
+      { min: 8, max: 9, band: 3.5, range: "8–9" },
+      { min: 6, max: 7, band: 3, range: "6–7" },
+      { min: 4, max: 5, band: 2.5, range: "4–5" },
+    ];
+
     function computeBandScore(correct) {
       /*
        * IELTS Academic Reading raw score to band conversion
@@ -3610,11 +3791,134 @@
       if (correct >= 8) return 3.5;
       if (correct >= 6) return 3;
       if (correct >= 4) return 2.5;
-      if (correct === 0) return 0;
-      return 1;
+      return "Below Band 2.5";
     }
 
+    function formatBandLabel(band) {
+      return typeof band === "number" ? "Band " + band : band;
+    }
 
+    function resetTopBarAttemptState() {
+      fullTestScoreAvailable = false;
+      fullTestCorrectCount = null;
+      const candidate = document.getElementById("candidateNameDisplay");
+      const score = document.getElementById("topBarScoreStatus");
+      if (candidate) {
+        candidate.textContent = "";
+        candidate.style.display = "none";
+        candidate.removeAttribute("title");
+      }
+      if (score) {
+        score.textContent = "";
+        score.style.display = "none";
+        score.removeAttribute("aria-label");
+      }
+      renderScoreGuideTable();
+    }
+
+    function updateCandidateDisplay() {
+      const candidate = document.getElementById("candidateNameDisplay");
+      if (!candidate) return;
+      if (mode === "test" && studentName) {
+        candidate.textContent = "Candidate: " + studentName;
+        candidate.title = "Candidate: " + studentName;
+        candidate.style.display = "block";
+      } else {
+        candidate.textContent = "";
+        candidate.style.display = "none";
+        candidate.removeAttribute("title");
+      }
+    }
+
+    function updateStudyModePill() {
+      const pill = document.getElementById("studyModePill");
+      if (pill) pill.style.display = mode === "study" ? "block" : "none";
+    }
+
+    function updateTopBarScore(correctCount) {
+      fullTestScoreAvailable = true;
+      fullTestCorrectCount = correctCount;
+      const band = computeBandScore(correctCount);
+      const text = correctCount + " / 40 · " + formatBandLabel(band);
+      const score = document.getElementById("topBarScoreStatus");
+      if (score) {
+        score.textContent = text;
+        score.setAttribute("aria-label", correctCount + " correct answers out of 40. Estimated IELTS Academic Reading " + formatBandLabel(band) + ".");
+        score.style.display = "block";
+      }
+      renderScoreGuideTable();
+    }
+
+    function renderScoreGuideTable() {
+      const body = document.getElementById("scoreGuideTableBody");
+      if (!body) return;
+      body.innerHTML = "";
+      const current = fullTestScoreAvailable ? fullTestCorrectCount : null;
+      academicReadingBandRows.forEach((row) => {
+        const tr = document.createElement("tr");
+        const inRange = current !== null && current >= row.min && current <= row.max;
+        if (inRange) tr.className = "current-score-row";
+        const rangeCell = document.createElement("td");
+        rangeCell.textContent = row.range;
+        if (inRange) {
+          const label = document.createElement("span");
+          label.className = "current-score-label";
+          label.textContent = "Your current score";
+          rangeCell.appendChild(label);
+        }
+        const bandCell = document.createElement("td");
+        bandCell.textContent = row.band;
+        tr.append(rangeCell, bandCell);
+        body.appendChild(tr);
+      });
+      const summary = document.getElementById("scoreGuideSummary");
+      const helper = document.getElementById("scoreGuideHelper");
+      if (summary && helper) {
+        if (fullTestScoreAvailable) {
+          const band = computeBandScore(fullTestCorrectCount);
+          summary.textContent = "Your score: " + fullTestCorrectCount + " / 40 · " + formatBandLabel(band);
+          summary.hidden = false;
+          helper.hidden = true;
+        } else {
+          summary.textContent = "";
+          summary.hidden = true;
+          helper.hidden = false;
+        }
+      }
+    }
+
+    function openScoreGuide() {
+      lastScoreGuideOpener = document.activeElement;
+      renderScoreGuideTable();
+      const overlay = document.getElementById("scoreGuideOverlay");
+      const close = document.getElementById("scoreGuideClose");
+      if (overlay) {
+        overlay.style.display = "flex";
+        overlay.setAttribute("aria-hidden", "false");
+      }
+      if (close) close.focus();
+    }
+
+    function closeScoreGuide() {
+      const overlay = document.getElementById("scoreGuideOverlay");
+      if (overlay) {
+        overlay.style.display = "none";
+        overlay.setAttribute("aria-hidden", "true");
+      }
+      if (lastScoreGuideOpener && typeof lastScoreGuideOpener.focus === "function") {
+        lastScoreGuideOpener.focus();
+      }
+    }
+
+    document.addEventListener("keydown", (event) => {
+      const overlay = document.getElementById("scoreGuideOverlay");
+      if (event.key === "Escape" && overlay && overlay.style.display === "flex") {
+        closeScoreGuide();
+      }
+    });
+
+    window.openScoreGuide = openScoreGuide;
+    window.closeScoreGuide = closeScoreGuide;
 
     function formatDuration(totalSeconds) {
       const sign = totalSeconds < 0 ? "-" : "";
@@ -5613,6 +5917,7 @@
 
       const band = computeBandScore(correctCount);
       const desc = getBandDescriptor(band);
+      updateTopBarScore(correctCount);
 
       const studentLine = document.getElementById("studentLine");
       const fullScreenExitLine = document.getElementById("fullScreenExitLine");
@@ -5645,7 +5950,7 @@
       if (bandLine)
         bandLine.textContent =
           "Estimated IELTS Academic Reading band: " +
-          band +
+          formatBandLabel(band) +
           ". Skill level: " +
           desc.level;
       if (descriptorLine) descriptorLine.textContent = desc.description;
