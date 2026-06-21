@@ -775,6 +775,29 @@
       transform: translateY(-1px);
     }
 
+    .study-task-result-line {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      margin: 6px 0 12px;
+      padding: 6px 10px;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      background: var(--bg-secondary);
+      color: var(--text);
+      font-size: 0.86rem;
+      font-weight: 700;
+    }
+
+    .study-task-result-line::before {
+      content: "";
+      width: 8px;
+      height: 8px;
+      border-radius: 999px;
+      background: var(--text-soft);
+      flex: 0 0 auto;
+    }
+
     #tfngStrategyButton,
     #oneWordStrategyButton,
     #oneWordP2StrategyButton,
@@ -2114,6 +2137,7 @@
                 <p><strong>READING PASSAGE 1 : Questions 1-13</strong></p>
                 <p>Do the following statements agree with the information given in Reading Passage 1?<span class="study-feedback-controls"><button type="button" id="tfngStrategyButton" class="study-icon-btn" aria-label="How to tackle True / False / Not Given" title="How to tackle this task" aria-controls="tfngStrategyPanel" hidden>ⓘ</button><button type="button" id="tfngRevealButton" class="study-reveal-btn" data-study-reveal-group="tfng" hidden>Show answers &amp; feedback</button></span></p>
                 <div id="tfngStrategyPanel" class="tfng-study-panel" hidden></div>
+                <div id="tfngTaskResult" class="study-task-result-line" role="status" aria-live="polite" hidden></div>
                 <p>In boxes 1-7 on your answer sheet, write</p>
                 <p><strong>TRUE</strong> if the statement agrees with the information</p>
                 <p><strong>FALSE</strong> if the statement contradicts the information</p>
@@ -2159,6 +2183,7 @@
               <div class="instruction-block">
                 <p><strong>Questions 8-13</strong><span class="study-feedback-controls"><button type="button" id="oneWordStrategyButton" class="study-icon-btn" aria-label="How to tackle ONE WORD ONLY completion" title="How to tackle this task" aria-controls="oneWordStrategyPanel" hidden>ⓘ</button><button type="button" id="oneWordRevealButton" class="study-reveal-btn" data-study-reveal-group="one-word-p1" hidden>Show answers &amp; feedback</button></span></p>
                 <div id="oneWordStrategyPanel" class="one-word-study-panel tfng-study-panel" hidden></div>
+                <div id="oneWordTaskResult" class="study-task-result-line" role="status" aria-live="polite" hidden></div>
                 <p>Complete the table below.</p>
                 <p>Choose <strong>ONE WORD ONLY</strong> from the passage for each answer.</p>
                 <p>Write your answers in boxes 8-13 on your answer sheet.</p>
@@ -2197,6 +2222,7 @@
                 <p>Reading Passage 2 has seven paragraphs, A-G.</p>
                 <p>Choose the correct heading for each paragraph from the list of headings below.<span class="study-feedback-controls"><button type="button" id="matchingHeadingsStrategyButton" class="study-icon-btn" aria-label="How to tackle Matching Headings" title="How to tackle this task" aria-controls="matchingHeadingsStrategyPanel" hidden>ⓘ</button><button type="button" id="matchingHeadingsRevealButton" class="study-reveal-btn" data-study-reveal-group="matching-headings" hidden>Show answers &amp; feedback</button></span></p>
                 <div id="matchingHeadingsStrategyPanel" class="matching-headings-study-panel tfng-study-panel" hidden></div>
+                <div id="matchingHeadingsTaskResult" class="study-task-result-line" role="status" aria-live="polite" hidden></div>
                 <p>Write the correct number, i-ix, in boxes 14-20 on your answer sheet.</p>
               </div>
 
@@ -2252,6 +2278,7 @@
               <div class="instruction-block">
                 <p><strong>Questions 21-24</strong><span class="study-feedback-controls"><button type="button" id="oneWordP2StrategyButton" class="study-icon-btn" aria-label="How to tackle ONE WORD ONLY completion" title="How to tackle this task" aria-controls="oneWordP2StrategyPanel" hidden>ⓘ</button><button type="button" id="oneWordP2RevealButton" class="study-reveal-btn" data-study-reveal-group="one-word-p2" hidden>Show answers &amp; feedback</button></span></p>
                 <div id="oneWordP2StrategyPanel" class="one-word-p2-study-panel" hidden></div>
+                <div id="oneWordP2TaskResult" class="study-task-result-line" role="status" aria-live="polite" hidden></div>
                 <p>Complete the notes below.</p>
                 <p>Choose <strong>ONE WORD ONLY</strong> from the passage for each answer.</p>
                 <p>Write your answers in boxes 21-24 on your answer sheet.</p>
@@ -2269,6 +2296,7 @@
               <div class="instruction-block">
                 <p><strong>Questions 25-26</strong><span class="study-feedback-controls"><button type="button" id="chooseTwoStrategyButton" class="study-icon-btn" aria-label="How to tackle Choose TWO letters" title="How to tackle this task" aria-controls="chooseTwoStrategyPanel" hidden>ⓘ</button><button type="button" id="chooseTwoRevealButton" class="study-reveal-btn" data-study-reveal-group="choose-two" hidden>Show answers &amp; feedback</button></span></p>
                 <div id="chooseTwoStrategyPanel" class="choose-two-study-panel" hidden></div>
+                <div id="chooseTwoTaskResult" class="study-task-result-line" role="status" aria-live="polite" hidden></div>
                 <p>Choose TWO letters, A-E.</p>
                 <p>Write the correct letters in boxes 25 and 26 on your answer sheet.</p>
                 <p>Which TWO of the following points does the writer make about King Djoser?</p>
@@ -2293,6 +2321,7 @@
                 <p><strong>READING PASSAGE 3 : Questions 27-40</strong></p>
                 <p>Choose the correct letter, A, B, C or D.<span class="study-feedback-controls"><button type="button" id="multipleChoiceStrategyButton" class="study-icon-btn" aria-label="How to tackle multiple choice" title="How to tackle this task" aria-controls="multipleChoiceStrategyPanel" hidden>ⓘ</button><button type="button" id="multipleChoiceRevealButton" class="study-reveal-btn" data-study-reveal-group="multiple-choice" hidden>Show answers &amp; feedback</button></span></p>
                 <div id="multipleChoiceStrategyPanel" class="multiple-choice-study-panel tfng-study-panel" hidden></div>
+                <div id="multipleChoiceTaskResult" class="study-task-result-line" role="status" aria-live="polite" hidden></div>
                 <p>Write the correct letter in boxes 27-30 on your answer sheet.</p>
               </div>
 
@@ -2343,6 +2372,7 @@
               <div class="instruction-block">
                 <p><strong>Questions 31-34</strong><span class="study-feedback-controls"><button type="button" id="summaryCompletionStrategyButton" class="study-icon-btn" aria-label="How to tackle summary completion with a word list" title="How to tackle this task" aria-controls="summaryCompletionStrategyPanel" hidden>ⓘ</button><button type="button" id="summaryCompletionRevealButton" class="study-reveal-btn" data-study-reveal-group="summary-completion" hidden>Show answers &amp; feedback</button></span></p>
                 <div id="summaryCompletionStrategyPanel" class="summary-completion-study-panel tfng-study-panel" hidden></div>
+                <div id="summaryCompletionTaskResult" class="study-task-result-line" role="status" aria-live="polite" hidden></div>
                 <p>Complete the summary using the list of words, A-G, below.</p>
                 <p>Write the correct letter, A-G, in boxes 31-34 on your answer sheet.</p>
               </div>
@@ -2368,6 +2398,7 @@
               <div class="instruction-block">
                 <p><strong>Questions 35-40</strong><span class="study-feedback-controls"><button type="button" id="matchingPeopleStrategyButton" class="study-icon-btn" aria-label="How to tackle matching statements with people" title="How to tackle this task" aria-controls="matchingPeopleStrategyPanel" hidden>ⓘ</button><button type="button" id="matchingPeopleRevealButton" class="study-reveal-btn" data-study-reveal-group="matching-people" hidden>Show answers &amp; feedback</button></span></p>
                 <div id="matchingPeopleStrategyPanel" class="matching-people-study-panel tfng-study-panel" hidden></div>
+                <div id="matchingPeopleTaskResult" class="study-task-result-line" role="status" aria-live="polite" hidden></div>
                 <p>Look at the following statements (Questions 35-40) and the list of people below.</p>
                 <p>Match each statement with the correct person, A, B or C.</p>
                 <p>Write the correct letter, A, B or C, in boxes 35-40 on your answer sheet.</p>
@@ -5423,14 +5454,14 @@
 
 
     const studyTaskGroups = [
-      { id: "tfng", questions: [1, 2, 3, 4, 5, 6, 7], passage: 1, revealButtonId: "tfngRevealButton", setSubmitted: (value) => { tfngFeedbackSubmitted = value; }, setCluesVisible: (value) => { tfngCluesVisible = value; }, clearSingleClue: () => { tfngSingleClueQuestion = null; }, render: renderTfngFeedbackCards, refreshClues: refreshTfngPassageClues, clearFocus: clearTfngEvidenceHighlight },
-      { id: "one-word-p1", questions: [8, 9, 10, 11, 12, 13], passage: 1, revealButtonId: "oneWordRevealButton", setSubmitted: (value) => { oneWordFeedbackSubmitted = value; }, setCluesVisible: (value) => { oneWordCluesVisible = value; }, clearSingleClue: () => { oneWordSingleClueQuestion = null; }, render: renderOneWordFeedbackCards, refreshClues: refreshOneWordPassageClues, clearFocus: clearOneWordFocus },
-      { id: "matching-headings", questions: [14, 15, 16, 17, 18, 19, 20], passage: 2, revealButtonId: "matchingHeadingsRevealButton", setSubmitted: (value) => { matchingHeadingsFeedbackSubmitted = value; }, setCluesVisible: (value) => { matchingHeadingsCluesVisible = value; }, clearSingleClue: () => { matchingHeadingsSingleClueQuestion = null; }, render: renderMatchingHeadingsFeedbackCards, refreshClues: refreshMatchingHeadingsPassageClues, clearFocus: clearMatchingHeadingsFocus },
-      { id: "one-word-p2", questions: [21, 22, 23, 24], passage: 2, revealButtonId: "oneWordP2RevealButton", setSubmitted: (value) => { oneWordP2FeedbackSubmitted = value; }, setCluesVisible: (value) => { oneWordP2CluesVisible = value; }, clearSingleClue: () => { oneWordP2SingleClueQuestion = null; }, render: renderOneWordP2FeedbackCards, refreshClues: refreshOneWordP2PassageClues, clearFocus: clearOneWordP2Focus },
-      { id: "choose-two", questions: [25, 26], passage: 2, revealButtonId: "chooseTwoRevealButton", setSubmitted: (value) => { chooseTwoFeedbackSubmitted = value; }, setCluesVisible: (value) => { chooseTwoCluesVisible = value; }, clearSingleClue: () => { chooseTwoSingleClueOption = null; }, render: renderChooseTwoFeedbackCard, refreshClues: refreshChooseTwoPassageClues, clearFocus: clearChooseTwoFocus },
-      { id: "multiple-choice", questions: [27, 28, 29, 30], passage: 3, revealButtonId: "multipleChoiceRevealButton", setSubmitted: (value) => { multipleChoiceFeedbackSubmitted = value; }, setCluesVisible: (value) => { multipleChoiceCluesVisible = value; }, clearSingleClue: () => { multipleChoiceSingleClueQuestion = null; }, render: renderMultipleChoiceFeedbackCards, refreshClues: refreshMultipleChoicePassageClues, clearFocus: clearMultipleChoiceFocus },
-      { id: "summary-completion", questions: [31, 32, 33, 34], passage: 3, revealButtonId: "summaryCompletionRevealButton", setSubmitted: (value) => { summaryCompletionFeedbackSubmitted = value; }, setCluesVisible: (value) => { summaryCompletionCluesVisible = value; }, clearSingleClue: () => { summaryCompletionSingleClueQuestion = null; }, render: renderSummaryCompletionFeedbackCards, refreshClues: refreshSummaryCompletionPassageClues, clearFocus: clearSummaryCompletionFocus },
-      { id: "matching-people", questions: [35, 36, 37, 38, 39, 40], passage: 3, revealButtonId: "matchingPeopleRevealButton", setSubmitted: (value) => { matchingPeopleFeedbackSubmitted = value; }, setCluesVisible: (value) => { matchingPeopleCluesVisible = value; }, clearSingleClue: () => { matchingPeopleSingleClueQuestion = null; }, render: renderMatchingPeopleFeedbackCards, refreshClues: refreshMatchingPeoplePassageClues, clearFocus: clearMatchingPeopleFocus }
+      { id: "tfng", questions: [1, 2, 3, 4, 5, 6, 7], passage: 1, total: 7, revealButtonId: "tfngRevealButton", resultLineId: "tfngTaskResult", setSubmitted: (value) => { tfngFeedbackSubmitted = value; }, setCluesVisible: (value) => { tfngCluesVisible = value; }, clearSingleClue: () => { tfngSingleClueQuestion = null; }, render: renderTfngFeedbackCards, refreshClues: refreshTfngPassageClues, clearFocus: clearTfngEvidenceHighlight },
+      { id: "one-word-p1", questions: [8, 9, 10, 11, 12, 13], passage: 1, total: 6, revealButtonId: "oneWordRevealButton", resultLineId: "oneWordTaskResult", setSubmitted: (value) => { oneWordFeedbackSubmitted = value; }, setCluesVisible: (value) => { oneWordCluesVisible = value; }, clearSingleClue: () => { oneWordSingleClueQuestion = null; }, render: renderOneWordFeedbackCards, refreshClues: refreshOneWordPassageClues, clearFocus: clearOneWordFocus },
+      { id: "matching-headings", questions: [14, 15, 16, 17, 18, 19, 20], passage: 2, total: 7, revealButtonId: "matchingHeadingsRevealButton", resultLineId: "matchingHeadingsTaskResult", setSubmitted: (value) => { matchingHeadingsFeedbackSubmitted = value; }, setCluesVisible: (value) => { matchingHeadingsCluesVisible = value; }, clearSingleClue: () => { matchingHeadingsSingleClueQuestion = null; }, render: renderMatchingHeadingsFeedbackCards, refreshClues: refreshMatchingHeadingsPassageClues, clearFocus: clearMatchingHeadingsFocus },
+      { id: "one-word-p2", questions: [21, 22, 23, 24], passage: 2, total: 4, revealButtonId: "oneWordP2RevealButton", resultLineId: "oneWordP2TaskResult", setSubmitted: (value) => { oneWordP2FeedbackSubmitted = value; }, setCluesVisible: (value) => { oneWordP2CluesVisible = value; }, clearSingleClue: () => { oneWordP2SingleClueQuestion = null; }, render: renderOneWordP2FeedbackCards, refreshClues: refreshOneWordP2PassageClues, clearFocus: clearOneWordP2Focus },
+      { id: "choose-two", questions: [25, 26], passage: 2, total: 2, revealButtonId: "chooseTwoRevealButton", resultLineId: "chooseTwoTaskResult", setSubmitted: (value) => { chooseTwoFeedbackSubmitted = value; }, setCluesVisible: (value) => { chooseTwoCluesVisible = value; }, clearSingleClue: () => { chooseTwoSingleClueOption = null; }, render: renderChooseTwoFeedbackCard, refreshClues: refreshChooseTwoPassageClues, clearFocus: clearChooseTwoFocus },
+      { id: "multiple-choice", questions: [27, 28, 29, 30], passage: 3, total: 4, revealButtonId: "multipleChoiceRevealButton", resultLineId: "multipleChoiceTaskResult", setSubmitted: (value) => { multipleChoiceFeedbackSubmitted = value; }, setCluesVisible: (value) => { multipleChoiceCluesVisible = value; }, clearSingleClue: () => { multipleChoiceSingleClueQuestion = null; }, render: renderMultipleChoiceFeedbackCards, refreshClues: refreshMultipleChoicePassageClues, clearFocus: clearMultipleChoiceFocus },
+      { id: "summary-completion", questions: [31, 32, 33, 34], passage: 3, total: 4, revealButtonId: "summaryCompletionRevealButton", resultLineId: "summaryCompletionTaskResult", setSubmitted: (value) => { summaryCompletionFeedbackSubmitted = value; }, setCluesVisible: (value) => { summaryCompletionCluesVisible = value; }, clearSingleClue: () => { summaryCompletionSingleClueQuestion = null; }, render: renderSummaryCompletionFeedbackCards, refreshClues: refreshSummaryCompletionPassageClues, clearFocus: clearSummaryCompletionFocus },
+      { id: "matching-people", questions: [35, 36, 37, 38, 39, 40], passage: 3, total: 6, revealButtonId: "matchingPeopleRevealButton", resultLineId: "matchingPeopleTaskResult", setSubmitted: (value) => { matchingPeopleFeedbackSubmitted = value; }, setCluesVisible: (value) => { matchingPeopleCluesVisible = value; }, clearSingleClue: () => { matchingPeopleSingleClueQuestion = null; }, render: renderMatchingPeopleFeedbackCards, refreshClues: refreshMatchingPeoplePassageClues, clearFocus: clearMatchingPeopleFocus }
     ];
     const revealedStudyTaskGroups = new Set();
 
@@ -5467,7 +5498,44 @@
 
     function resetStudyTaskRevealStates() {
       revealedStudyTaskGroups.clear();
+      hideAllStudyTaskResultLines();
       updateStudyTaskRevealButtons();
+    }
+
+    function hideStudyTaskResultLine(group) {
+      const line = document.getElementById(group.resultLineId);
+      if (!line) return;
+      line.hidden = true;
+      line.textContent = "";
+    }
+
+    function hideAllStudyTaskResultLines() {
+      studyTaskGroups.forEach(hideStudyTaskResultLine);
+    }
+
+    function getStudyTaskCorrectCount(group) {
+      if (!group) return 0;
+      if (group.id === "choose-two") return getChooseTwoCorrectCount("q25_26", ["B", "D"]);
+      return group.questions.reduce((count, q) => {
+        const user = getUserAnswer(q);
+        const key = answerKey[q];
+        let isCorrect = false;
+        if (user && Array.isArray(key)) isCorrect = key.some((k) => user.toLowerCase() === String(k).toLowerCase());
+        else if (user && typeof key === "string") {
+          if (/^(TRUE|FALSE|NOT GIVEN)$/.test(key)) isCorrect = user.toUpperCase() === key;
+          else if (key.length === 1) isCorrect = user.toUpperCase() === key.toUpperCase();
+          else isCorrect = user.toLowerCase() === key.toLowerCase();
+        }
+        return count + (isCorrect ? 1 : 0);
+      }, 0);
+    }
+
+    function updateStudyTaskResultLine(group) {
+      const line = document.getElementById(group.resultLineId);
+      if (!line) return;
+      const correct = getStudyTaskCorrectCount(group);
+      line.textContent = "Task result: " + correct + " / " + group.total + " correct";
+      line.hidden = false;
     }
 
     function clearStudyTaskQuestionFeedback(group) {
@@ -5503,6 +5571,7 @@
       group.setCluesVisible(true);
       group.clearSingleClue();
       evaluateStudyTaskGroup(group);
+      updateStudyTaskResultLine(group);
       group.render();
       group.refreshClues();
       updateTfngStudyFeedbackVisibility();
@@ -5521,6 +5590,7 @@
         const target = document.getElementById("ca-" + q);
         if (target) target.style.display = "none";
       });
+      hideStudyTaskResultLine(group);
       group.clearFocus();
       group.refreshClues();
       updateTfngStudyFeedbackVisibility();
@@ -6099,6 +6169,7 @@
       clearTfngEvidenceHighlight();
       const correctCount = evaluateQuestions();
       if (mode === "study") fullStudyReviewSubmitted = true;
+      hideAllStudyTaskResultLines();
       tfngFeedbackSubmitted = true;
       tfngCluesVisible = true;
       tfngSingleClueQuestion = null;
