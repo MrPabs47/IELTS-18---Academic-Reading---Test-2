@@ -2744,7 +2744,17 @@
       return normaliseAnswer(user) === normaliseAnswer(key);
     }
 
-    function buildScoreGuideRows(activeScore) {
+    function getBandConversionLabel(correct) {
+      return correct <= 3 ? "below 2.5" : String(computeBandScore(correct));
+    }
+
+    function isRawScoreInRange(score, range) {
+      if (score == null) return false;
+      const [low, high] = range.split("–").map((value) => Number(value));
+      return score >= low && score <= high;
+    }
+
+    function buildScoreGuideRows(activeRawScore) {
       const rows = [
         ["39–40", "9"], ["37–38", "8.5"], ["35–36", "8"], ["33–34", "7.5"],
         ["30–32", "7"], ["27–29", "6.5"], ["23–26", "6"], ["19–22", "5.5"],
@@ -2753,18 +2763,14 @@
       ];
       const body = document.getElementById("scoreGuideRows");
       if (!body) return;
-      body.innerHTML = rows.map(([range, band]) => '<tr' + (String(activeScore || "") === band ? ' class="active-band-row"' : '') + '><td>' + range + '</td><td>' + band + '</td></tr>').join("");
+      body.innerHTML = rows.map(([range, band]) => '<tr' + (isRawScoreInRange(activeRawScore, range) ? ' class="active-band-row"' : '') + '><td>' + range + '</td><td>' + band + '</td></tr>').join("");
     }
 
     function toggleScoreGuide(show) {
       const guide = document.getElementById("scoreGuide");
       if (!guide) return;
-      buildScoreGuideRows(lastRawScore == null ? null : formatBandLabel(computeBandScore(lastRawScore)));
+      buildScoreGuideRows(lastRawScore);
       guide.style.display = show ? "flex" : "none";
-    }
-
-    function formatBandLabel(band) {
-      return String(band);
     }
 
     function startStudyTimer() {
@@ -2992,10 +2998,10 @@
       const correct = evaluateQuestions();
       lastRawScore = correct;
       getStudyData().taskGroups.forEach((group) => showStudyGroup(group.id));
-      buildScoreGuideRows(formatBandLabel(computeBandScore(correct)));
+      buildScoreGuideRows(correct);
       updateCounts();
       buildQuestionNav();
-      const band = formatBandLabel(computeBandScore(correct));
+      const band = getBandConversionLabel(correct);
       alert("Study check complete: " + correct + " / 40. Estimated band: " + band + ".");
     }
 
@@ -3149,14 +3155,14 @@
       if (bandLine)
         bandLine.textContent =
           "Estimated IELTS Academic Reading band: " +
-          band +
+          getBandConversionLabel(correctCount) +
           ". Skill level: " +
           desc.level;
       if (descriptorLine) descriptorLine.textContent = desc.description;
 
       if (mode === "study") {
         getStudyData().taskGroups.forEach((group) => showStudyGroup(group.id));
-        buildScoreGuideRows(formatBandLabel(band));
+        buildScoreGuideRows(correctCount);
       }
 
       if (resultsOverlay) resultsOverlay.style.display = "flex";
@@ -3164,7 +3170,7 @@
       if (mode === "test") {
         showStudyChrome(true, false);
         getStudyData().taskGroups.forEach((group) => showStudyGroup(group.id));
-        buildScoreGuideRows(formatBandLabel(band));
+        buildScoreGuideRows(correctCount);
         testSubmitted = true;
         isTestRunning = false;
         updateActiveCandidateDisplay();
