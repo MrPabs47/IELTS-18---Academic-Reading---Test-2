@@ -1868,11 +1868,7 @@
           <div class="pane-header" id="passageHeader">
             <div class="passage-header-line" id="passageHeaderLine">Part 1 <span>Read the text and answer questions 1–13.</span></div>
             <div class="passage-clue-toolbar" id="passageClueToolbar" aria-label="Passage clue controls">
-              <button type="button" id="tfngClueToggle" class="tfng-clue-toggle" hidden>Show all passage clues</button>
-              <button type="button" id="oneWordClueToggle" class="one-word-clue-toggle" hidden>Show all Q8–13 passage clues</button>
-              <button type="button" id="matchingHeadingsClueToggle" class="matching-headings-clue-toggle" hidden>Show all Q14–20 passage clues</button>
-              <button type="button" id="oneWordP2ClueToggle" class="one-word-p2-clue-toggle" hidden>Show all Q21–24 passage clues</button>
-              <button type="button" id="chooseTwoClueToggle" class="one-word-p2-clue-toggle" hidden>Show all Q25–26 passage clues</button>
+              <button type="button" id="passageClueToggle" class="tfng-clue-toggle" hidden>Show all passage clues</button>
             </div>
           </div>
           <div class="pane-content" id="passageContent">
@@ -3794,27 +3790,63 @@
       }
     }
 
-    function isPassageClueToggleActiveForSection(toggleId) {
-      if (activeSection === 1) return toggleId === "tfngClueToggle" || toggleId === "oneWordClueToggle";
-      if (activeSection === 2) return toggleId === "matchingHeadingsClueToggle" || toggleId === "oneWordP2ClueToggle" || toggleId === "chooseTwoClueToggle";
-      return false;
+    function getActivePassageClueGroups() {
+      if (activeSection === 1) {
+        return [
+          { available: isTfngFeedbackAvailable, full: () => tfngCluesVisible && tfngSingleClueQuestion === null },
+          { available: isOneWordFeedbackAvailable, full: () => oneWordCluesVisible && oneWordSingleClueQuestion === null }
+        ];
+      }
+      if (activeSection === 2) {
+        return [
+          { available: isMatchingHeadingsFeedbackAvailable, full: () => matchingHeadingsCluesVisible && matchingHeadingsSingleClueQuestion === null },
+          { available: isOneWordP2FeedbackAvailable, full: () => oneWordP2CluesVisible && oneWordP2SingleClueQuestion === null },
+          { available: isChooseTwoFeedbackAvailable, full: () => chooseTwoCluesVisible && chooseTwoSingleClueOption === null }
+        ];
+      }
+      return [];
+    }
+
+    function isActivePassageClueMapFullyVisible() {
+      const groups = getActivePassageClueGroups().filter((group) => group.available());
+      return groups.length > 0 && groups.every((group) => group.full());
+    }
+
+    function setActivePassageClueMapVisible(visible) {
+      if (activeSection === 1) {
+        if (isTfngFeedbackAvailable()) { tfngCluesVisible = visible; tfngSingleClueQuestion = null; }
+        if (isOneWordFeedbackAvailable()) { oneWordCluesVisible = visible; oneWordSingleClueQuestion = null; }
+      } else if (activeSection === 2) {
+        if (isMatchingHeadingsFeedbackAvailable()) { matchingHeadingsCluesVisible = visible; matchingHeadingsSingleClueQuestion = null; }
+        if (isOneWordP2FeedbackAvailable()) { oneWordP2CluesVisible = visible; oneWordP2SingleClueQuestion = null; }
+        if (isChooseTwoFeedbackAvailable()) { chooseTwoCluesVisible = visible; chooseTwoSingleClueOption = null; }
+      }
+      refreshActivePassageClues();
+    }
+
+    function refreshActivePassageClues() {
+      refreshTfngPassageClues();
+      refreshOneWordPassageClues();
+      refreshMatchingHeadingsPassageClues();
+      refreshOneWordP2PassageClues();
+      refreshChooseTwoPassageClues();
+      updatePassageClueToolbarVisibility();
     }
 
     function updatePassageClueToolbarVisibility() {
-      updateTfngClueToggle();
-      updateOneWordClueToggle();
-      updateMatchingHeadingsClueToggle();
-      updateOneWordP2ClueToggle();
-      updateChooseTwoClueToggle();
+      const toolbar = document.getElementById("passageClueToolbar");
+      const toggle = document.getElementById("passageClueToggle");
+      const available = getActivePassageClueGroups().some((group) => group.available());
+      if (toolbar) toolbar.hidden = !available;
+      if (!toggle) return;
+      toggle.hidden = !available;
+      const fullMapVisible = isActivePassageClueMapFullyVisible();
+      toggle.textContent = fullMapVisible ? "Hide all passage clues" : "Show all passage clues";
+      toggle.setAttribute("aria-pressed", String(fullMapVisible));
     }
 
     function updateTfngClueToggle() {
-      const toggle = document.getElementById("tfngClueToggle");
-      const available = isTfngFeedbackAvailable() && isPassageClueToggleActiveForSection("tfngClueToggle");
-      if (!toggle) return;
-      toggle.hidden = !available;
-      toggle.textContent = tfngCluesVisible && tfngSingleClueQuestion === null ? "Hide all passage clues" : "Show all passage clues";
-      toggle.setAttribute("aria-pressed", String(tfngCluesVisible));
+      updatePassageClueToolbarVisibility();
     }
 
     function refreshTfngPassageClues() {
@@ -3860,7 +3892,8 @@
     }
 
     function revealTfngEvidence(questionNumber) {
-      const allCluesVisible = tfngCluesVisible && tfngSingleClueQuestion === null;
+      const allCluesVisible = activeSection === 1 && isActivePassageClueMapFullyVisible();
+      if (!allCluesVisible) { if (isOneWordFeedbackAvailable()) { oneWordCluesVisible = false; oneWordSingleClueQuestion = null; } refreshOneWordPassageClues(); }
       focusTfngPassageClue(questionNumber, true, !allCluesVisible);
     }
 
@@ -3911,12 +3944,7 @@
     }
 
     function updateOneWordClueToggle() {
-      const toggle = document.getElementById("oneWordClueToggle");
-      const available = isOneWordFeedbackAvailable() && isPassageClueToggleActiveForSection("oneWordClueToggle");
-      if (!toggle) return;
-      toggle.hidden = !available;
-      toggle.textContent = oneWordCluesVisible && oneWordSingleClueQuestion === null ? "Hide all Q8–13 passage clues" : "Show all Q8–13 passage clues";
-      toggle.setAttribute("aria-pressed", String(oneWordCluesVisible));
+      updatePassageClueToolbarVisibility();
     }
 
     function refreshOneWordPassageClues() {
@@ -3950,7 +3978,8 @@
     }
 
     function revealOneWordEvidence(questionNumber) {
-      const allCluesVisible = oneWordCluesVisible && oneWordSingleClueQuestion === null;
+      const allCluesVisible = activeSection === 1 && isActivePassageClueMapFullyVisible();
+      if (!allCluesVisible) { if (isTfngFeedbackAvailable()) { tfngCluesVisible = false; tfngSingleClueQuestion = null; } refreshTfngPassageClues(); }
       focusOneWordPassageClue(questionNumber, true, !allCluesVisible);
     }
 
@@ -4018,12 +4047,7 @@
     }
 
     function updateOneWordP2ClueToggle() {
-      const toggle = document.getElementById("oneWordP2ClueToggle");
-      const available = isOneWordP2FeedbackAvailable() && isPassageClueToggleActiveForSection("oneWordP2ClueToggle");
-      if (!toggle) return;
-      toggle.hidden = !available;
-      toggle.textContent = oneWordP2CluesVisible && oneWordP2SingleClueQuestion === null ? "Hide all Q21–24 passage clues" : "Show all Q21–24 passage clues";
-      toggle.setAttribute("aria-pressed", String(oneWordP2CluesVisible));
+      updatePassageClueToolbarVisibility();
     }
 
     function refreshOneWordP2PassageClues() {
@@ -4058,7 +4082,8 @@
     }
 
     function revealOneWordP2Evidence(questionNumber) {
-      const allCluesVisible = oneWordP2CluesVisible && oneWordP2SingleClueQuestion === null;
+      const allCluesVisible = activeSection === 2 && isActivePassageClueMapFullyVisible();
+      if (!allCluesVisible) { if (isMatchingHeadingsFeedbackAvailable()) { matchingHeadingsCluesVisible = false; matchingHeadingsSingleClueQuestion = null; } if (isChooseTwoFeedbackAvailable()) { chooseTwoCluesVisible = false; chooseTwoSingleClueOption = null; } refreshMatchingHeadingsPassageClues(); refreshChooseTwoPassageClues(); }
       focusOneWordP2PassageClue(questionNumber, true, !allCluesVisible);
     }
 
@@ -4121,12 +4146,7 @@
     }
 
     function updateChooseTwoClueToggle() {
-      const toggle = document.getElementById("chooseTwoClueToggle");
-      const available = isChooseTwoFeedbackAvailable() && isPassageClueToggleActiveForSection("chooseTwoClueToggle");
-      if (!toggle) return;
-      toggle.hidden = !available;
-      toggle.textContent = chooseTwoCluesVisible && chooseTwoSingleClueOption === null ? "Hide all Q25–26 passage clues" : "Show all Q25–26 passage clues";
-      toggle.setAttribute("aria-pressed", String(chooseTwoCluesVisible));
+      updatePassageClueToolbarVisibility();
     }
 
     function refreshChooseTwoPassageClues() {
@@ -4178,7 +4198,8 @@
     }
 
     function revealChooseTwoEvidence(optionLetter) {
-      const allCluesVisible = chooseTwoCluesVisible && chooseTwoSingleClueOption === null;
+      const allCluesVisible = activeSection === 2 && isActivePassageClueMapFullyVisible();
+      if (!allCluesVisible) { if (isMatchingHeadingsFeedbackAvailable()) { matchingHeadingsCluesVisible = false; matchingHeadingsSingleClueQuestion = null; } if (isOneWordP2FeedbackAvailable()) { oneWordP2CluesVisible = false; oneWordP2SingleClueQuestion = null; } refreshMatchingHeadingsPassageClues(); refreshOneWordP2PassageClues(); }
       focusChooseTwoPassageClue(optionLetter, true, !allCluesVisible);
     }
 
@@ -4215,12 +4236,7 @@
     }
 
     function updateMatchingHeadingsClueToggle() {
-      const toggle = document.getElementById("matchingHeadingsClueToggle");
-      const available = isMatchingHeadingsFeedbackAvailable() && isPassageClueToggleActiveForSection("matchingHeadingsClueToggle");
-      if (!toggle) return;
-      toggle.hidden = !available;
-      toggle.textContent = matchingHeadingsCluesVisible && matchingHeadingsSingleClueQuestion === null ? "Hide all Q14–20 passage clues" : "Show all Q14–20 passage clues";
-      toggle.setAttribute("aria-pressed", String(matchingHeadingsCluesVisible));
+      updatePassageClueToolbarVisibility();
     }
 
     function refreshMatchingHeadingsPassageClues() {
@@ -4254,7 +4270,8 @@
     }
 
     function revealMatchingHeadingsEvidence(questionNumber) {
-      const allCluesVisible = matchingHeadingsCluesVisible && matchingHeadingsSingleClueQuestion === null;
+      const allCluesVisible = activeSection === 2 && isActivePassageClueMapFullyVisible();
+      if (!allCluesVisible) { if (isOneWordP2FeedbackAvailable()) { oneWordP2CluesVisible = false; oneWordP2SingleClueQuestion = null; } if (isChooseTwoFeedbackAvailable()) { chooseTwoCluesVisible = false; chooseTwoSingleClueOption = null; } refreshOneWordP2PassageClues(); refreshChooseTwoPassageClues(); }
       focusMatchingHeadingsPassageClue(questionNumber, true, !allCluesVisible);
     }
 
@@ -4708,64 +4725,10 @@
         });
         matchingHeadingsStrategyButton.setAttribute("aria-expanded", "false");
       }
-      const clueToggle = document.getElementById("tfngClueToggle");
-      if (clueToggle) {
-        clueToggle.addEventListener("click", () => {
-          if (tfngSingleClueQuestion !== null) {
-            tfngSingleClueQuestion = null;
-            tfngCluesVisible = true;
-          } else {
-            tfngCluesVisible = !tfngCluesVisible;
-          }
-          refreshTfngPassageClues();
-        });
-      }
-      const matchingHeadingsClueToggle = document.getElementById("matchingHeadingsClueToggle");
-      if (matchingHeadingsClueToggle) {
-        matchingHeadingsClueToggle.addEventListener("click", () => {
-          if (matchingHeadingsSingleClueQuestion !== null) {
-            matchingHeadingsSingleClueQuestion = null;
-            matchingHeadingsCluesVisible = true;
-          } else {
-            matchingHeadingsCluesVisible = !matchingHeadingsCluesVisible;
-          }
-          refreshMatchingHeadingsPassageClues();
-        });
-      }
-      const oneWordP2ClueToggle = document.getElementById("oneWordP2ClueToggle");
-      if (oneWordP2ClueToggle) {
-        oneWordP2ClueToggle.addEventListener("click", () => {
-          if (oneWordP2SingleClueQuestion !== null) {
-            oneWordP2SingleClueQuestion = null;
-            oneWordP2CluesVisible = true;
-          } else {
-            oneWordP2CluesVisible = !oneWordP2CluesVisible;
-          }
-          refreshOneWordP2PassageClues();
-        });
-      }
-      const chooseTwoClueToggle = document.getElementById("chooseTwoClueToggle");
-      if (chooseTwoClueToggle) {
-        chooseTwoClueToggle.addEventListener("click", () => {
-          if (chooseTwoSingleClueOption !== null) {
-            chooseTwoSingleClueOption = null;
-            chooseTwoCluesVisible = true;
-          } else {
-            chooseTwoCluesVisible = !chooseTwoCluesVisible;
-          }
-          refreshChooseTwoPassageClues();
-        });
-      }
-      const oneWordClueToggle = document.getElementById("oneWordClueToggle");
-      if (oneWordClueToggle) {
-        oneWordClueToggle.addEventListener("click", () => {
-          if (oneWordSingleClueQuestion !== null) {
-            oneWordSingleClueQuestion = null;
-            oneWordCluesVisible = true;
-          } else {
-            oneWordCluesVisible = !oneWordCluesVisible;
-          }
-          refreshOneWordPassageClues();
+      const passageClueToggle = document.getElementById("passageClueToggle");
+      if (passageClueToggle) {
+        passageClueToggle.addEventListener("click", () => {
+          setActivePassageClueMapVisible(!isActivePassageClueMapFullyVisible());
         });
       }
       document.getElementById("passageContent")?.addEventListener("click", (event) => {
