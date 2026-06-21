@@ -320,6 +320,21 @@
       outline: none;
     }
 
+    .heading-placement-target.current-matching-heading .heading-target-line {
+      border-color: rgba(37, 99, 235, 0.65);
+      background: color-mix(in srgb, var(--accent-soft) 38%, var(--bg) 62%);
+    }
+
+    .heading-placement-target.filled .heading-target-line {
+      border-color: transparent;
+      background: transparent;
+    }
+
+    .heading-placement-target.filled.current-matching-heading .heading-target-line {
+      border-color: rgba(37, 99, 235, 0.65);
+      background: color-mix(in srgb, var(--accent-soft) 28%, transparent 72%);
+    }
+
     .heading-target-card {
       display: none;
       align-items: center;
@@ -327,9 +342,9 @@
       gap: 10px;
       width: 100%;
       padding: 5px 8px;
-      border: 1px solid var(--accent);
+      border: 1px solid rgba(100, 116, 139, 0.45);
       border-radius: 8px;
-      background: var(--accent-soft);
+      background: color-mix(in srgb, var(--bg) 92%, var(--bg-secondary));
       color: var(--text);
       font-weight: 700;
       line-height: 1.35;
@@ -835,6 +850,14 @@
     .feedback-only.current-question,
     .feedback-only.correct,
     .feedback-only.incorrect {
+      border: 0;
+      background: transparent;
+    }
+
+    .matching-heading-feedback-row,
+    .matching-heading-feedback-row.current-question {
+      margin: 0;
+      padding: 0;
       border: 0;
       background: transparent;
     }
@@ -1477,23 +1500,49 @@
     }
 
     .matching-headings-bank {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
       align-items: stretch;
       gap: 8px;
       margin-top: 8px;
       padding: 10px;
     }
 
+    .matching-headings-bank .drag-hint {
+      grid-column: 1 / -1;
+    }
+
     .matching-heading-card {
-      justify-content: flex-start;
-      flex: 1 1 210px;
+      display: grid;
+      grid-template-columns: 2.25rem minmax(0, 1fr);
+      align-items: start;
+      column-gap: 10px;
       min-height: 0;
       padding: 8px 10px;
       font-size: 0.92rem;
       font-weight: 700;
-      line-height: 1.25;
+      line-height: 1.28;
       text-align: left;
       color: var(--text);
       font-family: inherit;
+    }
+
+    .matching-heading-roman {
+      color: var(--text-soft);
+      font-weight: 800;
+      text-align: right;
+      white-space: nowrap;
+    }
+
+    .matching-heading-wording {
+      min-width: 0;
+      color: var(--text);
+    }
+
+    @media (max-width: 760px) {
+      .matching-headings-bank {
+        grid-template-columns: 1fr;
+      }
     }
 
     .matching-heading-card:disabled,
@@ -2457,15 +2506,15 @@
 
               <div class="drag-bank matching-headings-bank" id="matchingHeadingsBank" aria-label="List of Headings">
                 <span class="drag-hint">Select or drag a heading, then place it above Paragraph A-G in the passage.</span>
-                <button type="button" class="drag-item matching-heading-card" draggable="true" data-heading-value="i" data-heading-text="The areas and artefacts within the pyramid itself" aria-label="Heading i: The areas and artefacts within the pyramid itself"><strong>i</strong>&nbsp; The areas and artefacts within the pyramid itself</button>
-                <button type="button" class="drag-item matching-heading-card" draggable="true" data-heading-value="ii" data-heading-text="A difficult task for those involved" aria-label="Heading ii: A difficult task for those involved"><strong>ii</strong>&nbsp; A difficult task for those involved</button>
-                <button type="button" class="drag-item matching-heading-card" draggable="true" data-heading-value="iii" data-heading-text="A king who saved his people" aria-label="Heading iii: A king who saved his people"><strong>iii</strong>&nbsp; A king who saved his people</button>
-                <button type="button" class="drag-item matching-heading-card" draggable="true" data-heading-value="iv" data-heading-text="A single certainty among other less definite facts" aria-label="Heading iv: A single certainty among other less definite facts"><strong>iv</strong>&nbsp; A single certainty among other less definite facts</button>
-                <button type="button" class="drag-item matching-heading-card" draggable="true" data-heading-value="v" data-heading-text="An overview of the external buildings and areas" aria-label="Heading v: An overview of the external buildings and areas"><strong>v</strong>&nbsp; An overview of the external buildings and areas</button>
-                <button type="button" class="drag-item matching-heading-card" draggable="true" data-heading-value="vi" data-heading-text="A pyramid design that others copied" aria-label="Heading vi: A pyramid design that others copied"><strong>vi</strong>&nbsp; A pyramid design that others copied</button>
-                <button type="button" class="drag-item matching-heading-card" draggable="true" data-heading-value="vii" data-heading-text="An idea for changing the design of burial structures" aria-label="Heading vii: An idea for changing the design of burial structures"><strong>vii</strong>&nbsp; An idea for changing the design of burial structures</button>
-                <button type="button" class="drag-item matching-heading-card" draggable="true" data-heading-value="viii" data-heading-text="An incredible experience despite the few remains" aria-label="Heading viii: An incredible experience despite the few remains"><strong>viii</strong>&nbsp; An incredible experience despite the few remains</button>
-                <button type="button" class="drag-item matching-heading-card" draggable="true" data-heading-value="ix" data-heading-text="The answers to some unexpected questions" aria-label="Heading ix: The answers to some unexpected questions"><strong>ix</strong>&nbsp; The answers to some unexpected questions</button>
+                <button type="button" class="drag-item matching-heading-card" draggable="true" data-heading-value="i" data-heading-text="The areas and artefacts within the pyramid itself" aria-label="Heading i: The areas and artefacts within the pyramid itself"><span class="matching-heading-roman">i</span><span class="matching-heading-wording">The areas and artefacts within the pyramid itself</span></button>
+                <button type="button" class="drag-item matching-heading-card" draggable="true" data-heading-value="ii" data-heading-text="A difficult task for those involved" aria-label="Heading ii: A difficult task for those involved"><span class="matching-heading-roman">ii</span><span class="matching-heading-wording">A difficult task for those involved</span></button>
+                <button type="button" class="drag-item matching-heading-card" draggable="true" data-heading-value="iii" data-heading-text="A king who saved his people" aria-label="Heading iii: A king who saved his people"><span class="matching-heading-roman">iii</span><span class="matching-heading-wording">A king who saved his people</span></button>
+                <button type="button" class="drag-item matching-heading-card" draggable="true" data-heading-value="iv" data-heading-text="A single certainty among other less definite facts" aria-label="Heading iv: A single certainty among other less definite facts"><span class="matching-heading-roman">iv</span><span class="matching-heading-wording">A single certainty among other less definite facts</span></button>
+                <button type="button" class="drag-item matching-heading-card" draggable="true" data-heading-value="v" data-heading-text="An overview of the external buildings and areas" aria-label="Heading v: An overview of the external buildings and areas"><span class="matching-heading-roman">v</span><span class="matching-heading-wording">An overview of the external buildings and areas</span></button>
+                <button type="button" class="drag-item matching-heading-card" draggable="true" data-heading-value="vi" data-heading-text="A pyramid design that others copied" aria-label="Heading vi: A pyramid design that others copied"><span class="matching-heading-roman">vi</span><span class="matching-heading-wording">A pyramid design that others copied</span></button>
+                <button type="button" class="drag-item matching-heading-card" draggable="true" data-heading-value="vii" data-heading-text="An idea for changing the design of burial structures" aria-label="Heading vii: An idea for changing the design of burial structures"><span class="matching-heading-roman">vii</span><span class="matching-heading-wording">An idea for changing the design of burial structures</span></button>
+                <button type="button" class="drag-item matching-heading-card" draggable="true" data-heading-value="viii" data-heading-text="An incredible experience despite the few remains" aria-label="Heading viii: An incredible experience despite the few remains"><span class="matching-heading-roman">viii</span><span class="matching-heading-wording">An incredible experience despite the few remains</span></button>
+                <button type="button" class="drag-item matching-heading-card" draggable="true" data-heading-value="ix" data-heading-text="The answers to some unexpected questions" aria-label="Heading ix: The answers to some unexpected questions"><span class="matching-heading-roman">ix</span><span class="matching-heading-wording">The answers to some unexpected questions</span></button>
               </div>
               <div id="matchingHeadingsLive" class="matching-headings-live" aria-live="polite"></div>
 
@@ -3879,9 +3928,16 @@
       document
         .querySelectorAll(".question-block, .inline-answer")
         .forEach((el) => el.classList.remove("current-question"));
+      document
+        .querySelectorAll(".heading-placement-target.current-matching-heading")
+        .forEach((el) => el.classList.remove("current-matching-heading"));
       const block = getQuestionTarget(qNum);
-      if (block && !block.classList.contains("feedback-only")) {
+      if (block && !block.classList.contains("feedback-only") && !block.classList.contains("matching-heading-feedback-row")) {
         block.classList.add("current-question");
+      }
+      if (qNum >= 14 && qNum <= 20) {
+        const target = document.querySelector('.heading-placement-target[data-q="' + qNum + '"]');
+        if (target) target.classList.add("current-matching-heading");
       }
     }
 
