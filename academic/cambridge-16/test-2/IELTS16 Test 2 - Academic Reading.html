@@ -1169,6 +1169,32 @@
       cursor: pointer;
       font-size: 0.82rem;
     }
+
+
+    .study-mode-pill { display:none; align-items:center; gap:6px; border:1px solid #b7d4ff; background:#eaf3ff; color:#0b4a8b; border-radius:999px; padding:5px 10px; font-weight:700; font-size:.85rem; }
+    .study-toolbar { display:none; gap:10px; align-items:center; flex-wrap:wrap; padding:10px 14px; border-bottom:1px solid var(--border); background:var(--bg-secondary); }
+    .study-timer { font-weight:700; }
+    .score-guide-btn, .study-check-all, .study-task-toggle { border:1px solid var(--border); background:var(--bg); color:var(--text); border-radius:8px; padding:7px 10px; cursor:pointer; font-weight:700; }
+    .study-check-all { background:#0b5cab; color:#fff; border-color:#0b5cab; }
+    .study-task-panel { border:1px solid #d7e3f5; border-radius:12px; background:#f8fbff; padding:12px; margin:12px 0; }
+    .study-task-panel h3 { margin:0 0 6px; font-size:1rem; }
+    .study-task-panel ol { margin:8px 0 8px 22px; }
+    .study-task-actions { display:flex; align-items:center; gap:10px; flex-wrap:wrap; margin-top:10px; }
+    .study-task-result { display:none; font-weight:700; color:#0b4a8b; }
+    .study-feedback-card { border:1px solid #d7e3f5; border-left:5px solid #0b5cab; border-radius:12px; background:#fff; padding:12px; margin:10px 0; box-shadow:0 2px 8px rgba(0,0,0,.04); }
+    .study-feedback-card h4 { margin:0 0 8px; }
+    .study-feedback-card dl { display:grid; grid-template-columns:max-content 1fr; gap:6px 12px; margin:0; }
+    .study-feedback-card dt { font-weight:700; color:#333; }
+    .study-feedback-card dd { margin:0; }
+    .study-feedback-card.correct { border-left-color:#198754; }
+    .study-feedback-card.incorrect { border-left-color:#c62828; }
+    .study-clue-btn { margin-top:10px; border:1px solid #0b5cab; color:#0b5cab; background:#fff; border-radius:999px; padding:6px 10px; cursor:pointer; font-weight:700; }
+    .study-evidence-highlight { background:#fff3a3; box-shadow:0 0 0 3px rgba(255,193,7,.35); border-radius:3px; }
+    .score-guide { display:none; position:fixed; inset:0; background:rgba(0,0,0,.45); z-index:10002; align-items:center; justify-content:center; padding:20px; }
+    .score-guide-panel { background:var(--bg); color:var(--text); border-radius:14px; max-width:520px; width:100%; padding:18px; box-shadow:0 18px 50px rgba(0,0,0,.25); }
+    .score-guide-panel table { width:100%; border-collapse:collapse; margin-top:10px; }
+    .score-guide-panel th, .score-guide-panel td { border:1px solid var(--border); padding:6px 8px; text-align:left; }
+    .score-guide-panel tr.active-band-row { background:#d9ecff; font-weight:800; }
   </style>
 </head>
 <body data-theme="black-on-white">
@@ -1258,6 +1284,21 @@
         </div>
       </div>
     </header>
+
+    <div id="studyToolbar" class="study-toolbar" aria-live="polite">
+      <span id="studyModePill" class="study-mode-pill">Study mode</span>
+      <span class="study-timer">Study time: <span id="studyTimerDisplay">00:00</span></span>
+      <button type="button" class="score-guide-btn" onclick="toggleScoreGuide(true)">Score guide</button>
+      <button type="button" class="study-check-all" onclick="checkAllStudyAnswers()">Check all answers</button>
+    </div>
+
+    <div id="scoreGuide" class="score-guide" role="dialog" aria-modal="true" aria-labelledby="scoreGuideTitle">
+      <div class="score-guide-panel">
+        <button class="options-close" type="button" onclick="toggleScoreGuide(false)">✕</button>
+        <h2 id="scoreGuideTitle">Academic Reading Score guide</h2>
+        <table><thead><tr><th>Raw score</th><th>Band</th></tr></thead><tbody id="scoreGuideRows"></tbody></table>
+      </div>
+    </div>
 
     <!-- Options overlay -->
     <div id="optionsOverlay">
@@ -1458,6 +1499,7 @@
 
   <div id="shortcutToast" role="status" aria-live="polite" aria-atomic="true"></div>
 
+  <script src="study-feedback.js"></script>
   <script>
     /***************
      * GLOBAL STATE
@@ -1675,6 +1717,9 @@
 
     function startTest(selectedMode) {
       mode = selectedMode;
+      testSubmitted = false;
+      document.querySelectorAll("#questionContent select, #questionContent input").forEach((el) => (el.disabled = false));
+      resetStudyReviewState();
       const timerContainer = document.getElementById("timerContainer");
 
       visitedSections.clear();
@@ -1688,12 +1733,16 @@
       }
 
       if (mode === "test") {
+        stopStudyTimer();
+        showStudyChrome(false);
         if (timerContainer) {
           timerContainer.style.display = "block";
           timerContainer.setAttribute("aria-hidden", "false");
         }
         timerSeconds = 60 * 60;
       } else {
+        showStudyChrome(true);
+        startStudyTimer();
         if (timerContainer) {
           timerContainer.style.display = "none";
           timerContainer.setAttribute("aria-hidden", "true");
@@ -1704,6 +1753,7 @@
       }
 
       document.getElementById("app").style.display = "block";
+      initStudyFramework();
       initQuestionInputs();
       setupDragMatch();
       buildQuestionNav();
@@ -2168,29 +2218,9 @@
       });
     }
 
-    function convertGapFillNumbersToBullets() {
-      document.querySelectorAll(".question-block[data-q]").forEach((block) => {
-        const qNum = parseInt(block.getAttribute("data-q"), 10);
-        if (!(qNum >= 9 && qNum <= 13)) return;
-        const label = block.querySelector(".question-number-label");
-        const text = block.querySelector(".question-text");
-        if (!text) return;
-        if (label) label.remove();
-        text.classList.add("gap-fill");
-
-        if (!text.querySelector(".gap-bullet")) {
-          const bullet = document.createElement("span");
-          bullet.className = "gap-bullet";
-          bullet.setAttribute("aria-hidden", "true");
-          bullet.textContent = "•";
-          text.prepend(bullet);
-        }
-      });
-    }
 // Build all questions immediately after DOM loads (script is at the end)
     buildRemainingQuestions();
     stampInlineInputNumbers();
-    convertGapFillNumbersToBullets();
     setupDragMatch();
     enableRadioToggleOff();
 
@@ -2412,6 +2442,7 @@
       updateCounts();
       highlightCurrentQuestion(currentQuestion);
       buildQuestionNav();
+      renderVisibleStudyEvidence();
     }
 
     function prevSection() {
@@ -2642,10 +2673,263 @@
       if (correct >= 8) return 3.5;
       if (correct >= 6) return 3;
       if (correct >= 4) return 2.5;
-      if (correct === 0) return 0;
-      return 1;
+      return "below 2.5";
     }
 
+
+
+
+
+    /**********************
+     * STUDY MODE FEEDBACK
+     **********************/
+    let studyTimerSeconds = 0;
+    let studyTimerId = null;
+    let fullStudyReviewSubmitted = false;
+    let lastRawScore = null;
+    const revealedStudyTaskGroups = new Set();
+
+    function getStudyData() {
+      return window.IELTS16AcademicTest2StudyFeedback || { taskGroups: [], taskStrategies: {}, questions: {} };
+    }
+
+    function escapeHtml(value) {
+      return String(value == null ? "" : value).replace(/[&<>"']/g, (ch) => ({"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#39;"}[ch]));
+    }
+
+    function normaliseAnswer(value) {
+      return String(value || "").trim().toLowerCase();
+    }
+
+    function isQuestionCorrect(q) {
+      const user = getUserAnswer(q);
+      const key = answerKey[q];
+      if (!user) return false;
+      if (Array.isArray(key)) return key.some((item) => normaliseAnswer(item) === normaliseAnswer(user));
+      if (/^(TRUE|FALSE|NOT GIVEN|YES|NO)$/.test(String(key))) return user.toUpperCase() === String(key).toUpperCase();
+      return normaliseAnswer(user) === normaliseAnswer(key);
+    }
+
+    function buildScoreGuideRows(activeScore) {
+      const rows = [
+        ["39–40", "9"], ["37–38", "8.5"], ["35–36", "8"], ["33–34", "7.5"],
+        ["30–32", "7"], ["27–29", "6.5"], ["23–26", "6"], ["19–22", "5.5"],
+        ["15–18", "5"], ["13–14", "4.5"], ["10–12", "4"], ["8–9", "3.5"],
+        ["6–7", "3"], ["4–5", "2.5"], ["0–3", "below 2.5"]
+      ];
+      const body = document.getElementById("scoreGuideRows");
+      if (!body) return;
+      body.innerHTML = rows.map(([range, band]) => '<tr' + (String(activeScore || "") === band ? ' class="active-band-row"' : '') + '><td>' + range + '</td><td>' + band + '</td></tr>').join("");
+    }
+
+    function toggleScoreGuide(show) {
+      const guide = document.getElementById("scoreGuide");
+      if (!guide) return;
+      buildScoreGuideRows(lastRawScore == null ? null : formatBandLabel(computeBandScore(lastRawScore)));
+      guide.style.display = show ? "flex" : "none";
+    }
+
+    function formatBandLabel(band) {
+      return String(band);
+    }
+
+    function startStudyTimer() {
+      stopStudyTimer();
+      studyTimerSeconds = 0;
+      const display = document.getElementById("studyTimerDisplay");
+      if (display) display.textContent = formatDuration(studyTimerSeconds);
+      studyTimerId = setInterval(() => {
+        studyTimerSeconds += 1;
+        const el = document.getElementById("studyTimerDisplay");
+        if (el) el.textContent = formatDuration(studyTimerSeconds);
+      }, 1000);
+    }
+
+    function stopStudyTimer() {
+      if (studyTimerId) clearInterval(studyTimerId);
+      studyTimerId = null;
+    }
+
+    function resetStudyReviewState() {
+      fullStudyReviewSubmitted = false;
+      lastRawScore = null;
+      revealedStudyTaskGroups.clear();
+      document.querySelectorAll(".study-feedback-card").forEach((el) => el.remove());
+      document.querySelectorAll(".study-task-result").forEach((el) => { el.textContent = ""; el.style.display = "none"; });
+      document.querySelectorAll(".study-task-toggle").forEach((btn) => { btn.textContent = "Show feedback"; btn.setAttribute("aria-expanded", "false"); });
+      clearStudyEvidenceHighlights();
+      Object.keys(correctAnswerText).forEach((q) => { const el = document.getElementById("ca-" + q); if (el) { el.textContent = ""; el.style.display = "none"; } });
+      document.querySelectorAll(".question-block").forEach((el) => el.classList.remove("correct", "incorrect"));
+      buildScoreGuideRows(null);
+    }
+
+    function initStudyFramework() {
+      const data = getStudyData();
+      data.taskGroups.forEach((group) => {
+        if (document.getElementById("study-panel-" + group.id)) return;
+        const firstBlock = document.querySelector('.question-block[data-q="' + group.questionNumbers[0] + '"]');
+        if (!firstBlock) return;
+        const strategy = data.taskStrategies[group.strategyKey] || {};
+        const panel = document.createElement("div");
+        panel.className = "study-task-panel";
+        panel.id = "study-panel-" + group.id;
+        panel.dataset.groupId = group.id;
+        panel.style.display = mode === "study" || testSubmitted ? "block" : "none";
+        panel.innerHTML = '<h3>' + escapeHtml(group.label) + ' strategy</h3>' +
+          '<p>' + escapeHtml(strategy.purpose || "Review this question group and compare your answer with the passage evidence.") + '</p>' +
+          '<ol>' + (strategy.steps || []).map((step) => '<li>' + escapeHtml(step) + '</li>').join("") + '</ol>' +
+          (strategy.commonTrap ? '<p><strong>Common trap:</strong> ' + escapeHtml(strategy.commonTrap) + '</p>' : '') +
+          '<div class="study-task-actions"><button type="button" class="study-task-toggle" data-study-group="' + group.id + '" aria-expanded="false">Show feedback</button><span class="study-task-result" id="study-result-' + group.id + '"></span></div>';
+        firstBlock.parentNode.insertBefore(panel, firstBlock);
+      });
+      document.querySelectorAll(".study-task-toggle").forEach((btn) => {
+        if (btn.dataset.bound) return;
+        btn.dataset.bound = "true";
+        btn.addEventListener("click", () => toggleStudyGroup(btn.dataset.studyGroup));
+      });
+      buildScoreGuideRows(null);
+    }
+
+    function showStudyChrome(show, showPill = mode === "study") {
+      const toolbar = document.getElementById("studyToolbar");
+      const pill = document.getElementById("studyModePill");
+      if (toolbar) toolbar.style.display = show ? "flex" : "none";
+      if (pill) pill.style.display = show && showPill ? "inline-flex" : "none";
+      document.querySelectorAll(".study-task-panel").forEach((el) => el.style.display = (show || testSubmitted) ? "block" : "none");
+    }
+
+    function toggleStudyGroup(groupId) {
+      if (revealedStudyTaskGroups.has(groupId)) hideStudyGroup(groupId);
+      else showStudyGroup(groupId);
+    }
+
+    function showStudyGroup(groupId) {
+      const group = getStudyData().taskGroups.find((item) => item.id === groupId);
+      if (!group) return;
+      revealedStudyTaskGroups.add(groupId);
+      const correct = group.questionNumbers.filter(isQuestionCorrect).length;
+      const result = document.getElementById("study-result-" + group.id);
+      if (result) { result.textContent = correct + " / " + group.questionNumbers.length + " correct"; result.style.display = "inline"; }
+      const btn = document.querySelector('[data-study-group="' + group.id + '"]');
+      if (btn) { btn.textContent = "Hide feedback"; btn.setAttribute("aria-expanded", "true"); }
+      group.questionNumbers.forEach(renderStudyFeedbackCard);
+      renderCorrectAnswerTextForQuestions(group.questionNumbers);
+      renderStudyEvidenceForGroup(group);
+    }
+
+    function hideStudyGroup(groupId) {
+      const group = getStudyData().taskGroups.find((item) => item.id === groupId);
+      if (!group) return;
+      revealedStudyTaskGroups.delete(groupId);
+      group.questionNumbers.forEach((q) => {
+        const card = document.getElementById("study-feedback-" + q);
+        if (card) card.remove();
+        if (!fullStudyReviewSubmitted && mode === "study") {
+          const ca = document.getElementById("ca-" + q); if (ca) { ca.textContent = ""; ca.style.display = "none"; }
+        }
+      });
+      const result = document.getElementById("study-result-" + group.id);
+      if (result) { result.textContent = ""; result.style.display = "none"; }
+      const btn = document.querySelector('[data-study-group="' + group.id + '"]');
+      if (btn) { btn.textContent = "Show feedback"; btn.setAttribute("aria-expanded", "false"); }
+      renderVisibleStudyEvidence();
+    }
+
+    function renderStudyFeedbackCard(q) {
+      const block = document.querySelector('.question-block[data-q="' + q + '"]');
+      if (!block) return;
+      const old = document.getElementById("study-feedback-" + q);
+      if (old) old.remove();
+      const info = getStudyData().questions[q] || {};
+      const user = getUserAnswer(q) || "Not answered";
+      const correct = isQuestionCorrect(q);
+      const card = document.createElement("div");
+      card.className = "study-feedback-card " + (correct ? "correct" : "incorrect");
+      card.id = "study-feedback-" + q;
+      card.innerHTML = '<h4>Question ' + q + '</h4><dl>' +
+        '<dt>Your answer</dt><dd>' + escapeHtml(user) + '</dd>' +
+        '<dt>Correct answer</dt><dd>' + escapeHtml(info.correctAnswerText || correctAnswerText[q] || "") + '</dd>' +
+        '<dt>Why</dt><dd>' + escapeHtml(info.explanation || "") + '</dd>' +
+        '<dt>Skill</dt><dd>' + escapeHtml(info.skillFocus || "") + '</dd>' +
+        '</dl><button type="button" class="study-clue-btn" data-clue-q="' + q + '">Show passage clue</button>';
+      block.appendChild(card);
+      card.querySelector(".study-clue-btn").addEventListener("click", () => focusStudyEvidence(q));
+    }
+
+    function renderCorrectAnswerTextForQuestions(questions) {
+      questions.forEach((q) => {
+        const el = document.getElementById("ca-" + q);
+        if (el) { el.textContent = "Correct answer: " + (correctAnswerText[q] || ""); el.style.display = "block"; }
+      });
+    }
+
+    function clearStudyEvidenceHighlights() {
+      document.querySelectorAll(".study-evidence-highlight").forEach((span) => {
+        const parent = span.parentNode;
+        while (span.firstChild) parent.insertBefore(span.firstChild, span);
+        span.remove();
+        parent.normalize();
+      });
+    }
+
+    function renderStudyEvidenceForGroup(group) {
+      renderVisibleStudyEvidence();
+    }
+
+    function renderVisibleStudyEvidence() {
+      clearStudyEvidenceHighlights();
+      const activeGroups = getStudyData().taskGroups.filter((group) => revealedStudyTaskGroups.has(group.id));
+      activeGroups.filter((group) => group.passage === activeSection).forEach((group) => {
+        group.questionNumbers.forEach((q) => markStudyEvidence(q));
+      });
+    }
+
+    function markStudyEvidence(q) {
+      const info = getStudyData().questions[q] || {};
+      const text = info.infoButtonAfter || info.evidence;
+      if (!text) return;
+      const passage = document.querySelector('.passage-section[data-section="' + (info.passage || activeSection) + '"]');
+      if (!passage) return;
+      const walker = document.createTreeWalker(passage, NodeFilter.SHOW_TEXT);
+      const needle = String(text).replace(/\.\.\./g, "").trim().slice(0, 90);
+      if (!needle) return;
+      let node;
+      while ((node = walker.nextNode())) {
+        const idx = node.nodeValue.indexOf(needle);
+        if (idx >= 0) {
+          const range = document.createRange();
+          range.setStart(node, idx);
+          range.setEnd(node, idx + needle.length);
+          const span = document.createElement("span");
+          span.className = "study-evidence-highlight";
+          span.id = "study-evidence-" + q;
+          try { range.surroundContents(span); } catch (e) {}
+          return;
+        }
+      }
+    }
+
+    function focusStudyEvidence(q) {
+      const info = getStudyData().questions[q] || {};
+      if (info.passage && info.passage !== activeSection) switchSection(info.passage);
+      renderVisibleStudyEvidence();
+      setTimeout(() => {
+        const el = document.getElementById("study-evidence-" + q);
+        if (el) el.scrollIntoView({ behavior: "smooth", block: "center" });
+      }, 50);
+    }
+
+    function checkAllStudyAnswers() {
+      fullStudyReviewSubmitted = true;
+      const correct = evaluateQuestions();
+      lastRawScore = correct;
+      getStudyData().taskGroups.forEach((group) => showStudyGroup(group.id));
+      buildScoreGuideRows(formatBandLabel(computeBandScore(correct)));
+      updateCounts();
+      buildQuestionNav();
+      const band = formatBandLabel(computeBandScore(correct));
+      alert("Study check complete: " + correct + " / 40. Estimated band: " + band + ".");
+    }
 
 
     function formatDuration(totalSeconds) {
@@ -2750,7 +3034,9 @@
     }
 
     function submitTest() {
+      if (mode === "study") fullStudyReviewSubmitted = true;
       const correctCount = evaluateQuestions();
+      lastRawScore = correctCount;
 
       // In both modes, show correct answer text
       Object.keys(correctAnswerText).forEach((q) => {
@@ -2800,9 +3086,17 @@
           desc.level;
       if (descriptorLine) descriptorLine.textContent = desc.description;
 
+      if (mode === "study") {
+        getStudyData().taskGroups.forEach((group) => showStudyGroup(group.id));
+        buildScoreGuideRows(formatBandLabel(band));
+      }
+
       if (resultsOverlay) resultsOverlay.style.display = "flex";
 
       if (mode === "test") {
+        showStudyChrome(true, false);
+        getStudyData().taskGroups.forEach((group) => showStudyGroup(group.id));
+        buildScoreGuideRows(formatBandLabel(band));
         testSubmitted = true;
         isTestRunning = false;
         isTimerPaused = false;
