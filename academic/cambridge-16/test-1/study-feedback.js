@@ -91,6 +91,18 @@ window.IELTS16AcademicTest1StudyFeedback = {
         { title: "Eliminate precisely", detail: "a familiar word does not make an option correct." },
         { title: "Watch out", detail: "all four options may mention the same topic, but only one answers the question exactly." }
       ]
+    },
+
+    summaryCompletionWordList: {
+      label: "Summary completion with a word list",
+      questionNumbers: [31, 32, 33, 34],
+      steps: [
+        { title: "Read summary / predict gap", detail: "use grammar and meaning around each blank before looking at the options." },
+        { title: "Scan word list", detail: "check which words fit the sentence pattern and collocation." },
+        { title: "Find source in order", detail: "follow the summary through the passage in the same sequence." },
+        { title: "Match paraphrase", detail: "choose the option that matches the passage meaning, not just a repeated topic." },
+        { title: "Check sentence", detail: "read the completed sentence to confirm grammar and meaning." }
+      ]
     }
   },
 
@@ -436,6 +448,54 @@ window.IELTS16AcademicTest1StudyFeedback = {
       infoButtonAfter: "History is clear that change can mean redundancies. But social policies can tackle this through retraining and redeployment.",
       explanation: "McGaughey accepts that change can cause redundancies, but says retraining and redeployment can deal with this. He shows how job-market changes can be handled successfully, so D is correct.",
       skillFocus: "Follow contrast words such as “but”. The correct option often summarises the solution as well as the problem."
+    },
+
+    31: {
+      taskType: "summaryCompletionWordList",
+      passage: 3,
+      answer: "G",
+      answerLabel: "information",
+      marks: 1,
+      evidence: "Dr Stella Pachidi from Cambridge Judge Business School believes that some of the most fundamental changes are happening as a result of the ‘algorithmication’ of jobs that are dependent on data rather than on production – the so-called knowledge economy.",
+      infoButtonAfter: "Dr Stella Pachidi from Cambridge Judge Business School believes that some of the most fundamental changes are happening as a result of the ‘algorithmication’ of jobs that are dependent on data rather than on production – the so-called knowledge economy.",
+      explanation: "The summary says these jobs rely not on production but on ____. The passage says they are dependent on data rather than on production. Data means information, so G is correct.",
+      skillFocus: "Use contrasts carefully. Here, data rather than production is the contrast, and information is the noun that fits the gap."
+    },
+
+    32: {
+      taskType: "summaryCompletionWordList",
+      passage: 3,
+      answer: "E",
+      answerLabel: "reliance",
+      marks: 1,
+      evidence: "In cases like this, Pachidi believes, a short-sighted view begins to creep into working practices whereby workers learn through the ‘algorithm’s eyes’ and become dependent on its instructions.",
+      infoButtonAfter: "In cases like this, Pachidi believes, a short-sighted view begins to creep into working practices whereby workers learn through the ‘algorithm’s eyes’ and become dependent on its instructions.",
+      explanation: "The summary describes a growing ____ on AI recommendations. The passage says workers become dependent on the algorithm’s instructions, so dependent is paraphrased by reliance.",
+      skillFocus: "Check collocation as well as meaning. Growing reliance on is a natural noun phrase matching become dependent on."
+    },
+
+    33: {
+      taskType: "summaryCompletionWordList",
+      passage: 3,
+      answer: "C",
+      answerLabel: "intuition",
+      marks: 1,
+      evidence: "Alternative explorations – where experimentation and human instinct lead to progress and new ideas – are effectively discouraged.",
+      infoButtonAfter: "Alternative explorations – where experimentation and human instinct lead to progress and new ideas – are effectively discouraged.",
+      explanation: "The summary says staff are deterred from experimenting and using their own ____. The passage says experimentation and human instinct are discouraged. Instinct matches intuition.",
+      skillFocus: "Choose a synonym that fits the grammar. Intuition is a noun and fits after using their own."
+    },
+
+    34: {
+      taskType: "summaryCompletionWordList",
+      passage: 3,
+      answer: "F",
+      answerLabel: "confidence",
+      marks: 1,
+      evidence: "Their objective is to make AI technologies more trustworthy and transparent, so that organisations and individuals understand how AI decisions are made.",
+      infoButtonAfter: "Their objective is to make AI technologies more trustworthy and transparent, so that organisations and individuals understand how AI decisions are made.",
+      explanation: "The summary says researchers want to increase users’ ____ with regard to the technology. Making AI more trustworthy and transparent would build confidence in it.",
+      skillFocus: "Link the result to the aim. Transparent, trustworthy technology helps users feel confidence in the technology."
     }
   }
 };
