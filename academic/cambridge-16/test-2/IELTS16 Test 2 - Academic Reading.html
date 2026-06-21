@@ -245,6 +245,13 @@
       color: var(--text-soft);
     }
 
+    #activeCandidateName {
+      display: none;
+      margin-left: 8px;
+      font-weight: 700;
+      color: var(--text);
+    }
+
     .top-right {
       display: flex;
       align-items: center;
@@ -1241,6 +1248,7 @@
         <div class="logo home-link" onclick="confirmGoHome()" title="Return to home">IELTS Pabs</div>
         <div class="test-title">
           Reading Test 2 – Academic – Cambridge 16
+          <span id="activeCandidateName"></span>
         </div>
       </div>
       <div class="top-right">
@@ -1287,9 +1295,9 @@
 
     <div id="studyToolbar" class="study-toolbar" aria-live="polite">
       <span id="studyModePill" class="study-mode-pill">Study mode</span>
-      <span class="study-timer">Study time: <span id="studyTimerDisplay">00:00</span></span>
+      <span id="studyTimerControl" class="study-timer">Study time: <span id="studyTimerDisplay">00:00</span></span>
       <button type="button" class="score-guide-btn" onclick="toggleScoreGuide(true)">Score guide</button>
-      <button type="button" class="study-check-all" onclick="checkAllStudyAnswers()">Check all answers</button>
+      <button id="studyCheckAllControl" type="button" class="study-check-all" onclick="checkAllStudyAnswers()">Check all answers</button>
     </div>
 
     <div id="scoreGuide" class="score-guide" role="dialog" aria-modal="true" aria-labelledby="scoreGuideTitle">
@@ -1711,6 +1719,7 @@
 
       isTestRunning = true;
       isTimerPaused = false;
+      updateActiveCandidateDisplay();
       startTimer();
       updateFullscreenButton();
     }
@@ -1718,6 +1727,7 @@
     function startTest(selectedMode) {
       mode = selectedMode;
       testSubmitted = false;
+      resetFreshAttemptState();
       document.querySelectorAll("#questionContent select, #questionContent input").forEach((el) => (el.disabled = false));
       resetStudyReviewState();
       const timerContainer = document.getElementById("timerContainer");
@@ -1731,6 +1741,8 @@
         clearInterval(timerId);
         timerId = null;
       }
+
+      updateActiveCandidateDisplay();
 
       if (mode === "test") {
         stopStudyTimer();
@@ -2204,6 +2216,26 @@
     }
 
     
+    function convertGapFillNumbersToBullets() {
+      document.querySelectorAll(".question-block[data-q]").forEach((block) => {
+        const qNum = parseInt(block.getAttribute("data-q"), 10);
+        if (!(qNum >= 9 && qNum <= 13)) return;
+        const label = block.querySelector(".question-number-label");
+        const text = block.querySelector(".question-text");
+        if (!text) return;
+        if (label) label.remove();
+        text.classList.add("gap-fill");
+
+        if (!text.querySelector(".gap-bullet")) {
+          const bullet = document.createElement("span");
+          bullet.className = "gap-bullet";
+          bullet.setAttribute("aria-hidden", "true");
+          bullet.textContent = "•";
+          text.prepend(bullet);
+        }
+      });
+    }
+
     function enableRadioToggleOff() {
       document.querySelectorAll('input[type="radio"]').forEach((radio) => {
         radio.addEventListener("pointerdown", () => {
@@ -2221,6 +2253,7 @@
 // Build all questions immediately after DOM loads (script is at the end)
     buildRemainingQuestions();
     stampInlineInputNumbers();
+    convertGapFillNumbersToBullets();
     setupDragMatch();
     enableRadioToggleOff();
 
@@ -2673,7 +2706,8 @@
       if (correct >= 8) return 3.5;
       if (correct >= 6) return 3;
       if (correct >= 4) return 2.5;
-      return "below 2.5";
+      if (correct > 0) return 2;
+      return 0;
     }
 
 
@@ -2750,6 +2784,35 @@
       studyTimerId = null;
     }
 
+    function updateActiveCandidateDisplay() {
+      const el = document.getElementById("activeCandidateName");
+      if (!el) return;
+      if (mode === "test" && isTestRunning && !testSubmitted && studentName) {
+        el.textContent = "Candidate: " + studentName;
+        el.style.display = "inline";
+      } else {
+        el.textContent = "";
+        el.style.display = "none";
+      }
+    }
+
+    function resetFreshAttemptState() {
+      document.querySelectorAll("#questionContent input[type='radio']").forEach((el) => { el.checked = false; el.dataset.wasChecked = "0"; });
+      document.querySelectorAll("#questionContent input[type='text']").forEach((el) => { el.value = ""; });
+      document.querySelectorAll("#questionContent select").forEach((el) => { el.value = ""; });
+      document.querySelectorAll(".drop-zone").forEach((zone) => { zone.textContent = "Drop here"; zone.classList.remove("filled", "over"); });
+      document.querySelectorAll(".drag-item").forEach((item) => item.classList.remove("selected"));
+      document.querySelectorAll(".qnav").forEach((item) => item.classList.remove("answered", "complete", "current"));
+      document.querySelectorAll(".part-chip").forEach((chip) => chip.classList.remove("complete", "partial"));
+      closeResults();
+      const input = document.getElementById("studentNameInput");
+      if (mode !== "test") {
+        studentName = "";
+        if (input) input.value = "";
+      }
+      updateActiveCandidateDisplay();
+    }
+
     function resetStudyReviewState() {
       fullStudyReviewSubmitted = false;
       lastRawScore = null;
@@ -2793,8 +2856,13 @@
     function showStudyChrome(show, showPill = mode === "study") {
       const toolbar = document.getElementById("studyToolbar");
       const pill = document.getElementById("studyModePill");
+      const timerControl = document.getElementById("studyTimerControl");
+      const checkAllControl = document.getElementById("studyCheckAllControl");
       if (toolbar) toolbar.style.display = show ? "flex" : "none";
       if (pill) pill.style.display = show && showPill ? "inline-flex" : "none";
+      const showStudyOnlyControls = show && mode === "study" && !testSubmitted;
+      if (timerControl) timerControl.style.display = showStudyOnlyControls ? "inline" : "none";
+      if (checkAllControl) checkAllControl.style.display = showStudyOnlyControls ? "inline-block" : "none";
       document.querySelectorAll(".study-task-panel").forEach((el) => el.style.display = (show || testSubmitted) ? "block" : "none");
     }
 
@@ -2824,7 +2892,7 @@
       group.questionNumbers.forEach((q) => {
         const card = document.getElementById("study-feedback-" + q);
         if (card) card.remove();
-        if (!fullStudyReviewSubmitted && mode === "study") {
+        if (mode === "study") {
           const ca = document.getElementById("ca-" + q); if (ca) { ca.textContent = ""; ca.style.display = "none"; }
         }
       });
@@ -3099,6 +3167,7 @@
         buildScoreGuideRows(formatBandLabel(band));
         testSubmitted = true;
         isTestRunning = false;
+        updateActiveCandidateDisplay();
         isTimerPaused = false;
         hideFullscreenLockOverlay();
         if (timerId) {
