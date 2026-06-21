@@ -324,8 +324,14 @@
       box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.18);
     }
 
-    #timerContainer {
+    #timerContainer,
+    #studyTimerContainer {
       display: none;
+    }
+
+    #studyTimerContainer {
+      color: var(--text-soft);
+      font-weight: 700;
     }
 
     #timerDisplay {
@@ -1918,8 +1924,9 @@
         <div id="topBarScoreStatus" role="status" aria-live="polite"></div>
       </div>
       <div class="top-right">
-        <div id="studyModePill" role="status" aria-label="Study mode is active">Study mode</div>
         <button type="button" id="scoreGuideButton" class="score-guide-button" aria-haspopup="dialog" aria-controls="scoreGuideOverlay" onclick="openScoreGuide()">📊 <span>Score guide</span></button>
+        <div id="studyModePill" role="status" aria-label="Study mode is active">Study mode</div>
+        <div id="studyTimerContainer" role="timer" aria-live="polite" aria-atomic="true" aria-hidden="true">Study time: <span id="studyTimerDisplay">00:00</span></div>
         <div id="timerContainer" role="status" aria-live="polite" aria-atomic="true" aria-hidden="true"><span id="timerPrefix">Time left:</span> <span id="timerDisplay">60:00</span></div>
         <div class="icon-group">
           <span class="icon" title="Connection status">
@@ -2460,7 +2467,6 @@
         <button type="button" id="scoreGuideClose" class="score-guide-close" aria-label="Close score guide" onclick="closeScoreGuide()">×</button>
       </div>
       <p id="scoreGuideSummary" class="score-guide-summary" hidden></p>
-      <p id="scoreGuideHelper" class="score-guide-helper">Complete the full test to see your current score highlighted.</p>
       <table class="score-guide-table" aria-label="IELTS Academic Reading raw score conversion">
         <thead><tr><th>Correct answers</th><th>Estimated band</th></tr></thead>
         <tbody id="scoreGuideTableBody"></tbody>
@@ -2479,6 +2485,8 @@
     let activeSection = 1;
     let timerSeconds = 60 * 60;
     let timerId = null;
+    let studyTimerId = null;
+    let studyStartedAt = 0;
     let testSubmitted = false;
     let pendingMode = null;
     let studentName = "";
@@ -2703,6 +2711,7 @@
         clearInterval(timerId);
         timerId = null;
       }
+      stopStudyElapsedTimer();
 
       resetTopBarAttemptState();
       testSubmitted = false;
@@ -2771,8 +2780,9 @@
         isTestRunning = false;
         isTimerPaused = false;
         fullScreenEnforcementEnabled = false;
+        startStudyElapsedTimer();
       }
-      updateStudyModePill();
+      updateTopRightModeState();
 
       document.getElementById("app").style.display = "block";
       initQuestionInputs();
@@ -2852,6 +2862,39 @@
       } else {
         wireModeButtons();
       }
+    }
+
+    function formatStudyElapsed(totalSeconds) {
+      const hours = Math.floor(totalSeconds / 3600);
+      const minutes = Math.floor((totalSeconds % 3600) / 60);
+      const seconds = totalSeconds % 60;
+      if (hours > 0) {
+        return hours + ":" + minutes.toString().padStart(2, "0") + ":" + seconds.toString().padStart(2, "0");
+      }
+      return minutes.toString().padStart(2, "0") + ":" + seconds.toString().padStart(2, "0");
+    }
+
+    function updateStudyElapsedTimer() {
+      const display = document.getElementById("studyTimerDisplay");
+      if (!display || !studyStartedAt) return;
+      const elapsed = Math.max(0, Math.floor((Date.now() - studyStartedAt) / 1000));
+      display.textContent = formatStudyElapsed(elapsed);
+    }
+
+    function startStudyElapsedTimer() {
+      stopStudyElapsedTimer();
+      studyStartedAt = Date.now();
+      const display = document.getElementById("studyTimerDisplay");
+      if (display) display.textContent = "00:00";
+      studyTimerId = setInterval(updateStudyElapsedTimer, 1000);
+    }
+
+    function stopStudyElapsedTimer() {
+      if (studyTimerId) {
+        clearInterval(studyTimerId);
+        studyTimerId = null;
+      }
+      studyStartedAt = 0;
     }
 
     function startTimer() {
@@ -3830,9 +3873,25 @@
       }
     }
 
-    function updateStudyModePill() {
+    function updateTopRightModeState() {
       const pill = document.getElementById("studyModePill");
-      if (pill) pill.style.display = mode === "study" ? "block" : "none";
+      const guide = document.getElementById("scoreGuideButton");
+      const studyTimer = document.getElementById("studyTimerContainer");
+      const testTimer = document.getElementById("timerContainer");
+      const showReviewControls = mode === "study" || (mode === "test" && testSubmitted);
+      const showStudyElapsed = mode === "study" && !testSubmitted;
+      const showTestCountdown = mode === "test";
+
+      if (guide) guide.style.display = showReviewControls ? "inline-flex" : "none";
+      if (pill) pill.style.display = showReviewControls ? "block" : "none";
+      if (studyTimer) {
+        studyTimer.style.display = showStudyElapsed ? "block" : "none";
+        studyTimer.setAttribute("aria-hidden", showStudyElapsed ? "false" : "true");
+      }
+      if (testTimer) {
+        testTimer.style.display = showTestCountdown ? "block" : "none";
+        testTimer.setAttribute("aria-hidden", showTestCountdown ? "false" : "true");
+      }
     }
 
     function updateTopBarScore(correctCount) {
@@ -3872,17 +3931,14 @@
         body.appendChild(tr);
       });
       const summary = document.getElementById("scoreGuideSummary");
-      const helper = document.getElementById("scoreGuideHelper");
-      if (summary && helper) {
+      if (summary) {
         if (fullTestScoreAvailable) {
           const band = computeBandScore(fullTestCorrectCount);
           summary.textContent = "Your score: " + fullTestCorrectCount + " / 40 · " + formatBandLabel(band);
           summary.hidden = false;
-          helper.hidden = true;
         } else {
           summary.textContent = "";
           summary.hidden = true;
-          helper.hidden = false;
         }
       }
     }
@@ -5896,7 +5952,10 @@
       matchingPeopleFeedbackSubmitted = true;
       matchingPeopleCluesVisible = true;
       matchingPeopleSingleClueQuestion = null;
-      if (mode === "test") testSubmitted = true;
+      if (mode === "test") {
+        testSubmitted = true;
+        stopStudyElapsedTimer();
+      }
       renderTfngFeedbackCards();
       renderOneWordFeedbackCards();
       renderOneWordP2FeedbackCards();
@@ -5965,6 +6024,7 @@
           clearInterval(timerId);
           timerId = null;
         }
+        updateTopRightModeState();
         exitAppFullscreen();
         // Disable further changes in test mode
         document
@@ -5989,6 +6049,7 @@
       if (focusViolationLine) focusViolationLine.textContent = "";
       if (totalTimeLine) totalTimeLine.textContent = "";
       if (overlay) overlay.style.display = "none";
+      updateTopRightModeState();
       clearTfngEvidenceHighlight();
     }
 
