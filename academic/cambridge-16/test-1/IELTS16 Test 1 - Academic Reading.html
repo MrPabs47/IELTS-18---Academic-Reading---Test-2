@@ -252,6 +252,106 @@
     .passage-subtitle { font-style: italic; color: var(--text-soft); margin: 0 0 12px; }
     .paragraph-letter { font-weight: 700; display: inline-block; margin-right: 8px; }
 
+    .matching-heading-paragraph-label {
+      margin: 18px 0 6px;
+      font-size: 1.05rem;
+      font-weight: 800;
+      color: var(--text);
+    }
+
+    .heading-placement-target {
+      width: 100%;
+      margin: 12px 0 10px;
+      padding: 0;
+      border: 0;
+      background: transparent;
+      color: var(--text);
+      font: inherit;
+      text-align: left;
+      cursor: pointer;
+    }
+
+    .heading-placement-target[aria-disabled="true"] {
+      cursor: default;
+      opacity: 0.92;
+    }
+
+    .heading-target-line {
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 44px;
+      border: 1.5px dashed rgba(100, 116, 139, 0.68);
+      border-radius: 10px;
+      background: color-mix(in srgb, var(--bg) 86%, var(--bg-secondary));
+      transition: border-color 0.16s ease, background 0.16s ease, box-shadow 0.16s ease;
+    }
+
+    .heading-target-number {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 34px;
+      height: 28px;
+      border-radius: 999px;
+      border: 1px solid var(--border);
+      background: var(--bg);
+      color: var(--text-soft);
+      font-weight: 800;
+    }
+
+    .heading-placement-target.drag-over .heading-target-line,
+    .heading-placement-target.is-selected-target .heading-target-line,
+    .heading-placement-target:focus-visible .heading-target-line {
+      border-color: var(--accent);
+      background: var(--accent-soft);
+      box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.14);
+      outline: none;
+    }
+
+    .heading-target-card {
+      display: none;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      width: 100%;
+      padding: 8px 10px;
+      border: 1px solid var(--accent);
+      border-radius: 10px;
+      background: var(--accent-soft);
+      color: var(--text);
+      font-weight: 700;
+      line-height: 1.35;
+    }
+
+    .heading-target-card-text {
+      flex: 1 1 auto;
+    }
+
+    .heading-remove-btn {
+      flex: 0 0 auto;
+      border: 1px solid var(--border);
+      background: var(--bg);
+      color: var(--text);
+      border-radius: 999px;
+      padding: 4px 8px;
+      font: inherit;
+      font-size: 0.8rem;
+      font-weight: 800;
+      cursor: pointer;
+    }
+
+    .heading-remove-btn:hover,
+    .heading-remove-btn:focus-visible {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.14);
+      outline: none;
+    }
+
+    .heading-placement-target.filled .heading-target-number { display: none; }
+    .heading-placement-target.filled .heading-target-card { display: flex; }
+
 
     .test-title,
     #candidateNameDisplay,
@@ -1339,6 +1439,56 @@
       font-size: 0.9rem;
     }
 
+    .matching-headings-bank {
+      align-items: stretch;
+      gap: 8px;
+      margin-top: 8px;
+      padding: 10px;
+    }
+
+    .matching-heading-card {
+      justify-content: flex-start;
+      flex: 1 1 210px;
+      min-height: 0;
+      padding: 8px 10px;
+      font-size: 0.92rem;
+      font-weight: 700;
+      line-height: 1.25;
+      text-align: left;
+      color: var(--text);
+      font-family: inherit;
+    }
+
+    .matching-heading-card:disabled,
+    .matching-heading-card.is-used {
+      display: none;
+    }
+
+    .matching-heading-card.selected {
+      background: var(--accent-soft);
+      box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.14);
+    }
+
+    .matching-heading-hidden-control {
+      position: absolute !important;
+      width: 1px !important;
+      height: 1px !important;
+      overflow: hidden !important;
+      clip: rect(0 0 0 0) !important;
+      clip-path: inset(50%) !important;
+      white-space: nowrap !important;
+    }
+
+    .matching-headings-live {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      overflow: hidden;
+      clip: rect(0 0 0 0);
+      clip-path: inset(50%);
+      white-space: nowrap;
+    }
+
     .drop-zone {
       display: inline-flex;
       align-items: center;
@@ -2085,19 +2235,26 @@
             <!-- Section 2 passage -->
             <div class="passage-section" data-section="2" style="display:none;">
               <h2 class="passage-main-title">The Step Pyramid of Djoser</h2>
-              <h3>A</h3>
+              <h3 class="matching-heading-paragraph-label" id="paragraph-a-heading">A</h3>
+              <div role="button" tabindex="0" class="heading-placement-target" data-paragraph="A" data-q="14" aria-label="Place selected heading in Paragraph A, Question 14"><span class="heading-target-line"><span class="heading-target-number">14</span><span class="heading-target-card" draggable="true"><span class="heading-target-card-text"></span><span class="heading-remove-btn" role="button" tabindex="0" aria-label="Remove heading from Paragraph A, Question 14">Remove</span></span></span></div>
               <p>The pyramids are the most famous monuments of ancient Egypt and still hold enormous interest for people in the present day. These grand, impressive tributes to the memory of the Egyptian kings have become linked with the country even though other cultures, such as the Chinese and Mayan, also built pyramids. The evolution of the pyramid form has been written and argued about for centuries. However, there is no question that, as far as Egypt is concerned, it began with one monument to one king designed by one brilliant architect: the Step Pyramid of Djoser at Saqqara.</p>
-              <h3>B</h3>
+              <h3 class="matching-heading-paragraph-label" id="paragraph-b-heading">B</h3>
+              <div role="button" tabindex="0" class="heading-placement-target" data-paragraph="B" data-q="15" aria-label="Place selected heading in Paragraph B, Question 15"><span class="heading-target-line"><span class="heading-target-number">15</span><span class="heading-target-card" draggable="true"><span class="heading-target-card-text"></span><span class="heading-remove-btn" role="button" tabindex="0" aria-label="Remove heading from Paragraph B, Question 15">Remove</span></span></span></div>
               <p>Djoser was the first king of the Third Dynasty of Egypt and the first to build in stone. Prior to Djoser’s reign, tombs were rectangular monuments made of dried clay brick, which covered underground passages where the deceased person was buried. For reasons which remain unclear, Djoser’s main official, whose name was Imhotep, conceived of building a taller, more impressive tomb for his king by stacking stone slabs on top of one another, progressively making them smaller, to form the shape now known as the Step Pyramid. Djoser is thought to have reigned for 19 years, but some historians and scholars attribute a much longer time for his rule, owing to the number and size of the monuments he built.</p>
-              <h3>C</h3>
+              <h3 class="matching-heading-paragraph-label" id="paragraph-c-heading">C</h3>
+              <div role="button" tabindex="0" class="heading-placement-target" data-paragraph="C" data-q="16" aria-label="Place selected heading in Paragraph C, Question 16"><span class="heading-target-line"><span class="heading-target-number">16</span><span class="heading-target-card" draggable="true"><span class="heading-target-card-text"></span><span class="heading-remove-btn" role="button" tabindex="0" aria-label="Remove heading from Paragraph C, Question 16">Remove</span></span></span></div>
               <p>The Step Pyramid has been thoroughly examined and investigated over the last century, and it is now known that the building process went through many different stages. Historian Marc Van de Mieroop comments on this, writing ‘Much experimentation was involved, which is especially clear in the construction of the pyramid in the center of the complex. It had several plans … before it became the first Step Pyramid in history, piling six levels on top of one another … The weight of the enormous mass was a challenge for the builders, who placed the stones at an inward incline in order to prevent the monument breaking up.’</p>
-              <h3>D</h3>
+              <h3 class="matching-heading-paragraph-label" id="paragraph-d-heading">D</h3>
+              <div role="button" tabindex="0" class="heading-placement-target" data-paragraph="D" data-q="17" aria-label="Place selected heading in Paragraph D, Question 17"><span class="heading-target-line"><span class="heading-target-number">17</span><span class="heading-target-card" draggable="true"><span class="heading-target-card-text"></span><span class="heading-remove-btn" role="button" tabindex="0" aria-label="Remove heading from Paragraph D, Question 17">Remove</span></span></span></div>
               <p>When finally completed, the Step Pyramid rose 62 meters high and was the tallest structure of its time. The complex in which it was built was the size of a city in ancient Egypt and included a temple, courtyards, shrines, and living quarters for the priests. It covered a region of 16 hectares and was surrounded by a wall 10.5 meters high. The wall had 13 false doors cut into it with only one true entrance cut into the south-east corner; the entire wall was then ringed by a trench 750 meters long and 40 meters wide. The false doors and the trench were incorporated into the complex to discourage unwanted visitors. If someone wished to enter, he or she would have needed to know in advance how to find the location of the true opening in the wall. Djoser was so proud of his accomplishment that he broke the tradition of having only his own name on the monument and had Imhotep’s name carved on it as well.</p>
-              <h3>E</h3>
+              <h3 class="matching-heading-paragraph-label" id="paragraph-e-heading">E</h3>
+              <div role="button" tabindex="0" class="heading-placement-target" data-paragraph="E" data-q="18" aria-label="Place selected heading in Paragraph E, Question 18"><span class="heading-target-line"><span class="heading-target-number">18</span><span class="heading-target-card" draggable="true"><span class="heading-target-card-text"></span><span class="heading-remove-btn" role="button" tabindex="0" aria-label="Remove heading from Paragraph E, Question 18">Remove</span></span></span></div>
               <p>The burial chamber of the tomb, where the king’s body was laid to rest, was dug beneath the base of the pyramid, surrounded by a vast maze of long tunnels that had rooms off them to discourage robbers. One of the most mysterious discoveries found inside the pyramid was a large number of stone vessels. Over 40,000 of these vessels, of various forms and shapes, were discovered in storerooms off the pyramid’s underground passages. They are inscribed with the names of rulers from the First and Second Dynasties of Egypt and made from different kinds of stone. There is no agreement among scholars and archaeologists on why the vessels were placed in the tomb of Djoser or what they were supposed to represent. The archaeologist Jean-Philippe Lauer, who excavated most of the pyramid and complex, believes they were originally stored and then given a ‘proper burial’ by Djoser in his pyramid to honor his predecessors. There are other historians, however, who claim the vessels were dumped into the shafts as yet another attempt to prevent grave robbers from getting to the king’s burial chamber.</p>
-              <h3>F</h3>
+              <h3 class="matching-heading-paragraph-label" id="paragraph-f-heading">F</h3>
+              <div role="button" tabindex="0" class="heading-placement-target" data-paragraph="F" data-q="19" aria-label="Place selected heading in Paragraph F, Question 19"><span class="heading-target-line"><span class="heading-target-number">19</span><span class="heading-target-card" draggable="true"><span class="heading-target-card-text"></span><span class="heading-remove-btn" role="button" tabindex="0" aria-label="Remove heading from Paragraph F, Question 19">Remove</span></span></span></div>
               <p>Unfortunately, all of the precautions and intricate design of the underground network did not prevent ancient robbers from finding a way in. Djoser’s grave goods, and even his body, were stolen at some point in the past and all archaeologists found were a small number of his valuables overlooked by the thieves. There was enough left throughout the pyramid and its complex, however, to astonish and amaze the archaeologists who excavated it.</p>
-              <h3>G</h3>
+              <h3 class="matching-heading-paragraph-label" id="paragraph-g-heading">G</h3>
+              <div role="button" tabindex="0" class="heading-placement-target" data-paragraph="G" data-q="20" aria-label="Place selected heading in Paragraph G, Question 20"><span class="heading-target-line"><span class="heading-target-number">20</span><span class="heading-target-card" draggable="true"><span class="heading-target-card-text"></span><span class="heading-remove-btn" role="button" tabindex="0" aria-label="Remove heading from Paragraph G, Question 20">Remove</span></span></span></div>
               <p>Egyptologist Miroslav Verner writes, ‘Few monuments hold a place in human history as significant as that of the Step Pyramid in Saqqara … It can be said without exaggeration that this pyramid complex constitutes a milestone in the evolution of monumental stone architecture in Egypt and in the world as a whole.’ The Step Pyramid was a revolutionary advance in architecture and became the archetype which all the other great pyramid builders of Egypt would follow.</p>
             </div>
 
@@ -2226,55 +2383,27 @@
                 <p>Write the correct number, i-ix, in boxes 14-20 on your answer sheet.</p>
               </div>
 
-              <div class="notes-box">
-                <div class="notes-box-title">List of Headings</div>
-                <p>i&nbsp;&nbsp;&nbsp;&nbsp; The areas and artefacts within the pyramid itself</p>
-                <p>ii&nbsp;&nbsp;&nbsp;&nbsp; A difficult task for those involved</p>
-                <p>iii&nbsp;&nbsp;&nbsp;&nbsp; A king who saved his people</p>
-                <p>iv&nbsp;&nbsp;&nbsp;&nbsp; A single certainty among other less definite facts</p>
-                <p>v&nbsp;&nbsp;&nbsp;&nbsp; An overview of the external buildings and areas</p>
-                <p>vi&nbsp;&nbsp;&nbsp;&nbsp; A pyramid design that others copied</p>
-                <p>vii&nbsp;&nbsp;&nbsp;&nbsp; An idea for changing the design of burial structures</p>
-                <p>viii&nbsp;&nbsp;&nbsp;&nbsp; An incredible experience despite the few remains</p>
-                <p>ix&nbsp;&nbsp;&nbsp;&nbsp; The answers to some unexpected questions</p>
+              <div class="drag-bank matching-headings-bank" id="matchingHeadingsBank" aria-label="List of Headings">
+                <span class="drag-hint">Select or drag a heading, then place it above Paragraph A-G in the passage.</span>
+                <button type="button" class="drag-item matching-heading-card" draggable="true" data-heading-value="i" data-heading-text="The areas and artefacts within the pyramid itself" aria-label="Heading i: The areas and artefacts within the pyramid itself"><strong>i</strong>&nbsp; The areas and artefacts within the pyramid itself</button>
+                <button type="button" class="drag-item matching-heading-card" draggable="true" data-heading-value="ii" data-heading-text="A difficult task for those involved" aria-label="Heading ii: A difficult task for those involved"><strong>ii</strong>&nbsp; A difficult task for those involved</button>
+                <button type="button" class="drag-item matching-heading-card" draggable="true" data-heading-value="iii" data-heading-text="A king who saved his people" aria-label="Heading iii: A king who saved his people"><strong>iii</strong>&nbsp; A king who saved his people</button>
+                <button type="button" class="drag-item matching-heading-card" draggable="true" data-heading-value="iv" data-heading-text="A single certainty among other less definite facts" aria-label="Heading iv: A single certainty among other less definite facts"><strong>iv</strong>&nbsp; A single certainty among other less definite facts</button>
+                <button type="button" class="drag-item matching-heading-card" draggable="true" data-heading-value="v" data-heading-text="An overview of the external buildings and areas" aria-label="Heading v: An overview of the external buildings and areas"><strong>v</strong>&nbsp; An overview of the external buildings and areas</button>
+                <button type="button" class="drag-item matching-heading-card" draggable="true" data-heading-value="vi" data-heading-text="A pyramid design that others copied" aria-label="Heading vi: A pyramid design that others copied"><strong>vi</strong>&nbsp; A pyramid design that others copied</button>
+                <button type="button" class="drag-item matching-heading-card" draggable="true" data-heading-value="vii" data-heading-text="An idea for changing the design of burial structures" aria-label="Heading vii: An idea for changing the design of burial structures"><strong>vii</strong>&nbsp; An idea for changing the design of burial structures</button>
+                <button type="button" class="drag-item matching-heading-card" draggable="true" data-heading-value="viii" data-heading-text="An incredible experience despite the few remains" aria-label="Heading viii: An incredible experience despite the few remains"><strong>viii</strong>&nbsp; An incredible experience despite the few remains</button>
+                <button type="button" class="drag-item matching-heading-card" draggable="true" data-heading-value="ix" data-heading-text="The answers to some unexpected questions" aria-label="Heading ix: The answers to some unexpected questions"><strong>ix</strong>&nbsp; The answers to some unexpected questions</button>
               </div>
+              <div id="matchingHeadingsLive" class="matching-headings-live" aria-live="polite"></div>
 
-              <div class="question-block" data-q="14">
-                <div class="question-text"><span class="question-number-label">14.</span> Paragraph A</div>
-                <div class="matching-control"><select class="matching-select" name="q14"><option value=""></option><option value="i">i</option><option value="ii">ii</option><option value="iii">iii</option><option value="iv">iv</option><option value="v">v</option><option value="vi">vi</option><option value="vii">vii</option><option value="viii">viii</option><option value="ix">ix</option></select></div>
-                <div class="correct-answer-text" id="ca-14"></div>
-              </div>
-              <div class="question-block" data-q="15">
-                <div class="question-text"><span class="question-number-label">15.</span> Paragraph B</div>
-                <div class="matching-control"><select class="matching-select" name="q15"><option value=""></option><option value="i">i</option><option value="ii">ii</option><option value="iii">iii</option><option value="iv">iv</option><option value="v">v</option><option value="vi">vi</option><option value="vii">vii</option><option value="viii">viii</option><option value="ix">ix</option></select></div>
-                <div class="correct-answer-text" id="ca-15"></div>
-              </div>
-              <div class="question-block" data-q="16">
-                <div class="question-text"><span class="question-number-label">16.</span> Paragraph C</div>
-                <div class="matching-control"><select class="matching-select" name="q16"><option value=""></option><option value="i">i</option><option value="ii">ii</option><option value="iii">iii</option><option value="iv">iv</option><option value="v">v</option><option value="vi">vi</option><option value="vii">vii</option><option value="viii">viii</option><option value="ix">ix</option></select></div>
-                <div class="correct-answer-text" id="ca-16"></div>
-              </div>
-              <div class="question-block" data-q="17">
-                <div class="question-text"><span class="question-number-label">17.</span> Paragraph D</div>
-                <div class="matching-control"><select class="matching-select" name="q17"><option value=""></option><option value="i">i</option><option value="ii">ii</option><option value="iii">iii</option><option value="iv">iv</option><option value="v">v</option><option value="vi">vi</option><option value="vii">vii</option><option value="viii">viii</option><option value="ix">ix</option></select></div>
-                <div class="correct-answer-text" id="ca-17"></div>
-              </div>
-              <div class="question-block" data-q="18">
-                <div class="question-text"><span class="question-number-label">18.</span> Paragraph E</div>
-                <div class="matching-control"><select class="matching-select" name="q18"><option value=""></option><option value="i">i</option><option value="ii">ii</option><option value="iii">iii</option><option value="iv">iv</option><option value="v">v</option><option value="vi">vi</option><option value="vii">vii</option><option value="viii">viii</option><option value="ix">ix</option></select></div>
-                <div class="correct-answer-text" id="ca-18"></div>
-              </div>
-              <div class="question-block" data-q="19">
-                <div class="question-text"><span class="question-number-label">19.</span> Paragraph F</div>
-                <div class="matching-control"><select class="matching-select" name="q19"><option value=""></option><option value="i">i</option><option value="ii">ii</option><option value="iii">iii</option><option value="iv">iv</option><option value="v">v</option><option value="vi">vi</option><option value="vii">vii</option><option value="viii">viii</option><option value="ix">ix</option></select></div>
-                <div class="correct-answer-text" id="ca-19"></div>
-              </div>
-              <div class="question-block" data-q="20">
-                <div class="question-text"><span class="question-number-label">20.</span> Paragraph G</div>
-                <div class="matching-control"><select class="matching-select" name="q20"><option value=""></option><option value="i">i</option><option value="ii">ii</option><option value="iii">iii</option><option value="iv">iv</option><option value="v">v</option><option value="vi">vi</option><option value="vii">vii</option><option value="viii">viii</option><option value="ix">ix</option></select></div>
-                <div class="correct-answer-text" id="ca-20"></div>
-              </div>
-
+                <div class="question-block matching-heading-feedback-row" data-q="14"><div class="matching-heading-hidden-control"><div class="question-text"><span class="question-number-label">14.</span> Paragraph A</div><div class="matching-control"><select class="matching-select" name="q14"><option value=""></option><option value="i">i</option><option value="ii">ii</option><option value="iii">iii</option><option value="iv">iv</option><option value="v">v</option><option value="vi">vi</option><option value="vii">vii</option><option value="viii">viii</option><option value="ix">ix</option></select></div></div><div class="correct-answer-text" id="ca-14"></div></div>
+                <div class="question-block matching-heading-feedback-row" data-q="15"><div class="matching-heading-hidden-control"><div class="question-text"><span class="question-number-label">15.</span> Paragraph B</div><div class="matching-control"><select class="matching-select" name="q15"><option value=""></option><option value="i">i</option><option value="ii">ii</option><option value="iii">iii</option><option value="iv">iv</option><option value="v">v</option><option value="vi">vi</option><option value="vii">vii</option><option value="viii">viii</option><option value="ix">ix</option></select></div></div><div class="correct-answer-text" id="ca-15"></div></div>
+                <div class="question-block matching-heading-feedback-row" data-q="16"><div class="matching-heading-hidden-control"><div class="question-text"><span class="question-number-label">16.</span> Paragraph C</div><div class="matching-control"><select class="matching-select" name="q16"><option value=""></option><option value="i">i</option><option value="ii">ii</option><option value="iii">iii</option><option value="iv">iv</option><option value="v">v</option><option value="vi">vi</option><option value="vii">vii</option><option value="viii">viii</option><option value="ix">ix</option></select></div></div><div class="correct-answer-text" id="ca-16"></div></div>
+                <div class="question-block matching-heading-feedback-row" data-q="17"><div class="matching-heading-hidden-control"><div class="question-text"><span class="question-number-label">17.</span> Paragraph D</div><div class="matching-control"><select class="matching-select" name="q17"><option value=""></option><option value="i">i</option><option value="ii">ii</option><option value="iii">iii</option><option value="iv">iv</option><option value="v">v</option><option value="vi">vi</option><option value="vii">vii</option><option value="viii">viii</option><option value="ix">ix</option></select></div></div><div class="correct-answer-text" id="ca-17"></div></div>
+                <div class="question-block matching-heading-feedback-row" data-q="18"><div class="matching-heading-hidden-control"><div class="question-text"><span class="question-number-label">18.</span> Paragraph E</div><div class="matching-control"><select class="matching-select" name="q18"><option value=""></option><option value="i">i</option><option value="ii">ii</option><option value="iii">iii</option><option value="iv">iv</option><option value="v">v</option><option value="vi">vi</option><option value="vii">vii</option><option value="viii">viii</option><option value="ix">ix</option></select></div></div><div class="correct-answer-text" id="ca-18"></div></div>
+                <div class="question-block matching-heading-feedback-row" data-q="19"><div class="matching-heading-hidden-control"><div class="question-text"><span class="question-number-label">19.</span> Paragraph F</div><div class="matching-control"><select class="matching-select" name="q19"><option value=""></option><option value="i">i</option><option value="ii">ii</option><option value="iii">iii</option><option value="iv">iv</option><option value="v">v</option><option value="vi">vi</option><option value="vii">vii</option><option value="viii">viii</option><option value="ix">ix</option></select></div></div><div class="correct-answer-text" id="ca-19"></div></div>
+                <div class="question-block matching-heading-feedback-row" data-q="20"><div class="matching-heading-hidden-control"><div class="question-text"><span class="question-number-label">20.</span> Paragraph G</div><div class="matching-control"><select class="matching-select" name="q20"><option value=""></option><option value="i">i</option><option value="ii">ii</option><option value="iii">iii</option><option value="iv">iv</option><option value="v">v</option><option value="vi">vi</option><option value="vii">vii</option><option value="viii">viii</option><option value="ix">ix</option></select></div></div><div class="correct-answer-text" id="ca-20"></div></div>
               <div class="instruction-block">
                 <p><strong>Questions 21-24</strong><span class="study-feedback-controls"><button type="button" id="oneWordP2StrategyButton" class="study-icon-btn" aria-label="How to tackle ONE WORD ONLY completion" title="How to tackle this task" aria-controls="oneWordP2StrategyPanel" hidden>ⓘ</button><button type="button" id="oneWordP2RevealButton" class="study-reveal-btn" data-study-reveal-group="one-word-p2" hidden>Show answers &amp; feedback</button></span></p>
                 <div id="oneWordP2StrategyPanel" class="one-word-p2-study-panel" hidden></div>
@@ -2845,6 +2974,7 @@
       initQuestionInputs();
       initTfngStudyFeedback();
       setupDragMatch();
+      resetMatchingHeadingsInteraction();
       buildQuestionNav();
       setupSelectionListeners();
       setupDividerDrag();
@@ -3162,102 +3292,233 @@
     }
 
     let dragMatchReady = false;
+    let selectedMatchingHeading = "";
+    let draggedMatchingHeading = "";
+
+    const matchingHeadingParagraphs = [
+      { paragraph: "A", q: 14 },
+      { paragraph: "B", q: 15 },
+      { paragraph: "C", q: 16 },
+      { paragraph: "D", q: 17 },
+      { paragraph: "E", q: 18 },
+      { paragraph: "F", q: 19 },
+      { paragraph: "G", q: 20 }
+    ];
+
+    function isMatchingHeadingsLocked() {
+      return mode === "test" && testSubmitted;
+    }
+
+    function announceMatchingHeading(message) {
+      const live = document.getElementById("matchingHeadingsLive");
+      if (!live) return;
+      live.textContent = "";
+      window.setTimeout(() => { live.textContent = message; }, 20);
+    }
+
+    function getMatchingHeadingData(value) {
+      const card = document.querySelector('.matching-heading-card[data-heading-value="' + value + '"]');
+      return card ? { value, text: card.dataset.headingText || card.textContent.trim() } : null;
+    }
+
+    function getMatchingHeadingSelect(q) {
+      return document.querySelector('select[name="q' + q + '"]');
+    }
+
+    function dispatchMatchingHeadingChange(q) {
+      const sel = getMatchingHeadingSelect(q);
+      if (!sel) return;
+      sel.dispatchEvent(new Event("input", { bubbles: true }));
+      sel.dispatchEvent(new Event("change", { bubbles: true }));
+    }
+
+    function clearMatchingHeadingSelection(announce = false) {
+      selectedMatchingHeading = "";
+      document.querySelectorAll(".matching-heading-card.selected").forEach((card) => card.classList.remove("selected"));
+      document.querySelectorAll(".heading-placement-target.is-selected-target").forEach((target) => target.classList.remove("is-selected-target"));
+      if (announce) announceMatchingHeading("Heading selection cancelled.");
+    }
+
+    function refreshMatchingHeadingsUI() {
+      const used = new Set();
+      matchingHeadingParagraphs.forEach(({ paragraph, q }) => {
+        const target = document.querySelector('.heading-placement-target[data-q="' + q + '"]');
+        const sel = getMatchingHeadingSelect(q);
+        const value = sel ? sel.value.trim() : "";
+        const data = value ? getMatchingHeadingData(value) : null;
+        if (target) {
+          const text = target.querySelector(".heading-target-card-text");
+          const remove = target.querySelector(".heading-remove-btn");
+          if (data && text) {
+            target.classList.add("filled");
+            target.dataset.headingValue = value;
+            text.innerHTML = '<strong>' + data.value + '</strong>&nbsp; ' + data.text;
+            target.setAttribute("aria-label", "Paragraph " + paragraph + ", Question " + q + ", placed heading " + data.value + ": " + data.text + ". Select another heading to replace it.");
+            if (remove) remove.setAttribute("aria-label", "Remove heading " + data.value + " from Paragraph " + paragraph + ", Question " + q);
+            used.add(value);
+          } else {
+            target.classList.remove("filled");
+            delete target.dataset.headingValue;
+            if (text) text.textContent = "";
+            target.setAttribute("aria-label", "Place selected heading in Paragraph " + paragraph + ", Question " + q);
+            if (remove) remove.setAttribute("aria-label", "Remove heading from Paragraph " + paragraph + ", Question " + q);
+          }
+          target.setAttribute("aria-disabled", String(isMatchingHeadingsLocked()));
+        }
+      });
+
+      document.querySelectorAll(".matching-heading-card").forEach((card) => {
+        const value = card.dataset.headingValue;
+        const usedHere = used.has(value);
+        card.classList.toggle("is-used", usedHere);
+        card.disabled = usedHere || isMatchingHeadingsLocked();
+        if (usedHere && selectedMatchingHeading === value) selectedMatchingHeading = "";
+      });
+      if (selectedMatchingHeading && isMatchingHeadingsLocked()) clearMatchingHeadingSelection(false);
+    }
+
+    function placeMatchingHeading(q, value, source = "") {
+      if (isMatchingHeadingsLocked() || !value) return;
+      const targetInfo = matchingHeadingParagraphs.find((item) => item.q === Number(q));
+      const data = getMatchingHeadingData(value);
+      if (!targetInfo || !data) return;
+
+      let fromParagraph = "";
+      let replaced = "";
+      matchingHeadingParagraphs.forEach(({ paragraph, q: otherQ }) => {
+        const sel = getMatchingHeadingSelect(otherQ);
+        if (!sel) return;
+        if (sel.value === value && otherQ !== Number(q)) {
+          sel.value = "";
+          fromParagraph = paragraph;
+          dispatchMatchingHeadingChange(otherQ);
+        }
+      });
+
+      const sel = getMatchingHeadingSelect(q);
+      if (sel) {
+        replaced = sel.value && sel.value !== value ? sel.value : "";
+        sel.value = value;
+        dispatchMatchingHeadingChange(q);
+      }
+      clearMatchingHeadingSelection(false);
+      refreshMatchingHeadingsUI();
+      const moveText = fromParagraph ? " moved from Paragraph " + fromParagraph + "" : "";
+      const replaceText = replaced ? ", replacing heading " + replaced : "";
+      announceMatchingHeading("Heading " + value + moveText + " placed in Paragraph " + targetInfo.paragraph + ", Question " + q + replaceText + ".");
+    }
+
+    function removeMatchingHeading(q) {
+      if (isMatchingHeadingsLocked()) return;
+      const targetInfo = matchingHeadingParagraphs.find((item) => item.q === Number(q));
+      const sel = getMatchingHeadingSelect(q);
+      if (!sel || !sel.value) return;
+      const removed = sel.value;
+      sel.value = "";
+      dispatchMatchingHeadingChange(q);
+      clearMatchingHeadingSelection(false);
+      refreshMatchingHeadingsUI();
+      announceMatchingHeading("Heading " + removed + " removed from Paragraph " + (targetInfo ? targetInfo.paragraph : "") + ", Question " + q + ".");
+    }
+
+    function resetMatchingHeadingsInteraction() {
+      matchingHeadingParagraphs.forEach(({ q }) => {
+        const sel = getMatchingHeadingSelect(q);
+        if (sel) {
+          sel.disabled = false;
+          sel.value = "";
+          dispatchMatchingHeadingChange(q);
+        }
+      });
+      clearMatchingHeadingSelection(false);
+      refreshMatchingHeadingsUI();
+    }
 
     function setupDragMatch() {
       if (dragMatchReady) return;
       dragMatchReady = true;
-      let picked = "";
-      const nameByLetter = { A: "Susan Jebb", B: "Kim Roberts", C: "Janice Burberry", D: "Seema Kennedy" };
-      document.querySelectorAll(".drag-item").forEach((item) => {
-        item.addEventListener("dragstart", (e) => {
-          e.dataTransfer.setData("text/plain", item.dataset.value);
-          e.dataTransfer.effectAllowed = "copy";
-        });
-        item.addEventListener("click", () => {
-          const isAlreadySelected = item.classList.contains("selected");
-          document
-            .querySelectorAll(".drag-item")
-            .forEach((i) => i.classList.remove("selected"));
-          if (isAlreadySelected) {
-            picked = "";
+
+      document.querySelectorAll(".matching-heading-card").forEach((card) => {
+        card.addEventListener("dragstart", (e) => {
+          if (isMatchingHeadingsLocked() || card.disabled) {
+            e.preventDefault();
             return;
           }
-          item.classList.add("selected");
-          picked = item.dataset.value;
+          draggedMatchingHeading = card.dataset.headingValue || "";
+          e.dataTransfer.setData("text/plain", draggedMatchingHeading);
+          e.dataTransfer.effectAllowed = "move";
         });
-      });
-
-      function apply(zone, val) {
-        if (!/^[ABCD]$/.test(val)) return;
-        const qName = zone.dataset.for;
-        const sel = document.querySelector('select[name="' + qName + '"]');
-        if (sel) {
-          sel.value = val;
-          sel.dispatchEvent(new Event("change", { bubbles: true }));
-        }
-        zone.textContent = nameByLetter[val] || val;
-        zone.classList.add("filled");
-      }
-
-      function clear(zone) {
-        const qName = zone.dataset.for;
-        const sel = document.querySelector('select[name="' + qName + '"]');
-        if (sel) {
-          sel.value = "";
-          sel.dispatchEvent(new Event("change", { bubbles: true }));
-        }
-        zone.textContent = "Drop here";
-        zone.classList.remove("filled");
-      }
-
-      document.querySelectorAll(".drop-zone").forEach((zone) => {
-        zone.addEventListener("dragover", (e) => {
-          e.preventDefault();
-          zone.classList.add("over");
-        });
-        zone.addEventListener("dragleave", () => zone.classList.remove("over"));
-        zone.addEventListener("drop", (e) => {
-          e.preventDefault();
-          zone.classList.remove("over");
-          const val = e.dataTransfer.getData("text/plain");
-          apply(zone, val);
-        });
-        zone.addEventListener("click", () => {
-          if (picked) {
-            if (zone.classList.contains("filled")) {
-              const sel = document.querySelector('select[name="' + zone.dataset.for + '"]');
-              if (sel && sel.value === picked) {
-                clear(zone);
-                return;
-              }
-            }
-            apply(zone, picked);
+        card.addEventListener("dragend", () => { draggedMatchingHeading = ""; });
+        card.addEventListener("click", () => {
+          if (isMatchingHeadingsLocked() || card.disabled) return;
+          const value = card.dataset.headingValue || "";
+          if (selectedMatchingHeading === value) {
+            clearMatchingHeadingSelection(true);
             return;
           }
-          if (zone.classList.contains("filled")) clear(zone);
+          clearMatchingHeadingSelection(false);
+          selectedMatchingHeading = value;
+          card.classList.add("selected");
+          document.querySelectorAll(".heading-placement-target[aria-disabled='false']").forEach((target) => target.classList.add("is-selected-target"));
+          announceMatchingHeading("Heading " + value + " selected. Choose a paragraph target to place it.");
         });
-        zone.addEventListener("keydown", (e) => {
-          if (e.key === "Backspace" || e.key === "Delete") clear(zone);
-          if (/^[abcdABCD]$/.test(e.key)) apply(zone, e.key.toUpperCase());
+        card.addEventListener("keydown", (e) => {
+          if (e.key !== "Enter" && e.key !== " ") return;
+          e.preventDefault();
+          card.click();
         });
-        zone.addEventListener("dblclick", () => clear(zone));
       });
 
-      document.querySelectorAll(".drop-zone").forEach((zone) => {
-        const qName = zone.dataset.for;
-        const sel = document.querySelector('select[name="' + qName + '"]');
-        if (sel && sel.value) {
-          apply(zone, sel.value);
+      document.querySelectorAll(".heading-placement-target").forEach((target) => {
+        target.addEventListener("dragover", (e) => {
+          if (isMatchingHeadingsLocked()) return;
+          e.preventDefault();
+          target.classList.add("drag-over");
+        });
+        target.addEventListener("dragleave", () => target.classList.remove("drag-over"));
+        target.addEventListener("drop", (e) => {
+          if (isMatchingHeadingsLocked()) return;
+          e.preventDefault();
+          target.classList.remove("drag-over");
+          const value = e.dataTransfer.getData("text/plain") || draggedMatchingHeading;
+          placeMatchingHeading(target.dataset.q, value, "drag");
+        });
+        target.addEventListener("click", (e) => {
+          const remove = e.target.closest(".heading-remove-btn");
+          if (remove) {
+            e.preventDefault();
+            e.stopPropagation();
+            removeMatchingHeading(target.dataset.q);
+            return;
+          }
+          if (selectedMatchingHeading) placeMatchingHeading(target.dataset.q, selectedMatchingHeading, "click");
+        });
+        target.addEventListener("keydown", (e) => {
+          const remove = e.target.closest(".heading-remove-btn");
+          if (remove && (e.key === "Enter" || e.key === " ")) {
+            e.preventDefault();
+            removeMatchingHeading(target.dataset.q);
+            return;
+          }
+          if ((e.key === "Enter" || e.key === " ") && selectedMatchingHeading) {
+            e.preventDefault();
+            placeMatchingHeading(target.dataset.q, selectedMatchingHeading, "keyboard");
+          }
+          if (e.key === "Backspace" || e.key === "Delete") {
+            e.preventDefault();
+            removeMatchingHeading(target.dataset.q);
+          }
+        });
+      });
+
+      document.querySelectorAll("select[name^='q']").forEach((select) => {
+        const q = Number((select.name || "").replace("q", ""));
+        if (q >= 14 && q <= 20) {
+          select.addEventListener("change", refreshMatchingHeadingsUI);
         }
       });
 
-      document.querySelectorAll(".clear-drop-btn").forEach((btn) => {
-        btn.addEventListener("click", () => {
-          const qName = btn.dataset.clearFor;
-          const zone = document.querySelector('.drop-zone[data-for="' + qName + '"]');
-          if (zone) clear(zone);
-        });
-      });
+      refreshMatchingHeadingsUI();
     }
 
 
@@ -6273,6 +6534,7 @@
         document
           .querySelectorAll("#questionContent select, #questionContent input")
           .forEach((el) => (el.disabled = true));
+        refreshMatchingHeadingsUI();
       }
 
       updateTfngStudyFeedbackVisibility();
