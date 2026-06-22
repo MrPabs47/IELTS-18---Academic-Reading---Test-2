@@ -3058,7 +3058,10 @@
       const passageNum = info.passage || activeSection;
       const passage = document.querySelector('.passage-section[data-section="' + passageNum + '"]');
       if (!passage) return null;
-      const existing = Array.from(passage.querySelectorAll(".study-evidence-highlight")).find((mark) => mark.dataset.clueText === text);
+      const existing = Array.from(passage.querySelectorAll(".study-evidence-highlight")).find((mark) => {
+        const markedText = mark.dataset.clueText || "";
+        return markedText === text || markedText.includes(text);
+      });
       if (existing) {
         const questions = new Set((existing.dataset.clueQuestions || "").split(",").filter(Boolean));
         questions.add(String(q));
