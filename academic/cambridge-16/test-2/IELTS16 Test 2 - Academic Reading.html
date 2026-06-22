@@ -1197,8 +1197,18 @@
     .study-feedback-card dd { margin:0; }
     .study-feedback-card.correct { border-left-color:#198754; }
     .study-feedback-card.incorrect { border-left-color:#c62828; }
-    .study-clue-btn { margin-top:10px; border:1px solid #0b5cab; color:#0b5cab; background:#fff; border-radius:999px; padding:6px 10px; cursor:pointer; font-weight:700; }
-    .study-evidence-highlight { background:#fff3a3; box-shadow:0 0 0 3px rgba(255,193,7,.35); border-radius:3px; }
+    .study-clue-btn { margin-top:10px; border:1px solid color-mix(in srgb, #15803d 55%, var(--border)); color:color-mix(in srgb, #15803d 75%, var(--text)); background:color-mix(in srgb, #dcfce7 60%, var(--bg)); border-radius:999px; padding:6px 10px; cursor:pointer; font-weight:700; display:inline-flex; align-items:center; justify-content:center; min-width:34px; min-height:34px; font-size:1.05rem; }
+    .study-clue-btn:hover, .study-clue-btn:focus-visible, .study-clue-toggle:hover, .study-clue-toggle:focus-visible { transform:translateY(-1px); box-shadow:0 6px 16px rgba(21,128,61,.18); outline:2px solid color-mix(in srgb, var(--accent) 45%, transparent); outline-offset:2px; }
+    .passage-clue-toolbar { display:flex; align-items:center; gap:8px; padding:8px 14px 0; }
+    .passage-clue-toolbar:empty, .passage-clue-toolbar:not(:has(button:not([hidden]))) { display:none; }
+    .study-clue-toggle { margin:0 0 2px; border:1px solid color-mix(in srgb, #15803d 55%, var(--border)); border-radius:999px; background:color-mix(in srgb, #dcfce7 52%, var(--bg)); color:color-mix(in srgb, #14532d 70%, var(--text)); cursor:pointer; font:inherit; font-weight:700; padding:6px 12px; }
+    .study-evidence-highlight { border-radius:5px; background:color-mix(in srgb, #bbf7d0 58%, var(--bg)); color:var(--text); box-shadow:0 0 0 1px color-mix(in srgb, #15803d 36%, transparent); padding:1px 2px; }
+    .study-evidence-highlight.focused-clue { outline:3px solid color-mix(in srgb, #16a34a 70%, var(--accent)); outline-offset:2px; box-shadow:0 0 0 4px color-mix(in srgb, #bbf7d0 60%, transparent); }
+    .study-evidence-highlight.attention-pulse { animation:studyEvidencePulse 1.2s ease-out 1; }
+    .study-clue-badge { display:inline-flex; align-items:center; justify-content:center; min-width:1.35em; height:1.35em; margin-left:4px; border:1px solid color-mix(in srgb, #14532d 76%, var(--text)); border-radius:999px; background:#14532d; color:#fff; font-weight:700; font-size:.78em; line-height:1; cursor:pointer; user-select:none; }
+    .study-clue-badge:focus-visible { outline:2px solid var(--accent); outline-offset:2px; }
+    .question-block.focused-question-flash, .study-feedback-card.focused-question-flash { outline:3px solid color-mix(in srgb, var(--accent) 70%, #16a34a); outline-offset:3px; border-radius:12px; }
+    @keyframes studyEvidencePulse { 0%{box-shadow:0 0 0 2px color-mix(in srgb, var(--accent) 30%, transparent);} 45%{box-shadow:0 0 0 7px color-mix(in srgb, var(--accent-soft) 70%, transparent);} 100%{box-shadow:0 0 0 2px color-mix(in srgb, var(--accent) 28%, transparent);} }
     .score-guide { display:none; position:fixed; inset:0; background:rgba(0,0,0,.45); z-index:10002; align-items:center; justify-content:center; padding:20px; }
     .score-guide-panel { background:var(--bg); color:var(--text); border-radius:14px; max-width:520px; width:100%; padding:18px; box-shadow:0 18px 50px rgba(0,0,0,.25); }
     .score-guide-panel table { width:100%; border-collapse:collapse; margin-top:10px; }
@@ -1360,6 +1370,7 @@
           <div class="pane-header" id="passageHeader">
             Part 1 <span>Read the text and answer questions 1–13.</span>
           </div>
+          <div class="passage-clue-toolbar" id="passageClueToolbar" aria-label="Passage clue controls"><button type="button" id="passageClueToggle" class="study-clue-toggle" hidden>Show all passage clues</button></div>
           <div class="pane-content" id="passageContent">
             <!-- Section 1 passages -->
                         <div class="passage-section" data-section="1">
@@ -2952,65 +2963,149 @@
         '<dt>Correct answer</dt><dd>' + escapeHtml(info.correctAnswerText || correctAnswerText[q] || "") + '</dd>' +
         '<dt>Why</dt><dd>' + escapeHtml(info.explanation || "") + '</dd>' +
         '<dt>Skill</dt><dd>' + escapeHtml(info.skillFocus || "") + '</dd>' +
-        '</dl><button type="button" class="study-clue-btn" data-clue-q="' + q + '">Show passage clue</button>';
+        '</dl><div class="evidence-action-row"><button type="button" class="study-clue-btn" data-clue-q="' + q + '" aria-label="Show passage clue for question ' + q + '" title="Passage clue">🔎</button></div>';
       block.appendChild(card);
       card.querySelector(".study-clue-btn").addEventListener("click", () => focusStudyEvidence(q));
     }
 
     function clearStudyEvidenceHighlights() {
-      document.querySelectorAll(".study-evidence-highlight").forEach((span) => {
-        const parent = span.parentNode;
-        while (span.firstChild) parent.insertBefore(span.firstChild, span);
-        span.remove();
+      document.querySelectorAll(".study-evidence-highlight").forEach((mark) => {
+        const parent = mark.parentNode;
+        parent.replaceChild(document.createTextNode(mark.dataset.clueText || mark.childNodes[0]?.textContent || mark.textContent), mark);
         parent.normalize();
       });
+      document.querySelectorAll(".study-feedback-card.focused-question-flash, .question-block.focused-question-flash").forEach((el) => el.classList.remove("focused-question-flash"));
+    }
+
+    function getActiveStudyGroupsForPassage(passage = activeSection) {
+      return getStudyData().taskGroups.filter((group) => revealedStudyTaskGroups.has(group.id) && String(group.passage) === String(passage));
+    }
+
+    function updateStudyClueToolbar() {
+      const toggle = document.getElementById("passageClueToggle");
+      if (!toggle) return;
+      const hasRevealedFeedback = getActiveStudyGroupsForPassage(activeSection).length > 0;
+      toggle.hidden = mode !== "study" && !testSubmitted || !hasRevealedFeedback;
+      toggle.textContent = isStudyFullClueMapVisible() ? "Hide all passage clues" : "Show all passage clues";
+      toggle.onclick = () => {
+        const anyVisible = isStudyFullClueMapVisible();
+        clearStudyEvidenceHighlights();
+        if (!anyVisible) {
+          getActiveStudyGroupsForPassage(activeSection).forEach((group) => group.questionNumbers.forEach((q) => markStudyEvidence(q)));
+        }
+        updateStudyClueToolbar();
+      };
+    }
+
+    function isStudyFullClueMapVisible() {
+      const activeQs = getActiveStudyGroupsForPassage(activeSection).flatMap((group) => group.questionNumbers.map(String));
+      if (!activeQs.length) return false;
+      const visibleQs = new Set();
+      document.querySelectorAll('.passage-section[data-section="' + activeSection + '"] .study-evidence-highlight').forEach((mark) => {
+        (mark.dataset.clueQuestions || "").split(",").filter(Boolean).forEach((q) => visibleQs.add(q));
+      });
+      return activeQs.every((q) => visibleQs.has(q));
     }
 
     function renderStudyEvidenceForGroup(group) {
-      renderVisibleStudyEvidence();
+      updateStudyClueToolbar();
     }
 
     function renderVisibleStudyEvidence() {
       clearStudyEvidenceHighlights();
-      const activeGroups = getStudyData().taskGroups.filter((group) => revealedStudyTaskGroups.has(group.id));
-      activeGroups.filter((group) => group.passage === activeSection).forEach((group) => {
-        group.questionNumbers.forEach((q) => markStudyEvidence(q));
+      updateStudyClueToolbar();
+    }
+
+    function getStudyEvidenceText(q) {
+      const info = getStudyData().questions[q] || {};
+      return String(info.infoButtonAfter || info.evidence || "").trim();
+    }
+
+    function findTextNodeMatch(root, needle) {
+      const walker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT, {
+        acceptNode(node) {
+          if (!node.nodeValue || !node.nodeValue.trim()) return NodeFilter.FILTER_REJECT;
+          if (node.parentElement && node.parentElement.closest("mark, button, input, select, textarea")) return NodeFilter.FILTER_REJECT;
+          return NodeFilter.FILTER_ACCEPT;
+        }
       });
+      let node;
+      while ((node = walker.nextNode())) {
+        const idx = node.nodeValue.indexOf(needle);
+        if (idx >= 0) return { node, idx };
+      }
+      return null;
     }
 
     function markStudyEvidence(q) {
       const info = getStudyData().questions[q] || {};
-      const text = info.infoButtonAfter || info.evidence;
-      if (!text) return;
-      const passage = document.querySelector('.passage-section[data-section="' + (info.passage || activeSection) + '"]');
-      if (!passage) return;
-      const walker = document.createTreeWalker(passage, NodeFilter.SHOW_TEXT);
-      const needle = String(text).replace(/\.\.\./g, "").trim().slice(0, 90);
-      if (!needle) return;
-      let node;
-      while ((node = walker.nextNode())) {
-        const idx = node.nodeValue.indexOf(needle);
-        if (idx >= 0) {
-          const range = document.createRange();
-          range.setStart(node, idx);
-          range.setEnd(node, idx + needle.length);
-          const span = document.createElement("span");
-          span.className = "study-evidence-highlight";
-          span.id = "study-evidence-" + q;
-          try { range.surroundContents(span); } catch (e) {}
-          return;
-        }
+      const text = getStudyEvidenceText(q);
+      if (!text) return null;
+      const passageNum = info.passage || activeSection;
+      const passage = document.querySelector('.passage-section[data-section="' + passageNum + '"]');
+      if (!passage) return null;
+      const existing = Array.from(passage.querySelectorAll(".study-evidence-highlight")).find((mark) => mark.dataset.clueText === text);
+      if (existing) {
+        const questions = new Set((existing.dataset.clueQuestions || "").split(",").filter(Boolean));
+        questions.add(String(q));
+        existing.dataset.clueQuestions = Array.from(questions).join(",");
+        renderStudyClueBadges(existing);
+        return existing;
       }
+      const match = findTextNodeMatch(passage, text);
+      if (!match) return null;
+      const range = document.createRange();
+      range.setStart(match.node, match.idx);
+      range.setEnd(match.node, match.idx + text.length);
+      const mark = document.createElement("mark");
+      mark.className = "study-evidence-highlight";
+      mark.id = "study-evidence-" + q;
+      mark.dataset.clueText = text;
+      mark.dataset.clueQuestions = String(q);
+      try { range.surroundContents(mark); } catch (e) { return null; }
+      renderStudyClueBadges(mark);
+      return mark;
+    }
+
+    function renderStudyClueBadges(mark) {
+      mark.querySelectorAll(".study-clue-badge").forEach((badge) => badge.remove());
+      (mark.dataset.clueQuestions || "").split(",").filter(Boolean).forEach((question) => {
+        const badge = document.createElement("button");
+        badge.type = "button";
+        badge.className = "study-clue-badge";
+        badge.textContent = question;
+        badge.setAttribute("aria-label", "Return to question " + question);
+        badge.addEventListener("click", (event) => { event.stopPropagation(); focusStudyQuestion(question); });
+        mark.appendChild(badge);
+      });
+    }
+
+    function focusStudyQuestion(q) {
+      const card = document.getElementById("study-feedback-" + q);
+      const block = document.querySelector('.question-block[data-q="' + q + '"]');
+      const target = card || block;
+      if (!target) return;
+      target.scrollIntoView({ behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth", block: "center" });
+      target.classList.add("focused-question-flash");
+      setTimeout(() => target.classList.remove("focused-question-flash"), 1400);
     }
 
     function focusStudyEvidence(q) {
       const info = getStudyData().questions[q] || {};
-      if (info.passage && info.passage !== activeSection) switchSection(info.passage);
-      renderVisibleStudyEvidence();
+      const targetPassage = info.passage || activeSection;
+      if (targetPassage && targetPassage !== activeSection) switchSection(targetPassage);
+      clearStudyEvidenceHighlights();
       setTimeout(() => {
-        const el = document.getElementById("study-evidence-" + q);
-        if (el) el.scrollIntoView({ behavior: "smooth", block: "center" });
-      }, 50);
+        const el = markStudyEvidence(q);
+        updateStudyClueToolbar();
+        if (!el) return;
+        el.classList.add("focused-clue");
+        el.setAttribute("tabindex", "-1");
+        el.scrollIntoView({ behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth", block: "center" });
+        el.focus({ preventScroll: true });
+        requestAnimationFrame(() => el.classList.add("attention-pulse"));
+        setTimeout(() => el.classList.remove("attention-pulse"), 1400);
+      }, 70);
     }
 
     function checkAllStudyAnswers() {
