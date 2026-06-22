@@ -1181,24 +1181,37 @@
     .study-mode-pill { display:none; align-items:center; gap:6px; border:1px solid #b7d4ff; background:#eaf3ff; color:#0b4a8b; border-radius:999px; padding:5px 10px; font-weight:700; font-size:.85rem; }
     .study-toolbar { display:none; gap:10px; align-items:center; flex-wrap:wrap; padding:10px 14px; border-bottom:1px solid var(--border); background:var(--bg-secondary); }
     .study-timer { font-weight:700; }
-    .score-guide-btn, .study-check-all, .study-task-toggle, .study-strategy-toggle { border:1px solid var(--border); background:var(--bg); color:var(--text); border-radius:8px; padding:7px 10px; cursor:pointer; font-weight:700; }
-    .study-check-all { background:#0b5cab; color:#fff; border-color:#0b5cab; }
-    .study-task-panel { border:1px solid #d7e3f5; border-radius:12px; background:#f8fbff; padding:12px; margin:12px 0; }
-    .study-task-panel h3 { margin:0 0 6px; font-size:1rem; }
+    .score-guide-btn, .study-check-all, .study-task-toggle, .study-strategy-toggle { border:1px solid var(--border); background:var(--bg); color:var(--text); border-radius:999px; padding:7px 12px; cursor:pointer; font:inherit; font-weight:800; transition:background .16s ease, border-color .16s ease, box-shadow .16s ease, transform .16s ease; white-space:nowrap; }
+    .score-guide-btn:hover, .score-guide-btn:focus-visible, .study-task-toggle:hover, .study-task-toggle:focus-visible, .study-strategy-toggle:hover, .study-strategy-toggle:focus-visible { border-color:var(--accent); background:var(--accent-soft); outline:2px solid transparent; box-shadow:0 0 0 3px var(--accent-soft); transform:translateY(-1px); }
+    .study-check-all { background:#0b5cab; color:#fff; border-color:#0b5cab; border-radius:8px; }
+    .study-task-toggle { border-color:var(--accent); background:var(--accent-soft); color:var(--accent); font-size:.78rem; line-height:1.1; }
+    .study-strategy-toggle { border-color:color-mix(in srgb, var(--accent) 62%, var(--border)); background:color-mix(in srgb, var(--accent) 18%, var(--bg)); color:color-mix(in srgb, var(--accent) 82%, var(--text)); box-shadow:0 1px 3px color-mix(in srgb, var(--accent) 18%, transparent); }
+    .study-task-panel, .study-feedback-card { margin:10px 0; padding:12px; border:1px solid var(--border); border-radius:12px; background:var(--bg-secondary); color:var(--text); }
+    .study-panel-header { display:flex; align-items:flex-start; justify-content:space-between; gap:10px; margin:0 0 8px; }
+    .study-task-panel h3, .study-feedback-card h4 { margin:0 0 8px; font-size:.98rem; }
+    .study-panel-header h3 { margin-bottom:0; }
+    .study-task-actions { display:flex; align-items:center; justify-content:flex-end; gap:10px; flex-wrap:wrap; }
     .study-strategy-content { display:none; margin-top:8px; }
     .study-strategy-content.is-open { display:block; }
-    .study-task-panel ol { margin:8px 0 8px 22px; }
-    .study-task-actions { display:flex; align-items:center; gap:10px; flex-wrap:wrap; margin-top:10px; }
-    .study-task-result { display:none; font-weight:700; color:#0b4a8b; }
-    .study-feedback-card { border:1px solid #d7e3f5; border-left:5px solid #0b5cab; border-radius:12px; background:#fff; padding:12px; margin:10px 0; box-shadow:0 2px 8px rgba(0,0,0,.04); }
-    .study-feedback-card h4 { margin:0 0 8px; }
-    .study-feedback-card dl { display:grid; grid-template-columns:max-content 1fr; gap:6px 12px; margin:0; }
-    .study-feedback-card dt { font-weight:700; color:#333; }
+    .study-strategy-grid { display:grid; grid-template-columns:repeat(auto-fit, minmax(170px, 1fr)); gap:8px; margin-top:8px; }
+    .study-strategy-step, .study-common-trap { border:1px solid var(--border); border-left:4px solid var(--accent); border-radius:10px; background:var(--bg); padding:9px; }
+    .study-common-trap { border-left-color:var(--correct); }
+    .study-strategy-label { display:inline-flex; align-items:center; gap:5px; margin-bottom:4px; color:var(--text); font-weight:800; }
+    .study-strategy-chip { display:inline-flex; align-items:center; justify-content:center; min-width:1.55em; height:1.55em; border-radius:999px; background:var(--accent-soft); color:var(--accent); font-size:.82em; font-weight:800; }
+    .study-common-trap .study-strategy-chip { background:color-mix(in srgb, var(--correct) 16%, var(--bg)); color:color-mix(in srgb, var(--correct) 78%, var(--text)); }
+    .study-strategy-step p, .study-common-trap p { margin:0; }
+    .study-task-result { display:none; align-items:center; gap:6px; margin:6px 0 12px; padding:6px 10px; border:1px solid var(--border); border-radius:8px; background:var(--bg-secondary); color:var(--text); font-size:.86rem; font-weight:700; }
+    .study-task-result::before { content:""; width:8px; height:8px; border-radius:999px; background:var(--text-soft); flex:0 0 auto; }
+    .study-feedback-card dl { display:grid; grid-template-columns:minmax(110px, max-content) 1fr; gap:6px 10px; margin:0; }
+    .study-feedback-card dt { font-weight:800; color:var(--text-soft); }
+    .study-feedback-card dt.label-correct-answer { color:color-mix(in srgb, var(--correct) 78%, var(--text)); }
+    .study-feedback-card dt.label-why, .study-feedback-card dt.label-skill { color:color-mix(in srgb, var(--accent) 72%, var(--text)); }
     .study-feedback-card dd { margin:0; }
-    .study-feedback-card.correct { border-left-color:#198754; }
-    .study-feedback-card.incorrect { border-left-color:#c62828; }
-    .study-clue-btn { margin-top:10px; border:1px solid color-mix(in srgb, #15803d 55%, var(--border)); color:color-mix(in srgb, #15803d 75%, var(--text)); background:color-mix(in srgb, #dcfce7 60%, var(--bg)); border-radius:999px; padding:6px 10px; cursor:pointer; font-weight:700; display:inline-flex; align-items:center; justify-content:center; min-width:34px; min-height:34px; font-size:1.05rem; }
-    .study-clue-btn:hover, .study-clue-btn:focus-visible, .study-clue-toggle:hover, .study-clue-toggle:focus-visible { transform:translateY(-1px); box-shadow:0 6px 16px rgba(21,128,61,.18); outline:2px solid color-mix(in srgb, var(--accent) 45%, transparent); outline-offset:2px; }
+    .study-feedback-card.correct { border-left:4px solid var(--correct); }
+    .study-feedback-card.incorrect { border-left:4px solid var(--incorrect); }
+    .evidence-action-row { display:flex; justify-content:flex-end; margin-top:10px; }
+    .study-clue-btn { width:30px; height:30px; border:1px solid var(--border); color:var(--text); background:var(--bg-secondary); border-radius:999px; cursor:pointer; font:inherit; line-height:1; display:inline-flex; align-items:center; justify-content:center; transition:background .16s ease, border-color .16s ease, transform .16s ease; }
+    .study-clue-btn:hover, .study-clue-btn:focus-visible, .study-clue-toggle:hover, .study-clue-toggle:focus-visible { transform:translateY(-1px); box-shadow:0 0 0 3px var(--accent-soft); border-color:var(--accent); background:var(--accent-soft); outline:2px solid transparent; }
     .passage-clue-toolbar { display:flex; align-items:center; gap:8px; padding:8px 14px 0; }
     .passage-clue-toolbar:empty, .passage-clue-toolbar:not(:has(button:not([hidden]))) { display:none; }
     .study-clue-toggle { margin:0 0 2px; border:1px solid color-mix(in srgb, #15803d 55%, var(--border)); border-radius:999px; background:color-mix(in srgb, #dcfce7 52%, var(--bg)); color:color-mix(in srgb, #14532d 70%, var(--text)); cursor:pointer; font:inherit; font-weight:700; padding:6px 12px; }
@@ -2859,13 +2872,14 @@
         panel.id = "study-panel-" + group.id;
         panel.dataset.groupId = group.id;
         panel.style.display = mode === "study" || testSubmitted ? "block" : "none";
-        panel.innerHTML = '<h3>' + escapeHtml(group.label) + ' strategy</h3>' +
-          '<div class="study-task-actions"><button type="button" class="study-strategy-toggle" data-strategy-group="' + group.id + '" aria-expanded="false" aria-controls="study-strategy-' + group.id + '">Strategy</button><button type="button" class="study-task-toggle" data-study-group="' + group.id + '" aria-expanded="false">Show feedback</button><span class="study-task-result" id="study-result-' + group.id + '"></span></div>' +
+        panel.innerHTML = '<div class="study-panel-header"><h3>' + escapeHtml(group.label) + ' strategy</h3>' +
+          '<div class="study-task-actions"><button type="button" class="study-strategy-toggle" data-strategy-group="' + group.id + '" aria-expanded="false" aria-controls="study-strategy-' + group.id + '">Strategy</button><button type="button" class="study-task-toggle" data-study-group="' + group.id + '" aria-expanded="false">Show feedback</button></div></div>' +
+          '<div class="study-task-result" id="study-result-' + group.id + '" role="status" aria-live="polite"></div>' +
           '<div class="study-strategy-content" id="study-strategy-' + group.id + '">' +
           '<p>' + escapeHtml(strategy.purpose || "Review this question group and compare your answer with the passage evidence.") + '</p>' +
-          '<ol>' + (strategy.steps || []).map((step) => '<li>' + escapeHtml(step) + '</li>').join("") + '</ol>' +
-          (strategy.commonTrap ? '<p><strong>Common trap:</strong> ' + escapeHtml(strategy.commonTrap) + '</p>' : '') +
-          '</div>';
+          '<div class="study-strategy-grid">' + (strategy.steps || []).map((step, index) => '<div class="study-strategy-step"><span class="study-strategy-label"><span class="study-strategy-chip">' + (index + 1) + '</span>Step ' + (index + 1) + '</span><p>' + escapeHtml(step) + '</p></div>').join("") +
+          (strategy.commonTrap ? '<div class="study-common-trap"><span class="study-strategy-label"><span class="study-strategy-chip">!</span>Common trap</span><p>' + escapeHtml(strategy.commonTrap) + '</p></div>' : '') +
+          '</div></div>';
         firstBlock.parentNode.insertBefore(panel, firstBlock);
       });
       document.querySelectorAll(".study-task-toggle").forEach((btn) => {
@@ -2923,7 +2937,7 @@
       revealedStudyTaskGroups.add(groupId);
       const correct = group.questionNumbers.filter(isQuestionCorrect).length;
       const result = document.getElementById("study-result-" + group.id);
-      if (result) { result.textContent = correct + " / " + group.questionNumbers.length + " correct"; result.style.display = "inline"; }
+      if (result) { result.textContent = correct + " / " + group.questionNumbers.length + " correct"; result.style.display = "inline-flex"; }
       const btn = document.querySelector('[data-study-group="' + group.id + '"]');
       if (btn) { btn.textContent = "Hide feedback"; btn.setAttribute("aria-expanded", "true"); }
       group.questionNumbers.forEach(renderStudyFeedbackCard);
@@ -2959,11 +2973,11 @@
       card.className = "study-feedback-card " + (correct ? "correct" : "incorrect");
       card.id = "study-feedback-" + q;
       card.innerHTML = '<h4>Question ' + q + '</h4><dl>' +
-        '<dt>Your answer</dt><dd>' + escapeHtml(user) + '</dd>' +
-        '<dt>Correct answer</dt><dd>' + escapeHtml(info.correctAnswerText || correctAnswerText[q] || "") + '</dd>' +
-        '<dt>Why</dt><dd>' + escapeHtml(info.explanation || "") + '</dd>' +
-        '<dt>Skill</dt><dd>' + escapeHtml(info.skillFocus || "") + '</dd>' +
-        '</dl><div class="evidence-action-row"><button type="button" class="study-clue-btn" data-clue-q="' + q + '" aria-label="Show passage clue for question ' + q + '" title="Passage clue">🔎</button></div>';
+        '<dt class="label-your-answer">Your answer</dt><dd>' + escapeHtml(user) + '</dd>' +
+        '<dt class="label-correct-answer">Correct answer</dt><dd>' + escapeHtml(info.correctAnswerText || correctAnswerText[q] || "") + '</dd>' +
+        '<dt class="label-why">Why</dt><dd>' + escapeHtml(info.explanation || "") + '</dd>' +
+        '<dt class="label-skill">Skill</dt><dd>' + escapeHtml(info.skillFocus || "") + '</dd>' +
+        '</dl><div class="evidence-action-row"><button type="button" class="study-clue-btn" data-clue-q="' + q + '" aria-label="Show passage clue for question ' + q + '" title="Passage clue"><svg aria-hidden="true" focusable="false" width="15" height="15" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" d="m15.5 15.5 4.5 4.5M10.5 17a6.5 6.5 0 1 1 0-13 6.5 6.5 0 0 1 0 13Z"/></svg></button></div>';
       block.appendChild(card);
       card.querySelector(".study-clue-btn").addEventListener("click", () => focusStudyEvidence(q));
     }
