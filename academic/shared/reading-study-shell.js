@@ -129,9 +129,11 @@
           if (!toggle) return;
           const active = call(adapter.getActivePassage, null);
           const groups = call(adapter.getTaskGroups, []) || [];
-          const hasPassageClues = groups.some((group) => String(group.passage) === String(active));
           const isStudyMode = call(adapter.isStudyMode, call(adapter.getMode, "test") === "study");
           const submitted = !!call(adapter.isSubmitted, false);
+          const hasPassageClues = groups.some((group) => (
+            String(group.passage) === String(active) && (submitted || state.visibleGroups.has(group.id))
+          ));
           toggle.hidden = (!isStudyMode && !submitted) || !hasPassageClues;
           const fullMapVisible = state.fullClueMapPassages.has(String(active));
           toggle.textContent = fullMapVisible ? "Hide all passage clues" : "Show all passage clues";

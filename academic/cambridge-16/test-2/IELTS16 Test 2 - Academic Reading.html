@@ -3105,11 +3105,32 @@
     function showStudyChrome(show, showPill = mode === "study") {
       const controller = getStudyShellController();
       if (controller) controller.showChrome(show, { showPill });
-      document.querySelectorAll(".study-strategy-toggle, .study-task-toggle").forEach((btn) => {
-        btn.hidden = !show;
-      });
+      updateStudyTaskControlVisibility();
       document.querySelectorAll(".study-task-panel").forEach((panel) => {
         if (!panel.querySelector(".study-strategy-content.is-open")) panel.hidden = true;
+      });
+    }
+
+    function isStudyTaskRevealButtonVisible() {
+      return mode === "study" && !testSubmitted && !fullStudyReviewSubmitted;
+    }
+
+    function isStudyStrategyButtonVisible() {
+      return mode === "study" || testSubmitted;
+    }
+
+    function updateStudyTaskControlVisibility() {
+      const showStrategies = isStudyStrategyButtonVisible();
+      const showReveal = isStudyTaskRevealButtonVisible();
+      document.querySelectorAll(".study-strategy-toggle").forEach((btn) => {
+        btn.hidden = !showStrategies;
+      });
+      document.querySelectorAll(".study-task-toggle").forEach((btn) => {
+        btn.hidden = !showReveal;
+        const groupId = btn.dataset.studyGroup;
+        const revealed = groupId && revealedStudyTaskGroups.has(groupId);
+        btn.textContent = revealed ? "Hide answers & feedback" : "Show answers & feedback";
+        btn.setAttribute("aria-expanded", revealed ? "true" : "false");
       });
     }
 
@@ -3134,6 +3155,7 @@
     }
 
     function toggleStudyGroup(groupId) {
+      if (!isStudyTaskRevealButtonVisible()) return;
       const controller = getStudyShellController();
       if (controller && controller.isGroupVisible(groupId)) controller.hideGroup(groupId);
       else if (controller) controller.showGroup(groupId);
@@ -3158,6 +3180,7 @@
       if (btn) { btn.textContent = "Hide answers & feedback"; btn.setAttribute("aria-expanded", "true"); }
       group.questionNumbers.forEach(renderStudyFeedbackCard);
       clearCorrectAnswerPlaceholders(group.questionNumbers);
+      updateStudyTaskControlVisibility();
     }
 
     function hideStudyGroup(groupId) {
@@ -3180,6 +3203,7 @@
       const btn = document.querySelector('[data-study-group="' + group.id + '"]');
       if (btn) { btn.textContent = "Show answers & feedback"; btn.setAttribute("aria-expanded", "false"); }
       renderVisibleStudyEvidence();
+      updateStudyTaskControlVisibility();
     }
 
     function renderStudyFeedbackCard(q) {
@@ -3531,10 +3555,10 @@
       if (resultsOverlay) resultsOverlay.style.display = "flex";
 
       if (mode === "test") {
+        testSubmitted = true;
         showStudyChrome(true, false);
         getStudyData().taskGroups.forEach((group) => showStudyGroup(group.id));
         updateTopBarScore(correctCount);
-        testSubmitted = true;
         isTestRunning = false;
         updateActiveCandidateDisplay();
         isTimerPaused = false;
