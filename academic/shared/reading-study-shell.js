@@ -1,7 +1,6 @@
 /* Shared IELTS Pabs Reading Study Mode shell controller.
    Dependency-free static helper; pages provide DOM/data callbacks via adapter. */
 (function () {
-  function noop() {}
   function call(fn, fallback) {
     return typeof fn === "function" ? fn() : fallback;
   }
@@ -26,7 +25,6 @@
         scoreGuideButton: "scoreGuideButton",
         studyModePill: "studyModePill",
         studyTimer: "studyTimerContainer",
-        studyCheckAll: "studyCheckAllControl",
         passageClueToggle: "passageClueToggle",
         studyHeaderChrome: "studyHeaderChrome"
       }, adapter.elements || {});
@@ -42,7 +40,6 @@
           setVisible(byId("scoreGuideButton"), !!show, "inline-flex");
           setVisible(byId("studyModePill"), !!(show && opts.showPill !== false && isStudyMode), "inline-flex");
           setVisible(byId("studyTimer"), studyActive, "block");
-          setVisible(byId("studyCheckAll"), studyActive, "inline-flex");
           document.querySelectorAll(".study-task-panel").forEach((el) => {
             el.classList.toggle("is-visible", !!show || submitted);
             el.style.display = (!!show || submitted) ? "block" : "none";
@@ -92,8 +89,8 @@
           this.renderVisibleEvidence();
         },
         focusClue(questionNumber) {
-          // Preserve already visible group clues; then add/focus the requested clue.
-          this.renderVisibleEvidence();
+          // Full passage maps are authoritative controller state; preserve them while focusing one clue.
+          if (!state.fullClueMapVisible) this.renderVisibleEvidence();
           const el = typeof adapter.focusQuestionClue === "function" ? adapter.focusQuestionClue(questionNumber) : null;
           this.updateClueToolbar();
           return el;
@@ -107,7 +104,6 @@
           const isStudyMode = call(adapter.isStudyMode, call(adapter.getMode, "test") === "study");
           const submitted = !!call(adapter.isSubmitted, false);
           toggle.hidden = (!isStudyMode && !submitted) || !hasPassageClues;
-          state.fullClueMapVisible = typeof adapter.isFullClueMapVisible === "function" ? adapter.isFullClueMapVisible() : state.fullClueMapVisible;
           toggle.textContent = state.fullClueMapVisible ? "Hide all passage clues" : "Show all passage clues";
           toggle.onclick = () => {
             if (state.fullClueMapVisible) controller.hideAllPassageClues();

@@ -20,7 +20,7 @@ A page integrating the shared shell calls `ReadingStudyShell.init(adapter)` and 
 - `markEvidence(questionNumber)` marks the exact passage clue string for that question.
 - `clearEvidence()` clears visible passage clue marks before a controller re-render.
 - `focusQuestionClue(questionNumber)` focuses/pulses a single clue without clearing existing visible group clues.
-- `isFullClueMapVisible()` reports Show all / Hide all passage-clue state.
+- The returned controller owns Show all / Hide all passage-clue state and restores only currently revealed group evidence when a full map is hidden.
 - `getActivePassage()` returns the passage/part whose clue toolbar is active.
 - `isSubmitted()` and `isStudyMode()` keep Study-only controls inert in active Test Mode.
 

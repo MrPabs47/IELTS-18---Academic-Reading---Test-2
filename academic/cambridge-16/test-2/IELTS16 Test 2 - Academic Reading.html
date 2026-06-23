@@ -1283,7 +1283,6 @@
           <button id="scoreGuideButton" type="button" class="score-guide-btn" onclick="toggleScoreGuide(true)">Score guide</button>
           <span id="studyModePill" class="study-mode-pill">Study mode</span>
           <span id="studyTimerContainer" class="study-timer">Study time: <span id="studyTimerDisplay">00:00</span></span>
-          <button id="studyCheckAllControl" type="button" class="study-check-all" onclick="checkAllStudyAnswers()">Check all answers</button>
         </div>
         <div class="icon-group">
           <span class="icon" title="Connection status">
@@ -2913,12 +2912,10 @@
         markEvidence: markStudyEvidence,
         clearEvidence: clearStudyEvidenceHighlights,
         focusQuestionClue: focusMarkedStudyEvidence,
-        isFullClueMapVisible: isStudyFullClueMapVisible,
         elements: {
           scoreGuideButton: "scoreGuideButton",
           studyModePill: "studyModePill",
           studyTimer: "studyTimerContainer",
-          studyCheckAll: "studyCheckAllControl",
           passageClueToggle: "passageClueToggle"
         }
       });

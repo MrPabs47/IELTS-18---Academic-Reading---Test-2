@@ -272,6 +272,9 @@ def test_study_shell_foundation_and_lifecycle_behaviour_contract() -> None:
     assert "Study time: <span id=\"studyTimerDisplay\">00:00</span>" in page
     assert 'id="studyHeaderChrome" class="study-header-chrome"' in page
     assert page.index('id="scoreGuideButton"') < page.index('id="studyModePill"') < page.index('id="studyTimerContainer"') < page.index('class="icon-group"')
+    header = page[page.index('id="studyHeaderChrome"'):page.index('class="icon-group"')]
+    assert "Check all answers" not in header
+    assert "studyCheckAllControl" not in header
     assert "#studyToolbar" not in shared_css
     assert ".is-visible" in shared_css
     assert ".study-icon-btn" in shared_css
@@ -289,6 +292,8 @@ def test_study_shell_foundation_and_lifecycle_behaviour_contract() -> None:
     assert "setVisible(byId(\"studyTimer\"), studyActive" in shared_js
     assert "studyActive = !!show && isStudyMode && !submitted" in shared_js
     assert "toggle.hidden = (!isStudyMode && !submitted) || !hasPassageClues" in shared_js
+    assert "adapter.isFullClueMapVisible" not in shared_js
+    assert "studyCheckAll" not in shared_js
 
     init = page[page.index("ReadingStudyShell.init({"):page.index("function showStudyChrome")]
     assert "getMode: () => mode" in init
@@ -306,6 +311,82 @@ def test_study_shell_foundation_and_lifecycle_behaviour_contract() -> None:
     focus = page[page.index("function focusStudyEvidence(q)"):page.index("function checkAllStudyAnswers()")]
     assert "controller.focusClue(q)" in focus
     assert "clearStudyEvidenceHighlights();\n      setTimeout" not in focus
+
+
+def test_shared_controller_full_map_state_with_mocked_adapter() -> None:
+    """Exercise full-map and focus lifecycle with a mocked DOM/adapter, no browser needed."""
+    script = """
+      const assert = require('assert');
+      global.window = {};
+      const elements = {
+        passageClueToggle: { hidden: true, textContent: '', onclick: null, classList: { toggle() {} }, setAttribute() {} },
+        studyHeaderChrome: { style: {}, classList: { toggle() {} }, setAttribute() {} },
+        scoreGuideButton: { style: {}, classList: { toggle() {} }, setAttribute() {} },
+        studyModePill: { style: {}, classList: { toggle() {} }, setAttribute() {} },
+        studyTimerContainer: { style: {}, classList: { toggle() {} }, setAttribute() {} }
+      };
+      global.document = {
+        getElementById(id) { return elements[id] || null; },
+        querySelectorAll(selector) { return selector === '.study-task-panel' ? [] : []; }
+      };
+      require(SHELL_PATH);
+
+      let mode = 'study';
+      let submitted = false;
+      let activePassage = 1;
+      const visible = new Set();
+      const focused = [];
+      const groups = [
+        { id: 'g1', passage: 1, questionNumbers: [1, 2] },
+        { id: 'g2', passage: 1, questionNumbers: [3, 4] },
+        { id: 'g3', passage: 2, questionNumbers: [5] }
+      ];
+      const controller = window.ReadingStudyShell.init({
+        getMode: () => mode,
+        isStudyMode: () => mode === 'study',
+        isSubmitted: () => submitted,
+        getTaskGroups: () => groups,
+        getActivePassage: () => activePassage,
+        visibleGroups: new Set(),
+        showGroupFeedback() {},
+        hideGroupFeedback() {},
+        markEvidence(q) { visible.add(String(q)); return { q }; },
+        clearEvidence() { visible.clear(); },
+        focusQuestionClue(q) { visible.add(String(q)); focused.push(String(q)); return { q }; }
+      });
+      const visibleList = () => Array.from(visible).sort().join(',');
+      const toggle = elements.passageClueToggle;
+
+      controller.updateClueToolbar();
+      assert.strictEqual(toggle.hidden, false);
+      assert.strictEqual(toggle.textContent, 'Show all passage clues');
+      toggle.onclick();
+      assert.strictEqual(visibleList(), '1,2,3,4');
+      assert.strictEqual(toggle.textContent, 'Hide all passage clues');
+
+      controller.focusClue(2);
+      assert.strictEqual(visibleList(), '1,2,3,4');
+      assert.deepStrictEqual(focused, ['2']);
+
+      toggle.onclick();
+      assert.strictEqual(visibleList(), '');
+      assert.strictEqual(toggle.textContent, 'Show all passage clues');
+
+      controller.showGroup('g1');
+      assert.strictEqual(visibleList(), '1,2');
+      toggle.onclick();
+      assert.strictEqual(visibleList(), '1,2,3,4');
+      toggle.onclick();
+      assert.strictEqual(visibleList(), '1,2');
+      assert.strictEqual(toggle.textContent, 'Show all passage clues');
+
+      mode = 'test';
+      submitted = false;
+      controller.updateClueToolbar();
+      assert.strictEqual(toggle.hidden, true);
+    """
+    script = "const SHELL_PATH = " + json.dumps(str(ROOT / "academic/shared/reading-study-shell.js")) + ";\n" + script
+    subprocess.check_call(["node", "-e", script])
 
 def test_overlapping_and_contained_clue_badges_are_preserved() -> None:
     """Contained clue strings must reuse marks and keep every badge."""
