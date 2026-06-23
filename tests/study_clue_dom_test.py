@@ -288,6 +288,8 @@ def test_study_shell_foundation_and_lifecycle_behaviour_contract() -> None:
     assert "showAllPassageClues()" in shared_js
     assert "hideAllPassageClues()" in shared_js
     assert "focusClue(questionNumber)" in shared_js
+    assert "fullClueMapVisible" not in shared_js
+    assert "fullClueMapPassages: new Set()" in shared_js
     assert "this.renderVisibleEvidence(active);" in shared_js
     assert "setVisible(byId(\"studyTimer\"), studyActive" in shared_js
     assert "studyActive = !!show && isStudyMode && !submitted" in shared_js
