@@ -262,6 +262,7 @@ def test_study_shell_foundation_and_lifecycle_behaviour_contract() -> None:
     """Guard the shared Study Mode shell import and Test 1 evidence lifecycle parity."""
     page = HTML_PATH.read_text(encoding="utf-8")
     shared_css = (ROOT / "academic/shared/reading-study-shell.css").read_text(encoding="utf-8")
+    shared_js = (ROOT / "academic/shared/reading-study-shell.js").read_text(encoding="utf-8")
     readme = (ROOT / "academic/shared/README-study-mode-shell.md").read_text(encoding="utf-8")
 
     assert '<link rel="stylesheet" href="../../shared/reading-study-shell.css">' in page
@@ -269,26 +270,42 @@ def test_study_shell_foundation_and_lifecycle_behaviour_contract() -> None:
     assert "Show answers &amp; feedback" in page
     assert "Hide answers & feedback" in page
     assert "Study time: <span id=\"studyTimerDisplay\">00:00</span>" in page
-    assert "#studyToolbar" in shared_css
+    assert 'id="studyHeaderChrome" class="study-header-chrome"' in page
+    assert page.index('id="scoreGuideButton"') < page.index('id="studyModePill"') < page.index('id="studyTimerContainer"') < page.index('class="icon-group"')
+    assert "#studyToolbar" not in shared_css
+    assert ".is-visible" in shared_css
     assert ".study-icon-btn" in shared_css
     assert ".study-feedback-card dl" in shared_css
-    for hook in ["getMode()", "getTaskGroups()", "showGroupFeedback(groupId)", "hideGroupFeedback(groupId)", "getEvidenceText(questionNumber)", "focusQuestionClue(questionNumber)", "getActivePassage()"]:
+    assert "ReadingStudyShell.init(adapter)" in readme
+    for hook in ["getMode()", "getTaskGroups()", "showGroupFeedback(groupId)", "hideGroupFeedback(groupId)", "markEvidence(questionNumber)", "clearEvidence()", "focusQuestionClue(questionNumber)", "getActivePassage()"]:
         assert hook in readme
 
-    show_group = page[page.index("function showStudyGroup(groupId)"):page.index("function hideStudyGroup(groupId)")]
-    assert "renderStudyEvidenceForGroup(group);" in show_group
+    assert "init(adapter)" in shared_js
+    assert "showChrome(show, options)" in shared_js
+    assert "showAllPassageClues()" in shared_js
+    assert "hideAllPassageClues()" in shared_js
+    assert "focusClue(questionNumber)" in shared_js
+    assert "this.renderVisibleEvidence();" in shared_js
+    assert "setVisible(byId(\"studyTimer\"), studyActive" in shared_js
+    assert "studyActive = !!show && isStudyMode && !submitted" in shared_js
+    assert "toggle.hidden = (!isStudyMode && !submitted) || !hasPassageClues" in shared_js
+
+    init = page[page.index("ReadingStudyShell.init({"):page.index("function showStudyChrome")]
+    assert "getMode: () => mode" in init
+    assert "showGroupFeedback: renderStudyGroupFeedback" in init
+    assert "hideGroupFeedback: clearStudyGroupFeedback" in init
+    assert "markEvidence: markStudyEvidence" in init
+    assert "focusQuestionClue: focusMarkedStudyEvidence" in init
+
+    show_group = page[page.index("function showStudyGroup(groupId)"):page.index("function renderStudyGroupFeedback(groupId)")]
+    assert "controller.showGroup(groupId)" in show_group
     render_group = page[page.index("function renderStudyEvidenceForGroup(group)"):page.index("function getStudyEvidenceText(q)")]
     assert "group.questionNumbers.forEach((q) => markStudyEvidence(q));" in render_group
     assert "revealedStudyTaskGroups.has(group.id)" in render_group
 
     focus = page[page.index("function focusStudyEvidence(q)"):page.index("function checkAllStudyAnswers()")]
-    assert "renderVisibleStudyEvidence();" in focus
+    assert "controller.focusClue(q)" in focus
     assert "clearStudyEvidenceHighlights();\n      setTimeout" not in focus
-
-    toggle = page[page.index("toggle.onclick = () => {"):page.index("function isStudyFullClueMapVisible()")]
-    assert "getStudyData().taskGroups.filter((group) => String(group.passage) === String(activeSection))" in toggle
-    assert "getActiveStudyGroupsForPassage(activeSection).forEach" in toggle
-
 
 def test_overlapping_and_contained_clue_badges_are_preserved() -> None:
     """Contained clue strings must reuse marks and keep every badge."""

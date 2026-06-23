@@ -1279,6 +1279,12 @@
       </div>
       <div class="top-right">
         <div id="timerContainer" role="status" aria-live="polite" aria-atomic="true" aria-hidden="true"><span id="timerPrefix">Time left:</span> <span id="timerDisplay">60:00</span></div>
+        <div id="studyHeaderChrome" class="study-header-chrome" aria-live="polite">
+          <button id="scoreGuideButton" type="button" class="score-guide-btn" onclick="toggleScoreGuide(true)">Score guide</button>
+          <span id="studyModePill" class="study-mode-pill">Study mode</span>
+          <span id="studyTimerContainer" class="study-timer">Study time: <span id="studyTimerDisplay">00:00</span></span>
+          <button id="studyCheckAllControl" type="button" class="study-check-all" onclick="checkAllStudyAnswers()">Check all answers</button>
+        </div>
         <div class="icon-group">
           <span class="icon" title="Connection status">
             <span class="sr-only">Connection status</span>
@@ -1319,12 +1325,6 @@
       </div>
     </header>
 
-    <div id="studyToolbar" class="study-toolbar" aria-live="polite">
-      <span id="studyModePill" class="study-mode-pill">Study mode</span>
-      <span id="studyTimerControl" class="study-timer">Study time: <span id="studyTimerDisplay">00:00</span></span>
-      <button type="button" class="score-guide-btn" onclick="toggleScoreGuide(true)">Score guide</button>
-      <button id="studyCheckAllControl" type="button" class="study-check-all" onclick="checkAllStudyAnswers()">Check all answers</button>
-    </div>
 
     <div id="scoreGuide" class="score-guide" role="dialog" aria-modal="true" aria-labelledby="scoreGuideTitle">
       <div class="score-guide-panel">
@@ -2750,6 +2750,7 @@
     let fullStudyReviewSubmitted = false;
     let lastRawScore = null;
     const revealedStudyTaskGroups = new Set();
+    let studyShellController = null;
 
     function getStudyData() {
       return window.IELTS16AcademicTest2StudyFeedback || { taskGroups: [], taskStrategies: {}, questions: {} };
@@ -2897,17 +2898,36 @@
       buildScoreGuideRows(null);
     }
 
+    function getStudyShellController() {
+      if (studyShellController) return studyShellController;
+      if (!window.ReadingStudyShell || typeof window.ReadingStudyShell.init !== "function") return null;
+      studyShellController = window.ReadingStudyShell.init({
+        getMode: () => mode,
+        isStudyMode: () => mode === "study",
+        isSubmitted: () => testSubmitted,
+        getTaskGroups: () => getStudyData().taskGroups,
+        getActivePassage: () => activeSection,
+        visibleGroups: revealedStudyTaskGroups,
+        showGroupFeedback: renderStudyGroupFeedback,
+        hideGroupFeedback: clearStudyGroupFeedback,
+        markEvidence: markStudyEvidence,
+        clearEvidence: clearStudyEvidenceHighlights,
+        focusQuestionClue: focusMarkedStudyEvidence,
+        isFullClueMapVisible: isStudyFullClueMapVisible,
+        elements: {
+          scoreGuideButton: "scoreGuideButton",
+          studyModePill: "studyModePill",
+          studyTimer: "studyTimerContainer",
+          studyCheckAll: "studyCheckAllControl",
+          passageClueToggle: "passageClueToggle"
+        }
+      });
+      return studyShellController;
+    }
+
     function showStudyChrome(show, showPill = mode === "study") {
-      const toolbar = document.getElementById("studyToolbar");
-      const pill = document.getElementById("studyModePill");
-      const timerControl = document.getElementById("studyTimerControl");
-      const checkAllControl = document.getElementById("studyCheckAllControl");
-      if (toolbar) toolbar.style.display = show ? "flex" : "none";
-      if (pill) pill.style.display = show && showPill ? "inline-flex" : "none";
-      const showStudyOnlyControls = show && mode === "study" && !testSubmitted;
-      if (timerControl) timerControl.style.display = showStudyOnlyControls ? "inline" : "none";
-      if (checkAllControl) checkAllControl.style.display = showStudyOnlyControls ? "inline-block" : "none";
-      document.querySelectorAll(".study-task-panel").forEach((el) => el.style.display = (show || testSubmitted) ? "block" : "none");
+      const controller = getStudyShellController();
+      if (controller) controller.showChrome(show, { showPill });
     }
 
     function toggleStudyStrategy(groupId) {
@@ -2929,14 +2949,23 @@
     }
 
     function toggleStudyGroup(groupId) {
-      if (revealedStudyTaskGroups.has(groupId)) hideStudyGroup(groupId);
+      const controller = getStudyShellController();
+      if (controller && controller.isGroupVisible(groupId)) controller.hideGroup(groupId);
+      else if (controller) controller.showGroup(groupId);
+      else if (revealedStudyTaskGroups.has(groupId)) hideStudyGroup(groupId);
       else showStudyGroup(groupId);
     }
 
     function showStudyGroup(groupId) {
+      const controller = getStudyShellController();
+      if (controller) { controller.showGroup(groupId); return; }
+      renderStudyGroupFeedback(groupId);
+      renderStudyEvidenceForGroup(getStudyData().taskGroups.find((item) => item.id === groupId));
+    }
+
+    function renderStudyGroupFeedback(groupId) {
       const group = getStudyData().taskGroups.find((item) => item.id === groupId);
       if (!group) return;
-      revealedStudyTaskGroups.add(groupId);
       const correct = group.questionNumbers.filter(isQuestionCorrect).length;
       const result = document.getElementById("study-result-" + group.id);
       if (result) { result.textContent = correct + " / " + group.questionNumbers.length + " correct"; result.style.display = "inline-flex"; }
@@ -2944,13 +2973,18 @@
       if (btn) { btn.textContent = "Hide answers & feedback"; btn.setAttribute("aria-expanded", "true"); }
       group.questionNumbers.forEach(renderStudyFeedbackCard);
       clearCorrectAnswerPlaceholders(group.questionNumbers);
-      renderStudyEvidenceForGroup(group);
     }
 
     function hideStudyGroup(groupId) {
+      const controller = getStudyShellController();
+      if (controller) { controller.hideGroup(groupId); return; }
+      clearStudyGroupFeedback(groupId);
+      renderVisibleStudyEvidence();
+    }
+
+    function clearStudyGroupFeedback(groupId) {
       const group = getStudyData().taskGroups.find((item) => item.id === groupId);
       if (!group) return;
-      revealedStudyTaskGroups.delete(groupId);
       group.questionNumbers.forEach((q) => {
         const card = document.getElementById("study-feedback-" + q);
         if (card) card.remove();
@@ -2998,21 +3032,8 @@
     }
 
     function updateStudyClueToolbar() {
-      const toggle = document.getElementById("passageClueToggle");
-      if (!toggle) return;
-      const hasPassageClues = getStudyData().taskGroups.some((group) => String(group.passage) === String(activeSection));
-      toggle.hidden = (mode !== "study" && !testSubmitted) || !hasPassageClues;
-      toggle.textContent = isStudyFullClueMapVisible() ? "Hide all passage clues" : "Show all passage clues";
-      toggle.onclick = () => {
-        const anyVisible = isStudyFullClueMapVisible();
-        clearStudyEvidenceHighlights();
-        if (!anyVisible) {
-          getStudyData().taskGroups.filter((group) => String(group.passage) === String(activeSection)).forEach((group) => group.questionNumbers.forEach((q) => markStudyEvidence(q)));
-        } else {
-          getActiveStudyGroupsForPassage(activeSection).forEach((group) => group.questionNumbers.forEach((q) => markStudyEvidence(q)));
-        }
-        updateStudyClueToolbar();
-      };
+      const controller = getStudyShellController();
+      if (controller) controller.updateClueToolbar();
     }
 
     function isStudyFullClueMapVisible() {
@@ -3026,6 +3047,7 @@
     }
 
     function renderStudyEvidenceForGroup(group) {
+      if (!group) return;
       group.questionNumbers.forEach((q) => markStudyEvidence(q));
       updateStudyClueToolbar();
     }
@@ -3115,21 +3137,28 @@
       setTimeout(() => target.classList.remove("focused-question-flash"), 1400);
     }
 
+
+    function focusMarkedStudyEvidence(q) {
+      const el = markStudyEvidence(q);
+      updateStudyClueToolbar();
+      if (!el) return null;
+      el.classList.add("focused-clue");
+      el.setAttribute("tabindex", "-1");
+      el.scrollIntoView({ behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth", block: "center" });
+      el.focus({ preventScroll: true });
+      requestAnimationFrame(() => el.classList.add("attention-pulse"));
+      setTimeout(() => el.classList.remove("attention-pulse"), 1400);
+      return el;
+    }
+
     function focusStudyEvidence(q) {
       const info = getStudyData().questions[q] || {};
       const targetPassage = info.passage || activeSection;
       if (targetPassage && targetPassage !== activeSection) switchSection(targetPassage);
       setTimeout(() => {
-        renderVisibleStudyEvidence();
-        const el = markStudyEvidence(q);
-        updateStudyClueToolbar();
+        const controller = getStudyShellController();
+        const el = controller ? controller.focusClue(q) : focusMarkedStudyEvidence(q);
         if (!el) return;
-        el.classList.add("focused-clue");
-        el.setAttribute("tabindex", "-1");
-        el.scrollIntoView({ behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth", block: "center" });
-        el.focus({ preventScroll: true });
-        requestAnimationFrame(() => el.classList.add("attention-pulse"));
-        setTimeout(() => el.classList.remove("attention-pulse"), 1400);
       }, 70);
     }
 
