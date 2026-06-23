@@ -3008,6 +3008,8 @@
       const score = document.getElementById("topBarScoreStatus");
       if (score) { score.textContent = ""; score.style.display = "none"; score.removeAttribute("aria-label"); }
       revealedStudyTaskGroups.clear();
+      if (studyShellController && typeof studyShellController.reset === "function") studyShellController.reset();
+      studyShellController = null;
       document.querySelectorAll(".study-feedback-card").forEach((el) => el.remove());
       document.querySelectorAll(".study-task-result").forEach((el) => { el.textContent = ""; el.style.display = "none"; el.hidden = true; });
       document.querySelectorAll(".study-task-toggle").forEach((btn) => { btn.textContent = "Show answers & feedback"; btn.setAttribute("aria-expanded", "false"); btn.hidden = true; });
@@ -3124,9 +3126,13 @@
       const showReveal = isStudyTaskRevealButtonVisible();
       document.querySelectorAll(".study-strategy-toggle").forEach((btn) => {
         btn.hidden = !showStrategies;
+        btn.disabled = !showStrategies;
+        btn.setAttribute("aria-hidden", showStrategies ? "false" : "true");
       });
       document.querySelectorAll(".study-task-toggle").forEach((btn) => {
         btn.hidden = !showReveal;
+        btn.disabled = !showReveal;
+        btn.setAttribute("aria-hidden", showReveal ? "false" : "true");
         const groupId = btn.dataset.studyGroup;
         const revealed = groupId && revealedStudyTaskGroups.has(groupId);
         btn.textContent = revealed ? "Hide answers & feedback" : "Show answers & feedback";

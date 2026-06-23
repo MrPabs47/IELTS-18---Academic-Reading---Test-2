@@ -135,12 +135,19 @@
             String(group.passage) === String(active) && (submitted || state.visibleGroups.has(group.id))
           ));
           toggle.hidden = (!isStudyMode && !submitted) || !hasPassageClues;
+          toggle.disabled = toggle.hidden;
+          toggle.setAttribute("aria-hidden", toggle.hidden ? "true" : "false");
           const fullMapVisible = state.fullClueMapPassages.has(String(active));
           toggle.textContent = fullMapVisible ? "Hide all passage clues" : "Show all passage clues";
           toggle.onclick = () => {
+            if (toggle.hidden || toggle.disabled) return;
             if (state.fullClueMapPassages.has(String(call(adapter.getActivePassage, null)))) controller.hideAllPassageClues();
             else controller.showAllPassageClues();
           };
+        },
+        reset() {
+          state.fullClueMapPassages.clear();
+          this.renderVisibleEvidence();
         }
       };
       return controller;

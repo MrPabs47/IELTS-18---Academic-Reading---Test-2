@@ -297,6 +297,10 @@ def test_study_shell_foundation_and_lifecycle_behaviour_contract() -> None:
     assert "setVisible(byId(\"studyTimer\"), studyActive" in shared_js
     assert "studyActive = !!show && isStudyMode && !submitted" in shared_js
     assert "toggle.hidden = (!isStudyMode && !submitted) || !hasPassageClues" in shared_js
+    assert "toggle.disabled = toggle.hidden" in shared_js
+    assert "if (toggle.hidden || toggle.disabled) return;" in shared_js
+    assert "reset()" in shared_js
+    assert "state.fullClueMapPassages.clear();" in shared_js
     assert "submitted || state.visibleGroups.has(group.id)" in shared_js
     assert "adapter.isFullClueMapVisible" not in shared_js
     assert "studyCheckAll" not in shared_js
@@ -318,6 +322,10 @@ def test_study_shell_foundation_and_lifecycle_behaviour_contract() -> None:
     assert 'function updateStudyTaskControlVisibility()' in page
     assert 'btn.hidden = !showReveal;' in page
     assert 'btn.hidden = !showStrategies;' in page
+    assert 'btn.disabled = !showReveal;' in page
+    assert 'btn.disabled = !showStrategies;' in page
+    assert 'studyShellController = null;' in page
+    assert 'typeof studyShellController.reset === "function"' in page
     toggle_group = page[page.index("function toggleStudyGroup(groupId)"):page.index("function showStudyGroup(groupId)")]
     assert 'if (!isStudyTaskRevealButtonVisible()) return;' in toggle_group
     test_submit = page[page.index('if (mode === "test") {', page.index("function submitTest()")):page.index("exitAppFullscreen();", page.index("function submitTest()"))]
@@ -391,9 +399,11 @@ def test_shared_controller_full_map_state_with_mocked_adapter() -> None:
 
       controller.updateClueToolbar();
       assert.strictEqual(toggle.hidden, true);
+      assert.strictEqual(toggle.disabled, true);
       controller.showGroup('g1');
       assert.strictEqual(visibleList(1), '1,2');
       assert.strictEqual(toggle.hidden, false);
+      assert.strictEqual(toggle.disabled, false);
       assert.strictEqual(toggle.textContent, 'Show all passage clues');
       toggle.onclick();
       assert.strictEqual(visibleList(1), '1,2,3,4');
@@ -402,10 +412,12 @@ def test_shared_controller_full_map_state_with_mocked_adapter() -> None:
       activePassage = 2;
       controller.updateClueToolbar();
       assert.strictEqual(toggle.hidden, true);
+      assert.strictEqual(toggle.disabled, true);
       assert.strictEqual(toggle.textContent, 'Show all passage clues');
       activePassage = 1;
       controller.updateClueToolbar();
       assert.strictEqual(toggle.hidden, false);
+      assert.strictEqual(toggle.disabled, false);
       assert.strictEqual(toggle.textContent, 'Hide all passage clues');
 
       controller.focusClue(2);
@@ -439,6 +451,7 @@ def test_shared_controller_full_map_state_with_mocked_adapter() -> None:
       submitted = false;
       controller.updateClueToolbar();
       assert.strictEqual(toggle.hidden, true);
+      assert.strictEqual(toggle.disabled, true);
     """
     script = "const SHELL_PATH = " + json.dumps(str(ROOT / "academic/shared/reading-study-shell.js")) + ";\n" + script
     subprocess.check_call(["node", "-e", script])
