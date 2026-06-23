@@ -256,3 +256,48 @@ def test_study_clue_rendering_contract_and_test_mode_safeguards_remain_intact() 
     assert page.count('function submitTest()') == 1
     assert page.count('const answerKey =') == 1
     assert page.count('const correctAnswerText =') == 1
+
+
+def test_study_shell_foundation_and_lifecycle_behaviour_contract() -> None:
+    """Guard the shared Study Mode shell import and Test 1 evidence lifecycle parity."""
+    page = HTML_PATH.read_text(encoding="utf-8")
+    shared_css = (ROOT / "academic/shared/reading-study-shell.css").read_text(encoding="utf-8")
+    readme = (ROOT / "academic/shared/README-study-mode-shell.md").read_text(encoding="utf-8")
+
+    assert '<link rel="stylesheet" href="../../shared/reading-study-shell.css">' in page
+    assert '<script src="../../shared/reading-study-shell.js"></script>' in page
+    assert "Show answers &amp; feedback" in page
+    assert "Hide answers & feedback" in page
+    assert "Study time: <span id=\"studyTimerDisplay\">00:00</span>" in page
+    assert "#studyToolbar" in shared_css
+    assert ".study-icon-btn" in shared_css
+    assert ".study-feedback-card dl" in shared_css
+    for hook in ["getMode()", "getTaskGroups()", "showGroupFeedback(groupId)", "hideGroupFeedback(groupId)", "getEvidenceText(questionNumber)", "focusQuestionClue(questionNumber)", "getActivePassage()"]:
+        assert hook in readme
+
+    show_group = page[page.index("function showStudyGroup(groupId)"):page.index("function hideStudyGroup(groupId)")]
+    assert "renderStudyEvidenceForGroup(group);" in show_group
+    render_group = page[page.index("function renderStudyEvidenceForGroup(group)"):page.index("function getStudyEvidenceText(q)")]
+    assert "group.questionNumbers.forEach((q) => markStudyEvidence(q));" in render_group
+    assert "revealedStudyTaskGroups.has(group.id)" in render_group
+
+    focus = page[page.index("function focusStudyEvidence(q)"):page.index("function checkAllStudyAnswers()")]
+    assert "renderVisibleStudyEvidence();" in focus
+    assert "clearStudyEvidenceHighlights();\n      setTimeout" not in focus
+
+    toggle = page[page.index("toggle.onclick = () => {"):page.index("function isStudyFullClueMapVisible()")]
+    assert "getStudyData().taskGroups.filter((group) => String(group.passage) === String(activeSection))" in toggle
+    assert "getActiveStudyGroupsForPassage(activeSection).forEach" in toggle
+
+
+def test_overlapping_and_contained_clue_badges_are_preserved() -> None:
+    """Contained clue strings must reuse marks and keep every badge."""
+    passage = _DomNode(tag="div", attrs={"class": "passage-section", "data-section": "1"})
+    passage.append(_DomNode(text="alpha beta gamma delta"))
+    first = _mark_study_evidence(passage, 1, "alpha beta gamma")
+    second = _mark_study_evidence(passage, 2, "beta")
+    assert first is not None
+    assert second is first
+    assert (first.attrs.get("data-clue-questions") or "").split(",") == ["1", "2"]
+    badges = [child.children[0].text for child in first.children if child.tag == "button"]
+    assert badges == ["1", "2"]

@@ -1,0 +1,23 @@
+/* Shared IELTS Pabs Reading Study Mode shell foundation.
+   Imported by tests that use the canonical Study Mode chrome, controls,
+   feedback cards and evidence-clue styling. */
+#studyToolbar { display:none; gap:10px; align-items:center; flex-wrap:wrap; padding:10px 14px; border-bottom:1px solid var(--border); background:var(--bg-secondary); }
+#studyModePill, .study-mode-pill { display:none; align-items:center; gap:6px; border:1px solid #b7d4ff; background:#eaf3ff; color:#0b4a8b; border-radius:999px; padding:5px 10px; font-weight:700; font-size:.85rem; }
+.study-timer, #studyTimerContainer { font-weight:700; }
+.study-feedback-controls { display:inline-flex; align-items:center; gap:8px; margin-left:10px; vertical-align:middle; flex-wrap:wrap; }
+.study-icon-btn, .study-strategy-toggle { width:30px; height:30px; border:1px solid var(--border); border-radius:999px; background:var(--bg-secondary); color:var(--text); cursor:pointer; display:inline-flex; align-items:center; justify-content:center; font:inherit; font-weight:800; line-height:1; transition:background .16s ease,border-color .16s ease,box-shadow .16s ease,transform .16s ease; }
+.study-icon-btn:hover, .study-icon-btn:focus-visible, .study-strategy-toggle:hover, .study-strategy-toggle:focus-visible { border-color:var(--accent); background:var(--accent-soft); box-shadow:0 0 0 3px var(--accent-soft); outline:2px solid transparent; transform:translateY(-1px); }
+.study-reveal-btn, .study-task-toggle { border:1px solid var(--accent); border-radius:999px; background:var(--accent-soft); color:var(--accent); cursor:pointer; font:inherit; font-size:.78rem; font-weight:800; line-height:1.1; padding:7px 12px; white-space:nowrap; transition:background .16s ease,border-color .16s ease,box-shadow .16s ease,transform .16s ease; }
+.study-reveal-btn:hover, .study-reveal-btn:focus-visible, .study-task-toggle:hover, .study-task-toggle:focus-visible { border-color:var(--accent); background:var(--accent-soft); box-shadow:0 0 0 3px var(--accent-soft); outline:2px solid transparent; transform:translateY(-1px); }
+.study-task-panel, .study-feedback-card { margin:10px 0; padding:12px; border:1px solid var(--border); border-radius:12px; background:var(--bg-secondary); color:var(--text); }
+.study-task-result, .study-task-result-line { align-items:center; gap:6px; margin:6px 0 12px; padding:6px 10px; border:1px solid var(--border); border-radius:8px; background:var(--bg-secondary); color:var(--text); font-size:.86rem; font-weight:700; }
+.study-task-result-line[hidden] { display:none; }
+.study-task-result-line:not([hidden]), .study-task-result { display:inline-flex; }
+.study-task-result::before, .study-task-result-line:not([hidden])::before { content:""; width:8px; height:8px; border-radius:999px; background:var(--text-soft); flex:0 0 auto; }
+.study-feedback-card dl { display:grid; grid-template-columns:minmax(110px, max-content) 1fr; gap:6px 10px; margin:0; }
+.study-feedback-card dt { font-weight:800; color:var(--text-soft); }
+.study-feedback-card dt.label-correct-answer { color:color-mix(in srgb, var(--correct) 78%, var(--text)); }
+.study-feedback-card dt.label-why, .study-feedback-card dt.label-skill { color:color-mix(in srgb, var(--accent) 72%, var(--text)); }
+.study-feedback-card dd { margin:0; }
+.study-clue-btn { width:30px; height:30px; border:1px solid var(--border); color:var(--text); background:var(--bg-secondary); border-radius:999px; cursor:pointer; font:inherit; line-height:1; display:inline-flex; align-items:center; justify-content:center; transition:background .16s ease,border-color .16s ease,transform .16s ease; }
+.study-clue-btn:hover, .study-clue-btn:focus-visible { transform:translateY(-1px); box-shadow:0 0 0 3px var(--accent-soft); border-color:var(--accent); background:var(--accent-soft); outline:2px solid transparent; }
