@@ -288,7 +288,7 @@ def test_study_shell_foundation_and_lifecycle_behaviour_contract() -> None:
     assert "showAllPassageClues()" in shared_js
     assert "hideAllPassageClues()" in shared_js
     assert "focusClue(questionNumber)" in shared_js
-    assert "this.renderVisibleEvidence();" in shared_js
+    assert "this.renderVisibleEvidence(active);" in shared_js
     assert "setVisible(byId(\"studyTimer\"), studyActive" in shared_js
     assert "studyActive = !!show && isStudyMode && !submitted" in shared_js
     assert "toggle.hidden = (!isStudyMode && !submitted) || !hasPassageClues" in shared_js
@@ -300,6 +300,7 @@ def test_study_shell_foundation_and_lifecycle_behaviour_contract() -> None:
     assert "showGroupFeedback: renderStudyGroupFeedback" in init
     assert "hideGroupFeedback: clearStudyGroupFeedback" in init
     assert "markEvidence: markStudyEvidence" in init
+    assert "clearEvidenceForPassage: clearStudyEvidenceHighlightsForPassage" in init
     assert "focusQuestionClue: focusMarkedStudyEvidence" in init
 
     show_group = page[page.index("function showStudyGroup(groupId)"):page.index("function renderStudyGroupFeedback(groupId)")]
@@ -334,13 +335,15 @@ def test_shared_controller_full_map_state_with_mocked_adapter() -> None:
       let mode = 'study';
       let submitted = false;
       let activePassage = 1;
-      const visible = new Set();
+      const visibleByPassage = new Map([['1', new Set()], ['2', new Set()]]);
       const focused = [];
       const groups = [
         { id: 'g1', passage: 1, questionNumbers: [1, 2] },
         { id: 'g2', passage: 1, questionNumbers: [3, 4] },
         { id: 'g3', passage: 2, questionNumbers: [5] }
       ];
+      const passageForQuestion = (q) => groups.find((group) => group.questionNumbers.includes(Number(q))).passage;
+      const addVisible = (q) => visibleByPassage.get(String(passageForQuestion(q))).add(String(q));
       const controller = window.ReadingStudyShell.init({
         getMode: () => mode,
         isStudyMode: () => mode === 'study',
@@ -350,35 +353,56 @@ def test_shared_controller_full_map_state_with_mocked_adapter() -> None:
         visibleGroups: new Set(),
         showGroupFeedback() {},
         hideGroupFeedback() {},
-        markEvidence(q) { visible.add(String(q)); return { q }; },
-        clearEvidence() { visible.clear(); },
-        focusQuestionClue(q) { visible.add(String(q)); focused.push(String(q)); return { q }; }
+        markEvidence(q) { addVisible(q); return { q }; },
+        clearEvidence() { visibleByPassage.forEach((set) => set.clear()); },
+        clearEvidenceForPassage(passage) { visibleByPassage.get(String(passage)).clear(); },
+        focusQuestionClue(q) { addVisible(q); focused.push(String(q)); return { q }; }
       });
-      const visibleList = () => Array.from(visible).sort().join(',');
+      const visibleList = (passage) => Array.from(visibleByPassage.get(String(passage))).sort().join(',');
       const toggle = elements.passageClueToggle;
 
       controller.updateClueToolbar();
       assert.strictEqual(toggle.hidden, false);
       assert.strictEqual(toggle.textContent, 'Show all passage clues');
       toggle.onclick();
-      assert.strictEqual(visibleList(), '1,2,3,4');
+      assert.strictEqual(visibleList(1), '1,2,3,4');
+      assert.strictEqual(toggle.textContent, 'Hide all passage clues');
+
+      activePassage = 2;
+      controller.updateClueToolbar();
+      assert.strictEqual(toggle.textContent, 'Show all passage clues');
+      activePassage = 1;
+      controller.updateClueToolbar();
       assert.strictEqual(toggle.textContent, 'Hide all passage clues');
 
       controller.focusClue(2);
-      assert.strictEqual(visibleList(), '1,2,3,4');
+      assert.strictEqual(visibleList(1), '1,2,3,4');
       assert.deepStrictEqual(focused, ['2']);
 
       toggle.onclick();
-      assert.strictEqual(visibleList(), '');
+      assert.strictEqual(visibleList(1), '');
       assert.strictEqual(toggle.textContent, 'Show all passage clues');
 
       controller.showGroup('g1');
-      assert.strictEqual(visibleList(), '1,2');
+      assert.strictEqual(visibleList(1), '1,2');
       toggle.onclick();
-      assert.strictEqual(visibleList(), '1,2,3,4');
+      assert.strictEqual(visibleList(1), '1,2,3,4');
+      activePassage = 2;
+      controller.showGroup('g3');
+      assert.strictEqual(visibleList(2), '5');
+      assert.strictEqual(toggle.textContent, 'Hide all passage clues');
+      activePassage = 1;
+      controller.updateClueToolbar();
       toggle.onclick();
-      assert.strictEqual(visibleList(), '1,2');
+      assert.strictEqual(visibleList(1), '1,2');
+      assert.strictEqual(visibleList(2), '5');
       assert.strictEqual(toggle.textContent, 'Show all passage clues');
+
+      controller.showGroup('g2');
+      assert.strictEqual(toggle.textContent, 'Hide all passage clues');
+      activePassage = 2;
+      controller.updateClueToolbar();
+      assert.strictEqual(toggle.textContent, 'Hide all passage clues');
 
       mode = 'test';
       submitted = false;

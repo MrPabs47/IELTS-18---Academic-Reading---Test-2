@@ -2911,6 +2911,7 @@
         hideGroupFeedback: clearStudyGroupFeedback,
         markEvidence: markStudyEvidence,
         clearEvidence: clearStudyEvidenceHighlights,
+        clearEvidenceForPassage: clearStudyEvidenceHighlightsForPassage,
         focusQuestionClue: focusMarkedStudyEvidence,
         elements: {
           scoreGuideButton: "scoreGuideButton",
@@ -3017,6 +3018,15 @@
 
     function clearStudyEvidenceHighlights() {
       document.querySelectorAll(".study-evidence-highlight").forEach((mark) => {
+        const parent = mark.parentNode;
+        parent.replaceChild(document.createTextNode(mark.dataset.clueText || mark.childNodes[0]?.textContent || mark.textContent), mark);
+        parent.normalize();
+      });
+      document.querySelectorAll(".study-feedback-card.focused-question-flash, .question-block.focused-question-flash").forEach((el) => el.classList.remove("focused-question-flash"));
+    }
+
+    function clearStudyEvidenceHighlightsForPassage(passage) {
+      document.querySelectorAll('.passage-section[data-section="' + passage + '"] .study-evidence-highlight').forEach((mark) => {
         const parent = mark.parentNode;
         parent.replaceChild(document.createTextNode(mark.dataset.clueText || mark.childNodes[0]?.textContent || mark.textContent), mark);
         parent.normalize();
