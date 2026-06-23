@@ -270,6 +270,9 @@ def test_study_shell_foundation_and_lifecycle_behaviour_contract() -> None:
     assert "Show answers &amp; feedback" in page
     assert "Hide answers & feedback" in page
     assert "Study time: <span id=\"studyTimerDisplay\">00:00</span>" in page
+    assert '<div id="topBarScoreStatus" role="status" aria-live="polite"></div>' in page
+    assert 'class="score-guide-button"' in page
+    assert '📊 <span>Score guide</span>' in page
     assert 'id="studyHeaderChrome" class="study-header-chrome"' in page
     assert page.index('id="scoreGuideButton"') < page.index('id="studyModePill"') < page.index('id="studyTimerContainer"') < page.index('class="icon-group"')
     header = page[page.index('id="studyHeaderChrome"'):page.index('class="icon-group"')]
@@ -296,6 +299,17 @@ def test_study_shell_foundation_and_lifecycle_behaviour_contract() -> None:
     assert "toggle.hidden = (!isStudyMode && !submitted) || !hasPassageClues" in shared_js
     assert "adapter.isFullClueMapVisible" not in shared_js
     assert "studyCheckAll" not in shared_js
+    assert 'id="studyToolbar"' not in page
+    assert 'id="scoreGuideOverlay" class="score-guide-overlay"' in page
+    modal = page[page.index('id="scoreGuideOverlay"'):page.index('<!-- Options overlay -->')]
+    assert 'id="scoreGuideClose" class="score-guide-close"' in modal
+    assert 'id="scoreGuideSummary" class="score-guide-summary" hidden' in modal
+    assert 'id="scoreGuideTableBody"' in modal
+    assert 'function openScoreGuide()' in page
+    assert 'function closeScoreGuide()' in page
+    assert 'function updateTopBarScore(correctCount)' in page
+    assert 'correctCount + " / 40 · " + formatBandLabel' in page
+    assert '"Score: " + score + " / " + totals[sec] + " points"' in page
 
     init = page[page.index("ReadingStudyShell.init({"):page.index("function showStudyChrome")]
     assert "getMode: () => mode" in init
