@@ -718,22 +718,23 @@
     }
 
     #passageHeader {
-      align-items: flex-start;
-      flex-direction: column;
-      gap: 6px;
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto;
+      align-items: center;
+      gap: 10px;
     }
 
     .passage-header-line {
       line-height: 1.25;
+      min-width: 0;
     }
 
     .passage-clue-toolbar {
       display: flex;
-      flex-wrap: wrap;
       align-items: center;
-      justify-content: flex-start;
+      justify-content: flex-end;
       gap: 6px;
-      width: 100%;
+      min-width: max-content;
     }
 
     .passage-clue-toolbar:empty,
@@ -744,7 +745,21 @@
     .passage-clue-toolbar button {
       margin: 0;
       max-width: 100%;
-      white-space: normal;
+      white-space: nowrap;
+    }
+
+    @media (max-width: 640px) {
+      #passageHeader {
+        grid-template-columns: minmax(0, 1fr);
+        align-items: start;
+      }
+      .passage-clue-toolbar {
+        justify-content: flex-start;
+        min-width: 0;
+      }
+      .passage-clue-toolbar button {
+        white-space: normal;
+      }
     }
 
     .pane-content {
@@ -4665,7 +4680,7 @@
     }
 
     function showTfngPassageClues() {
-      if (!isTfngFeedbackAvailable()) return;
+      if (!isStudyClueMapRouteAvailable()) return;
       const data = window.IELTS16AcademicTest1StudyFeedback;
       const passageSection = document.querySelector('.passage-section[data-section="1"]');
       if (!data || !data.questions || !passageSection) return;
@@ -4701,25 +4716,34 @@
       }
     }
 
+
+    function isStudyClueMapRouteAvailable() {
+      return mode === "study" || (mode === "test" && testSubmitted);
+    }
+
+    function isStudyGroupExplicitlyRevealed(groupId) {
+      return mode === "study" && revealedStudyTaskGroups.has(groupId);
+    }
+
     function getActivePassageClueGroups() {
       if (activeSection === 1) {
         return [
-          { available: isTfngFeedbackAvailable, full: () => tfngCluesVisible && tfngSingleClueQuestion === null },
-          { available: isOneWordFeedbackAvailable, full: () => oneWordCluesVisible && oneWordSingleClueQuestion === null }
+          { available: isStudyClueMapRouteAvailable, full: () => tfngCluesVisible && tfngSingleClueQuestion === null },
+          { available: isStudyClueMapRouteAvailable, full: () => oneWordCluesVisible && oneWordSingleClueQuestion === null }
         ];
       }
       if (activeSection === 2) {
         return [
-          { available: isMatchingHeadingsFeedbackAvailable, full: () => matchingHeadingsCluesVisible && matchingHeadingsSingleClueQuestion === null },
-          { available: isOneWordP2FeedbackAvailable, full: () => oneWordP2CluesVisible && oneWordP2SingleClueQuestion === null },
-          { available: isChooseTwoFeedbackAvailable, full: () => chooseTwoCluesVisible && chooseTwoSingleClueOption === null }
+          { available: isStudyClueMapRouteAvailable, full: () => matchingHeadingsCluesVisible && matchingHeadingsSingleClueQuestion === null },
+          { available: isStudyClueMapRouteAvailable, full: () => oneWordP2CluesVisible && oneWordP2SingleClueQuestion === null },
+          { available: isStudyClueMapRouteAvailable, full: () => chooseTwoCluesVisible && chooseTwoSingleClueOption === null }
         ];
       }
       if (activeSection === 3) {
         return [
-          { available: isMultipleChoiceFeedbackAvailable, full: () => multipleChoiceCluesVisible && multipleChoiceSingleClueQuestion === null },
-          { available: isSummaryCompletionFeedbackAvailable, full: () => summaryCompletionCluesVisible && summaryCompletionSingleClueQuestion === null },
-          { available: isMatchingPeopleFeedbackAvailable, full: () => matchingPeopleCluesVisible && matchingPeopleSingleClueQuestion === null }
+          { available: isStudyClueMapRouteAvailable, full: () => multipleChoiceCluesVisible && multipleChoiceSingleClueQuestion === null },
+          { available: isStudyClueMapRouteAvailable, full: () => summaryCompletionCluesVisible && summaryCompletionSingleClueQuestion === null },
+          { available: isStudyClueMapRouteAvailable, full: () => matchingPeopleCluesVisible && matchingPeopleSingleClueQuestion === null }
         ];
       }
       return [];
@@ -4732,18 +4756,41 @@
 
     function setActivePassageClueMapVisible(visible) {
       if (activeSection === 1) {
-        if (isTfngFeedbackAvailable()) { tfngCluesVisible = visible; tfngSingleClueQuestion = null; }
-        if (isOneWordFeedbackAvailable()) { oneWordCluesVisible = visible; oneWordSingleClueQuestion = null; }
+        if (isStudyClueMapRouteAvailable()) { tfngCluesVisible = visible; tfngSingleClueQuestion = null; }
+        if (isStudyClueMapRouteAvailable()) { oneWordCluesVisible = visible; oneWordSingleClueQuestion = null; }
       } else if (activeSection === 2) {
-        if (isMatchingHeadingsFeedbackAvailable()) { matchingHeadingsCluesVisible = visible; matchingHeadingsSingleClueQuestion = null; }
-        if (isOneWordP2FeedbackAvailable()) { oneWordP2CluesVisible = visible; oneWordP2SingleClueQuestion = null; }
-        if (isChooseTwoFeedbackAvailable()) { chooseTwoCluesVisible = visible; chooseTwoSingleClueOption = null; }
+        if (isStudyClueMapRouteAvailable()) { matchingHeadingsCluesVisible = visible; matchingHeadingsSingleClueQuestion = null; }
+        if (isStudyClueMapRouteAvailable()) { oneWordP2CluesVisible = visible; oneWordP2SingleClueQuestion = null; }
+        if (isStudyClueMapRouteAvailable()) { chooseTwoCluesVisible = visible; chooseTwoSingleClueOption = null; }
       } else if (activeSection === 3) {
-        if (isMultipleChoiceFeedbackAvailable()) { multipleChoiceCluesVisible = visible; multipleChoiceSingleClueQuestion = null; }
-        if (isSummaryCompletionFeedbackAvailable()) { summaryCompletionCluesVisible = visible; summaryCompletionSingleClueQuestion = null; }
-        if (isMatchingPeopleFeedbackAvailable()) { matchingPeopleCluesVisible = visible; matchingPeopleSingleClueQuestion = null; }
+        if (isStudyClueMapRouteAvailable()) { multipleChoiceCluesVisible = visible; multipleChoiceSingleClueQuestion = null; }
+        if (isStudyClueMapRouteAvailable()) { summaryCompletionCluesVisible = visible; summaryCompletionSingleClueQuestion = null; }
+        if (isStudyClueMapRouteAvailable()) { matchingPeopleCluesVisible = visible; matchingPeopleSingleClueQuestion = null; }
       }
       refreshActivePassageClues();
+    }
+
+    function clearActivePassageFocusedClues() {
+      if (activeSection === 1) {
+        tfngCluesVisible = false; tfngSingleClueQuestion = null;
+        oneWordCluesVisible = false; oneWordSingleClueQuestion = null;
+        refreshTfngPassageClues();
+        refreshOneWordPassageClues();
+      } else if (activeSection === 2) {
+        matchingHeadingsCluesVisible = false; matchingHeadingsSingleClueQuestion = null;
+        oneWordP2CluesVisible = false; oneWordP2SingleClueQuestion = null;
+        chooseTwoCluesVisible = false; chooseTwoSingleClueOption = null;
+        refreshMatchingHeadingsPassageClues();
+        refreshOneWordP2PassageClues();
+        refreshChooseTwoPassageClues();
+      } else if (activeSection === 3) {
+        multipleChoiceCluesVisible = false; multipleChoiceSingleClueQuestion = null;
+        summaryCompletionCluesVisible = false; summaryCompletionSingleClueQuestion = null;
+        matchingPeopleCluesVisible = false; matchingPeopleSingleClueQuestion = null;
+        refreshMultipleChoicePassageClues();
+        refreshSummaryCompletionPassageClues();
+        refreshMatchingPeoplePassageClues();
+      }
     }
 
     function refreshActivePassageClues() {
@@ -4765,6 +4812,8 @@
       if (toolbar) toolbar.hidden = !available;
       if (!toggle) return;
       toggle.hidden = !available;
+      toggle.disabled = !available;
+      toggle.setAttribute("aria-hidden", available ? "false" : "true");
       const fullMapVisible = isActivePassageClueMapFullyVisible();
       toggle.textContent = fullMapVisible ? "Hide all passage clues" : "Show all passage clues";
       toggle.setAttribute("aria-pressed", String(fullMapVisible));
@@ -4776,7 +4825,7 @@
 
     function refreshTfngPassageClues() {
       removeTfngPassageClues();
-      if (isTfngFeedbackAvailable() && tfngCluesVisible) showTfngPassageClues();
+      if (isStudyClueMapRouteAvailable() && tfngCluesVisible) showTfngPassageClues();
       updateTfngClueToggle();
     }
 
@@ -4818,7 +4867,7 @@
 
     function revealTfngEvidence(questionNumber) {
       const allCluesVisible = activeSection === 1 && isActivePassageClueMapFullyVisible();
-      if (!allCluesVisible) { if (isOneWordFeedbackAvailable()) { oneWordCluesVisible = false; oneWordSingleClueQuestion = null; } refreshOneWordPassageClues(); }
+      if (!allCluesVisible) clearActivePassageFocusedClues();
       focusTfngPassageClue(questionNumber, true, !allCluesVisible);
     }
 
@@ -4832,7 +4881,7 @@
     }
 
     function showOneWordPassageClues() {
-      if (!isOneWordFeedbackAvailable()) return;
+      if (!isStudyClueMapRouteAvailable()) return;
       const data = window.IELTS16AcademicTest1StudyFeedback;
       const passageSection = document.querySelector('.passage-section[data-section="1"]');
       if (!data || !data.questions || !passageSection) return;
@@ -4874,7 +4923,7 @@
 
     function refreshOneWordPassageClues() {
       removeOneWordPassageClues();
-      if (isOneWordFeedbackAvailable() && oneWordCluesVisible) showOneWordPassageClues();
+      if (isStudyClueMapRouteAvailable() && oneWordCluesVisible) showOneWordPassageClues();
       updateOneWordClueToggle();
     }
 
@@ -4904,7 +4953,7 @@
 
     function revealOneWordEvidence(questionNumber) {
       const allCluesVisible = activeSection === 1 && isActivePassageClueMapFullyVisible();
-      if (!allCluesVisible) { if (isTfngFeedbackAvailable()) { tfngCluesVisible = false; tfngSingleClueQuestion = null; } refreshTfngPassageClues(); }
+      if (!allCluesVisible) clearActivePassageFocusedClues();
       focusOneWordPassageClue(questionNumber, true, !allCluesVisible);
     }
 
@@ -4935,7 +4984,7 @@
     }
 
     function showOneWordP2PassageClues() {
-      if (!isOneWordP2FeedbackAvailable()) return;
+      if (!isStudyClueMapRouteAvailable()) return;
       const data = window.IELTS16AcademicTest1StudyFeedback;
       const passageSection = document.querySelector('.passage-section[data-section="2"]');
       if (!data || !data.questions || !passageSection) return;
@@ -4977,7 +5026,7 @@
 
     function refreshOneWordP2PassageClues() {
       removeOneWordP2PassageClues();
-      if (isOneWordP2FeedbackAvailable() && oneWordP2CluesVisible) showOneWordP2PassageClues();
+      if (isStudyClueMapRouteAvailable() && oneWordP2CluesVisible) showOneWordP2PassageClues();
       updateOneWordP2ClueToggle();
       updateChooseTwoClueToggle();
     }
@@ -5008,7 +5057,7 @@
 
     function revealOneWordP2Evidence(questionNumber) {
       const allCluesVisible = activeSection === 2 && isActivePassageClueMapFullyVisible();
-      if (!allCluesVisible) { if (isMatchingHeadingsFeedbackAvailable()) { matchingHeadingsCluesVisible = false; matchingHeadingsSingleClueQuestion = null; } if (isChooseTwoFeedbackAvailable()) { chooseTwoCluesVisible = false; chooseTwoSingleClueOption = null; } refreshMatchingHeadingsPassageClues(); refreshChooseTwoPassageClues(); }
+      if (!allCluesVisible) clearActivePassageFocusedClues();
       focusOneWordP2PassageClue(questionNumber, true, !allCluesVisible);
     }
 
@@ -5036,7 +5085,7 @@
     }
 
     function showChooseTwoPassageClues() {
-      if (!isChooseTwoFeedbackAvailable()) return;
+      if (!isStudyClueMapRouteAvailable()) return;
       const item = getChooseTwoStudyData();
       const passageSection = document.querySelector('.passage-section[data-section="2"]');
       if (!item || !item.options || !passageSection) return;
@@ -5076,7 +5125,7 @@
 
     function refreshChooseTwoPassageClues() {
       removeChooseTwoPassageClues();
-      if (isChooseTwoFeedbackAvailable() && chooseTwoCluesVisible) showChooseTwoPassageClues();
+      if (isStudyClueMapRouteAvailable() && chooseTwoCluesVisible) showChooseTwoPassageClues();
       updateChooseTwoClueToggle();
     }
 
@@ -5124,12 +5173,12 @@
 
     function revealChooseTwoEvidence(optionLetter) {
       const allCluesVisible = activeSection === 2 && isActivePassageClueMapFullyVisible();
-      if (!allCluesVisible) { if (isMatchingHeadingsFeedbackAvailable()) { matchingHeadingsCluesVisible = false; matchingHeadingsSingleClueQuestion = null; } if (isOneWordP2FeedbackAvailable()) { oneWordP2CluesVisible = false; oneWordP2SingleClueQuestion = null; } refreshMatchingHeadingsPassageClues(); refreshOneWordP2PassageClues(); }
+      if (!allCluesVisible) clearActivePassageFocusedClues();
       focusChooseTwoPassageClue(optionLetter, true, !allCluesVisible);
     }
 
     function showMatchingHeadingsPassageClues() {
-      if (!isMatchingHeadingsFeedbackAvailable()) return;
+      if (!isStudyClueMapRouteAvailable()) return;
       const data = window.IELTS16AcademicTest1StudyFeedback;
       const passageSection = document.querySelector('.passage-section[data-section="2"]');
       if (!data || !data.questions || !passageSection) return;
@@ -5166,7 +5215,7 @@
 
     function refreshMatchingHeadingsPassageClues() {
       removeMatchingHeadingsPassageClues();
-      if (isMatchingHeadingsFeedbackAvailable() && matchingHeadingsCluesVisible) showMatchingHeadingsPassageClues();
+      if (isStudyClueMapRouteAvailable() && matchingHeadingsCluesVisible) showMatchingHeadingsPassageClues();
       updateMatchingHeadingsClueToggle();
     }
 
@@ -5196,7 +5245,7 @@
 
     function revealMatchingHeadingsEvidence(questionNumber) {
       const allCluesVisible = activeSection === 2 && isActivePassageClueMapFullyVisible();
-      if (!allCluesVisible) { if (isOneWordP2FeedbackAvailable()) { oneWordP2CluesVisible = false; oneWordP2SingleClueQuestion = null; } if (isChooseTwoFeedbackAvailable()) { chooseTwoCluesVisible = false; chooseTwoSingleClueOption = null; } refreshOneWordP2PassageClues(); refreshChooseTwoPassageClues(); }
+      if (!allCluesVisible) clearActivePassageFocusedClues();
       focusMatchingHeadingsPassageClue(questionNumber, true, !allCluesVisible);
     }
 
@@ -5470,7 +5519,7 @@
     }
 
     function showMultipleChoicePassageClues() {
-      if (!isMultipleChoiceFeedbackAvailable()) return;
+      if (!isStudyClueMapRouteAvailable()) return;
       const data = window.IELTS16AcademicTest1StudyFeedback;
       const passageSection = document.querySelector('.passage-section[data-section="3"]');
       if (!data || !data.questions || !passageSection) return;
@@ -5503,7 +5552,7 @@
 
     function refreshMultipleChoicePassageClues() {
       removeMultipleChoicePassageClues();
-      if (isMultipleChoiceFeedbackAvailable() && multipleChoiceCluesVisible) showMultipleChoicePassageClues();
+      if (isStudyClueMapRouteAvailable() && multipleChoiceCluesVisible) showMultipleChoicePassageClues();
       updatePassageClueToolbarVisibility();
     }
 
@@ -5534,6 +5583,7 @@
 
     function revealMultipleChoiceEvidence(questionNumber) {
       const allCluesVisible = activeSection === 3 && isActivePassageClueMapFullyVisible();
+      if (!allCluesVisible) clearActivePassageFocusedClues();
       focusMultipleChoicePassageClue(questionNumber, true, !allCluesVisible);
     }
 
@@ -5605,7 +5655,7 @@
     }
 
     function showSummaryCompletionPassageClues() {
-      if (!isSummaryCompletionFeedbackAvailable()) return;
+      if (!isStudyClueMapRouteAvailable()) return;
       const data = window.IELTS16AcademicTest1StudyFeedback;
       const passageSection = document.querySelector('.passage-section[data-section="3"]');
       if (!data || !data.questions || !passageSection) return;
@@ -5638,7 +5688,7 @@
 
     function refreshSummaryCompletionPassageClues() {
       removeSummaryCompletionPassageClues();
-      if (isSummaryCompletionFeedbackAvailable() && summaryCompletionCluesVisible) showSummaryCompletionPassageClues();
+      if (isStudyClueMapRouteAvailable() && summaryCompletionCluesVisible) showSummaryCompletionPassageClues();
       updatePassageClueToolbarVisibility();
     }
 
@@ -5668,6 +5718,7 @@
 
     function revealSummaryCompletionEvidence(questionNumber) {
       const allCluesVisible = activeSection === 3 && isActivePassageClueMapFullyVisible();
+      if (!allCluesVisible) clearActivePassageFocusedClues();
       focusSummaryCompletionPassageClue(questionNumber, true, !allCluesVisible);
     }
 
@@ -5734,7 +5785,7 @@
     }
 
     function showMatchingPeoplePassageClues() {
-      if (!isMatchingPeopleFeedbackAvailable()) return;
+      if (!isStudyClueMapRouteAvailable()) return;
       const data = window.IELTS16AcademicTest1StudyFeedback;
       const passageSection = document.querySelector('.passage-section[data-section="3"]');
       if (!data || !data.questions || !passageSection) return;
@@ -5767,7 +5818,7 @@
 
     function refreshMatchingPeoplePassageClues() {
       removeMatchingPeoplePassageClues();
-      if (isMatchingPeopleFeedbackAvailable() && matchingPeopleCluesVisible) showMatchingPeoplePassageClues();
+      if (isStudyClueMapRouteAvailable() && matchingPeopleCluesVisible) showMatchingPeoplePassageClues();
       updatePassageClueToolbarVisibility();
     }
 
@@ -5795,6 +5846,7 @@
 
     function revealMatchingPeopleEvidence(questionNumber) {
       const allCluesVisible = activeSection === 3 && isActivePassageClueMapFullyVisible();
+      if (!allCluesVisible) clearActivePassageFocusedClues();
       focusMatchingPeoplePassageClue(questionNumber, true, !allCluesVisible);
     }
 
@@ -5994,12 +6046,9 @@
       if (!group || mode !== "study" || isFullStudyReviewActive()) return;
       revealedStudyTaskGroups.add(group.id);
       group.setSubmitted(true);
-      group.setCluesVisible(true);
-      group.clearSingleClue();
       evaluateStudyTaskGroup(group);
       updateStudyTaskResultLine(group);
       group.render();
-      group.refreshClues();
       updateTfngStudyFeedbackVisibility();
       updateStudyTaskRevealButtons();
       if (!refreshOnly) updatePassageClueToolbarVisibility();
@@ -6009,16 +6058,12 @@
       if (!group) return;
       revealedStudyTaskGroups.delete(group.id);
       group.setSubmitted(false);
-      group.setCluesVisible(false);
-      group.clearSingleClue();
       clearStudyTaskQuestionFeedback(group);
       group.questions.forEach((q) => {
         const target = document.getElementById("ca-" + q);
         if (target) target.style.display = "none";
       });
       hideStudyTaskResultLine(group);
-      group.clearFocus();
-      group.refreshClues();
       updateTfngStudyFeedbackVisibility();
       updateStudyTaskRevealButtons();
     }
@@ -6118,54 +6163,6 @@
       const chooseTwoDuplicate = document.getElementById("ca-26");
       if (chooseTwoTarget) chooseTwoTarget.style.display = chooseTwoFeedbackAvailable ? "block" : "none";
       if (chooseTwoDuplicate) chooseTwoDuplicate.style.display = "none";
-      if (feedbackAvailable) {
-        refreshTfngPassageClues();
-      } else {
-        removeTfngPassageClues();
-        clearTfngEvidenceHighlight();
-      }
-      if (oneWordFeedbackAvailable) {
-        refreshOneWordPassageClues();
-      } else {
-        removeOneWordPassageClues();
-        clearOneWordFocus();
-      }
-      if (oneWordP2FeedbackAvailable) {
-        refreshOneWordP2PassageClues();
-      } else {
-        removeOneWordP2PassageClues();
-        clearOneWordP2Focus();
-      }
-      if (chooseTwoFeedbackAvailable) {
-        refreshChooseTwoPassageClues();
-      } else {
-        removeChooseTwoPassageClues();
-        clearChooseTwoFocus();
-      }
-      if (matchingHeadingsFeedbackAvailable) {
-        refreshMatchingHeadingsPassageClues();
-      } else {
-        removeMatchingHeadingsPassageClues();
-        clearMatchingHeadingsFocus();
-      }
-      if (multipleChoiceFeedbackAvailable) {
-        refreshMultipleChoicePassageClues();
-      } else {
-        removeMultipleChoicePassageClues();
-        clearMultipleChoiceFocus();
-      }
-      if (summaryCompletionFeedbackAvailable) {
-        refreshSummaryCompletionPassageClues();
-      } else {
-        removeSummaryCompletionPassageClues();
-        clearSummaryCompletionFocus();
-      }
-      if (matchingPeopleFeedbackAvailable) {
-        refreshMatchingPeoplePassageClues();
-      } else {
-        removeMatchingPeoplePassageClues();
-        clearMatchingPeopleFocus();
-      }
     }
 
     function closeTfngStrategyPanel(returnFocus = true) {
@@ -6347,6 +6344,7 @@
       const passageClueToggle = document.getElementById("passageClueToggle");
       if (passageClueToggle) {
         passageClueToggle.addEventListener("click", () => {
+          if (passageClueToggle.hidden || passageClueToggle.disabled) return;
           setActivePassageClueMapVisible(!isActivePassageClueMapFullyVisible());
         });
       }
