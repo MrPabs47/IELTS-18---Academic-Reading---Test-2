@@ -6027,7 +6027,6 @@
         if (target) target.style.display = "none";
       });
       hideStudyTaskResultLine(group);
-      group.clearFocus();
       updateTfngStudyFeedbackVisibility();
       updateStudyTaskRevealButtons();
     }
@@ -6127,54 +6126,6 @@
       const chooseTwoDuplicate = document.getElementById("ca-26");
       if (chooseTwoTarget) chooseTwoTarget.style.display = chooseTwoFeedbackAvailable ? "block" : "none";
       if (chooseTwoDuplicate) chooseTwoDuplicate.style.display = "none";
-      if (feedbackAvailable) {
-        refreshTfngPassageClues();
-      } else {
-        removeTfngPassageClues();
-        clearTfngEvidenceHighlight();
-      }
-      if (oneWordFeedbackAvailable) {
-        refreshOneWordPassageClues();
-      } else {
-        removeOneWordPassageClues();
-        clearOneWordFocus();
-      }
-      if (oneWordP2FeedbackAvailable) {
-        refreshOneWordP2PassageClues();
-      } else {
-        removeOneWordP2PassageClues();
-        clearOneWordP2Focus();
-      }
-      if (chooseTwoFeedbackAvailable) {
-        refreshChooseTwoPassageClues();
-      } else {
-        removeChooseTwoPassageClues();
-        clearChooseTwoFocus();
-      }
-      if (matchingHeadingsFeedbackAvailable) {
-        refreshMatchingHeadingsPassageClues();
-      } else {
-        removeMatchingHeadingsPassageClues();
-        clearMatchingHeadingsFocus();
-      }
-      if (multipleChoiceFeedbackAvailable) {
-        refreshMultipleChoicePassageClues();
-      } else {
-        removeMultipleChoicePassageClues();
-        clearMultipleChoiceFocus();
-      }
-      if (summaryCompletionFeedbackAvailable) {
-        refreshSummaryCompletionPassageClues();
-      } else {
-        removeSummaryCompletionPassageClues();
-        clearSummaryCompletionFocus();
-      }
-      if (matchingPeopleFeedbackAvailable) {
-        refreshMatchingPeoplePassageClues();
-      } else {
-        removeMatchingPeoplePassageClues();
-        clearMatchingPeopleFocus();
-      }
     }
 
     function closeTfngStrategyPanel(returnFocus = true) {

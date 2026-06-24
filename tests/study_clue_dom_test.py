@@ -418,6 +418,74 @@ def test_study_shell_foundation_and_lifecycle_behaviour_contract() -> None:
     assert "clearStudyEvidenceHighlights();\n      setTimeout" not in focus
 
 
+
+def test_test1_feedback_controls_do_not_mutate_passage_clues() -> None:
+    """Runtime-style guard for Test 1 feedback actions staying independent of clue state."""
+    test1 = (ROOT / "academic/cambridge-16/test-1/IELTS16 Test 1 - Academic Reading.html").read_text(encoding="utf-8")
+    forbidden_clue_calls = [
+        "refreshTfngPassageClues(", "refreshOneWordPassageClues(", "refreshOneWordP2PassageClues(",
+        "refreshChooseTwoPassageClues(", "refreshMatchingHeadingsPassageClues(", "refreshMultipleChoicePassageClues(",
+        "refreshSummaryCompletionPassageClues(", "refreshMatchingPeoplePassageClues(",
+        "removeTfngPassageClues(", "removeOneWordPassageClues(", "removeOneWordP2PassageClues(",
+        "removeChooseTwoPassageClues(", "removeMatchingHeadingsPassageClues(", "removeMultipleChoicePassageClues(",
+        "removeSummaryCompletionPassageClues(", "removeMatchingPeoplePassageClues(",
+        "clearTfngEvidenceHighlight(", "clearOneWordFocus(", "clearOneWordP2Focus(", "clearChooseTwoFocus(",
+        "clearMatchingHeadingsFocus(", "clearMultipleChoiceFocus(", "clearSummaryCompletionFocus(", "clearMatchingPeopleFocus(",
+        "setCluesVisible(", "clearSingleClue(", "refreshClues(", "clearFocus(",
+    ]
+
+    feedback_path_ranges = [
+        ("function revealStudyTaskGroup(group", "function hideStudyTaskGroup(group)"),
+        ("function hideStudyTaskGroup(group)", "function toggleStudyTaskReveal(groupId)"),
+        ("function updateTfngStudyFeedbackVisibility()", "function closeTfngStrategyPanel"),
+        ("function updateStudyTaskRevealButtons()", "function hideStudyTaskResultLine"),
+        ("function hideStudyTaskResultLine(group)", "function clearStudyTaskQuestionFeedback"),
+        ("function updateStudyTaskResultLine(group)", "function clearStudyTaskQuestionFeedback"),
+    ]
+    for start, end in feedback_path_ranges:
+        body = test1[test1.index(start):test1.index(end)]
+        for forbidden in forbidden_clue_calls:
+            assert forbidden not in body, f"{forbidden} leaked into {start}"
+
+    # Runtime-style state model: feedback controls may toggle feedback only, while the
+    # same active-passage clue state is preserved across no-map, full-map and single-focus states.
+    state = {"feedback_open": False, "clues": set(), "button": "Show all passage clues"}
+    all_clues = {"tfng", "one-word"}
+
+    def show_feedback() -> None:
+        state["feedback_open"] = True
+
+    def hide_feedback() -> None:
+        state["feedback_open"] = False
+
+    def show_all_clues() -> None:
+        state["clues"] = set(all_clues)
+        state["button"] = "Hide all passage clues"
+
+    def hide_all_clues() -> None:
+        state["clues"].clear()
+        state["button"] = "Show all passage clues"
+
+    def focus_one_clue(name: str) -> None:
+        if state["button"] == "Show all passage clues":
+            state["clues"] = {name}
+
+    assert state == {"feedback_open": False, "clues": set(), "button": "Show all passage clues"}
+    show_feedback()
+    assert state == {"feedback_open": True, "clues": set(), "button": "Show all passage clues"}
+    hide_feedback()
+    assert state == {"feedback_open": False, "clues": set(), "button": "Show all passage clues"}
+    show_all_clues()
+    show_feedback(); hide_feedback()
+    assert state["clues"] == all_clues
+    hide_all_clues()
+    show_feedback(); hide_feedback()
+    assert state["clues"] == set()
+    focus_one_clue("tfng")
+    show_feedback(); hide_feedback()
+    assert state["clues"] == {"tfng"}
+
+
 def test_shared_controller_full_map_state_with_mocked_adapter() -> None:
     """Exercise independent feedback, full-map and focused-clue lifecycle without a browser."""
     script = """
