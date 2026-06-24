@@ -381,6 +381,14 @@ def test_study_shell_foundation_and_lifecycle_behaviour_contract() -> None:
     test1_header = test1[test1.index('<div class="pane-header" id="passageHeader">'):test1.index('<div class="pane-content" id="passageContent">')]
     assert 'id="passageHeaderLine"' in test1_header
     assert 'id="passageClueToolbar"' in test1_header
+    assert 'grid-template-columns: minmax(0, 1fr) auto;' in test1
+    assert 'min-width: max-content;' in test1
+    assert 'white-space: nowrap;' in test1
+    assert '@media (max-width: 640px)' in test1
+    assert 'grid-template-columns: minmax(0, 1fr);' in test1
+    assert 'white-space: normal;' in test1
+    assert 'grid-template-columns:minmax(0, 1fr) auto' in page
+    assert 'min-width:max-content' in page
     assert 'function isStudyClueMapRouteAvailable()' in test1
     assert 'function isStudyGroupExplicitlyRevealed(groupId)' in test1
     assert 'const restored = (groupId) => visible || isStudyGroupExplicitlyRevealed(groupId);' not in test1
@@ -432,36 +440,44 @@ def test_test1_single_focus_replaces_previous_clue_when_full_map_inactive() -> N
         assert "const allCluesVisible" in body
         assert "if (!allCluesVisible) clearActivePassageFocusedClues();" in body
 
-    state = {"full_map": False, "visible": set(), "focused": None}
-    all_passage_three = {"multiple-choice", "summary-completion", "matching-people"}
+    all_part3_clues = {"q29", "q30", "q38"}
 
-    def focus(clue: str) -> None:
-        if state["full_map"]:
-            state["focused"] = clue
-        else:
-            state["visible"] = {clue}
-            state["focused"] = clue
+    def run_focus_sequence(route: str) -> None:
+        state = {"route": route, "full_map": False, "visible": set(), "focused": None}
 
-    def show_all() -> None:
-        state["full_map"] = True
-        state["visible"] = set(all_passage_three)
+        def focus(clue: str) -> None:
+            if state["full_map"]:
+                state["focused"] = clue
+            else:
+                state["visible"] = {clue}
+                state["focused"] = clue
 
-    def hide_all() -> None:
-        state["full_map"] = False
-        state["visible"].clear()
-        state["focused"] = None
+        def show_all() -> None:
+            state["full_map"] = True
+            state["visible"] = set(all_part3_clues)
 
-    focus("multiple-choice")
-    assert state["visible"] == {"multiple-choice"}
-    focus("summary-completion")
-    assert state["visible"] == {"summary-completion"}
-    show_all()
-    focus("matching-people")
-    assert state["visible"] == all_passage_three
-    assert state["focused"] == "matching-people"
-    hide_all()
-    assert state["visible"] == set()
-    assert state["focused"] is None
+        def hide_all() -> None:
+            state["full_map"] = False
+            state["visible"].clear()
+            state["focused"] = None
+
+        focus("q29")
+        assert state["visible"] == {"q29"}
+        focus("q30")
+        assert state["visible"] == {"q30"}
+        focus("q38")
+        assert state["visible"] == {"q38"}
+        show_all()
+        focus("q29")
+        focus("q30")
+        assert state["visible"] == all_part3_clues
+        assert state["focused"] == "q30"
+        hide_all()
+        assert state["visible"] == set()
+        assert state["focused"] is None
+
+    run_focus_sequence("submitted-review")
+    run_focus_sequence("direct-study")
 
 
 def test_test1_feedback_controls_do_not_mutate_passage_clues() -> None:

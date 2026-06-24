@@ -718,26 +718,23 @@
     }
 
     #passageHeader {
-      display: flex;
-      flex-direction: row;
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto;
       align-items: center;
-      justify-content: space-between;
       gap: 10px;
-      flex-wrap: wrap;
     }
 
     .passage-header-line {
       line-height: 1.25;
-      flex: 1 1 260px;
+      min-width: 0;
     }
 
     .passage-clue-toolbar {
       display: flex;
-      flex-wrap: wrap;
       align-items: center;
       justify-content: flex-end;
       gap: 6px;
-      flex: 0 1 auto;
+      min-width: max-content;
     }
 
     .passage-clue-toolbar:empty,
@@ -748,7 +745,21 @@
     .passage-clue-toolbar button {
       margin: 0;
       max-width: 100%;
-      white-space: normal;
+      white-space: nowrap;
+    }
+
+    @media (max-width: 640px) {
+      #passageHeader {
+        grid-template-columns: minmax(0, 1fr);
+        align-items: start;
+      }
+      .passage-clue-toolbar {
+        justify-content: flex-start;
+        min-width: 0;
+      }
+      .passage-clue-toolbar button {
+        white-space: normal;
+      }
     }
 
     .pane-content {

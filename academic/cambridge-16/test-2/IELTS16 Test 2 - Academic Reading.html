@@ -1241,10 +1241,12 @@
     .evidence-action-row { display:flex; justify-content:flex-end; margin-top:10px; }
     .study-clue-btn { width:30px; height:30px; border:1px solid var(--border); color:var(--text); background:var(--bg-secondary); border-radius:999px; cursor:pointer; font:inherit; line-height:1; display:inline-flex; align-items:center; justify-content:center; transition:background .16s ease, border-color .16s ease, transform .16s ease; }
     .study-clue-btn:hover, .study-clue-btn:focus-visible, .study-clue-toggle:hover, .study-clue-toggle:focus-visible { transform:translateY(-1px); box-shadow:0 0 0 3px var(--accent-soft); border-color:var(--accent); background:var(--accent-soft); outline:2px solid transparent; }
-    #passageHeader { display:flex; flex-direction:row; align-items:center; justify-content:space-between; gap:10px; flex-wrap:wrap; }
-    .passage-header-line { flex:1 1 260px; line-height:1.25; }
-    .passage-clue-toolbar { display:flex; align-items:center; justify-content:flex-end; flex-wrap:wrap; gap:6px; flex:0 1 auto; padding:0; }
+    #passageHeader { display:grid; grid-template-columns:minmax(0, 1fr) auto; align-items:center; gap:10px; }
+    .passage-header-line { min-width:0; line-height:1.25; }
+    .passage-clue-toolbar { display:flex; align-items:center; justify-content:flex-end; gap:6px; min-width:max-content; padding:0; }
     .passage-clue-toolbar:empty, .passage-clue-toolbar:not(:has(button:not([hidden]))) { display:none; }
+    .passage-clue-toolbar button { margin:0; max-width:100%; white-space:nowrap; }
+    @media (max-width: 640px) { #passageHeader { grid-template-columns:minmax(0, 1fr); align-items:start; } .passage-clue-toolbar { justify-content:flex-start; min-width:0; } .passage-clue-toolbar button { white-space:normal; } }
     .study-clue-toggle { margin:0 0 2px; border:1px solid color-mix(in srgb, #15803d 55%, var(--border)); border-radius:999px; background:color-mix(in srgb, #dcfce7 52%, var(--bg)); color:color-mix(in srgb, #14532d 70%, var(--text)); cursor:pointer; font:inherit; font-weight:700; padding:6px 12px; }
     .study-evidence-highlight { border-radius:5px; background:color-mix(in srgb, #bbf7d0 58%, var(--bg)); color:var(--text); box-shadow:0 0 0 1px color-mix(in srgb, #15803d 36%, transparent); padding:1px 2px; }
     .study-evidence-highlight.focused-clue { outline:3px solid color-mix(in srgb, #16a34a 70%, var(--accent)); outline-offset:2px; box-shadow:0 0 0 4px color-mix(in srgb, #bbf7d0 60%, transparent); }
