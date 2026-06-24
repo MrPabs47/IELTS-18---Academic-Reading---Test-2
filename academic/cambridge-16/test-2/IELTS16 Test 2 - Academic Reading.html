@@ -1232,16 +1232,18 @@
     .study-feedback-card dt.label-correct-answer { color:color-mix(in srgb, var(--correct) 78%, var(--text)); }
     .study-feedback-card dt.label-why, .study-feedback-card dt.label-skill { color:color-mix(in srgb, var(--accent) 72%, var(--text)); }
     .study-feedback-card dd { margin:0; }
-    .study-feedback-card.correct { border-left:4px solid var(--correct); }
-    .study-feedback-card.incorrect { border-left:4px solid var(--incorrect); }
-    .study-feedback-card.unanswered { border-left:4px solid var(--text-soft); }
+    .study-feedback-card.correct { border-color:var(--correct); background:rgba(67,160,71,0.08); }
+    .study-feedback-card.incorrect { border-color:var(--incorrect); background:rgba(229,57,53,0.06); }
+    .study-feedback-card.unanswered { border-color:var(--border); background:var(--bg-secondary); }
     .study-feedback-card .feedback-status.correct-status { color:var(--correct); font-weight:700; }
     .study-feedback-card .feedback-status.incorrect-status { color:var(--incorrect); font-weight:700; }
     .study-feedback-card .feedback-status.unanswered-status { color:var(--text-soft); font-weight:700; }
     .evidence-action-row { display:flex; justify-content:flex-end; margin-top:10px; }
     .study-clue-btn { width:30px; height:30px; border:1px solid var(--border); color:var(--text); background:var(--bg-secondary); border-radius:999px; cursor:pointer; font:inherit; line-height:1; display:inline-flex; align-items:center; justify-content:center; transition:background .16s ease, border-color .16s ease, transform .16s ease; }
     .study-clue-btn:hover, .study-clue-btn:focus-visible, .study-clue-toggle:hover, .study-clue-toggle:focus-visible { transform:translateY(-1px); box-shadow:0 0 0 3px var(--accent-soft); border-color:var(--accent); background:var(--accent-soft); outline:2px solid transparent; }
-    .passage-clue-toolbar { display:flex; align-items:center; gap:8px; padding:8px 14px 0; }
+    #passageHeader { display:flex; flex-direction:row; align-items:center; justify-content:space-between; gap:10px; flex-wrap:wrap; }
+    .passage-header-line { flex:1 1 260px; line-height:1.25; }
+    .passage-clue-toolbar { display:flex; align-items:center; justify-content:flex-end; flex-wrap:wrap; gap:6px; flex:0 1 auto; padding:0; }
     .passage-clue-toolbar:empty, .passage-clue-toolbar:not(:has(button:not([hidden]))) { display:none; }
     .study-clue-toggle { margin:0 0 2px; border:1px solid color-mix(in srgb, #15803d 55%, var(--border)); border-radius:999px; background:color-mix(in srgb, #dcfce7 52%, var(--bg)); color:color-mix(in srgb, #14532d 70%, var(--text)); cursor:pointer; font:inherit; font-weight:700; padding:6px 12px; }
     .study-evidence-highlight { border-radius:5px; background:color-mix(in srgb, #bbf7d0 58%, var(--bg)); color:var(--text); box-shadow:0 0 0 1px color-mix(in srgb, #15803d 36%, transparent); padding:1px 2px; }
@@ -1426,9 +1428,9 @@
         <!-- Passage pane -->
         <div class="pane" id="passagePane">
           <div class="pane-header" id="passageHeader">
-            Part 1 <span>Read the text and answer questions 1–13.</span>
+            <div class="passage-header-line" id="passageHeaderLine">Part 1 <span>Read the text and answer questions 1–13.</span></div>
+            <div class="passage-clue-toolbar" id="passageClueToolbar" aria-label="Passage clue controls"><button type="button" id="passageClueToggle" class="study-clue-toggle" hidden>Show all passage clues</button></div>
           </div>
-          <div class="passage-clue-toolbar" id="passageClueToolbar" aria-label="Passage clue controls"><button type="button" id="passageClueToggle" class="study-clue-toggle" hidden>Show all passage clues</button></div>
           <div class="pane-content" id="passageContent">
             <!-- Section 1 passages -->
                         <div class="passage-section" data-section="1">
@@ -2461,16 +2463,16 @@
           " answered)";
       }
 
-      const pHeader = document.getElementById("passageHeader");
-      if (pHeader) {
+      const pHeaderLine = document.getElementById("passageHeaderLine");
+      if (pHeaderLine) {
         if (activeSection === 1) {
-          pHeader.textContent =
+          pHeaderLine.textContent =
             "Part 1 – Read the text and answer questions 1–13.";
         } else if (activeSection === 2) {
-          pHeader.textContent =
+          pHeaderLine.textContent =
             "Part 2 – Read the text and answer questions 14–26.";
         } else {
-          pHeader.textContent =
+          pHeaderLine.textContent =
             "Part 3 – Read the text and answer questions 27–40.";
         }
       }
@@ -2888,7 +2890,7 @@
           rangeCell.appendChild(label);
         }
         const bandCell = document.createElement("td");
-        bandCell.textContent = formatBandLabel(row.band);
+        bandCell.textContent = typeof row.band === "number" ? String(row.band) : row.band;
         tr.append(rangeCell, bandCell);
         body.appendChild(tr);
       });
@@ -3223,12 +3225,12 @@
       const correct = isQuestionCorrect(q);
       const unanswered = !rawUser;
       const statusClass = unanswered ? "unanswered" : (correct ? "correct" : "incorrect");
-      const statusText = (correct ? "✓ " : (unanswered ? "○ " : "✕ ")) + escapeHtml(info.correctAnswerText || correctAnswerText[q] || "") + (correct ? " · +1 point" : " · +0 points");
+      const statusText = unanswered ? "Not answered · 0 points" : (correct ? "✓ " : "✕ ") + escapeHtml(user) + (correct ? " · +1 point" : " · +0 points");
       const card = document.createElement("div");
       card.className = "study-feedback-card tfng-feedback-card " + statusClass;
       card.id = "study-feedback-" + q;
       card.innerHTML = '<h4>Question ' + q + '</h4><dl>' +
-        '<dt class="label-your-answer">Your answer</dt><dd><span class="feedback-status ' + (unanswered ? "unanswered-status" : (correct ? "correct-status" : "incorrect-status")) + '">' + statusText + '</span><br>' + escapeHtml(user) + '</dd>' +
+        '<dt class="label-your-answer">Your answer</dt><dd class="feedback-status ' + (unanswered ? "unanswered-status" : (correct ? "correct-status" : "incorrect-status")) + '">' + statusText + '</dd>' +
         '<dt class="label-correct-answer">Correct answer</dt><dd>' + escapeHtml(info.correctAnswerText || correctAnswerText[q] || "") + '</dd>' +
         '<dt class="label-why">Why</dt><dd>' + escapeHtml(info.explanation || "") + '</dd>' +
         '<dt class="label-skill">Skill</dt><dd>' + escapeHtml(info.skillFocus || "") + '</dd>' +

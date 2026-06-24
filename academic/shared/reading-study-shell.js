@@ -100,6 +100,12 @@
         hideAllPassageClues() {
           const active = call(adapter.getActivePassage, null);
           state.fullClueMapPassages.delete(String(active));
+          if (!!call(adapter.isSubmitted, false)) {
+            if (typeof adapter.clearEvidenceForPassage === "function") adapter.clearEvidenceForPassage(active);
+            else if (typeof adapter.clearEvidence === "function") adapter.clearEvidence();
+            this.updateClueToolbar();
+            return;
+          }
           this.renderVisibleEvidence(active);
         },
         focusClue(questionNumber) {
@@ -131,9 +137,7 @@
           const groups = call(adapter.getTaskGroups, []) || [];
           const isStudyMode = call(adapter.isStudyMode, call(adapter.getMode, "test") === "study");
           const submitted = !!call(adapter.isSubmitted, false);
-          const hasPassageClues = groups.some((group) => (
-            String(group.passage) === String(active) && (submitted || state.visibleGroups.has(group.id))
-          ));
+          const hasPassageClues = groups.some((group) => String(group.passage) === String(active));
           toggle.hidden = (!isStudyMode && !submitted) || !hasPassageClues;
           toggle.disabled = toggle.hidden;
           toggle.setAttribute("aria-hidden", toggle.hidden ? "true" : "false");

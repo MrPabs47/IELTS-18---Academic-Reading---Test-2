@@ -301,7 +301,7 @@ def test_study_shell_foundation_and_lifecycle_behaviour_contract() -> None:
     assert "if (toggle.hidden || toggle.disabled) return;" in shared_js
     assert "reset()" in shared_js
     assert "state.fullClueMapPassages.clear();" in shared_js
-    assert "submitted || state.visibleGroups.has(group.id)" in shared_js
+    assert "const hasPassageClues = groups.some((group) => String(group.passage) === String(active));" in shared_js
     assert "adapter.isFullClueMapVisible" not in shared_js
     assert "studyCheckAll" not in shared_js
     assert 'id="studyToolbar"' not in page
@@ -315,6 +315,8 @@ def test_study_shell_foundation_and_lifecycle_behaviour_contract() -> None:
     assert 'function updateTopBarScore(correctCount)' in page
     assert 'correctCount + " / 40 · " + formatBandLabel' in page
     assert '"Score: " + score + " / " + totals[sec] + " points"' in page
+    assert 'bandCell.textContent = typeof row.band === "number" ? String(row.band) : row.band;' in page
+    assert 'const statusText = unanswered ? "Not answered · 0 points"' in page
     assert 'function isStudyTaskRevealButtonVisible()' in page
     assert 'return mode === "study" && !testSubmitted && !fullStudyReviewSubmitted;' in page
     assert 'function isStudyStrategyButtonVisible()' in page
@@ -330,6 +332,17 @@ def test_study_shell_foundation_and_lifecycle_behaviour_contract() -> None:
     assert 'if (!isStudyTaskRevealButtonVisible()) return;' in toggle_group
     test_submit = page[page.index('if (mode === "test") {', page.index("function submitTest()")):page.index("exitAppFullscreen();", page.index("function submitTest()"))]
     assert test_submit.index("testSubmitted = true;") < test_submit.index("showStudyChrome(true, false);")
+    header_markup = page[page.index('<div class="pane-header" id="passageHeader">'):page.index('<div class="pane-content" id="passageContent">')]
+    assert 'id="passageHeaderLine"' in header_markup
+    assert 'id="passageClueToolbar"' in header_markup
+    test1 = (ROOT / "academic/cambridge-16/test-1/IELTS16 Test 1 - Academic Reading.html").read_text(encoding="utf-8")
+    test1_header = test1[test1.index('<div class="pane-header" id="passageHeader">'):test1.index('<div class="pane-content" id="passageContent">')]
+    assert 'id="passageHeaderLine"' in test1_header
+    assert 'id="passageClueToolbar"' in test1_header
+    assert 'function isStudyClueMapRouteAvailable()' in test1
+    assert 'function isStudyGroupExplicitlyRevealed(groupId)' in test1
+    assert 'toggle.disabled = !available;' in test1
+    assert 'if (passageClueToggle.hidden || passageClueToggle.disabled) return;' in test1
 
     init = page[page.index("ReadingStudyShell.init({"):page.index("function showStudyChrome")]
     assert "getMode: () => mode" in init
@@ -398,8 +411,9 @@ def test_shared_controller_full_map_state_with_mocked_adapter() -> None:
       const toggle = elements.passageClueToggle;
 
       controller.updateClueToolbar();
-      assert.strictEqual(toggle.hidden, true);
-      assert.strictEqual(toggle.disabled, true);
+      assert.strictEqual(toggle.hidden, false);
+      assert.strictEqual(toggle.disabled, false);
+      assert.strictEqual(toggle.textContent, 'Show all passage clues');
       controller.showGroup('g1');
       assert.strictEqual(visibleList(1), '1,2');
       assert.strictEqual(toggle.hidden, false);
@@ -411,8 +425,8 @@ def test_shared_controller_full_map_state_with_mocked_adapter() -> None:
 
       activePassage = 2;
       controller.updateClueToolbar();
-      assert.strictEqual(toggle.hidden, true);
-      assert.strictEqual(toggle.disabled, true);
+      assert.strictEqual(toggle.hidden, false);
+      assert.strictEqual(toggle.disabled, false);
       assert.strictEqual(toggle.textContent, 'Show all passage clues');
       activePassage = 1;
       controller.updateClueToolbar();
@@ -446,6 +460,13 @@ def test_shared_controller_full_map_state_with_mocked_adapter() -> None:
       activePassage = 2;
       controller.updateClueToolbar();
       assert.strictEqual(toggle.textContent, 'Hide all passage clues');
+      submitted = true;
+      mode = 'test';
+      controller.updateClueToolbar();
+      assert.strictEqual(toggle.hidden, false);
+      toggle.onclick();
+      assert.strictEqual(visibleList(2), '');
+      assert.strictEqual(toggle.textContent, 'Show all passage clues');
 
       mode = 'test';
       submitted = false;
