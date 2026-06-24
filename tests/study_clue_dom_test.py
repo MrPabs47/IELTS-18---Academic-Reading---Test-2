@@ -390,6 +390,10 @@ def test_study_shell_foundation_and_lifecycle_behaviour_contract() -> None:
     assert 'group.refreshClues();' not in reveal_test1
     assert 'group.setCluesVisible(false);' not in hide_test1
     assert 'group.refreshClues();' not in hide_test1
+    test1_show_functions = re.findall(r'function show\w+PassageClues\(\) \{(.*?)\n    \}', test1, flags=re.S)
+    assert len(test1_show_functions) >= 8
+    assert all('if (!isStudyClueMapRouteAvailable()) return;' in body for body in test1_show_functions)
+    assert all('FeedbackAvailable()) return;' not in body for body in test1_show_functions)
     assert 'toggle.disabled = !available;' in test1
     assert 'if (passageClueToggle.hidden || passageClueToggle.disabled) return;' in test1
 

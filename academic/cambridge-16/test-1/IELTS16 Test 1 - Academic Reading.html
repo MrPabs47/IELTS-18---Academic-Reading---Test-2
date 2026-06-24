@@ -4669,7 +4669,7 @@
     }
 
     function showTfngPassageClues() {
-      if (!isTfngFeedbackAvailable()) return;
+      if (!isStudyClueMapRouteAvailable()) return;
       const data = window.IELTS16AcademicTest1StudyFeedback;
       const passageSection = document.querySelector('.passage-section[data-section="1"]');
       if (!data || !data.questions || !passageSection) return;
@@ -4847,7 +4847,7 @@
     }
 
     function showOneWordPassageClues() {
-      if (!isOneWordFeedbackAvailable()) return;
+      if (!isStudyClueMapRouteAvailable()) return;
       const data = window.IELTS16AcademicTest1StudyFeedback;
       const passageSection = document.querySelector('.passage-section[data-section="1"]');
       if (!data || !data.questions || !passageSection) return;
@@ -4950,7 +4950,7 @@
     }
 
     function showOneWordP2PassageClues() {
-      if (!isOneWordP2FeedbackAvailable()) return;
+      if (!isStudyClueMapRouteAvailable()) return;
       const data = window.IELTS16AcademicTest1StudyFeedback;
       const passageSection = document.querySelector('.passage-section[data-section="2"]');
       if (!data || !data.questions || !passageSection) return;
@@ -5051,7 +5051,7 @@
     }
 
     function showChooseTwoPassageClues() {
-      if (!isChooseTwoFeedbackAvailable()) return;
+      if (!isStudyClueMapRouteAvailable()) return;
       const item = getChooseTwoStudyData();
       const passageSection = document.querySelector('.passage-section[data-section="2"]');
       if (!item || !item.options || !passageSection) return;
@@ -5144,7 +5144,7 @@
     }
 
     function showMatchingHeadingsPassageClues() {
-      if (!isMatchingHeadingsFeedbackAvailable()) return;
+      if (!isStudyClueMapRouteAvailable()) return;
       const data = window.IELTS16AcademicTest1StudyFeedback;
       const passageSection = document.querySelector('.passage-section[data-section="2"]');
       if (!data || !data.questions || !passageSection) return;
@@ -5485,7 +5485,7 @@
     }
 
     function showMultipleChoicePassageClues() {
-      if (!isMultipleChoiceFeedbackAvailable()) return;
+      if (!isStudyClueMapRouteAvailable()) return;
       const data = window.IELTS16AcademicTest1StudyFeedback;
       const passageSection = document.querySelector('.passage-section[data-section="3"]');
       if (!data || !data.questions || !passageSection) return;
@@ -5620,7 +5620,7 @@
     }
 
     function showSummaryCompletionPassageClues() {
-      if (!isSummaryCompletionFeedbackAvailable()) return;
+      if (!isStudyClueMapRouteAvailable()) return;
       const data = window.IELTS16AcademicTest1StudyFeedback;
       const passageSection = document.querySelector('.passage-section[data-section="3"]');
       if (!data || !data.questions || !passageSection) return;
@@ -5749,7 +5749,7 @@
     }
 
     function showMatchingPeoplePassageClues() {
-      if (!isMatchingPeopleFeedbackAvailable()) return;
+      if (!isStudyClueMapRouteAvailable()) return;
       const data = window.IELTS16AcademicTest1StudyFeedback;
       const passageSection = document.querySelector('.passage-section[data-section="3"]');
       if (!data || !data.questions || !passageSection) return;
