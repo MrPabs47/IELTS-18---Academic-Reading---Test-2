@@ -1254,11 +1254,12 @@
     .question-block.focused-question-flash, .study-feedback-card.focused-question-flash { outline:3px solid color-mix(in srgb, var(--accent) 70%, #16a34a); outline-offset:3px; border-radius:12px; }
     @keyframes studyEvidencePulse { 0%{box-shadow:0 0 0 2px color-mix(in srgb, var(--accent) 30%, transparent);} 45%{box-shadow:0 0 0 7px color-mix(in srgb, var(--accent-soft) 70%, transparent);} 100%{box-shadow:0 0 0 2px color-mix(in srgb, var(--accent) 28%, transparent);} }
     .score-guide-overlay { position:fixed; inset:0; display:none; align-items:center; justify-content:center; background:rgba(15, 23, 42, 0.62); z-index:1700; padding:18px; }
-    .score-guide-panel { background:var(--bg); color:var(--text); border-radius:14px; box-shadow:var(--shadow-soft); border:1px solid var(--border); width:min(520px, 96vw); max-height:88vh; overflow:auto; padding:22px; }
-    .score-guide-header { display:flex; align-items:flex-start; justify-content:space-between; gap:16px; margin-bottom:12px; }
+    .score-guide-panel { background:var(--bg); color:var(--text); border-radius:14px; box-shadow:var(--shadow-soft); border:1px solid var(--border); width:min(520px, 96vw); max-height:88vh; overflow:hidden; padding:22px; display:flex; flex-direction:column; }
+    .score-guide-header { display:flex; align-items:flex-start; justify-content:space-between; gap:16px; margin-bottom:12px; flex:0 0 auto; position:sticky; top:0; z-index:2; background:var(--bg); }
     .score-guide-header h2 { margin:0 0 4px; font-size:1.25rem; }
     .score-guide-subtitle, .score-guide-helper { color:var(--text-soft); margin:0 0 12px; }
-    .score-guide-summary { font-weight:800; margin:0 0 12px; color:var(--text); }
+    .score-guide-summary { font-weight:800; margin:0 0 12px; color:var(--text); flex:0 0 auto; }
+    .score-guide-scroll { overflow:auto; min-height:0; flex:1 1 auto; }
     .score-guide-close { border:1px solid var(--border); background:var(--bg-secondary); color:var(--text); border-radius:999px; width:32px; height:32px; font-size:1.2rem; cursor:pointer; }
     .score-guide-close:focus-visible, .score-guide-table:focus-visible { outline:3px solid rgba(37, 99, 235, 0.45); outline-offset:2px; }
     .score-guide-table { width:100%; border-collapse:collapse; font-size:0.95rem; }
@@ -1373,10 +1374,12 @@
           <button type="button" id="scoreGuideClose" class="score-guide-close" aria-label="Close score guide" onclick="closeScoreGuide()">×</button>
         </div>
         <p id="scoreGuideSummary" class="score-guide-summary" hidden></p>
-        <table class="score-guide-table" aria-label="IELTS Academic Reading raw score conversion">
-          <thead><tr><th>Correct answers</th><th>Estimated band</th></tr></thead>
-          <tbody id="scoreGuideTableBody"></tbody>
-        </table>
+        <div class="score-guide-scroll">
+          <table class="score-guide-table" aria-label="IELTS Academic Reading raw score conversion">
+            <thead><tr><th>Correct answers</th><th>Estimated band</th></tr></thead>
+            <tbody id="scoreGuideTableBody"></tbody>
+          </table>
+        </div>
       </div>
     </div>
 

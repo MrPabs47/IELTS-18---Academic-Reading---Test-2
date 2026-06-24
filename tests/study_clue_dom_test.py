@@ -229,6 +229,32 @@ def test_show_all_flow_renders_expected_clue_badges_for_each_passage() -> None:
     assert represented_questions == set(range(1, 41))
 
 
+
+def test_test2_audited_evidence_spans_are_exact_passage_text() -> None:
+    """Evidence improved during the audit must stay exact, markable passage text."""
+    page = HTML_PATH.read_text(encoding="utf-8")
+    feedback = STUDY_FEEDBACK_PATH.read_text(encoding="utf-8")
+    audited_evidence = [
+        "The White Horse has recently been re-dated and shown to be even older than its previously assigned ancient pre-Roman Iron Age* date.",
+        "While many historians are convinced the figure is prehistoric, others believe that it was the work of an artistic monk from a nearby priory",
+        "the Celtic*** horse goddess Epona, who was worshipped as a protector of horses, and for her associations with fertility",
+        "Microbes, most of them bacteria, have populated this planet since long before animal life developed and they will outlive us",
+        "while the number of human cells in the average person is about 30 trillion, the number of microbial ones is higher – about 39 trillion",
+        "we should realise we have a symbiotic relationship, that can be mutually beneficial or mutually destructive",
+        "Our obsession with hygiene, our overuse of antibiotics and our unhealthy, low-fibre diets are disrupting the bacterial balance",
+        "it isn’t an exceptional trait possessed by a small handful of bearded philosophers after all – in fact, the latest studies suggest that most of us have the ability to make wise decisions, given the right context",
+        "wisdom is not solely an “inner quality” but rather unfolds as a function of situations people happen to be in",
+        "another is appreciation of perspectives wider than the issue at hand",
+        "when we adopt a third-person, ‘observer’ viewpoint we reason more broadly and focus more on interpersonal and moral ideals",
+        "we reason more broadly and focus more on interpersonal and moral ideals such as justice and impartiality",
+        "couples in long-term romantic relationships were instructed to visualize an unresolved relationship conflict either through the eyes of an outsider or from their own perspective",
+        "Participants in the group assigned to the ‘distant observer’ role displayed more wisdom-related reasoning",
+    ]
+    for evidence in audited_evidence:
+        assert evidence in feedback
+        assert evidence in page
+
+
 def test_study_clue_rendering_contract_and_test_mode_safeguards_remain_intact() -> None:
     """Keep the Study visual shell hooks without bypassing Test Mode safeguards."""
     page = HTML_PATH.read_text(encoding="utf-8")
@@ -281,6 +307,9 @@ def test_study_shell_foundation_and_lifecycle_behaviour_contract() -> None:
     assert "#studyToolbar" not in shared_css
     assert ".is-visible" in shared_css
     assert ".study-icon-btn" in shared_css
+    assert "background:color-mix(in srgb, var(--accent) 18%, var(--bg))" in shared_css
+    assert "border:1px solid color-mix(in srgb, var(--accent) 62%, var(--border))" in shared_css
+    assert "background:color-mix(in srgb, var(--accent) 26%, var(--bg))" in shared_css
     assert ".study-feedback-card dl" in shared_css
     assert "ReadingStudyShell.init(adapter)" in readme
     for hook in ["getMode()", "getTaskGroups()", "showGroupFeedback(groupId)", "hideGroupFeedback(groupId)", "markEvidence(questionNumber)", "clearEvidence()", "focusQuestionClue(questionNumber)", "getActivePassage()"]:
@@ -309,14 +338,26 @@ def test_study_shell_foundation_and_lifecycle_behaviour_contract() -> None:
     modal = page[page.index('id="scoreGuideOverlay"'):page.index('<!-- Options overlay -->')]
     assert 'id="scoreGuideClose" class="score-guide-close"' in modal
     assert 'id="scoreGuideSummary" class="score-guide-summary" hidden' in modal
+    assert 'class="score-guide-scroll"' in modal
     assert 'id="scoreGuideTableBody"' in modal
+    assert 'overflow:hidden; padding:22px; display:flex; flex-direction:column;' in page
+    assert 'position:sticky; top:0; z-index:2; background:var(--bg);' in page
+    assert '.score-guide-scroll { overflow:auto; min-height:0; flex:1 1 auto; }' in page
     assert 'function openScoreGuide()' in page
     assert 'function closeScoreGuide()' in page
     assert 'function updateTopBarScore(correctCount)' in page
     assert 'correctCount + " / 40 · " + formatBandLabel' in page
     assert '"Score: " + score + " / " + totals[sec] + " points"' in page
+    assert 'const countText = answered[sec] + " of " + totals[sec];' in page
+    assert 'function shouldShowPartScores()' in page
+    assert 'return fullStudyReviewSubmitted || testSubmitted || fullTestScoreAvailable;' in page
+    assert 'fullStudyReviewSubmitted = false;' in page
+    assert 'fullTestScoreAvailable = false;' in page
     assert 'bandCell.textContent = typeof row.band === "number" ? String(row.band) : row.band;' in page
+    assert 'bandCell.textContent = "Band "' not in page
     assert 'const statusText = unanswered ? "Not answered · 0 points"' in page
+    assert 'block.appendChild(card);' in page
+    assert page.index('const card = document.createElement("div");') < page.index('block.appendChild(card);')
     assert 'function isStudyTaskRevealButtonVisible()' in page
     assert 'return mode === "study" && !testSubmitted && !fullStudyReviewSubmitted;' in page
     assert 'function isStudyStrategyButtonVisible()' in page
