@@ -4759,6 +4759,29 @@
       refreshActivePassageClues();
     }
 
+    function clearActivePassageFocusedClues() {
+      if (activeSection === 1) {
+        tfngCluesVisible = false; tfngSingleClueQuestion = null;
+        oneWordCluesVisible = false; oneWordSingleClueQuestion = null;
+        refreshTfngPassageClues();
+        refreshOneWordPassageClues();
+      } else if (activeSection === 2) {
+        matchingHeadingsCluesVisible = false; matchingHeadingsSingleClueQuestion = null;
+        oneWordP2CluesVisible = false; oneWordP2SingleClueQuestion = null;
+        chooseTwoCluesVisible = false; chooseTwoSingleClueOption = null;
+        refreshMatchingHeadingsPassageClues();
+        refreshOneWordP2PassageClues();
+        refreshChooseTwoPassageClues();
+      } else if (activeSection === 3) {
+        multipleChoiceCluesVisible = false; multipleChoiceSingleClueQuestion = null;
+        summaryCompletionCluesVisible = false; summaryCompletionSingleClueQuestion = null;
+        matchingPeopleCluesVisible = false; matchingPeopleSingleClueQuestion = null;
+        refreshMultipleChoicePassageClues();
+        refreshSummaryCompletionPassageClues();
+        refreshMatchingPeoplePassageClues();
+      }
+    }
+
     function refreshActivePassageClues() {
       refreshTfngPassageClues();
       refreshOneWordPassageClues();
@@ -4833,7 +4856,7 @@
 
     function revealTfngEvidence(questionNumber) {
       const allCluesVisible = activeSection === 1 && isActivePassageClueMapFullyVisible();
-      if (!allCluesVisible) { if (isOneWordFeedbackAvailable()) { oneWordCluesVisible = false; oneWordSingleClueQuestion = null; } refreshOneWordPassageClues(); }
+      if (!allCluesVisible) clearActivePassageFocusedClues();
       focusTfngPassageClue(questionNumber, true, !allCluesVisible);
     }
 
@@ -4919,7 +4942,7 @@
 
     function revealOneWordEvidence(questionNumber) {
       const allCluesVisible = activeSection === 1 && isActivePassageClueMapFullyVisible();
-      if (!allCluesVisible) { if (isTfngFeedbackAvailable()) { tfngCluesVisible = false; tfngSingleClueQuestion = null; } refreshTfngPassageClues(); }
+      if (!allCluesVisible) clearActivePassageFocusedClues();
       focusOneWordPassageClue(questionNumber, true, !allCluesVisible);
     }
 
@@ -5023,7 +5046,7 @@
 
     function revealOneWordP2Evidence(questionNumber) {
       const allCluesVisible = activeSection === 2 && isActivePassageClueMapFullyVisible();
-      if (!allCluesVisible) { if (isMatchingHeadingsFeedbackAvailable()) { matchingHeadingsCluesVisible = false; matchingHeadingsSingleClueQuestion = null; } if (isChooseTwoFeedbackAvailable()) { chooseTwoCluesVisible = false; chooseTwoSingleClueOption = null; } refreshMatchingHeadingsPassageClues(); refreshChooseTwoPassageClues(); }
+      if (!allCluesVisible) clearActivePassageFocusedClues();
       focusOneWordP2PassageClue(questionNumber, true, !allCluesVisible);
     }
 
@@ -5139,7 +5162,7 @@
 
     function revealChooseTwoEvidence(optionLetter) {
       const allCluesVisible = activeSection === 2 && isActivePassageClueMapFullyVisible();
-      if (!allCluesVisible) { if (isMatchingHeadingsFeedbackAvailable()) { matchingHeadingsCluesVisible = false; matchingHeadingsSingleClueQuestion = null; } if (isOneWordP2FeedbackAvailable()) { oneWordP2CluesVisible = false; oneWordP2SingleClueQuestion = null; } refreshMatchingHeadingsPassageClues(); refreshOneWordP2PassageClues(); }
+      if (!allCluesVisible) clearActivePassageFocusedClues();
       focusChooseTwoPassageClue(optionLetter, true, !allCluesVisible);
     }
 
@@ -5211,7 +5234,7 @@
 
     function revealMatchingHeadingsEvidence(questionNumber) {
       const allCluesVisible = activeSection === 2 && isActivePassageClueMapFullyVisible();
-      if (!allCluesVisible) { if (isOneWordP2FeedbackAvailable()) { oneWordP2CluesVisible = false; oneWordP2SingleClueQuestion = null; } if (isChooseTwoFeedbackAvailable()) { chooseTwoCluesVisible = false; chooseTwoSingleClueOption = null; } refreshOneWordP2PassageClues(); refreshChooseTwoPassageClues(); }
+      if (!allCluesVisible) clearActivePassageFocusedClues();
       focusMatchingHeadingsPassageClue(questionNumber, true, !allCluesVisible);
     }
 
@@ -5549,6 +5572,7 @@
 
     function revealMultipleChoiceEvidence(questionNumber) {
       const allCluesVisible = activeSection === 3 && isActivePassageClueMapFullyVisible();
+      if (!allCluesVisible) clearActivePassageFocusedClues();
       focusMultipleChoicePassageClue(questionNumber, true, !allCluesVisible);
     }
 
@@ -5683,6 +5707,7 @@
 
     function revealSummaryCompletionEvidence(questionNumber) {
       const allCluesVisible = activeSection === 3 && isActivePassageClueMapFullyVisible();
+      if (!allCluesVisible) clearActivePassageFocusedClues();
       focusSummaryCompletionPassageClue(questionNumber, true, !allCluesVisible);
     }
 
@@ -5810,6 +5835,7 @@
 
     function revealMatchingPeopleEvidence(questionNumber) {
       const allCluesVisible = activeSection === 3 && isActivePassageClueMapFullyVisible();
+      if (!allCluesVisible) clearActivePassageFocusedClues();
       focusMatchingPeoplePassageClue(questionNumber, true, !allCluesVisible);
     }
 

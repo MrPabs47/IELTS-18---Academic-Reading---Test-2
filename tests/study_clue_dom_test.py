@@ -419,6 +419,51 @@ def test_study_shell_foundation_and_lifecycle_behaviour_contract() -> None:
 
 
 
+
+def test_test1_single_focus_replaces_previous_clue_when_full_map_inactive() -> None:
+    """Guard Test 1 review focus behaviour: one focused clue per passage unless full map is active."""
+    test1 = (ROOT / "academic/cambridge-16/test-1/IELTS16 Test 1 - Academic Reading.html").read_text(encoding="utf-8")
+    assert "function clearActivePassageFocusedClues()" in test1
+    for name in [
+        "revealTfngEvidence", "revealOneWordEvidence", "revealOneWordP2Evidence", "revealChooseTwoEvidence",
+        "revealMatchingHeadingsEvidence", "revealMultipleChoiceEvidence", "revealSummaryCompletionEvidence", "revealMatchingPeopleEvidence",
+    ]:
+        body = test1[test1.index(f"function {name}"):test1.index("\n    }", test1.index(f"function {name}"))]
+        assert "const allCluesVisible" in body
+        assert "if (!allCluesVisible) clearActivePassageFocusedClues();" in body
+
+    state = {"full_map": False, "visible": set(), "focused": None}
+    all_passage_three = {"multiple-choice", "summary-completion", "matching-people"}
+
+    def focus(clue: str) -> None:
+        if state["full_map"]:
+            state["focused"] = clue
+        else:
+            state["visible"] = {clue}
+            state["focused"] = clue
+
+    def show_all() -> None:
+        state["full_map"] = True
+        state["visible"] = set(all_passage_three)
+
+    def hide_all() -> None:
+        state["full_map"] = False
+        state["visible"].clear()
+        state["focused"] = None
+
+    focus("multiple-choice")
+    assert state["visible"] == {"multiple-choice"}
+    focus("summary-completion")
+    assert state["visible"] == {"summary-completion"}
+    show_all()
+    focus("matching-people")
+    assert state["visible"] == all_passage_three
+    assert state["focused"] == "matching-people"
+    hide_all()
+    assert state["visible"] == set()
+    assert state["focused"] is None
+
+
 def test_test1_feedback_controls_do_not_mutate_passage_clues() -> None:
     """Runtime-style guard for Test 1 feedback actions staying independent of clue state."""
     test1 = (ROOT / "academic/cambridge-16/test-1/IELTS16 Test 1 - Academic Reading.html").read_text(encoding="utf-8")
