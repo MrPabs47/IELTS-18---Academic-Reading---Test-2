@@ -322,7 +322,7 @@ def test_study_shell_foundation_and_lifecycle_behaviour_contract() -> None:
     assert "focusClue(questionNumber)" in shared_js
     assert "fullClueMapVisible" not in shared_js
     assert "fullClueMapPassages: new Set()" in shared_js
-    assert "this.renderVisibleEvidence(active);" in shared_js
+    assert "focusedClueByPassage: new Map()" in shared_js
     assert "setVisible(byId(\"studyTimer\"), studyActive" in shared_js
     assert "studyActive = !!show && isStudyMode && !submitted" in shared_js
     assert "toggle.hidden = (!isStudyMode && !submitted) || !hasPassageClues" in shared_js
@@ -330,6 +330,7 @@ def test_study_shell_foundation_and_lifecycle_behaviour_contract() -> None:
     assert "if (toggle.hidden || toggle.disabled) return;" in shared_js
     assert "reset()" in shared_js
     assert "state.fullClueMapPassages.clear();" in shared_js
+    assert "state.focusedClueByPassage.clear();" in shared_js
     assert "const hasPassageClues = groups.some((group) => String(group.passage) === String(active));" in shared_js
     assert "adapter.isFullClueMapVisible" not in shared_js
     assert "studyCheckAll" not in shared_js
@@ -382,6 +383,13 @@ def test_study_shell_foundation_and_lifecycle_behaviour_contract() -> None:
     assert 'id="passageClueToolbar"' in test1_header
     assert 'function isStudyClueMapRouteAvailable()' in test1
     assert 'function isStudyGroupExplicitlyRevealed(groupId)' in test1
+    assert 'const restored = (groupId) => visible || isStudyGroupExplicitlyRevealed(groupId);' not in test1
+    reveal_test1 = test1[test1.index('function revealStudyTaskGroup(group'):test1.index('function hideStudyTaskGroup(group)')]
+    hide_test1 = test1[test1.index('function hideStudyTaskGroup(group)'):test1.index('function toggleStudyTaskReveal(groupId)')]
+    assert 'group.setCluesVisible(true);' not in reveal_test1
+    assert 'group.refreshClues();' not in reveal_test1
+    assert 'group.setCluesVisible(false);' not in hide_test1
+    assert 'group.refreshClues();' not in hide_test1
     assert 'toggle.disabled = !available;' in test1
     assert 'if (passageClueToggle.hidden || passageClueToggle.disabled) return;' in test1
 
@@ -395,9 +403,11 @@ def test_study_shell_foundation_and_lifecycle_behaviour_contract() -> None:
 
     show_group = page[page.index("function showStudyGroup(groupId)"):page.index("function renderStudyGroupFeedback(groupId)")]
     assert "controller.showGroup(groupId)" in show_group
-    render_group = page[page.index("function renderStudyEvidenceForGroup(group)"):page.index("function getStudyEvidenceText(q)")]
-    assert "group.questionNumbers.forEach((q) => markStudyEvidence(q));" in render_group
-    assert "revealedStudyTaskGroups.has(group.id)" in render_group
+    show_group = page[page.index("function showStudyGroup(groupId)"):page.index("function renderStudyGroupFeedback(groupId)")]
+    assert "renderStudyEvidenceForGroup" not in show_group
+    render_visible = page[page.index("function renderVisibleStudyEvidence()"):page.index("function getStudyEvidenceText(q)")]
+    assert "clearStudyEvidenceHighlights();" in render_visible
+    assert "revealedStudyTaskGroups.has(group.id)" not in render_visible
 
     focus = page[page.index("function focusStudyEvidence(q)"):page.index("function checkAllStudyAnswers()")]
     assert "controller.focusClue(q)" in focus
@@ -405,12 +415,12 @@ def test_study_shell_foundation_and_lifecycle_behaviour_contract() -> None:
 
 
 def test_shared_controller_full_map_state_with_mocked_adapter() -> None:
-    """Exercise full-map and focus lifecycle with a mocked DOM/adapter, no browser needed."""
+    """Exercise independent feedback, full-map and focused-clue lifecycle without a browser."""
     script = """
       const assert = require('assert');
       global.window = {};
       const elements = {
-        passageClueToggle: { hidden: true, textContent: '', onclick: null, classList: { toggle() {} }, setAttribute() {} },
+        passageClueToggle: { hidden: true, disabled: true, textContent: '', onclick: null, classList: { toggle() {} }, setAttribute(name, value) { this[name] = value; } },
         studyHeaderChrome: { style: {}, classList: { toggle() {} }, setAttribute() {} },
         scoreGuideButton: { style: {}, classList: { toggle() {} }, setAttribute() {} },
         studyModePill: { style: {}, classList: { toggle() {} }, setAttribute() {} },
@@ -426,6 +436,7 @@ def test_shared_controller_full_map_state_with_mocked_adapter() -> None:
       let submitted = false;
       let activePassage = 1;
       const visibleByPassage = new Map([['1', new Set()], ['2', new Set()]]);
+      const feedbackGroups = new Set();
       const focused = [];
       const groups = [
         { id: 'g1', passage: 1, questionNumbers: [1, 2] },
@@ -434,86 +445,117 @@ def test_shared_controller_full_map_state_with_mocked_adapter() -> None:
       ];
       const passageForQuestion = (q) => groups.find((group) => group.questionNumbers.includes(Number(q))).passage;
       const addVisible = (q) => visibleByPassage.get(String(passageForQuestion(q))).add(String(q));
+      const visibleList = (passage) => Array.from(visibleByPassage.get(String(passage))).sort().join(',');
       const controller = window.ReadingStudyShell.init({
         getMode: () => mode,
         isStudyMode: () => mode === 'study',
         isSubmitted: () => submitted,
         getTaskGroups: () => groups,
         getActivePassage: () => activePassage,
-        visibleGroups: new Set(),
-        showGroupFeedback() {},
-        hideGroupFeedback() {},
+        visibleGroups: feedbackGroups,
+        showGroupFeedback(groupId) { feedbackGroups.add(groupId); },
+        hideGroupFeedback(groupId) { feedbackGroups.delete(groupId); },
         markEvidence(q) { addVisible(q); return { q }; },
         clearEvidence() { visibleByPassage.forEach((set) => set.clear()); },
         clearEvidenceForPassage(passage) { visibleByPassage.get(String(passage)).clear(); },
         focusQuestionClue(q) { addVisible(q); focused.push(String(q)); return { q }; }
       });
-      const visibleList = (passage) => Array.from(visibleByPassage.get(String(passage))).sort().join(',');
       const toggle = elements.passageClueToggle;
 
+      // 2. Direct Study Mode starts with control available but no clues visible.
       controller.updateClueToolbar();
       assert.strictEqual(toggle.hidden, false);
       assert.strictEqual(toggle.disabled, false);
       assert.strictEqual(toggle.textContent, 'Show all passage clues');
+      assert.strictEqual(visibleList(1), '');
+
+      // 1. Showing answers/feedback does not create passage highlights.
       controller.showGroup('g1');
-      assert.strictEqual(visibleList(1), '1,2');
-      assert.strictEqual(toggle.hidden, false);
-      assert.strictEqual(toggle.disabled, false);
+      assert.strictEqual(feedbackGroups.has('g1'), true);
+      assert.strictEqual(visibleList(1), '');
       assert.strictEqual(toggle.textContent, 'Show all passage clues');
+
+      // 3. Show all reveals all active-passage clues and is passage-specific.
       toggle.onclick();
       assert.strictEqual(visibleList(1), '1,2,3,4');
       assert.strictEqual(toggle.textContent, 'Hide all passage clues');
-
       activePassage = 2;
       controller.updateClueToolbar();
-      assert.strictEqual(toggle.hidden, false);
-      assert.strictEqual(toggle.disabled, false);
+      assert.strictEqual(visibleList(2), '');
       assert.strictEqual(toggle.textContent, 'Show all passage clues');
       activePassage = 1;
       controller.updateClueToolbar();
-      assert.strictEqual(toggle.hidden, false);
-      assert.strictEqual(toggle.disabled, false);
       assert.strictEqual(toggle.textContent, 'Hide all passage clues');
 
+      // 6. With Show all active, magnifying-glass focus preserves the full map.
       controller.focusClue(2);
       assert.strictEqual(visibleList(1), '1,2,3,4');
       assert.deepStrictEqual(focused, ['2']);
 
+      // 4. Hide all removes all active-passage clues even while feedback remains open.
       toggle.onclick();
-      assert.strictEqual(visibleList(1), '1,2');
+      assert.strictEqual(feedbackGroups.has('g1'), true);
+      assert.strictEqual(visibleList(1), '');
       assert.strictEqual(toggle.textContent, 'Show all passage clues');
 
-      toggle.onclick();
-      assert.strictEqual(visibleList(1), '1,2,3,4');
+      // 5. After Hide all, magnifying glass reveals only the selected question clue.
+      controller.focusClue(2);
+      assert.strictEqual(visibleList(1), '2');
+      controller.focusClue(3);
+      assert.strictEqual(visibleList(1), '3');
+
+      // 7. Focused clue state is passage-specific.
       activePassage = 2;
-      controller.showGroup('g3');
+      controller.focusClue(5);
       assert.strictEqual(visibleList(2), '5');
-      assert.strictEqual(toggle.textContent, 'Hide all passage clues');
       activePassage = 1;
-      controller.updateClueToolbar();
-      toggle.onclick();
-      assert.strictEqual(visibleList(1), '1,2');
-      assert.strictEqual(visibleList(2), '5');
-      assert.strictEqual(toggle.textContent, 'Show all passage clues');
+      controller.renderVisibleEvidence(1);
+      assert.strictEqual(visibleList(1), '3');
 
-      controller.showGroup('g2');
-      assert.strictEqual(toggle.textContent, 'Hide all passage clues');
-      activePassage = 2;
-      controller.updateClueToolbar();
-      assert.strictEqual(toggle.textContent, 'Hide all passage clues');
+      // 9. Submitted Test Mode has controls, but Hide all does not re-show clues.
       submitted = true;
       mode = 'test';
+      activePassage = 2;
       controller.updateClueToolbar();
       assert.strictEqual(toggle.hidden, false);
+      assert.strictEqual(toggle.disabled, false);
+      toggle.onclick();
+      assert.strictEqual(toggle.textContent, 'Hide all passage clues');
+      assert.strictEqual(visibleList(2), '5');
       toggle.onclick();
       assert.strictEqual(visibleList(2), '');
       assert.strictEqual(toggle.textContent, 'Show all passage clues');
+      controller.focusClue(5);
+      assert.strictEqual(visibleList(2), '5');
+      toggle.onclick();
+      assert.strictEqual(visibleList(2), '5');
+      toggle.onclick();
+      assert.strictEqual(visibleList(2), '');
 
+      // 8. Fresh Test Mode before submission has no visible or callable clue controls.
       mode = 'test';
       submitted = false;
       controller.updateClueToolbar();
       assert.strictEqual(toggle.hidden, true);
       assert.strictEqual(toggle.disabled, true);
+      const before = visibleList(2);
+      toggle.onclick();
+      assert.strictEqual(visibleList(2), before);
+
+      // 10. Reset clears full-map and focused-clue state independently from feedback-card state.
+      mode = 'study';
+      submitted = false;
+      activePassage = 1;
+      controller.showGroup('g2');
+      controller.showAllPassageClues();
+      controller.focusClue(4);
+      controller.reset();
+      assert.strictEqual(feedbackGroups.has('g1'), true);
+      assert.strictEqual(feedbackGroups.has('g2'), true);
+      assert.strictEqual(visibleList(1), '');
+      assert.strictEqual(visibleList(2), '');
+      controller.updateClueToolbar();
+      assert.strictEqual(toggle.textContent, 'Show all passage clues');
     """
     script = "const SHELL_PATH = " + json.dumps(str(ROOT / "academic/shared/reading-study-shell.js")) + ";\n" + script
     subprocess.check_call(["node", "-e", script])

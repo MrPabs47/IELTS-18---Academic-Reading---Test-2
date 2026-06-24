@@ -4744,18 +4744,17 @@
     }
 
     function setActivePassageClueMapVisible(visible) {
-      const restored = (groupId) => visible || isStudyGroupExplicitlyRevealed(groupId);
       if (activeSection === 1) {
-        if (isStudyClueMapRouteAvailable()) { tfngCluesVisible = restored("tfng"); tfngSingleClueQuestion = null; }
-        if (isStudyClueMapRouteAvailable()) { oneWordCluesVisible = restored("one-word-p1"); oneWordSingleClueQuestion = null; }
+        if (isStudyClueMapRouteAvailable()) { tfngCluesVisible = visible; tfngSingleClueQuestion = null; }
+        if (isStudyClueMapRouteAvailable()) { oneWordCluesVisible = visible; oneWordSingleClueQuestion = null; }
       } else if (activeSection === 2) {
-        if (isStudyClueMapRouteAvailable()) { matchingHeadingsCluesVisible = restored("matching-headings"); matchingHeadingsSingleClueQuestion = null; }
-        if (isStudyClueMapRouteAvailable()) { oneWordP2CluesVisible = restored("one-word-p2"); oneWordP2SingleClueQuestion = null; }
-        if (isStudyClueMapRouteAvailable()) { chooseTwoCluesVisible = restored("choose-two"); chooseTwoSingleClueOption = null; }
+        if (isStudyClueMapRouteAvailable()) { matchingHeadingsCluesVisible = visible; matchingHeadingsSingleClueQuestion = null; }
+        if (isStudyClueMapRouteAvailable()) { oneWordP2CluesVisible = visible; oneWordP2SingleClueQuestion = null; }
+        if (isStudyClueMapRouteAvailable()) { chooseTwoCluesVisible = visible; chooseTwoSingleClueOption = null; }
       } else if (activeSection === 3) {
-        if (isStudyClueMapRouteAvailable()) { multipleChoiceCluesVisible = restored("multiple-choice"); multipleChoiceSingleClueQuestion = null; }
-        if (isStudyClueMapRouteAvailable()) { summaryCompletionCluesVisible = restored("summary-completion"); summaryCompletionSingleClueQuestion = null; }
-        if (isStudyClueMapRouteAvailable()) { matchingPeopleCluesVisible = restored("matching-people"); matchingPeopleSingleClueQuestion = null; }
+        if (isStudyClueMapRouteAvailable()) { multipleChoiceCluesVisible = visible; multipleChoiceSingleClueQuestion = null; }
+        if (isStudyClueMapRouteAvailable()) { summaryCompletionCluesVisible = visible; summaryCompletionSingleClueQuestion = null; }
+        if (isStudyClueMapRouteAvailable()) { matchingPeopleCluesVisible = visible; matchingPeopleSingleClueQuestion = null; }
       }
       refreshActivePassageClues();
     }
@@ -6010,12 +6009,9 @@
       if (!group || mode !== "study" || isFullStudyReviewActive()) return;
       revealedStudyTaskGroups.add(group.id);
       group.setSubmitted(true);
-      group.setCluesVisible(true);
-      group.clearSingleClue();
       evaluateStudyTaskGroup(group);
       updateStudyTaskResultLine(group);
       group.render();
-      group.refreshClues();
       updateTfngStudyFeedbackVisibility();
       updateStudyTaskRevealButtons();
       if (!refreshOnly) updatePassageClueToolbarVisibility();
@@ -6025,8 +6021,6 @@
       if (!group) return;
       revealedStudyTaskGroups.delete(group.id);
       group.setSubmitted(false);
-      group.setCluesVisible(false);
-      group.clearSingleClue();
       clearStudyTaskQuestionFeedback(group);
       group.questions.forEach((q) => {
         const target = document.getElementById("ca-" + q);
@@ -6034,7 +6028,6 @@
       });
       hideStudyTaskResultLine(group);
       group.clearFocus();
-      group.refreshClues();
       updateTfngStudyFeedbackVisibility();
       updateStudyTaskRevealButtons();
     }

@@ -19,7 +19,8 @@
       }
       const state = {
         visibleGroups: adapter.visibleGroups || new Set(),
-        fullClueMapPassages: new Set()
+        fullClueMapPassages: new Set(),
+        focusedClueByPassage: new Map()
       };
       const elements = Object.assign({
         scoreGuideButton: "scoreGuideButton",
@@ -49,26 +50,15 @@
         showGroup(groupId) {
           state.visibleGroups.add(groupId);
           if (typeof adapter.showGroupFeedback === "function") adapter.showGroupFeedback(groupId);
-          this.renderGroupEvidence(groupId);
-          const group = (call(adapter.getTaskGroups, []) || []).find((item) => item.id === groupId);
-          this.syncFullClueMapState(group ? group.passage : undefined);
           this.updateClueToolbar();
         },
         hideGroup(groupId) {
           state.visibleGroups.delete(groupId);
           if (typeof adapter.hideGroupFeedback === "function") adapter.hideGroupFeedback(groupId);
-          const group = (call(adapter.getTaskGroups, []) || []).find((item) => item.id === groupId);
-          if (group) state.fullClueMapPassages.delete(String(group.passage));
-          this.renderVisibleEvidence(group ? group.passage : undefined);
+          this.updateClueToolbar();
         },
         isGroupVisible(groupId) {
           return state.visibleGroups.has(groupId);
-        },
-        renderGroupEvidence(groupId) {
-          const group = (call(adapter.getTaskGroups, []) || []).find((item) => item.id === groupId);
-          if (group && typeof adapter.markEvidence === "function") {
-            (group.questionNumbers || []).forEach((q) => adapter.markEvidence(q));
-          }
         },
         renderVisibleEvidence(passage) {
           const active = passage === undefined ? null : String(passage);
@@ -77,14 +67,18 @@
           } else if (typeof adapter.clearEvidence === "function") {
             adapter.clearEvidence();
           }
-          (call(adapter.getTaskGroups, []) || [])
-            .filter((group) => active === null || String(group.passage) === active)
-            .forEach((group) => {
-            if (state.visibleGroups.has(group.id) && typeof adapter.markEvidence === "function") {
-              (group.questionNumbers || []).forEach((q) => adapter.markEvidence(q));
+          const groups = call(adapter.getTaskGroups, []) || [];
+          const passages = active === null ? Array.from(new Set(groups.map((group) => String(group.passage)))) : [active];
+          passages.forEach((passageKey) => {
+            if (state.fullClueMapPassages.has(passageKey)) {
+              groups
+                .filter((group) => String(group.passage) === passageKey)
+                .forEach((group) => (group.questionNumbers || []).forEach((q) => adapter.markEvidence && adapter.markEvidence(q)));
+              return;
             }
+            const focused = state.focusedClueByPassage.get(passageKey);
+            if (focused !== undefined && focused !== null && typeof adapter.markEvidence === "function") adapter.markEvidence(focused);
           });
-          this.syncFullClueMapState(active);
           this.updateClueToolbar();
         },
         showAllPassageClues() {
@@ -95,40 +89,30 @@
             .filter((group) => String(group.passage) === String(active))
             .forEach((group) => (group.questionNumbers || []).forEach((q) => adapter.markEvidence && adapter.markEvidence(q)));
           state.fullClueMapPassages.add(String(active));
+          state.focusedClueByPassage.delete(String(active));
           this.updateClueToolbar();
         },
         hideAllPassageClues() {
           const active = call(adapter.getActivePassage, null);
           state.fullClueMapPassages.delete(String(active));
-          if (!!call(adapter.isSubmitted, false)) {
-            if (typeof adapter.clearEvidenceForPassage === "function") adapter.clearEvidenceForPassage(active);
-            else if (typeof adapter.clearEvidence === "function") adapter.clearEvidence();
-            this.updateClueToolbar();
-            return;
-          }
-          this.renderVisibleEvidence(active);
+          state.focusedClueByPassage.delete(String(active));
+          if (typeof adapter.clearEvidenceForPassage === "function") adapter.clearEvidenceForPassage(active);
+          else if (typeof adapter.clearEvidence === "function") adapter.clearEvidence();
+          this.updateClueToolbar();
         },
         focusClue(questionNumber) {
-          // Full passage maps are authoritative controller state; preserve them while focusing one clue.
-          const active = call(adapter.getActivePassage, null);
-          if (!state.fullClueMapPassages.has(String(active))) this.renderVisibleEvidence(active);
+          const active = String(call(adapter.getActivePassage, null));
+          if (!state.fullClueMapPassages.has(active)) {
+            state.focusedClueByPassage.set(active, questionNumber);
+            if (typeof adapter.clearEvidenceForPassage === "function") adapter.clearEvidenceForPassage(active);
+            else if (typeof adapter.clearEvidence === "function") adapter.clearEvidence();
+          }
           const el = typeof adapter.focusQuestionClue === "function" ? adapter.focusQuestionClue(questionNumber) : null;
           this.updateClueToolbar();
           return el;
         },
-        syncFullClueMapState(passage) {
-          const groups = call(adapter.getTaskGroups, []) || [];
-          const passages = passage === undefined || passage === null
-            ? Array.from(new Set(groups.map((group) => String(group.passage))))
-            : [String(passage)];
-          passages.forEach((passageKey) => {
-            const passageGroups = groups.filter((group) => String(group.passage) === passageKey);
-            if (passageGroups.length && passageGroups.every((group) => state.visibleGroups.has(group.id))) {
-              state.fullClueMapPassages.add(passageKey);
-            } else {
-              state.fullClueMapPassages.delete(passageKey);
-            }
-          });
+        syncFullClueMapState() {
+          this.updateClueToolbar();
         },
         updateClueToolbar() {
           const toggle = byId("passageClueToggle");
@@ -151,6 +135,7 @@
         },
         reset() {
           state.fullClueMapPassages.clear();
+          state.focusedClueByPassage.clear();
           this.renderVisibleEvidence();
         }
       };

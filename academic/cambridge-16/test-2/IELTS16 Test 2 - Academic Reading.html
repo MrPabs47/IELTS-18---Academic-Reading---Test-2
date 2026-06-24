@@ -2572,7 +2572,9 @@
       updateCounts();
       highlightCurrentQuestion(currentQuestion);
       buildQuestionNav();
-      renderVisibleStudyEvidence();
+      const controller = getStudyShellController();
+      if (controller) controller.renderVisibleEvidence(activeSection);
+      else renderVisibleStudyEvidence();
     }
 
     function prevSection() {
@@ -3178,7 +3180,6 @@
       const controller = getStudyShellController();
       if (controller) { controller.showGroup(groupId); return; }
       renderStudyGroupFeedback(groupId);
-      renderStudyEvidenceForGroup(getStudyData().taskGroups.find((item) => item.id === groupId));
     }
 
     function renderStudyGroupFeedback(groupId) {
@@ -3198,7 +3199,6 @@
       const controller = getStudyShellController();
       if (controller) { controller.hideGroup(groupId); return; }
       clearStudyGroupFeedback(groupId);
-      renderVisibleStudyEvidence();
     }
 
     function clearStudyGroupFeedback(groupId) {
@@ -3213,7 +3213,6 @@
       if (result) { result.textContent = ""; result.hidden = true; result.style.display = "none"; }
       const btn = document.querySelector('[data-study-group="' + group.id + '"]');
       if (btn) { btn.textContent = "Show answers & feedback"; btn.setAttribute("aria-expanded", "false"); }
-      renderVisibleStudyEvidence();
       updateStudyTaskControlVisibility();
     }
 
@@ -3287,9 +3286,6 @@
 
     function renderVisibleStudyEvidence() {
       clearStudyEvidenceHighlights();
-      getStudyData().taskGroups.forEach((group) => {
-        if (revealedStudyTaskGroups.has(group.id)) group.questionNumbers.forEach((q) => markStudyEvidence(q));
-      });
       updateStudyClueToolbar();
     }
 
