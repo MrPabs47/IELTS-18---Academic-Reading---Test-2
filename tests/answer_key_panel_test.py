@@ -1,0 +1,180 @@
+"""Static regression coverage for IELTS 16 Academic Reading answer-key panels."""
+
+from __future__ import annotations
+
+import re
+from pathlib import Path
+
+ROOT = Path(__file__).resolve().parents[1]
+PAGES = [
+    ROOT / "academic" / "cambridge-16" / "test-1" / "IELTS16 Test 1 - Academic Reading.html",
+    ROOT / "academic" / "cambridge-16" / "test-2" / "IELTS16 Test 2 - Academic Reading.html",
+]
+
+
+def _read(path: Path) -> str:
+    return path.read_text(encoding="utf-8")
+
+
+def _extract_object(page: str, name: str) -> str:
+    match = re.search(rf"const\s+{name}\s*=\s*{{(.*?)^\s*}};", page, re.S | re.M)
+    assert match, f"Missing {name} object"
+    return match.group(1)
+
+
+def _object_keys(body: str) -> list[int]:
+    return [int(key) for key in re.findall(r"^\s*(\d+)\s*:", body, re.M)]
+
+
+def test_answer_key_controls_and_empty_panel_shells_exist() -> None:
+    for path in PAGES:
+        page = _read(path)
+        assert 'id="scoreGuideButton"' in page
+        assert 'id="answerKeyButton"' in page
+        assert page.index('id="scoreGuideButton"') < page.index('id="answerKeyButton"')
+        button_match = re.search(r'<button[^>]+id="answerKeyButton"[^>]*>(.*?)</button>', page, re.S)
+        assert button_match, "Missing Answer key header button"
+        button_tag = button_match.group(0)
+        assert 'onclick="openAnswerKeyPanel()"' in button_tag
+        assert 'aria-controls="answerKeyOverlay"' in button_tag
+        assert 'aria-label="Answer key"' in button_tag
+        assert 'title="Answer key"' in button_tag
+        assert button_match.group(1).strip() == '🔑'
+        assert '<span>Answer key</span>' not in button_tag
+        assert 'id="answerKeyOverlay"' in page
+        assert 'Answer key' in page
+        assert 'Correct answers for Questions 1–40' in page
+        assert 'id="answerKeyGrid"' in page
+        assert re.search(r'<div id="answerKeyGrid"[^>]*></div>', page), "Panel shell should not contain pre-rendered answers"
+
+
+def test_test1_has_scoped_answer_key_width_override_after_score_panel_rule() -> None:
+    test1 = _read(PAGES[0])
+    test2 = _read(PAGES[1])
+    scoped = '#answerKeyOverlay .score-guide-panel.answer-key-panel {'
+    assert scoped in test1
+    assert scoped not in test2
+    score_panel_pos = test1.index('.score-guide-panel {')
+    scoped_pos = test1.index(scoped)
+    assert score_panel_pos < scoped_pos
+    scoped_css = test1[scoped_pos : test1.index('}', scoped_pos)]
+    assert 'width: min(760px, calc(100vw - 32px));' in scoped_css
+    assert 'max-width: calc(100vw - 32px);' in scoped_css
+
+
+def test_answer_key_panels_share_wider_viewport_constrained_width() -> None:
+    for path in PAGES:
+        page = _read(path)
+        assert '.answer-key-panel { width:min(760px, 96vw);' in page
+        assert '.answer-key-panel { width:min(640px, 96vw);' not in page
+
+
+def test_answer_key_uses_three_column_desktop_grid() -> None:
+    for path in PAGES:
+        page = _read(path)
+        assert '.answer-key-grid { display:grid; grid-template-columns:repeat(3, minmax(0, 1fr));' in page
+        answer_grid_start = page.index('.answer-key-grid { display:grid;')
+        responsive_start = page.index('@media (max-width: 720px)', answer_grid_start)
+        desktop_answer_grid_css = page[answer_grid_start:responsive_start]
+        assert 'grid-template-columns:repeat(auto-fit' not in desktop_answer_grid_css
+        assert '.answer-key-section' in page
+        assert 'overflow:auto' not in page[page.index('.answer-key-section') : page.index('.answer-key-section h3')]
+        assert '@media (max-width: 720px)' in page
+        assert '.answer-key-grid { grid-template-columns:repeat(auto-fit, minmax(150px, 1fr)); }' in page
+
+
+def test_test1_answer_key_long_answers_can_wrap_without_clipping() -> None:
+    page = _read(PAGES[0])
+    assert 'grid-template-columns:2.1em minmax(0, 1fr);' in page
+    assert 'line-height:1.35;' in page
+    answer_css = page[page.index('.answer-key-answer {') : page.index('.answer-key-button[hidden]')]
+    assert 'min-width:0' in answer_css
+    assert 'overflow-wrap:anywhere' in answer_css
+    assert 'overflow:hidden' not in answer_css
+    assert 'text-overflow' not in answer_css
+    assert 'ellipsis' not in answer_css
+    assert 'white-space:nowrap' not in answer_css
+    answer_key = _extract_object(page, "answerKey")
+    correct_text = _extract_object(page, "correctAnswerText")
+    assert '11: "photographer"' in answer_key
+    assert '11: "photographer"' in correct_text
+    assert '3: "NOT GIVEN"' in answer_key
+    assert '3: "NOT GIVEN"' in correct_text
+    assert '.answer-key-grid { display:grid; grid-template-columns:repeat(3, minmax(0, 1fr));' in page
+
+
+def test_answer_key_visibility_rules_are_wired() -> None:
+    for path in PAGES:
+        page = _read(path)
+        assert 'return mode === "study" || (mode === "test" && testSubmitted);' in page
+        assert 'button.hidden = !available;' in page
+        assert 'button.disabled = !available;' in page
+        assert 'button.tabIndex = available ? 0 : -1;' in page
+        assert 'if (!available) closeAnswerKeyPanel(false);' in page
+        assert 'updateAnswerKeyVisibility();' in page
+
+
+def test_answer_key_renders_40_canonical_answers_in_13_13_14_sections() -> None:
+    for path in PAGES:
+        page = _read(path)
+        answer_key = _extract_object(page, "answerKey")
+        correct_text = _extract_object(page, "correctAnswerText")
+        assert _object_keys(answer_key) == list(range(1, 41))
+        assert _object_keys(correct_text) == list(range(1, 41))
+        assert 'const display = correctAnswerText[questionNumber];' in page
+        assert 'const canonical = answerKey[questionNumber];' in page
+        assert 'for (let q = range.from; q <= range.to; q++)' in page
+        assert '1: { from: 1, to: 13 }' in page
+        assert '2: { from: 14, to: 26 }' in page
+        assert '3: { from: 27, to: 40 }' in page
+        assert 'heading.textContent = "Part " + part + ": Questions " + range.from + "–" + range.to;' in page
+
+
+def test_answer_key_panel_is_neutral_reference_only() -> None:
+    banned = [
+        "learner-answer",
+        "Your answer",
+        "Correct/incorrect",
+        "Incorrect",
+        "green",
+        "red",
+        "score comparison",
+    ]
+    for path in PAGES:
+        page = _read(path)
+        panel_code = page[page.index('function renderAnswerKeyPanel') : page.index('function clearAnswerKeyPanel')]
+        for phrase in banned:
+            assert phrase not in panel_code
+        assert 'current-score-row' not in panel_code
+        assert 'correctCount' not in panel_code
+        assert 'evaluateQuestions' not in panel_code
+
+
+def test_answer_click_navigation_does_not_check_or_reveal_answers() -> None:
+    forbidden_calls = [
+        'submitTest(',
+        'handlePrimarySubmit(',
+        'evaluateQuestions(',
+        'showStudyGroup(',
+        'focusClue(',
+        'focusMarkedStudyEvidence(',
+        'renderTfngFeedbackCards(',
+    ]
+    for path in PAGES:
+        page = _read(path)
+        nav_code = page[page.index('function focusQuestionFromAnswerKey') : page.index('document.addEventListener("click", (event) => {')]
+        assert 'closeAnswerKeyPanel(false);' in nav_code
+        assert 'switchSection(section);' in nav_code
+        assert 'scrollIntoView' in nav_code
+        assert 'focused-question-flash' in nav_code
+        for call in forbidden_calls:
+            assert call not in nav_code
+
+
+def test_escape_overlay_click_reset_and_mode_switch_close_panel() -> None:
+    for path in PAGES:
+        page = _read(path)
+        assert 'event.key === "Escape" && overlay && overlay.style.display === "flex") closeAnswerKeyPanel();' in page
+        assert 'event.target === overlay) closeAnswerKeyPanel();' in page
+        assert 'function startTest(selectedMode)' in page
+        assert 'closeAnswerKeyPanel(false);' in page
