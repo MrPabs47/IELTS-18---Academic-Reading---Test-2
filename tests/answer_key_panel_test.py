@@ -48,6 +48,13 @@ def test_answer_key_controls_and_empty_panel_shells_exist() -> None:
         assert re.search(r'<div id="answerKeyGrid"[^>]*></div>', page), "Panel shell should not contain pre-rendered answers"
 
 
+def test_answer_key_panels_share_wider_viewport_constrained_width() -> None:
+    for path in PAGES:
+        page = _read(path)
+        assert '.answer-key-panel { width:min(760px, 96vw);' in page
+        assert '.answer-key-panel { width:min(640px, 96vw);' not in page
+
+
 def test_answer_key_uses_three_column_desktop_grid() -> None:
     for path in PAGES:
         page = _read(path)
