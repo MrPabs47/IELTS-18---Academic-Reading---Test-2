@@ -748,6 +748,19 @@
       white-space: nowrap;
     }
 
+
+    .answer-key-panel { width:min(640px, 96vw); display:flex; flex-direction:column; overflow:hidden; }
+    .answer-key-panel .score-guide-header { flex:0 0 auto; position:sticky; top:0; z-index:2; background:var(--bg); }
+    .answer-key-grid { display:grid; grid-template-columns:repeat(auto-fit, minmax(150px, 1fr)); gap:14px; overflow:auto; min-height:0; flex:1 1 auto; padding-right:2px; }
+    .answer-key-section { border:1px solid var(--border); border-radius:12px; background:var(--bg-secondary); padding:12px; }
+    .answer-key-section h3 { margin:0 0 10px; font-size:0.98rem; color:var(--text); }
+    .answer-key-list { display:grid; gap:5px; margin:0; }
+    .answer-key-item { display:grid; grid-template-columns:2.6em 1fr; gap:10px; align-items:center; width:100%; border:1px solid transparent; border-radius:8px; background:transparent; color:var(--text); padding:5px 7px; font:inherit; text-align:left; cursor:pointer; }
+    .answer-key-item:hover, .answer-key-item:focus-visible { border-color:var(--accent); background:var(--accent-soft); outline:2px solid transparent; box-shadow:0 0 0 3px rgba(37, 99, 235, 0.16); }
+    .answer-key-number { color:var(--text-soft); font-weight:800; }
+    .answer-key-answer { font-weight:800; }
+    .answer-key-button[hidden] { display:none !important; }
+
     @media (max-width: 640px) {
       #passageHeader {
         grid-template-columns: minmax(0, 1fr);
@@ -2223,6 +2236,7 @@
       </div>
       <div class="top-right">
         <button type="button" id="scoreGuideButton" class="score-guide-button" aria-haspopup="dialog" aria-controls="scoreGuideOverlay" onclick="openScoreGuide()">📊 <span>Score guide</span></button>
+        <button type="button" id="answerKeyButton" class="score-guide-button answer-key-button" aria-haspopup="dialog" aria-controls="answerKeyOverlay" aria-hidden="true" onclick="openAnswerKeyPanel()" hidden>🔑 <span>Answer key</span></button>
         <div id="studyModePill" role="status" aria-label="Study mode is active">Study mode</div>
         <div id="studyTimerContainer" role="timer" aria-live="polite" aria-atomic="true" aria-hidden="true">Study time: <span id="studyTimerDisplay">00:00</span></div>
         <div id="timerContainer" role="status" aria-live="polite" aria-atomic="true" aria-hidden="true"><span id="timerPrefix">Time left:</span> <span id="timerDisplay">60:00</span></div>
@@ -2794,6 +2808,20 @@
     </div>
   </div>
 
+
+  <div id="answerKeyOverlay" class="score-guide-overlay" role="dialog" aria-modal="true" aria-labelledby="answerKeyTitle" aria-describedby="answerKeySubtitle" aria-hidden="true">
+    <div class="score-guide-panel answer-key-panel">
+      <div class="score-guide-header">
+        <div>
+          <h2 id="answerKeyTitle">Answer key</h2>
+          <p id="answerKeySubtitle" class="score-guide-subtitle">Correct answers for Questions 1–40</p>
+        </div>
+        <button type="button" id="answerKeyClose" class="score-guide-close" aria-label="Close answer key" onclick="closeAnswerKeyPanel()">×</button>
+      </div>
+      <div id="answerKeyGrid" class="answer-key-grid" aria-label="Correct answers by reading part"></div>
+    </div>
+  </div>
+
   <div id="shortcutToast" role="status" aria-live="polite" aria-atomic="true"></div>
 
   <script src="study-feedback.js"></script>
@@ -3105,6 +3133,7 @@
         startStudyElapsedTimer();
       }
       updateTopRightModeState();
+      updateAnswerKeyVisibility();
 
       document.getElementById("app").style.display = "block";
       initQuestionInputs();
@@ -4340,6 +4369,7 @@
     }
 
     function resetTopBarAttemptState() {
+      if (typeof closeAnswerKeyPanel === "function") closeAnswerKeyPanel(false);
       fullTestScoreAvailable = false;
       fullTestCorrectCount = null;
       const candidate = document.getElementById("candidateNameDisplay");
@@ -4391,6 +4421,136 @@
         testTimer.setAttribute("aria-hidden", showTestCountdown ? "false" : "true");
       }
     }
+
+
+    let lastAnswerKeyOpener = null;
+
+    function isAnswerKeyAvailable() {
+      return mode === "study" || (mode === "test" && testSubmitted);
+    }
+
+    function formatAnswerKeyValue(questionNumber) {
+      const display = correctAnswerText[questionNumber];
+      if (display !== undefined) return String(display);
+      const canonical = answerKey[questionNumber];
+      return Array.isArray(canonical) ? canonical.join(", ") : String(canonical || "");
+    }
+
+    function renderAnswerKeyPanel() {
+      const grid = document.getElementById("answerKeyGrid");
+      if (!grid || !isAnswerKeyAvailable()) return;
+      grid.textContent = "";
+      Object.keys(sectionRanges).sort((a, b) => Number(a) - Number(b)).forEach((part) => {
+        const range = sectionRanges[part];
+        const section = document.createElement("section");
+        section.className = "answer-key-section";
+        const heading = document.createElement("h3");
+        heading.textContent = "Part " + part + ": Questions " + range.from + "–" + range.to;
+        const list = document.createElement("div");
+        list.className = "answer-key-list";
+        for (let q = range.from; q <= range.to; q++) {
+          const item = document.createElement("button");
+          item.type = "button";
+          item.className = "answer-key-item";
+          item.dataset.answerKeyQuestion = String(q);
+          item.setAttribute("aria-label", "Go to question " + q);
+          const num = document.createElement("span");
+          num.className = "answer-key-number";
+          num.textContent = String(q);
+          const answer = document.createElement("span");
+          answer.className = "answer-key-answer";
+          answer.textContent = formatAnswerKeyValue(q);
+          item.append(num, answer);
+          list.appendChild(item);
+        }
+        section.append(heading, list);
+        grid.appendChild(section);
+      });
+    }
+
+    function clearAnswerKeyPanel() {
+      const grid = document.getElementById("answerKeyGrid");
+      if (grid) grid.textContent = "";
+    }
+
+    function updateAnswerKeyVisibility() {
+      const button = document.getElementById("answerKeyButton");
+      const available = isAnswerKeyAvailable();
+      if (button) {
+        button.hidden = !available;
+        button.disabled = !available;
+        button.setAttribute("aria-hidden", available ? "false" : "true");
+        button.tabIndex = available ? 0 : -1;
+      }
+      if (!available) closeAnswerKeyPanel(false);
+    }
+
+    function openAnswerKeyPanel() {
+      if (!isAnswerKeyAvailable()) return;
+      lastAnswerKeyOpener = document.activeElement;
+      renderAnswerKeyPanel();
+      const overlay = document.getElementById("answerKeyOverlay");
+      const close = document.getElementById("answerKeyClose");
+      if (overlay) {
+        overlay.style.display = "flex";
+        overlay.setAttribute("aria-hidden", "false");
+      }
+      if (close) close.focus();
+    }
+
+    function closeAnswerKeyPanel(restoreFocus = true) {
+      const overlay = document.getElementById("answerKeyOverlay");
+      if (overlay) {
+        overlay.style.display = "none";
+        overlay.setAttribute("aria-hidden", "true");
+      }
+      clearAnswerKeyPanel();
+      if (restoreFocus && lastAnswerKeyOpener && typeof lastAnswerKeyOpener.focus === "function") {
+        lastAnswerKeyOpener.focus();
+      }
+    }
+
+    function getSectionForQuestion(questionNumber) {
+      const q = Number(questionNumber);
+      for (const [section, range] of Object.entries(sectionRanges)) {
+        if (q >= range.from && q <= range.to) return Number(section);
+      }
+      return activeSection;
+    }
+
+    function focusQuestionFromAnswerKey(questionNumber) {
+      const q = Number(questionNumber);
+      closeAnswerKeyPanel(false);
+      const section = getSectionForQuestion(q);
+      if (section !== activeSection) switchSection(section);
+      window.setTimeout(() => {
+        const target = document.querySelector('.question-block[data-q="' + q + '"], .inline-answer[data-q="' + q + '"]');
+        if (!target) return;
+        if (typeof setCurrentQuestion === "function") setCurrentQuestion(q);
+        target.scrollIntoView({ behavior: "smooth", block: "center" });
+        target.classList.add("focused-question-flash");
+        window.setTimeout(() => target.classList.remove("focused-question-flash"), 1400);
+      }, 80);
+    }
+
+    document.addEventListener("click", (event) => {
+      const item = event.target.closest && event.target.closest("[data-answer-key-question]");
+      if (item) {
+        event.preventDefault();
+        focusQuestionFromAnswerKey(item.dataset.answerKeyQuestion);
+        return;
+      }
+      const overlay = document.getElementById("answerKeyOverlay");
+      if (overlay && overlay.style.display === "flex" && event.target === overlay) closeAnswerKeyPanel();
+    });
+
+    document.addEventListener("keydown", (event) => {
+      const overlay = document.getElementById("answerKeyOverlay");
+      if (event.key === "Escape" && overlay && overlay.style.display === "flex") closeAnswerKeyPanel();
+    });
+
+    window.openAnswerKeyPanel = openAnswerKeyPanel;
+    window.closeAnswerKeyPanel = closeAnswerKeyPanel;
 
     function updateTopBarScore(correctCount) {
       fullTestScoreAvailable = true;
@@ -6621,6 +6781,7 @@
       matchingPeopleSingleClueQuestion = null;
       if (mode === "test") {
         testSubmitted = true;
+        updateAnswerKeyVisibility();
         stopStudyElapsedTimer();
       }
       renderTfngFeedbackCards();
@@ -6718,6 +6879,7 @@
       if (totalTimeLine) totalTimeLine.textContent = "";
       if (overlay) overlay.style.display = "none";
       updateTopRightModeState();
+      updateAnswerKeyVisibility();
       clearTfngEvidenceHighlight();
     }
 
