@@ -62,6 +62,26 @@ def test_answer_key_uses_three_column_desktop_grid() -> None:
         assert '.answer-key-grid { grid-template-columns:repeat(auto-fit, minmax(150px, 1fr)); }' in page
 
 
+def test_test1_answer_key_long_answers_can_wrap_without_clipping() -> None:
+    page = _read(PAGES[0])
+    assert 'grid-template-columns:2.1em minmax(0, 1fr);' in page
+    assert 'line-height:1.35;' in page
+    answer_css = page[page.index('.answer-key-answer {') : page.index('.answer-key-button[hidden]')]
+    assert 'min-width:0' in answer_css
+    assert 'overflow-wrap:anywhere' in answer_css
+    assert 'overflow:hidden' not in answer_css
+    assert 'text-overflow' not in answer_css
+    assert 'ellipsis' not in answer_css
+    assert 'white-space:nowrap' not in answer_css
+    answer_key = _extract_object(page, "answerKey")
+    correct_text = _extract_object(page, "correctAnswerText")
+    assert '11: "photographer"' in answer_key
+    assert '11: "photographer"' in correct_text
+    assert '3: "NOT GIVEN"' in answer_key
+    assert '3: "NOT GIVEN"' in correct_text
+    assert '.answer-key-grid { display:grid; grid-template-columns:repeat(3, minmax(0, 1fr));' in page
+
+
 def test_answer_key_visibility_rules_are_wired() -> None:
     for path in PAGES:
         page = _read(path)
