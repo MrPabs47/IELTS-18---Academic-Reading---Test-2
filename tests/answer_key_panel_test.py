@@ -48,6 +48,20 @@ def test_answer_key_controls_and_empty_panel_shells_exist() -> None:
         assert re.search(r'<div id="answerKeyGrid"[^>]*></div>', page), "Panel shell should not contain pre-rendered answers"
 
 
+def test_test1_has_scoped_answer_key_width_override_after_score_panel_rule() -> None:
+    test1 = _read(PAGES[0])
+    test2 = _read(PAGES[1])
+    scoped = '#answerKeyOverlay .score-guide-panel.answer-key-panel {'
+    assert scoped in test1
+    assert scoped not in test2
+    score_panel_pos = test1.index('.score-guide-panel {')
+    scoped_pos = test1.index(scoped)
+    assert score_panel_pos < scoped_pos
+    scoped_css = test1[scoped_pos : test1.index('}', scoped_pos)]
+    assert 'width: min(760px, calc(100vw - 32px));' in scoped_css
+    assert 'max-width: calc(100vw - 32px);' in scoped_css
+
+
 def test_answer_key_panels_share_wider_viewport_constrained_width() -> None:
     for path in PAGES:
         page = _read(path)
