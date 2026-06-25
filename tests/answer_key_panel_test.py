@@ -32,13 +32,34 @@ def test_answer_key_controls_and_empty_panel_shells_exist() -> None:
         assert 'id="scoreGuideButton"' in page
         assert 'id="answerKeyButton"' in page
         assert page.index('id="scoreGuideButton"') < page.index('id="answerKeyButton"')
-        assert 'onclick="openAnswerKeyPanel()"' in page
-        assert 'aria-controls="answerKeyOverlay"' in page
+        button_match = re.search(r'<button[^>]+id="answerKeyButton"[^>]*>(.*?)</button>', page, re.S)
+        assert button_match, "Missing Answer key header button"
+        button_tag = button_match.group(0)
+        assert 'onclick="openAnswerKeyPanel()"' in button_tag
+        assert 'aria-controls="answerKeyOverlay"' in button_tag
+        assert 'aria-label="Answer key"' in button_tag
+        assert 'title="Answer key"' in button_tag
+        assert button_match.group(1).strip() == '🔑'
+        assert '<span>Answer key</span>' not in button_tag
         assert 'id="answerKeyOverlay"' in page
         assert 'Answer key' in page
         assert 'Correct answers for Questions 1–40' in page
         assert 'id="answerKeyGrid"' in page
         assert re.search(r'<div id="answerKeyGrid"[^>]*></div>', page), "Panel shell should not contain pre-rendered answers"
+
+
+def test_answer_key_uses_three_column_desktop_grid() -> None:
+    for path in PAGES:
+        page = _read(path)
+        assert '.answer-key-grid { display:grid; grid-template-columns:repeat(3, minmax(0, 1fr));' in page
+        answer_grid_start = page.index('.answer-key-grid { display:grid;')
+        responsive_start = page.index('@media (max-width: 720px)', answer_grid_start)
+        desktop_answer_grid_css = page[answer_grid_start:responsive_start]
+        assert 'grid-template-columns:repeat(auto-fit' not in desktop_answer_grid_css
+        assert '.answer-key-section' in page
+        assert 'overflow:auto' not in page[page.index('.answer-key-section') : page.index('.answer-key-section h3')]
+        assert '@media (max-width: 720px)' in page
+        assert '.answer-key-grid { grid-template-columns:repeat(auto-fit, minmax(150px, 1fr)); }' in page
 
 
 def test_answer_key_visibility_rules_are_wired() -> None:
