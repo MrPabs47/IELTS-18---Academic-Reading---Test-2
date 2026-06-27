@@ -153,7 +153,7 @@ def _expand_overlapping_study_evidence(root: _DomNode, question_number: int, clu
     return None
 
 
-def _mark_study_evidence(root: _DomNode, question_number: int, clue: str) -> _DomNode | None:
+def _mark_study_evidence(root: _DomNode, question_number: int, clue: str, data: dict | None = None) -> _DomNode | None:
     for node in _walk_elements(root):
         if node.tag == "mark" and (node.attrs.get("data-clue-text") == clue or clue in str(node.attrs.get("data-clue-text") or "")):
             questions = [q for q in (node.attrs.get("data-clue-questions") or "").split(",") if q]
@@ -166,6 +166,24 @@ def _mark_study_evidence(root: _DomNode, question_number: int, clue: str) -> _Do
     expanded = _expand_overlapping_study_evidence(root, question_number, clue)
     if expanded is not None:
         return expanded
+
+    current = data["questions"][str(question_number)] if data is not None else {}
+    if data is not None and isinstance(current.get("evidence"), list):
+        for other_q, other in data["questions"].items():
+            if other_q == str(question_number) or other.get("passage") != current.get("passage"):
+                continue
+            containing = next((text for text in _raw_study_evidence_clues(other) if text != clue and (clue in text or _study_text_overlap_length(text, clue))), None)
+            if containing:
+                shared = _mark_study_evidence(root, int(other_q), containing, data)
+                if shared is not None:
+                    expanded_shared = shared if clue in str(shared.attrs.get("data-clue-text") or "") else _expand_overlapping_study_evidence(root, question_number, clue)
+                    if expanded_shared is not None:
+                        questions = [q for q in (expanded_shared.attrs.get("data-clue-questions") or "").split(",") if q]
+                        if str(question_number) not in questions:
+                            questions.append(str(question_number))
+                        expanded_shared.attrs["data-clue-questions"] = ",".join(questions)
+                        _render_study_clue_badges(expanded_shared)
+                        return expanded_shared
 
     match = _find_text_node_match(root, clue)
     if not match:
@@ -209,6 +227,24 @@ def _badge_map(root: _DomNode) -> dict[str, list[str]]:
     return {str(mark.attrs.get("data-clue-text")): [str(badge.children[0].text) for badge in mark.children if badge.tag == "button" and badge.attrs.get("class") == "study-clue-badge"] for mark in marks}
 
 
+
+def _study_evidence_clues(question: dict) -> list[str]:
+    raw_evidence = question.get("evidence")
+    evidence = raw_evidence if isinstance(raw_evidence, list) else (question.get("infoButtonAfter") or raw_evidence or "")
+    items = evidence if isinstance(evidence, list) else [evidence]
+    return [_normalise_text(str(item)) for item in items if _normalise_text(str(item))]
+
+
+def _raw_study_evidence_clues(question: dict) -> list[str]:
+    evidence = question.get("evidence") or ""
+    items = evidence if isinstance(evidence, list) else [evidence]
+    return [_normalise_text(str(item)) for item in items if _normalise_text(str(item))]
+
+
+def _mark_study_question(root: _DomNode, question_number: int, question: dict) -> list[_DomNode]:
+    data = _load_study_data()
+    return [mark for clue in _study_evidence_clues(question) if (mark := _mark_study_evidence(root, question_number, clue, data)) is not None]
+
 def test_all_40_study_clues_can_be_found_sequentially_in_their_passages() -> None:
     """Every question must have an exact, markable Study clue in a DOM text node."""
     data = _load_study_data()
@@ -219,24 +255,24 @@ def test_all_40_study_clues_can_be_found_sequentially_in_their_passages() -> Non
 
     for question_number in range(1, 41):
         question = data["questions"][str(question_number)]
-        clue = _normalise_text(question.get("infoButtonAfter") or question.get("evidence") or "")
+        clues = _study_evidence_clues(question)
         passage = passages[int(question["passage"])]
 
-        assert clue, f"Question {question_number} has no Study clue text"
-        assert _find_text_node_match(passage, clue), (
-            f"Question {question_number} clue is not present in a single eligible Passage {question['passage']} text node"
-        )
+        assert clues, f"Question {question_number} has no Study clue text"
+        for clue in clues:
+            assert _find_text_node_match(passage, clue), (
+                f"Question {question_number} clue is not present in a single eligible Passage {question['passage']} text node"
+            )
 
     sequential_passages = _extract_passage_roots()
     marked_questions: set[int] = set()
     for question_number in range(1, 41):
         question = data["questions"][str(question_number)]
-        clue = _normalise_text(question.get("infoButtonAfter") or question.get("evidence") or "")
         passage = sequential_passages[int(question["passage"])]
 
-        mark = _mark_study_evidence(passage, question_number, clue)
-        assert mark is not None, f"Question {question_number} clue could not be marked"
-        assert str(question_number) in (mark.attrs.get("data-clue-questions") or "").split(",")
+        marks = _mark_study_question(passage, question_number, question)
+        assert marks, f"Question {question_number} clue could not be marked"
+        assert all(str(question_number) in (mark.attrs.get("data-clue-questions") or "").split(",") for mark in marks)
         marked_questions.add(question_number)
 
     assert marked_questions == set(range(1, 41))
@@ -255,23 +291,23 @@ def test_show_all_flow_renders_expected_clue_badges_for_each_passage() -> None:
 
         for group in groups:
             for question_number in group["questionNumbers"]:
-                clue = _normalise_text(data["questions"][str(question_number)].get("infoButtonAfter") or data["questions"][str(question_number)].get("evidence") or "")
-                badge_key = next((existing_clue for existing_clue in expected_badges if clue in existing_clue), clue)
-                mark = _mark_study_evidence(passage, question_number, clue)
-                assert mark is not None
-                marked_text = str(mark.attrs.get("data-clue-text") or "")
-                if marked_text != badge_key:
-                    shared_badges: list[str] = []
-                    for existing_key in list(expected_badges):
-                        if existing_key in marked_text:
-                            shared_badges.extend(expected_badges.pop(existing_key))
-                    if badge_key in expected_badges:
-                        shared_badges.extend(expected_badges.pop(badge_key))
-                    expected_badges[marked_text] = shared_badges
-                    badge_key = marked_text
-                expected_badges.setdefault(badge_key, [])
-                if str(question_number) not in expected_badges[badge_key]:
-                    expected_badges[badge_key].append(str(question_number))
+                for clue in _study_evidence_clues(data["questions"][str(question_number)]):
+                    badge_key = next((existing_clue for existing_clue in expected_badges if clue in existing_clue), clue)
+                    mark = _mark_study_evidence(passage, question_number, clue, data)
+                    assert mark is not None
+                    marked_text = str(mark.attrs.get("data-clue-text") or "")
+                    if marked_text != badge_key:
+                        shared_badges: list[str] = []
+                        for existing_key in list(expected_badges):
+                            if existing_key in marked_text:
+                                shared_badges.extend(expected_badges.pop(existing_key))
+                        if badge_key in expected_badges:
+                            shared_badges.extend(expected_badges.pop(badge_key))
+                        expected_badges[marked_text] = shared_badges
+                        badge_key = marked_text
+                    expected_badges.setdefault(badge_key, [])
+                    if str(question_number) not in expected_badges[badge_key]:
+                        expected_badges[badge_key].append(str(question_number))
 
         actual_badges = _badge_map(passage)
         assert actual_badges == expected_badges
@@ -301,6 +337,7 @@ def test_test2_audited_evidence_spans_are_exact_passage_text() -> None:
         "we reason more broadly and focus more on interpersonal and moral ideals such as justice and impartiality",
         "couples in long-term romantic relationships were instructed to visualize an unresolved relationship conflict either through the eyes of an outsider or from their own perspective",
         "Participants in the group assigned to the ‘distant observer’ role displayed more wisdom-related reasoning",
+        "Couples in the ‘other’s eyes’ condition were significantly more likely to rely on wise reasoning",
     ]
     for evidence in audited_evidence:
         assert evidence in feedback
@@ -763,25 +800,87 @@ def test_overlapping_and_contained_clue_badges_are_preserved() -> None:
     assert badges == ["1", "2", "3"]
 
 
+def _text_content(node: _DomNode) -> str:
+    if node.tag is None:
+        return node.text
+    return "".join(_text_content(child) for child in node.children if not (child.tag == "button" and child.attrs.get("class") == "study-clue-badge"))
+
+
+def _clear_study_evidence(root: _DomNode) -> None:
+    for mark in list(_walk_elements(root)):
+        if mark.tag != "mark" or mark.attrs.get("class") != "study-evidence-highlight":
+            continue
+        parent = mark.parent
+        assert parent is not None
+        index = parent.children.index(mark)
+        replacement = _DomNode(text=str(mark.attrs.get("data-clue-text") or _text_content(mark)))
+        replacement.parent = parent
+        parent.children[index:index + 1] = [replacement]
+
+
+def test_test2_q39_evidence_array_focus_is_idempotent_and_clearable() -> None:
+    """Q39's single clue action must render both evidence snippets without duplication."""
+    data = _load_study_data()
+    passage = _extract_passage_roots()[3]
+    original_text = _text_content(passage)
+    q36 = data["questions"]["36"]["evidence"]
+    q38 = data["questions"]["38"]["evidence"]
+    q39_first, q39_second = data["questions"]["39"]["evidence"]
+
+    assert isinstance(data["questions"]["39"]["evidence"], list)
+    assert len(data["questions"]["39"]["evidence"]) == 2
+
+    first_mark = _mark_study_evidence(passage, 39, q39_first, data)
+    second_mark = _mark_study_evidence(passage, 39, q39_second, data)
+    repeated_first = _mark_study_evidence(passage, 39, q39_first, data)
+    repeated_second = _mark_study_evidence(passage, 39, q39_second, data)
+    q38_mark = _mark_study_evidence(passage, 38, q38, data)
+
+    assert first_mark is not None and second_mark is not None and q38_mark is not None
+    assert repeated_first is first_mark
+    assert repeated_second is second_mark
+    assert q36 in str(first_mark.attrs.get("data-clue-text") or "")
+    assert q39_first in str(first_mark.attrs.get("data-clue-text") or "")
+    assert q39_second == str(second_mark.attrs.get("data-clue-text") or "")
+    assert q38 == str(q38_mark.attrs.get("data-clue-text") or "")
+    assert (first_mark.attrs.get("data-clue-questions") or "").split(",") == ["36", "39"]
+    assert (second_mark.attrs.get("data-clue-questions") or "").split(",") == ["39"]
+    assert (q38_mark.attrs.get("data-clue-questions") or "").split(",") == ["38"]
+    assert sum(1 for node in _walk_elements(passage) if node.tag == "mark") == 3
+    assert all(child.tag != "mark" for mark in _walk_elements(passage) if mark.tag == "mark" for child in mark.children)
+    assert [child.children[0].text for child in first_mark.children if child.tag == "button"] == ["36", "39"]
+    assert [child.children[0].text for child in second_mark.children if child.tag == "button"] == ["39"]
+
+    _clear_study_evidence(passage)
+    assert _text_content(passage) == original_text
+    assert not [node for node in _walk_elements(passage) if node.tag == "mark"]
+
 def test_test2_part3_q36_q38_and_q39_show_all_clues_remain_visible() -> None:
     """Q39 starts inside Q36 evidence, while Q38 should remain a separate visible clue."""
     data = _load_study_data()
     passage = _extract_passage_roots()[3]
     q36 = data["questions"]["36"]["evidence"]
     q38 = data["questions"]["38"]["evidence"]
-    q39 = data["questions"]["39"]["evidence"]
+    q39_first, q39_second = data["questions"]["39"]["evidence"]
     first = _mark_study_evidence(passage, 36, q36)
     q38_mark = _mark_study_evidence(passage, 38, q38)
-    q39_mark = _mark_study_evidence(passage, 39, q39)
+    q39_first_mark = _mark_study_evidence(passage, 39, q39_first, data)
+    q39_second_mark = _mark_study_evidence(passage, 39, q39_second, data)
     assert first is not None
     assert q38_mark is not None
-    assert q39_mark is first
+    assert q39_first_mark is first
+    assert q39_second_mark is not None
+    assert q39_second_mark is not first
     assert q38_mark is not first
     assert q36 in str(first.attrs.get("data-clue-text") or "")
-    assert q39 in str(first.attrs.get("data-clue-text") or "")
+    assert q39_first in str(first.attrs.get("data-clue-text") or "")
+    assert q39_second in str(q39_second_mark.attrs.get("data-clue-text") or "")
     assert (first.attrs.get("data-clue-questions") or "").split(",") == ["36", "39"]
     assert (q38_mark.attrs.get("data-clue-questions") or "").split(",") == ["38"]
+    assert (q39_second_mark.attrs.get("data-clue-questions") or "").split(",") == ["39"]
     shared_badges = [child.children[0].text for child in first.children if child.tag == "button"]
     q38_badges = [child.children[0].text for child in q38_mark.children if child.tag == "button"]
+    q39_second_badges = [child.children[0].text for child in q39_second_mark.children if child.tag == "button"]
     assert shared_badges == ["36", "39"]
     assert q38_badges == ["38"]
+    assert q39_second_badges == ["39"]
