@@ -116,6 +116,43 @@ def _find_text_node_match(root: _DomNode, needle: str) -> tuple[_DomNode, int] |
     return None
 
 
+def _study_text_overlap_length(left: str, right: str) -> int:
+    for length in range(min(len(left), len(right)), 0, -1):
+        if left[-length:] == right[:length]:
+            return length
+    return 0
+
+
+def _expand_overlapping_study_evidence(root: _DomNode, question_number: int, clue: str) -> _DomNode | None:
+    for node in _walk_elements(root):
+        if node.tag != "mark":
+            continue
+        marked_text = str(node.attrs.get("data-clue-text") or "")
+        overlap = _study_text_overlap_length(marked_text, clue)
+        if not overlap or overlap == len(clue):
+            continue
+        suffix = clue[overlap:]
+        parent = node.parent
+        if parent is None:
+            continue
+        index = parent.children.index(node)
+        if index + 1 >= len(parent.children):
+            continue
+        next_node = parent.children[index + 1]
+        if next_node.tag is not None or not next_node.text.startswith(suffix):
+            continue
+        next_node.text = next_node.text[len(suffix):]
+        node.append(_DomNode(text=suffix))
+        node.attrs["data-clue-text"] = marked_text + suffix
+        questions = [q for q in (node.attrs.get("data-clue-questions") or "").split(",") if q]
+        if str(question_number) not in questions:
+            questions.append(str(question_number))
+        node.attrs["data-clue-questions"] = ",".join(questions)
+        _render_study_clue_badges(node)
+        return node
+    return None
+
+
 def _mark_study_evidence(root: _DomNode, question_number: int, clue: str) -> _DomNode | None:
     for node in _walk_elements(root):
         if node.tag == "mark" and (node.attrs.get("data-clue-text") == clue or clue in str(node.attrs.get("data-clue-text") or "")):
@@ -125,6 +162,10 @@ def _mark_study_evidence(root: _DomNode, question_number: int, clue: str) -> _Do
             node.attrs["data-clue-questions"] = ",".join(questions)
             _render_study_clue_badges(node)
             return node
+
+    expanded = _expand_overlapping_study_evidence(root, question_number, clue)
+    if expanded is not None:
+        return expanded
 
     match = _find_text_node_match(root, clue)
     if not match:
@@ -216,10 +257,21 @@ def test_show_all_flow_renders_expected_clue_badges_for_each_passage() -> None:
             for question_number in group["questionNumbers"]:
                 clue = _normalise_text(data["questions"][str(question_number)].get("infoButtonAfter") or data["questions"][str(question_number)].get("evidence") or "")
                 badge_key = next((existing_clue for existing_clue in expected_badges if clue in existing_clue), clue)
+                mark = _mark_study_evidence(passage, question_number, clue)
+                assert mark is not None
+                marked_text = str(mark.attrs.get("data-clue-text") or "")
+                if marked_text != badge_key:
+                    shared_badges: list[str] = []
+                    for existing_key in list(expected_badges):
+                        if existing_key in marked_text:
+                            shared_badges.extend(expected_badges.pop(existing_key))
+                    if badge_key in expected_badges:
+                        shared_badges.extend(expected_badges.pop(badge_key))
+                    expected_badges[marked_text] = shared_badges
+                    badge_key = marked_text
                 expected_badges.setdefault(badge_key, [])
                 if str(question_number) not in expected_badges[badge_key]:
                     expected_badges[badge_key].append(str(question_number))
-                assert _mark_study_evidence(passage, question_number, clue) is not None
 
         actual_badges = _badge_map(passage)
         assert actual_badges == expected_badges
@@ -696,13 +748,40 @@ def test_shared_controller_full_map_state_with_mocked_adapter() -> None:
     subprocess.check_call(["node", "-e", script])
 
 def test_overlapping_and_contained_clue_badges_are_preserved() -> None:
-    """Contained clue strings must reuse marks and keep every badge."""
+    """Contained and overlapping clue strings must reuse marks and keep every badge."""
     passage = _DomNode(tag="div", attrs={"class": "passage-section", "data-section": "1"})
-    passage.append(_DomNode(text="alpha beta gamma delta"))
+    passage.append(_DomNode(text="alpha beta gamma delta epsilon"))
     first = _mark_study_evidence(passage, 1, "alpha beta gamma")
     second = _mark_study_evidence(passage, 2, "beta")
+    third = _mark_study_evidence(passage, 3, "gamma delta")
     assert first is not None
     assert second is first
-    assert (first.attrs.get("data-clue-questions") or "").split(",") == ["1", "2"]
+    assert third is first
+    assert first.attrs.get("data-clue-text") == "alpha beta gamma delta"
+    assert (first.attrs.get("data-clue-questions") or "").split(",") == ["1", "2", "3"]
     badges = [child.children[0].text for child in first.children if child.tag == "button"]
-    assert badges == ["1", "2"]
+    assert badges == ["1", "2", "3"]
+
+
+def test_test2_part3_q36_q38_and_q39_show_all_clues_remain_visible() -> None:
+    """Q39 starts inside Q36 evidence, while Q38 should remain a separate visible clue."""
+    data = _load_study_data()
+    passage = _extract_passage_roots()[3]
+    q36 = data["questions"]["36"]["evidence"]
+    q38 = data["questions"]["38"]["evidence"]
+    q39 = data["questions"]["39"]["evidence"]
+    first = _mark_study_evidence(passage, 36, q36)
+    q38_mark = _mark_study_evidence(passage, 38, q38)
+    q39_mark = _mark_study_evidence(passage, 39, q39)
+    assert first is not None
+    assert q38_mark is not None
+    assert q39_mark is first
+    assert q38_mark is not first
+    assert q36 in str(first.attrs.get("data-clue-text") or "")
+    assert q39 in str(first.attrs.get("data-clue-text") or "")
+    assert (first.attrs.get("data-clue-questions") or "").split(",") == ["36", "39"]
+    assert (q38_mark.attrs.get("data-clue-questions") or "").split(",") == ["38"]
+    shared_badges = [child.children[0].text for child in first.children if child.tag == "button"]
+    q38_badges = [child.children[0].text for child in q38_mark.children if child.tag == "button"]
+    assert shared_badges == ["36", "39"]
+    assert q38_badges == ["38"]
