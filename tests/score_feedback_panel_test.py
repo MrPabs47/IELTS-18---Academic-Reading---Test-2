@@ -84,6 +84,33 @@ def test_explicit_question_type_metadata_present():
         assert group in test2
 
 
+def test_strength_and_focus_messages_use_separate_paths():
+    for path in TEST_FILES:
+        text = html(path)
+        assert 'const scoreFeedbackStrengthMessages = {' in text
+        assert 'You usually distinguished accurately between information that was stated, contradicted, or not mentioned.' in text
+        assert 'You selected options that were well supported by the passage.' in text
+        append_fn = text[text.index('function appendFeedbackItem'):text.index('function renderScoreFeedbackPanel()', text.index('function appendFeedbackItem'))]
+        assert 'title === "What went well"' in append_fn
+        assert 'scoreFeedbackStrengthMessages[item.group.strategyKey]' in append_fn
+        assert 'scoreFeedbackGuidance[item.group.strategyKey]' in append_fn
+        assert 'This is a useful area to practise.' in append_fn
+
+
+def test_scoring_timing_answer_key_clue_and_modal_paths_are_unchanged_by_wording_refinement():
+    for path in TEST_FILES:
+        text = html(path)
+        assert 'latestEvaluation = evaluation;' in text
+        assert 'questionOutcomes' in text
+        assert 'if (mode === "test")' in text
+        assert 'Total time used:' in text
+        assert 'Time remaining:' in text
+        assert 'openAnswerKeyPanel' in text
+        assert 'scoreFeedbackOverlay' in text
+        assert 'event.key === "Escape"' in text
+        assert 'event.target === feedbackOverlay' in text
+
+
 def test_thresholds_and_small_groups_guarded():
     for path in TEST_FILES:
         text = html(path)

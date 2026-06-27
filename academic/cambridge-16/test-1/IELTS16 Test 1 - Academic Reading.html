@@ -4301,6 +4301,17 @@
       "matching-people": "Match each statement to the person by tracking names, views, and paraphrases in the passage."
     };
 
+    const scoreFeedbackStrengthMessages = {
+      "tfng": "You usually distinguished accurately between information that was stated, contradicted, or not mentioned.",
+      "ynng": "You usually identified the writer’s opinions and recognised when no clear view was given.",
+      "matching-headings": "You identified the main ideas of the paragraphs accurately.",
+      "one-word-completion": "You located relevant details accurately and usually followed the answer format.",
+      "summary-completion": "You used grammar and meaning effectively to complete the summary.",
+      "multiple-choice": "You selected options that were well supported by the passage.",
+      "matching-people": "You matched viewpoints and supporting details to the correct people accurately."
+    };
+
+
     let lastScoreFeedbackOpener = null;
 
     function formatFeedbackDuration(totalSeconds) {
@@ -4338,7 +4349,9 @@
       line.textContent = item.group.label + ": " + item.correct + " / " + item.total + " correct";
       const guidance = document.createElement("p");
       guidance.className = "score-feedback-guidance";
-      guidance.textContent = scoreFeedbackGuidance[item.group.strategyKey] || "This is a useful area to practise.";
+      guidance.textContent = title === "What went well"
+        ? (scoreFeedbackStrengthMessages[item.group.strategyKey] || "You handled this question type accurately.")
+        : (scoreFeedbackGuidance[item.group.strategyKey] || "This is a useful area to practise.");
       parent.append(heading, line, guidance);
     }
 
