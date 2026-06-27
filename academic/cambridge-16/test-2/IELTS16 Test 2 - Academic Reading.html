@@ -3614,9 +3614,22 @@
       updateStudyClueToolbar();
     }
 
-    function getStudyEvidenceText(q) {
+    function getStudyEvidenceTexts(q) {
       const info = getStudyData().questions[q] || {};
-      return String(info.evidence || info.infoButtonAfter || "").trim();
+      const evidence = Array.isArray(info.evidence) ? info.evidence : (info.infoButtonAfter || info.evidence || "");
+      const items = Array.isArray(evidence) ? evidence : [evidence];
+      return items.map((item) => String(item || "").trim()).filter(Boolean);
+    }
+
+    function getStudyEvidenceText(q) {
+      return getStudyEvidenceTexts(q)[0] || "";
+    }
+
+    function getRawStudyEvidenceTexts(q) {
+      const info = getStudyData().questions[q] || {};
+      const evidence = info.evidence || "";
+      const items = Array.isArray(evidence) ? evidence : [evidence];
+      return items.map((item) => String(item || "").trim()).filter(Boolean);
     }
 
     function findTextNodeMatch(root, needle) {
@@ -3636,12 +3649,20 @@
     }
 
     function markStudyEvidence(q) {
+      const marks = markStudyEvidenceSnippets(q);
+      return marks[0] || null;
+    }
+
+    function markStudyEvidenceSnippets(q) {
       const info = getStudyData().questions[q] || {};
-      const text = getStudyEvidenceText(q);
-      if (!text) return null;
       const passageNum = info.passage || activeSection;
       const passage = document.querySelector('.passage-section[data-section="' + passageNum + '"]');
-      if (!passage) return null;
+      if (!passage) return [];
+      return getStudyEvidenceTexts(q).map((text) => markStudyEvidenceText(passage, q, text)).filter(Boolean);
+    }
+
+    function markStudyEvidenceText(passage, q, text) {
+      if (!text) return null;
       const existing = Array.from(passage.querySelectorAll(".study-evidence-highlight")).find((mark) => {
         const markedText = mark.dataset.clueText || "";
         return markedText === text || markedText.includes(text);
@@ -3652,6 +3673,21 @@
         existing.dataset.clueQuestions = Array.from(questions).join(",");
         renderStudyClueBadges(existing);
         return existing;
+      }
+      const info = getStudyData().questions[q] || {};
+      const containing = Array.isArray(info.evidence) ? findContainingStudyEvidenceQuestion(q, text) : null;
+      if (containing) {
+        const shared = markStudyEvidenceText(passage, containing.question, containing.text);
+        if (shared) {
+          const expandedShared = (shared.dataset.clueText || "").includes(text) ? shared : expandOverlappingStudyEvidence(passage, q, text);
+          if (expandedShared) {
+            const questions = new Set((expandedShared.dataset.clueQuestions || "").split(",").filter(Boolean));
+            questions.add(String(q));
+            expandedShared.dataset.clueQuestions = Array.from(questions).join(",");
+            renderStudyClueBadges(expandedShared);
+            return expandedShared;
+          }
+        }
       }
       const expanded = expandOverlappingStudyEvidence(passage, q, text);
       if (expanded) return expanded;
@@ -3668,6 +3704,17 @@
       try { range.surroundContents(mark); } catch (e) { return null; }
       renderStudyClueBadges(mark);
       return mark;
+    }
+
+    function findContainingStudyEvidenceQuestion(q, text) {
+      const data = getStudyData().questions || {};
+      const currentPassage = String((data[q] || {}).passage || activeSection);
+      for (const otherQ of Object.keys(data)) {
+        if (String(otherQ) === String(q) || String((data[otherQ] || {}).passage) !== currentPassage) continue;
+        const containingText = getRawStudyEvidenceTexts(otherQ).find((otherText) => otherText !== text && (otherText.includes(text) || getStudyTextOverlapLength(otherText, text)));
+        if (containingText) return { question: otherQ, text: containingText };
+      }
+      return null;
     }
 
     function getStudyTextOverlapLength(left, right) {
@@ -3725,16 +3772,19 @@
 
 
     function focusMarkedStudyEvidence(q) {
-      const el = markStudyEvidence(q);
+      const marks = markStudyEvidenceSnippets(q);
       updateStudyClueToolbar();
-      if (!el) return null;
-      el.classList.add("focused-clue");
-      el.setAttribute("tabindex", "-1");
-      el.scrollIntoView({ behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth", block: "center" });
-      el.focus({ preventScroll: true });
-      requestAnimationFrame(() => el.classList.add("attention-pulse"));
-      setTimeout(() => el.classList.remove("attention-pulse"), 1400);
-      return el;
+      if (!marks.length) return null;
+      const first = marks[0];
+      marks.forEach((el) => {
+        el.classList.add("focused-clue");
+        el.setAttribute("tabindex", "-1");
+        requestAnimationFrame(() => el.classList.add("attention-pulse"));
+        setTimeout(() => el.classList.remove("attention-pulse"), 1400);
+      });
+      first.scrollIntoView({ behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth", block: "center" });
+      first.focus({ preventScroll: true });
+      return first;
     }
 
     function focusStudyEvidence(q) {
