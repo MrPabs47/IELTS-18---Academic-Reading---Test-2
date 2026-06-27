@@ -84,12 +84,51 @@ def test_explicit_question_type_metadata_present():
         assert group in test2
 
 
+def test_score_feedback_body_is_single_scroll_region_with_static_header():
+    for path in TEST_FILES:
+        text = html(path)
+        assert '.score-feedback-panel {' in text
+        assert 'display: flex;' in text
+        assert 'flex-direction: column;' in text
+        assert 'overflow: hidden;' in text
+        assert '.score-feedback-panel .score-guide-header {' in text
+        assert 'flex: 0 0 auto;' in text
+        assert '#scoreFeedbackBody.score-feedback-body {' in text
+        assert 'flex: 1 1 auto;' in text
+        assert 'min-height: 0;' in text
+        assert 'overflow-y: auto;' in text
+        modal_markup = text[text.index('id="scoreFeedbackOverlay"'):text.index('id="answerKeyOverlay"')]
+        assert modal_markup.index('class="score-guide-header"') < modal_markup.index('id="scoreFeedbackBody"')
+
+
+def test_score_feedback_scroll_css_does_not_change_score_guide_or_answer_key_contracts():
+    for path in TEST_FILES:
+        text = html(path)
+        assert '#answerKeyOverlay .score-guide-panel.answer-key-panel' in text or '.answer-key-panel {' in text
+        score_feedback_css_start = text.index('.score-feedback-panel {')
+        score_feedback_css = text[score_feedback_css_start:text.index('#scoreFeedbackBody.score-feedback-body {', score_feedback_css_start)]
+        assert 'answer-key-panel' not in score_feedback_css
+        assert 'score-guide-panel {' not in score_feedback_css
+
+
+def test_test2_creates_feedback_cards_for_all_three_parts():
+    text = html(TEST_FILES[1])
+    render_fn = text[text.index('function renderScoreFeedbackPanel()'):text.index('function openScoreFeedbackPanel()')]
+    assert 'Object.keys(sectionRanges).sort((a,b)=>Number(a)-Number(b)).forEach((part)' in render_fn
+    assert 'const partGroups=scoreFeedbackGroups.filter((group)=>Number(group.part)===Number(part))' in render_fn
+    assert 'section.innerHTML="<h3>Part "+part+" · "' in render_fn
+    assert 'body.appendChild(section)' in render_fn
+    assert '{ part: 1,' in text and '{ part: 2,' in text and '{ part: 3,' in text
+
+
 def test_strength_and_focus_messages_use_separate_paths():
     for path in TEST_FILES:
         text = html(path)
         assert 'const scoreFeedbackStrengthMessages = {' in text
-        assert 'You usually distinguished accurately between information that was stated, contradicted, or not mentioned.' in text
-        assert 'You selected options that were well supported by the passage.' in text
+        assert 'You also recognised when the passage did not give enough information to make a decision.' in text
+        assert 'You avoided distractors that repeated words from the text but changed the meaning.' in text
+        assert 'Compare the meaning rather than matching individual words' in text
+        assert 'check the meaning of the whole option, not just familiar words' in text
         append_fn = text[text.index('function appendFeedbackItem'):text.index('function renderScoreFeedbackPanel()', text.index('function appendFeedbackItem'))]
         assert 'title === "What went well"' in append_fn
         assert 'scoreFeedbackStrengthMessages[item.group.strategyKey]' in append_fn

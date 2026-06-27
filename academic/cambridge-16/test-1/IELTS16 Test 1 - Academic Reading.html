@@ -440,6 +440,24 @@
     }
 
     .score-feedback-body { display: grid; gap: 16px; }
+
+    .score-feedback-panel {
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+
+    .score-feedback-panel .score-guide-header {
+      flex: 0 0 auto;
+    }
+
+    #scoreFeedbackBody.score-feedback-body {
+      flex: 1 1 auto;
+      min-height: 0;
+      overflow-y: auto;
+      padding-right: 6px;
+    }
+
     .score-feedback-card { border: 1px solid var(--border); border-radius: 12px; padding: 14px; background: var(--bg); }
     .score-feedback-card h3 { margin: 0 0 8px; }
     .score-feedback-card h4 { margin: 12px 0 6px; color: var(--text); }
@@ -4292,23 +4310,23 @@
     ];
 
     const scoreFeedbackGuidance = {
-      "tfng": "Read each statement carefully and decide whether the passage agrees, disagrees, or gives no information.",
-      "ynng": "Check whether the writer agrees, disagrees, or does not state a view; do not use outside knowledge.",
-      "matching-headings": "Focus on the main idea of each paragraph before comparing it with the list of headings.",
-      "one-word-completion": "Scan for the relevant detail, then check the word limit and spelling before you enter the answer.",
-      "summary-completion": "Use the surrounding grammar and meaning to choose the answer that fits the whole summary.",
-      "multiple-choice": "Underline the key idea in the stem, then eliminate options that are contradicted or not fully supported.",
-      "matching-people": "Match each statement to the person by tracking names, views, and paraphrases in the passage."
+      "tfng": "Read each statement carefully and decide whether the passage agrees, disagrees, or gives no information. Compare the meaning rather than matching individual words, and choose NOT GIVEN only when there is no clear comparison in the passage.",
+      "ynng": "Check whether the writer agrees, disagrees, or does not state a view; do not use outside knowledge. Look for opinion language and evaluate the writer’s position, not simply factual information.",
+      "matching-headings": "Focus on the main idea of each paragraph before comparing it with the list of headings. Ignore supporting examples at first and choose the heading that best summarises the whole paragraph.",
+      "one-word-completion": "Scan for the relevant detail, then check the word limit and spelling before you enter the answer. First predict the grammar or word type needed in the gap, then look for paraphrased wording in the passage.",
+      "summary-completion": "Use the surrounding grammar and meaning to choose the answer that fits the whole summary. Predict what kind of word is needed before scanning the passage, then check that the completed sentence makes logical sense.",
+      "multiple-choice": "Underline the key idea in the question stem, then eliminate options that are contradicted or only partly supported. Return to the relevant part of the passage and check the meaning of the whole option, not just familiar words.",
+      "matching-people": "Match each statement to the person by tracking names, views, and paraphrases in the passage. Make a quick note of each person’s opinion and avoid choosing an answer based on one repeated keyword alone."
     };
 
     const scoreFeedbackStrengthMessages = {
-      "tfng": "You usually distinguished accurately between information that was stated, contradicted, or not mentioned.",
-      "ynng": "You usually identified the writer’s opinions and recognised when no clear view was given.",
-      "matching-headings": "You identified the main ideas of the paragraphs accurately.",
-      "one-word-completion": "You located relevant details accurately and usually followed the answer format.",
-      "summary-completion": "You used grammar and meaning effectively to complete the summary.",
-      "multiple-choice": "You selected options that were well supported by the passage.",
-      "matching-people": "You matched viewpoints and supporting details to the correct people accurately."
+      "tfng": "You usually distinguished accurately between information that was stated, contradicted, or not mentioned. You also recognised when the passage did not give enough information to make a decision.",
+      "ynng": "You usually identified the writer’s opinions and recognised when no clear view was given. You focused on the writer’s position rather than general facts in the passage.",
+      "matching-headings": "You identified the main ideas of the paragraphs accurately. You focused on the overall message rather than being distracted by individual examples or details.",
+      "one-word-completion": "You located relevant details accurately and usually followed the answer format. Your answers generally fitted the grammar and word-limit requirements.",
+      "summary-completion": "You used grammar and meaning effectively to complete the summary. Your answers generally fitted both the sentence structure and the overall message.",
+      "multiple-choice": "You selected options that were well supported by the passage. You avoided distractors that repeated words from the text but changed the meaning.",
+      "matching-people": "You matched viewpoints and supporting details to the correct people accurately. You tracked paraphrased opinions rather than relying only on identical words."
     };
 
 
