@@ -1199,7 +1199,7 @@
     #topBarScoreStatus { font-size:0.95rem; color:var(--text-soft); min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
     .test-title { flex:0 1 auto; }
     #candidateNameDisplay { display:none; max-width:min(24vw, 260px); flex:0 1 auto; }
-    #topBarScoreStatus { display:none; flex:0 0 auto; font-weight:700; color:var(--text); }
+    #topBarScoreStatus { display:none; flex:0 0 auto; font-weight:700; color:var(--text); } .top-bar-score-button { appearance:none; border:0; background:transparent; padding:2px 4px; border-radius:6px; font:inherit; cursor:pointer; } .top-bar-score-button:hover, .top-bar-score-button:focus-visible { color:#e31837; background:rgba(227,24,55,.08); outline:2px solid transparent; } .score-feedback-body{display:grid;gap:16px}.score-feedback-card{border:1px solid var(--border);border-radius:12px;padding:14px;background:var(--bg)}.score-feedback-card h3{margin:0 0 8px}.score-feedback-card h4{margin:12px 0 6px;color:var(--text)}.score-feedback-list{display:grid;gap:8px;margin-top:8px}.score-feedback-part-score{font-weight:800}.score-feedback-muted{color:var(--text-soft)}.score-feedback-guidance{margin:4px 0 0}
     #studyModePill { display:none; border:1px solid rgba(37, 99, 235, 0.45); background:rgba(37, 99, 235, 0.08); color:#1d4ed8; border-radius:999px; padding:4px 10px; font-weight:700; line-height:1.2; }
     .score-guide-button { display:inline-flex; align-items:center; gap:6px; border:1px solid var(--border); background:var(--bg); color:var(--text); border-radius:999px; padding:5px 10px; font:inherit; font-weight:700; cursor:pointer; white-space:nowrap; }
     .score-guide-button:hover, .score-guide-button:focus-visible { border-color:var(--accent); outline:2px solid transparent; box-shadow:0 0 0 3px rgba(37, 99, 235, 0.18); }
@@ -1332,7 +1332,7 @@
         <div class="logo home-link" onclick="confirmGoHome()" title="Return to home">IELTS Pabs</div>
         <div class="test-title">IELTS 16 Academic Reading Test 2</div>
         <div id="candidateNameDisplay"></div>
-        <div id="topBarScoreStatus" role="status" aria-live="polite"></div>
+        <button type="button" id="topBarScoreStatus" class="top-bar-score-button" aria-live="polite" title="View score feedback" aria-haspopup="dialog" aria-controls="scoreFeedbackOverlay" aria-hidden="true" tabindex="-1" onclick="openScoreFeedbackPanel()" hidden></button>
       </div>
       <div class="top-right">
         <div id="studyHeaderChrome" class="study-header-chrome" aria-live="polite">
@@ -1600,6 +1600,18 @@
     </div>
   </div>
 
+  <div id="scoreFeedbackOverlay" class="score-guide-overlay" role="dialog" aria-modal="true" aria-labelledby="scoreFeedbackTitle" aria-describedby="scoreFeedbackSubtitle" aria-hidden="true">
+    <div class="score-guide-panel score-feedback-panel">
+      <div class="score-guide-header">
+        <div>
+          <h2 id="scoreFeedbackTitle">Score feedback</h2>
+          <p id="scoreFeedbackSubtitle" class="score-guide-subtitle">Your IELTS Academic Reading result</p>
+        </div>
+        <button type="button" id="scoreFeedbackClose" class="score-guide-close" aria-label="Close score feedback" onclick="closeScoreFeedbackPanel()">×</button>
+      </div>
+      <div id="scoreFeedbackBody" class="score-feedback-body"></div>
+    </div>
+  </div>
 
   <div id="answerKeyOverlay" class="score-guide-overlay" role="dialog" aria-modal="true" aria-labelledby="answerKeyTitle" aria-describedby="answerKeySubtitle" aria-hidden="true">
     <div class="score-guide-panel answer-key-panel">
@@ -2757,8 +2769,100 @@
       return "";
     }
 
+
+    let latestEvaluation = { total: 0, parts: { 1: 0, 2: 0, 3: 0 }, questionOutcomes: {} };
+
+    const scoreFeedbackGroups = [
+      { part: 1, label: "True / False / Not Given", questions: [1,2,3,4,5,6,7,8], strategyKey: "tfng" },
+      { part: 1, label: "Summary completion", questions: [9,10,11,12,13], strategyKey: "summary-completion" },
+      { part: 2, label: "Multiple choice", questions: [14,15,16], strategyKey: "multiple-choice" },
+      { part: 2, label: "Summary completion", questions: [17,18,19,20], strategyKey: "summary-completion" },
+      { part: 2, label: "Yes / No / Not Given", questions: [21,22,23,24,25,26], strategyKey: "ynng" },
+      { part: 3, label: "Multiple choice", questions: [27,28,29,30], strategyKey: "multiple-choice" },
+      { part: 3, label: "Summary completion", questions: [31,32,33,34,35], strategyKey: "summary-completion" },
+      { part: 3, label: "Yes / No / Not Given", questions: [36,37,38,39,40], strategyKey: "ynng" }
+    ];
+
+    const scoreFeedbackGuidance = {
+      "tfng": "Read each statement carefully and decide whether the passage agrees, disagrees, or gives no information.",
+      "ynng": "Check whether the writer agrees, disagrees, or does not state a view; do not use outside knowledge.",
+      "summary-completion": "Use the surrounding grammar and meaning to choose the answer that fits the whole summary.",
+      "multiple-choice": "Underline the key idea in the stem, then eliminate options that are contradicted or not fully supported."
+    };
+
+    let lastScoreFeedbackOpener = null;
+
+    function getQuestionSection(q) {
+      return q <= 13 ? 1 : q <= 26 ? 2 : 3;
+    }
+
+    function formatFeedbackDuration(totalSeconds) {
+      const safeSeconds = Math.max(0, Math.floor(totalSeconds));
+      const min = Math.floor(safeSeconds / 60);
+      const sec = safeSeconds % 60;
+      return min + " min " + sec + " sec";
+    }
+
+    function getScoreFeedbackEvaluation() {
+      return latestEvaluation && latestEvaluation.total === fullTestCorrectCount ? latestEvaluation : null;
+    }
+
+    function getGroupCorrectCount(group, evaluation) {
+      return group.questions.reduce((sum, questionNumber) => sum + (evaluation.questionOutcomes[questionNumber] || 0), 0);
+    }
+
+    function pickFeedbackGroup(groups, evaluation, type) {
+      const eligible = groups.map((group) => {
+        const total = group.questions.length;
+        const correct = getGroupCorrectCount(group, evaluation);
+        const ratio = total ? correct / total : 0;
+        return { group, total, correct, ratio };
+      }).filter((item) => item.total >= 3 && (type === "strength" ? item.ratio >= 0.75 : item.ratio < 0.60));
+      eligible.sort((a, b) => type === "strength" ? (b.ratio - a.ratio) || (b.total - a.total) : (a.ratio - b.ratio) || (b.total - a.total));
+      return eligible[0] || null;
+    }
+
+    function appendFeedbackItem(parent, title, item) {
+      if (!item) return;
+      const heading = document.createElement("h4");
+      heading.textContent = title;
+      const line = document.createElement("div");
+      line.className = "score-feedback-part-score";
+      line.textContent = item.group.label + ": " + item.correct + " / " + item.total + " correct";
+      const guidance = document.createElement("p");
+      guidance.className = "score-feedback-guidance";
+      guidance.textContent = scoreFeedbackGuidance[item.group.strategyKey] || "This is a useful area to practise.";
+      parent.append(heading, line, guidance);
+    }
+
+    function renderScoreFeedbackPanel() {
+      const body = document.getElementById("scoreFeedbackBody");
+      const evaluation = getScoreFeedbackEvaluation();
+      if (!body || !fullTestScoreAvailable || !evaluation) return false;
+      body.textContent = "";
+      const band = computeBandScore(fullTestCorrectCount);
+      const descriptor = getBandDescriptor(band);
+      const overall = document.createElement("section");
+      overall.className = "score-feedback-card";
+      overall.innerHTML = "<h3>Overall result</h3>";
+      const result = document.createElement("p"); result.textContent = "You answered " + fullTestCorrectCount + " out of 40 questions correctly.";
+      const bandLine = document.createElement("p"); bandLine.innerHTML = "Estimated IELTS Academic Reading band: <strong>" + formatBandLabel(band) + "</strong>.<br>Skill level: <strong>" + descriptor.level + "</strong>";
+      const desc = document.createElement("p"); desc.textContent = descriptor.description;
+      overall.append(result, bandLine, desc); body.appendChild(overall);
+      const performance = document.createElement("section"); performance.className = "score-feedback-card"; performance.innerHTML = "<h3>Performance by part</h3>";
+      const list = document.createElement("div"); list.className = "score-feedback-list";
+      Object.keys(sectionRanges).sort((a,b)=>Number(a)-Number(b)).forEach((part)=>{ const range=sectionRanges[part]; const row=document.createElement("div"); row.textContent="Part "+part+": "+(evaluation.parts[part]||0)+" / "+(range.to-range.from+1); list.appendChild(row); });
+      performance.appendChild(list); body.appendChild(performance);
+      Object.keys(sectionRanges).sort((a,b)=>Number(a)-Number(b)).forEach((part)=>{ const range=sectionRanges[part]; const total=range.to-range.from+1; const partGroups=scoreFeedbackGroups.filter((group)=>Number(group.part)===Number(part)); const strength=pickFeedbackGroup(partGroups,evaluation,"strength"); const focus=pickFeedbackGroup(partGroups,evaluation,"focus"); const section=document.createElement("section"); section.className="score-feedback-card"; section.innerHTML="<h3>Part "+part+" · "+(evaluation.parts[part]||0)+" / "+total+"</h3>"; appendFeedbackItem(section,"What went well",strength); appendFeedbackItem(section,"Focus next",focus); if(!strength&&!focus){ const neutral=document.createElement("p"); neutral.className="score-feedback-muted"; neutral.textContent="Keep reviewing the questions you were unsure about and compare each answer with the exact wording in the passage."; section.appendChild(neutral);} body.appendChild(section); });
+      if (mode === "test") { const time=document.createElement("section"); time.className="score-feedback-card"; time.innerHTML="<h3>Time management</h3>"; if (timerSeconds < 0) { const ended=document.createElement("p"); ended.textContent="The 60-minute test time ended before the test was submitted."; const guidance=document.createElement("p"); guidance.textContent="As a flexible guide, aim to complete Parts 1 and 2 in a little under 20 minutes each. This protects more time for Part 3, which is often more challenging, and leaves a few minutes for a final check."; time.append(ended,guidance); } else { const used=document.createElement("p"); used.textContent="Total time used: "+formatFeedbackDuration((60*60)-timerSeconds); const remaining=document.createElement("p"); remaining.textContent="Time remaining: "+formatFeedbackDuration(timerSeconds); const guidance=document.createElement("p"); guidance.textContent=timerSeconds>=180 ? "You completed the test within the time limit. Use any remaining time to revisit questions you were unsure about and check word limits, spelling, and answer choices." : "You completed the test within the time limit, but used almost all of it. In future attempts, try to leave around 3–5 minutes for a final check of difficult or uncertain answers."; time.append(used,remaining,guidance); } body.appendChild(time); }
+      return true;
+    }
+
+    function openScoreFeedbackPanel() { if (!fullTestScoreAvailable || !getScoreFeedbackEvaluation()) return; lastScoreFeedbackOpener = document.activeElement; if (!renderScoreFeedbackPanel()) return; const overlay=document.getElementById("scoreFeedbackOverlay"); const close=document.getElementById("scoreFeedbackClose"); if(overlay){ overlay.style.display="flex"; overlay.setAttribute("aria-hidden","false"); } if(close) close.focus(); }
+    function closeScoreFeedbackPanel(restoreFocus = true) { const overlay=document.getElementById("scoreFeedbackOverlay"); if(overlay){ overlay.style.display="none"; overlay.setAttribute("aria-hidden","true"); } if(restoreFocus && lastScoreFeedbackOpener && typeof lastScoreFeedbackOpener.focus === "function") lastScoreFeedbackOpener.focus(); }
+
     function evaluateQuestions() {
-      let correctCount = 0;
+      const evaluation = { total: 0, parts: { 1: 0, 2: 0, 3: 0 }, questionOutcomes: {} };
 
       for (let q = 1; q <= 40; q++) {
         const user = getUserAnswer(q);
@@ -2788,9 +2892,14 @@
           block.classList.remove("correct", "incorrect");
           if (isCorrect) {
             block.classList.add("correct");
-            correctCount++;
+            evaluation.total++;
+            evaluation.parts[getQuestionSection(q)]++;
+            evaluation.questionOutcomes[q] = 1;
           } else if (user) {
+            evaluation.questionOutcomes[q] = 0;
             block.classList.add("incorrect");
+          } else {
+            evaluation.questionOutcomes[q] = 0;
           }
         }
 
@@ -2803,7 +2912,8 @@
         }
       }
 
-      return correctCount;
+      latestEvaluation = evaluation;
+      return evaluation.total;
     }
 
     function computeBandScore(correct) {
@@ -3104,8 +3214,17 @@
     document.addEventListener("keydown", (event) => {
       const overlay = document.getElementById("answerKeyOverlay");
       if (event.key === "Escape" && overlay && overlay.style.display === "flex") closeAnswerKeyPanel();
+      const feedbackOverlay = document.getElementById("scoreFeedbackOverlay");
+      if (event.key === "Escape" && feedbackOverlay && feedbackOverlay.style.display === "flex") closeScoreFeedbackPanel();
     });
 
+    document.addEventListener("click", (event) => {
+      const feedbackOverlay = document.getElementById("scoreFeedbackOverlay");
+      if (feedbackOverlay && feedbackOverlay.style.display === "flex" && event.target === feedbackOverlay) closeScoreFeedbackPanel();
+    });
+
+    window.openScoreFeedbackPanel = openScoreFeedbackPanel;
+    window.closeScoreFeedbackPanel = closeScoreFeedbackPanel;
     window.openAnswerKeyPanel = openAnswerKeyPanel;
     window.closeAnswerKeyPanel = closeAnswerKeyPanel;
 
@@ -3119,6 +3238,10 @@
         score.textContent = text;
         score.setAttribute("aria-label", correctCount + " correct answers out of 40. Estimated IELTS Academic Reading " + formatBandLabel(computeBandScore(correctCount)) + ".");
         score.style.display = "block";
+        score.hidden = false;
+        score.disabled = false;
+        score.tabIndex = 0;
+        score.setAttribute("aria-hidden", "false");
       }
       buildScoreGuideRows(correctCount);
     }
@@ -3156,6 +3279,7 @@
 
     function resetFreshAttemptState() {
       if (typeof closeAnswerKeyPanel === "function") closeAnswerKeyPanel(false);
+      if (typeof closeScoreFeedbackPanel === "function") closeScoreFeedbackPanel(false);
       document.querySelectorAll("#questionContent input[type='radio']").forEach((el) => { el.checked = false; el.dataset.wasChecked = "0"; });
       document.querySelectorAll("#questionContent input[type='text']").forEach((el) => { el.value = ""; });
       document.querySelectorAll("#questionContent select").forEach((el) => { el.value = ""; });
@@ -3174,12 +3298,16 @@
 
     function resetStudyReviewState() {
       if (typeof closeAnswerKeyPanel === "function") closeAnswerKeyPanel(false);
+      if (typeof closeScoreFeedbackPanel === "function") closeScoreFeedbackPanel(false);
       fullStudyReviewSubmitted = false;
       lastRawScore = null;
       fullTestScoreAvailable = false;
       fullTestCorrectCount = null;
       const score = document.getElementById("topBarScoreStatus");
-      if (score) { score.textContent = ""; score.style.display = "none"; score.removeAttribute("aria-label"); }
+      if (score) { score.textContent = ""; score.style.display = "none"; score.removeAttribute("aria-label");
+        score.setAttribute("aria-hidden", "true");
+        score.tabIndex = -1;
+        score.hidden = true; }
       revealedStudyTaskGroups.clear();
       if (studyShellController && typeof studyShellController.reset === "function") studyShellController.reset();
       studyShellController = null;
