@@ -296,7 +296,9 @@ def test_study_shell_foundation_and_lifecycle_behaviour_contract() -> None:
     assert "Show answers &amp; feedback" in page
     assert "Hide answers & feedback" in page
     assert "Study time: <span id=\"studyTimerDisplay\">00:00</span>" in page
-    assert '<div id="topBarScoreStatus" role="status" aria-live="polite"></div>' in page
+    assert '<button type="button" id="topBarScoreStatus"' in page
+    assert 'aria-controls="scoreFeedbackOverlay"' in page
+    assert 'tabindex="-1"' in page
     assert 'class="score-guide-button"' in page
     assert '📊 <span>Score guide</span>' in page
     assert 'id="studyHeaderChrome" class="study-header-chrome"' in page
