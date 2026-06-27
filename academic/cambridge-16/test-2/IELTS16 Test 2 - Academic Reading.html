@@ -3653,6 +3653,8 @@
         renderStudyClueBadges(existing);
         return existing;
       }
+      const expanded = expandOverlappingStudyEvidence(passage, q, text);
+      if (expanded) return expanded;
       const match = findTextNodeMatch(passage, text);
       if (!match) return null;
       const range = document.createRange();
@@ -3666,6 +3668,36 @@
       try { range.surroundContents(mark); } catch (e) { return null; }
       renderStudyClueBadges(mark);
       return mark;
+    }
+
+    function getStudyTextOverlapLength(left, right) {
+      const limit = Math.min(left.length, right.length);
+      for (let length = limit; length > 0; length--) {
+        if (left.slice(-length) === right.slice(0, length)) return length;
+      }
+      return 0;
+    }
+
+    function expandOverlappingStudyEvidence(passage, q, text) {
+      const marks = Array.from(passage.querySelectorAll(".study-evidence-highlight"));
+      for (const mark of marks) {
+        const markedText = mark.dataset.clueText || "";
+        const overlap = getStudyTextOverlapLength(markedText, text);
+        if (!overlap || overlap === text.length) continue;
+        const suffix = text.slice(overlap);
+        let next = mark.nextSibling;
+        while (next && next.nodeType === Node.TEXT_NODE && next.nodeValue === "") next = next.nextSibling;
+        if (!next || next.nodeType !== Node.TEXT_NODE || !next.nodeValue.startsWith(suffix)) continue;
+        next.nodeValue = next.nodeValue.slice(suffix.length);
+        mark.appendChild(document.createTextNode(suffix));
+        mark.dataset.clueText = markedText + suffix;
+        const questions = new Set((mark.dataset.clueQuestions || "").split(",").filter(Boolean));
+        questions.add(String(q));
+        mark.dataset.clueQuestions = Array.from(questions).join(",");
+        renderStudyClueBadges(mark);
+        return mark;
+      }
+      return null;
     }
 
     function renderStudyClueBadges(mark) {
