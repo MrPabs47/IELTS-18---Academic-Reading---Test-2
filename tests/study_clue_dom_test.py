@@ -243,7 +243,7 @@ def test_test2_audited_evidence_spans_are_exact_passage_text() -> None:
         "we should realise we have a symbiotic relationship, that can be mutually beneficial or mutually destructive",
         "Our obsession with hygiene, our overuse of antibiotics and our unhealthy, low-fibre diets are disrupting the bacterial balance",
         "it isn’t an exceptional trait possessed by a small handful of bearded philosophers after all – in fact, the latest studies suggest that most of us have the ability to make wise decisions, given the right context",
-        "wisdom is not solely an “inner quality” but rather unfolds as a function of situations people happen to be in",
+        "our ability to reason wisely depends on a variety of external factors.",
         "another is appreciation of perspectives wider than the issue at hand",
         "when we adopt a third-person, ‘observer’ viewpoint we reason more broadly and focus more on interpersonal and moral ideals",
         "we reason more broadly and focus more on interpersonal and moral ideals such as justice and impartiality",
