@@ -1328,6 +1328,47 @@
       cursor: pointer;
       font-size: 0.82rem;
     }
+
+    #candidateNameDisplay { display:none; max-width:min(24vw, 260px); flex:0 1 auto; }
+    #topBarScoreStatus { display:none; flex:0 0 auto; font-weight:700; color:var(--text); }
+    .top-bar-score-button { appearance:none; border:0; background:transparent; padding:2px 4px; border-radius:6px; font:inherit; cursor:pointer; }
+    .top-bar-score-button:hover, .top-bar-score-button:focus-visible { color:#e31837; background:rgba(227,24,55,.08); outline:2px solid transparent; }
+    #studyModePill { display:none; border:1px solid rgba(37, 99, 235, 0.45); background:rgba(37, 99, 235, 0.08); color:#1d4ed8; border-radius:999px; padding:4px 10px; font-weight:700; line-height:1.2; }
+    #studyTimerContainer { display:none; color:var(--text-soft); font-weight:700; }
+    .study-header-chrome { display:inline-flex; align-items:center; gap:8px; flex-wrap:wrap; }
+    .score-guide-button { display:inline-flex; align-items:center; gap:6px; border:1px solid var(--border); background:var(--bg); color:var(--text); border-radius:999px; padding:5px 10px; font:inherit; font-weight:700; cursor:pointer; white-space:nowrap; }
+    .score-guide-button:hover, .score-guide-button:focus-visible { border-color:var(--accent); outline:2px solid transparent; box-shadow:0 0 0 3px rgba(37, 99, 235, 0.18); }
+    .score-guide-overlay { position:fixed; inset:0; display:none; align-items:center; justify-content:center; background:rgba(15, 23, 42, 0.62); z-index:1700; padding:18px; }
+    .score-guide-panel { background:var(--bg); color:var(--text); border-radius:14px; box-shadow:var(--shadow-soft); border:1px solid var(--border); width:min(520px, 96vw); max-height:88vh; overflow:hidden; padding:22px; display:flex; flex-direction:column; }
+    .score-guide-header { display:flex; align-items:flex-start; justify-content:space-between; gap:16px; margin-bottom:12px; flex:0 0 auto; position:sticky; top:0; z-index:2; background:var(--bg); }
+    .score-guide-header h2 { margin:0 0 4px; font-size:1.25rem; }
+    .score-guide-subtitle, .score-guide-helper { color:var(--text-soft); margin:0 0 12px; }
+    .score-guide-summary { font-weight:800; margin:0 0 12px; color:var(--text); flex:0 0 auto; }
+    .score-guide-scroll { overflow:auto; min-height:0; flex:1 1 auto; }
+    .score-guide-close { border:1px solid var(--border); background:var(--bg-secondary); color:var(--text); border-radius:999px; width:32px; height:32px; font-size:1.2rem; cursor:pointer; }
+    .score-guide-close:focus-visible, .score-guide-table:focus-visible { outline:3px solid rgba(37, 99, 235, 0.45); outline-offset:2px; }
+    .score-guide-table { width:100%; border-collapse:collapse; font-size:0.95rem; }
+    .score-guide-table th, .score-guide-table td { padding:9px 10px; border-bottom:1px solid var(--border); text-align:left; }
+    .score-guide-table th { background:var(--bg-secondary); font-weight:800; }
+    .score-guide-table tr.current-score-row td { background:rgba(34, 197, 94, 0.14); border-bottom-color:rgba(34, 197, 94, 0.45); }
+    .answer-key-panel { width:min(760px, 96vw); display:flex; flex-direction:column; overflow:hidden; }
+    .answer-key-grid { display:grid; grid-template-columns:repeat(3, minmax(0, 1fr)); gap:14px; overflow:auto; min-height:0; flex:1 1 auto; padding-right:2px; }
+    .answer-key-section { border:1px solid var(--border); border-radius:12px; background:var(--bg-secondary); padding:12px; }
+    .answer-key-section h3 { margin:0 0 10px; font-size:0.98rem; color:var(--text); }
+    .answer-key-list { display:grid; gap:5px; margin:0; }
+    .answer-key-item { display:grid; grid-template-columns:2.6em 1fr; gap:10px; align-items:center; width:100%; border:1px solid transparent; border-radius:8px; background:transparent; color:var(--text); padding:5px 7px; font:inherit; text-align:left; cursor:pointer; }
+    .answer-key-item:hover, .answer-key-item:focus-visible { border-color:var(--accent); background:var(--accent-soft); outline:2px solid transparent; box-shadow:0 0 0 3px rgba(37, 99, 235, 0.16); }
+    .answer-key-number { color:var(--text-soft); font-weight:800; }
+    .answer-key-answer { font-weight:800; }
+    .answer-key-button[hidden] { display:none !important; }
+    .score-feedback-panel { width:min(620px, 96vw); display:flex; flex-direction:column; overflow:hidden; }
+    .score-feedback-body { display:grid; gap:16px; overflow:auto; min-height:0; padding-right:6px; }
+    .score-feedback-card { border:1px solid var(--border); border-radius:12px; padding:14px; background:var(--bg); }
+    .score-feedback-card h3 { margin:0 0 8px; }
+    .score-feedback-muted { color:var(--text-soft); }
+    .score-feedback-part-score { font-weight:800; }
+    .current-score-label { display:inline-block; margin-left:8px; padding:2px 7px; border-radius:999px; background:rgba(22, 101, 52, 0.12); color:#166534; font-size:0.75rem; font-weight:800; }
+    @media (max-width: 720px) { .answer-key-grid { grid-template-columns:repeat(auto-fit, minmax(150px, 1fr)); } }
   </style>
 </head>
 <body data-theme="black-on-white" class="mode-screen-active">
@@ -1375,8 +1416,16 @@
         <div class="test-title">
           IELTS 16 Academic Reading Test 3
         </div>
+        <div id="candidateNameDisplay"></div>
+        <button type="button" id="topBarScoreStatus" class="top-bar-score-button" aria-live="polite" title="View score feedback" aria-haspopup="dialog" aria-controls="scoreFeedbackOverlay" aria-hidden="true" tabindex="-1" onclick="openScoreFeedbackPanel()" hidden></button>
       </div>
       <div class="top-right">
+        <div id="studyHeaderChrome" class="study-header-chrome" aria-live="polite">
+          <button type="button" id="scoreGuideButton" class="score-guide-button" aria-haspopup="dialog" aria-controls="scoreGuideOverlay" onclick="openScoreGuide()">📊 <span>Score guide</span></button>
+          <button type="button" id="answerKeyButton" class="score-guide-button answer-key-button" aria-label="Answer key" title="Answer key" aria-haspopup="dialog" aria-controls="answerKeyOverlay" aria-hidden="true" onclick="openAnswerKeyPanel()" hidden>🔑</button>
+          <div id="studyModePill" role="status" aria-label="Study mode is active">Study mode</div>
+          <div id="studyTimerContainer" role="timer" aria-live="polite" aria-atomic="true" aria-hidden="true">Study time: <span id="studyTimerDisplay">00:00</span></div>
+        </div>
         <div id="timerContainer" role="status" aria-live="polite" aria-atomic="true" aria-hidden="true"><span id="timerPrefix">Time left:</span> <span id="timerDisplay">60:00</span></div>
         <div class="icon-group">
           <span class="icon" title="Connection status">
@@ -1874,6 +1923,21 @@
     </div>
   </div>
 
+
+  <div id="scoreGuideOverlay" class="score-guide-overlay" role="dialog" aria-modal="true" aria-labelledby="scoreGuideTitle" aria-describedby="scoreGuideSubtitle" aria-hidden="true">
+    <div class="score-guide-panel">
+      <div class="score-guide-header"><div><h2 id="scoreGuideTitle">IELTS Academic Reading score guide</h2><p id="scoreGuideSubtitle" class="score-guide-subtitle">Correct answers out of 40</p></div><button type="button" id="scoreGuideClose" class="score-guide-close" aria-label="Close score guide" onclick="closeScoreGuide()">×</button></div>
+      <p id="scoreGuideSummary" class="score-guide-summary" hidden></p>
+      <div class="score-guide-scroll"><table class="score-guide-table" aria-label="IELTS Academic Reading raw score conversion"><thead><tr><th>Correct answers</th><th>Estimated band</th></tr></thead><tbody id="scoreGuideTableBody"></tbody></table></div>
+    </div>
+  </div>
+  <div id="scoreFeedbackOverlay" class="score-guide-overlay" role="dialog" aria-modal="true" aria-labelledby="scoreFeedbackTitle" aria-describedby="scoreFeedbackSubtitle" aria-hidden="true">
+    <div class="score-guide-panel score-feedback-panel"><div class="score-guide-header"><div><h2 id="scoreFeedbackTitle">Score feedback</h2><p id="scoreFeedbackSubtitle" class="score-guide-subtitle">Your IELTS Academic Reading result</p></div><button type="button" id="scoreFeedbackClose" class="score-guide-close" aria-label="Close score feedback" onclick="closeScoreFeedbackPanel()">×</button></div><div id="scoreFeedbackBody" class="score-feedback-body"></div></div>
+  </div>
+  <div id="answerKeyOverlay" class="score-guide-overlay" role="dialog" aria-modal="true" aria-labelledby="answerKeyTitle" aria-describedby="answerKeySubtitle" aria-hidden="true">
+    <div class="score-guide-panel answer-key-panel"><div class="score-guide-header"><div><h2 id="answerKeyTitle">Answer key</h2><p id="answerKeySubtitle" class="score-guide-subtitle">Correct answers for Questions 1–40</p></div><button type="button" id="answerKeyClose" class="score-guide-close" aria-label="Close answer key" onclick="closeAnswerKeyPanel()">×</button></div><div id="answerKeyGrid" class="answer-key-grid" aria-label="Correct answers by reading part"></div></div>
+  </div>
+
   <!-- Results overlay -->
   <div id="resultsOverlay">
     <div id="resultsPanel">
@@ -2062,6 +2126,267 @@
       40: "mustard / mustard plant(s)"
     };
 
+
+
+    let studyTimerSeconds = 0;
+    let studyTimerId = null;
+    let lastScoreGuideOpener = null;
+    let lastAnswerKeyOpener = null;
+    let lastScoreFeedbackOpener = null;
+    let fullTestScoreAvailable = false;
+    let latestScoreEvaluation = null;
+
+    function escapeHtml(value) {
+      return String(value).replace(/[&<>"']/g, (char) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[char]));
+    }
+
+    function startStudyTimer() {
+      stopStudyTimer();
+      studyTimerSeconds = 0;
+      const display = document.getElementById("studyTimerDisplay");
+      if (display) display.textContent = formatDuration(studyTimerSeconds);
+      studyTimerId = setInterval(() => {
+        studyTimerSeconds += 1;
+        const el = document.getElementById("studyTimerDisplay");
+        if (el) el.textContent = formatDuration(studyTimerSeconds);
+      }, 1000);
+    }
+
+    function stopStudyTimer() {
+      if (studyTimerId) clearInterval(studyTimerId);
+      studyTimerId = null;
+    }
+
+    function showStudyChrome(show) {
+      const pill = document.getElementById("studyModePill");
+      const studyTimer = document.getElementById("studyTimerContainer");
+      if (pill) pill.style.display = show ? "inline-flex" : "none";
+      if (studyTimer) {
+        studyTimer.style.display = show ? "block" : "none";
+        studyTimer.setAttribute("aria-hidden", show ? "false" : "true");
+      }
+    }
+
+    function getAcademicReadingBandRows() {
+      return [
+        [39, 40, "9"], [37, 38, "8.5"], [35, 36, "8"], [33, 34, "7.5"],
+        [30, 32, "7"], [27, 29, "6.5"], [23, 26, "6"], [19, 22, "5.5"],
+        [15, 18, "5"], [13, 14, "4.5"], [10, 12, "4"], [8, 9, "3.5"],
+        [6, 7, "3"], [4, 5, "2.5"]
+      ];
+    }
+
+    function closeSharedOverlays(except) {
+      if (except !== "scoreGuide") closeScoreGuide(false);
+      if (except !== "answerKey") closeAnswerKeyPanel(false);
+      if (except !== "scoreFeedback") closeScoreFeedbackPanel(false);
+    }
+
+    function renderScoreGuide() {
+      const body = document.getElementById("scoreGuideTableBody");
+      if (!body) return;
+      body.innerHTML = "";
+      const score = latestScoreEvaluation ? latestScoreEvaluation.correctCount : null;
+      getAcademicReadingBandRows().forEach(([from, to, band]) => {
+        const tr = document.createElement("tr");
+        if (score !== null && score >= from && score <= to) tr.className = "current-score-row";
+        const range = from === to ? String(from) : from + "–" + to;
+        tr.innerHTML = "<td>" + range + (tr.className ? ' <span class="current-score-label">your score</span>' : "") + "</td><td>" + band + "</td>";
+        body.appendChild(tr);
+      });
+      const summary = document.getElementById("scoreGuideSummary");
+      if (summary) {
+        if (score === null) { summary.hidden = true; summary.textContent = ""; }
+        else { summary.hidden = false; summary.textContent = "Your latest score: " + score + " / 40 · estimated band " + latestScoreEvaluation.band; }
+      }
+    }
+
+    function openScoreGuide() {
+      lastScoreGuideOpener = document.activeElement;
+      closeSharedOverlays("scoreGuide");
+      renderScoreGuide();
+      const overlay = document.getElementById("scoreGuideOverlay");
+      const close = document.getElementById("scoreGuideClose");
+      if (overlay) { overlay.style.display = "flex"; overlay.setAttribute("aria-hidden", "false"); }
+      if (close) close.focus();
+    }
+
+    function closeScoreGuide(restoreFocus = true) {
+      const overlay = document.getElementById("scoreGuideOverlay");
+      if (overlay) { overlay.style.display = "none"; overlay.setAttribute("aria-hidden", "true"); }
+      if (restoreFocus && lastScoreGuideOpener && typeof lastScoreGuideOpener.focus === "function") lastScoreGuideOpener.focus();
+    }
+
+    function isAnswerKeyAvailable() { return mode === "study" || (mode === "test" && testSubmitted); }
+
+    function getAnswerKeyDisplay(q) { return correctAnswerText[q] || (Array.isArray(answerKey[q]) ? answerKey[q].join(" / ") : answerKey[q]); }
+
+    function renderAnswerKeyPanel() {
+      const grid = document.getElementById("answerKeyGrid");
+      if (!grid) return;
+      grid.innerHTML = "";
+      Object.keys(sectionRanges).sort((a,b)=>Number(a)-Number(b)).forEach((part) => {
+        const range = sectionRanges[part];
+        const section = document.createElement("section");
+        section.className = "answer-key-section";
+        section.innerHTML = "<h3>Part " + part + " · Questions " + range.from + "–" + range.to + "</h3>";
+        const list = document.createElement("div");
+        list.className = "answer-key-list";
+        for (let q = range.from; q <= range.to; q++) {
+          const item = document.createElement("button");
+          item.type = "button";
+          item.className = "answer-key-item";
+          item.dataset.answerKeyQuestion = String(q);
+          item.innerHTML = '<span class="answer-key-number">Q' + q + '</span><span class="answer-key-answer">' + escapeHtml(String(getAnswerKeyDisplay(q) || "")) + '</span>';
+          list.appendChild(item);
+        }
+        section.appendChild(list);
+        grid.appendChild(section);
+      });
+    }
+
+    function updateAnswerKeyAvailability() {
+      const button = document.getElementById("answerKeyButton");
+      if (!button) return;
+      const available = isAnswerKeyAvailable();
+      button.hidden = !available;
+      button.setAttribute("aria-hidden", available ? "false" : "true");
+    }
+
+    function openAnswerKeyPanel() {
+      if (!isAnswerKeyAvailable()) return;
+      lastAnswerKeyOpener = document.activeElement;
+      closeSharedOverlays("answerKey");
+      renderAnswerKeyPanel();
+      const overlay = document.getElementById("answerKeyOverlay");
+      const close = document.getElementById("answerKeyClose");
+      if (overlay) { overlay.style.display = "flex"; overlay.setAttribute("aria-hidden", "false"); }
+      if (close) close.focus();
+    }
+
+    function closeAnswerKeyPanel(restoreFocus = true) {
+      const overlay = document.getElementById("answerKeyOverlay");
+      if (overlay) { overlay.style.display = "none"; overlay.setAttribute("aria-hidden", "true"); }
+      if (restoreFocus && lastAnswerKeyOpener && typeof lastAnswerKeyOpener.focus === "function") lastAnswerKeyOpener.focus();
+    }
+
+    function focusQuestionFromAnswerKey(q) {
+      closeAnswerKeyPanel(false);
+      const num = parseInt(q, 10);
+      if (Number.isNaN(num)) return;
+      const section = Object.keys(sectionRanges).find((part) => num >= sectionRanges[part].from && num <= sectionRanges[part].to);
+      if (section) switchSection(Number(section));
+      currentQuestion = num;
+      buildQuestionNav();
+      highlightCurrentQuestion(num);
+      const block = document.querySelector('[data-q="' + num + '"]');
+      if (block) {
+        block.scrollIntoView({ behavior: "smooth", block: "center" });
+        const control = block.querySelector("input, select, button");
+        if (control && typeof control.focus === "function") control.focus({ preventScroll: true });
+      }
+    }
+
+    function getQuestionScoreFromFeedback(q) {
+      const block = getQuestionTarget(q) || document.querySelector('[data-q="' + q + '"]');
+      if (!block) return 0;
+      if (block.classList.contains("correct")) return 1;
+      if (block.classList.contains("partial-correct")) {
+        if (q === 23 || q === 24) return getChooseTwoCorrectCount("q23_24", ["B", "C"]) / 2;
+        if (q === 25 || q === 26) return getChooseTwoCorrectCount("q25_26", ["A", "C"]) / 2;
+        return 0.5;
+      }
+      return 0;
+    }
+
+    function buildScoreEvaluation(correctCount) {
+      const parts = {};
+      Object.keys(sectionRanges).forEach((part) => {
+        let count = 0;
+        for (let q = sectionRanges[part].from; q <= sectionRanges[part].to; q++) {
+          count += getQuestionScoreFromFeedback(q);
+        }
+        parts[part] = count;
+      });
+      const band = computeBandScore(correctCount);
+      return { correctCount, band, parts };
+    }
+
+    function renderScoreFeedbackPanel() {
+      if (!latestScoreEvaluation) return false;
+      const body = document.getElementById("scoreFeedbackBody");
+      if (!body) return false;
+      body.innerHTML = "";
+      const summary = document.createElement("section");
+      summary.className = "score-feedback-card";
+      summary.innerHTML = "<h3>Total score</h3><p class='score-feedback-part-score'>" + latestScoreEvaluation.correctCount + " / 40 · estimated band " + latestScoreEvaluation.band + "</p><p class='score-feedback-muted'>Task-level Study Mode feedback, passage clues, and explanations will be added in a later PR.</p>";
+      body.appendChild(summary);
+      Object.keys(sectionRanges).sort((a,b)=>Number(a)-Number(b)).forEach((part) => {
+        const range = sectionRanges[part];
+        const total = range.to - range.from + 1;
+        const section = document.createElement("section");
+        section.className = "score-feedback-card";
+        section.innerHTML = "<h3>Part " + part + "</h3><p class='score-feedback-part-score'>" + (latestScoreEvaluation.parts[part] || 0) + " / " + total + "</p>";
+        body.appendChild(section);
+      });
+      return true;
+    }
+
+    function updateScoreStatus() {
+      const button = document.getElementById("topBarScoreStatus");
+      if (!button) return;
+      if (!fullTestScoreAvailable || !latestScoreEvaluation) {
+        button.hidden = true;
+        button.style.display = "none";
+        button.setAttribute("aria-hidden", "true");
+        button.setAttribute("tabindex", "-1");
+        return;
+      }
+      button.textContent = "Score: " + latestScoreEvaluation.correctCount + "/40 · Band " + latestScoreEvaluation.band;
+      button.hidden = false;
+      button.style.display = "inline-flex";
+      button.setAttribute("aria-hidden", "false");
+      button.removeAttribute("tabindex");
+    }
+
+    function openScoreFeedbackPanel() {
+      if (!fullTestScoreAvailable || !latestScoreEvaluation) return;
+      lastScoreFeedbackOpener = document.activeElement;
+      closeSharedOverlays("scoreFeedback");
+      if (!renderScoreFeedbackPanel()) return;
+      const overlay = document.getElementById("scoreFeedbackOverlay");
+      const close = document.getElementById("scoreFeedbackClose");
+      if (overlay) { overlay.style.display = "flex"; overlay.setAttribute("aria-hidden", "false"); }
+      if (close) close.focus();
+    }
+
+    function closeScoreFeedbackPanel(restoreFocus = true) {
+      const overlay = document.getElementById("scoreFeedbackOverlay");
+      if (overlay) { overlay.style.display = "none"; overlay.setAttribute("aria-hidden", "true"); }
+      if (restoreFocus && lastScoreFeedbackOpener && typeof lastScoreFeedbackOpener.focus === "function") lastScoreFeedbackOpener.focus();
+    }
+
+    function wireSharedOverlays() {
+      document.querySelectorAll(".score-guide-overlay").forEach((overlay) => {
+        if (overlay.dataset.sharedOverlayWired) return;
+        overlay.addEventListener("click", (event) => {
+          if (event.target !== overlay) return;
+          if (overlay.id === "scoreGuideOverlay") closeScoreGuide();
+          if (overlay.id === "answerKeyOverlay") closeAnswerKeyPanel();
+          if (overlay.id === "scoreFeedbackOverlay") closeScoreFeedbackPanel();
+        });
+        overlay.dataset.sharedOverlayWired = "true";
+      });
+      const answerGrid = document.getElementById("answerKeyGrid");
+      if (answerGrid && !answerGrid.dataset.answerKeyWired) {
+        answerGrid.addEventListener("click", (event) => {
+          const item = event.target.closest && event.target.closest("[data-answer-key-question]");
+          if (item) focusQuestionFromAnswerKey(item.dataset.answerKeyQuestion);
+        });
+        answerGrid.dataset.answerKeyWired = "true";
+      }
+    }
+
     /********************
      * MODE & INITIALISE
      ********************/
@@ -2121,13 +2446,24 @@
         timerId = null;
       }
 
+      closeSharedOverlays(false);
+      fullTestScoreAvailable = false;
+      latestScoreEvaluation = null;
+      updateScoreStatus();
+      updateAnswerKeyAvailability();
+
       if (mode === "test") {
+        stopStudyTimer();
+        showStudyChrome(false);
         if (timerContainer) {
           timerContainer.style.display = "block";
           timerContainer.setAttribute("aria-hidden", "false");
         }
         timerSeconds = 60 * 60;
       } else {
+        stopStudyTimer();
+        startStudyTimer();
+        showStudyChrome(true);
         if (timerContainer) {
           timerContainer.style.display = "none";
           timerContainer.setAttribute("aria-hidden", "true");
@@ -2145,6 +2481,8 @@
       setupDividerDrag();
       updateThemeButtons();
       updateFontButtons();
+      updateAnswerKeyAvailability();
+      wireSharedOverlays();
       window.addEventListener("beforeunload", (e) => {
         if (!testSubmitted) {
           e.preventDefault();
@@ -3131,6 +3469,17 @@
     }
 
     document.addEventListener("keydown", (event) => {
+      if (event.key === "Escape") {
+        const openOverlay = Array.from(document.querySelectorAll(".score-guide-overlay")).find((overlay) => overlay.style.display === "flex");
+        if (openOverlay) {
+          event.preventDefault();
+          if (openOverlay.id === "scoreGuideOverlay") closeScoreGuide();
+          if (openOverlay.id === "answerKeyOverlay") closeAnswerKeyPanel();
+          if (openOverlay.id === "scoreFeedbackOverlay") closeScoreFeedbackPanel();
+          return;
+        }
+      }
+
       const isFindShortcut =
         (event.ctrlKey || event.metaKey) &&
         String(event.key).toLowerCase() === "f";
@@ -3211,7 +3560,12 @@
       updateCounts();
       buildQuestionNav();
 
-      const band = computeBandScore(correctCount);
+      latestScoreEvaluation = buildScoreEvaluation(correctCount);
+      fullTestScoreAvailable = true;
+      updateScoreStatus();
+      updateAnswerKeyAvailability();
+
+      const band = latestScoreEvaluation.band;
       const desc = getBandDescriptor(band);
 
       const studentLine = document.getElementById("studentLine");
@@ -3261,6 +3615,7 @@
           clearInterval(timerId);
           timerId = null;
         }
+        stopStudyTimer();
         exitAppFullscreen();
         // Disable further changes in test mode
         document
@@ -3857,6 +4212,9 @@
     updateThemeButtons();
     updateFontButtons();
     ensureModeWiring();
+    wireSharedOverlays();
+    updateAnswerKeyAvailability();
+    updateScoreStatus();
     initAnimatedLogo();
   </script>
 </body>
