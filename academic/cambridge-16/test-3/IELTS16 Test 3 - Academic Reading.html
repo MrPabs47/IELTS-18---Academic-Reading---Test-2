@@ -4,6 +4,7 @@
   <meta charset="UTF-8" />
   <title>IELTS 16 Academic Reading Test 3</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link rel="stylesheet" href="../../shared/reading-feature-shell.css" />
   <style>
     :root {
       --bg: #ffffff;
@@ -1331,6 +1332,7 @@
   </style>
 </head>
 <body data-theme="black-on-white" class="mode-screen-active">
+  <div id="readingFeatureShellMount" aria-hidden="true"></div>
   <!-- Mode selection -->
   <div id="modeScreen">
     <div id="modeScreenInner">
@@ -1891,6 +1893,7 @@
 
   <div id="shortcutToast" role="status" aria-live="polite" aria-atomic="true"></div>
 
+  <script src="../../shared/reading-feature-shell.js"></script>
   <script>
     /***************
      * GLOBAL STATE
@@ -3851,6 +3854,46 @@
       document.addEventListener("mouseup", endDrag);
       document.addEventListener("touchend", endDrag);
       document.addEventListener("touchcancel", endDrag);
+    }
+
+
+
+    window.readingFeatureShellConfig = {
+      version: 1,
+      test: {
+        id: "cambridge-16-academic-reading-test-3",
+        title: "IELTS 16 Academic Reading Test 3",
+        totalQuestions: 40,
+        partRanges: {
+          1: { from: 1, to: 13 },
+          2: { from: 14, to: 26 },
+          3: { from: 27, to: 40 }
+        }
+      },
+      state: {
+        getMode: () => mode,
+        isTestSubmitted: () => testSubmitted,
+        getActivePart: () => activeSection
+      },
+      answers: {
+        getAnswerKeyDisplay: (questionNumber) =>
+          correctAnswerText[questionNumber] || ""
+      },
+      navigation: {
+        getQuestionTarget: (questionNumber) =>
+          getQuestionTarget(questionNumber)
+      }
+    };
+
+    function initReadingFeatureShell() {
+      if (!window.ReadingFeatureShell) return;
+      window.ReadingFeatureShell.init(window.readingFeatureShellConfig);
+    }
+
+    if (document.readyState === "loading") {
+      document.addEventListener("DOMContentLoaded", initReadingFeatureShell, { once: true });
+    } else {
+      initReadingFeatureShell();
     }
 
     // Ensure option buttons reflect the current theme and font selections on load.

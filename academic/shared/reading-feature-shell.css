@@ -1,0 +1,7 @@
+.reading-shell-root {
+  display: contents;
+}
+
+.reading-shell-hidden {
+  display: none !important;
+}
