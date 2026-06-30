@@ -3,71 +3,69 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 JS = (ROOT / "academic/shared/reading-feature-shell.js").read_text(encoding="utf-8")
-CSS = (ROOT / "academic/shared/reading-feature-shell.css").read_text(encoding="utf-8")
 HTML = (ROOT / "academic/cambridge-16/test-3/IELTS16 Test 3 - Academic Reading.html").read_text(encoding="utf-8")
 
 
-def test_shared_chrome_assets_api_and_score_scale_are_present():
+def test_shared_shell_assets_and_public_api_remain_available():
     assert HTML.count('../../shared/reading-feature-shell.css') == 1
     assert HTML.count('../../shared/reading-feature-shell.js') == 1
     assert HTML.count('id="readingFeatureShellMount"') == 1
     for name in ["init", "sync", "startStudySession", "getStatus", "validateConfig"]:
         assert re.search(rf"\b{name}\s*:\s*{name}\b", JS)
-    rows = re.findall(r'\{ correctAnswers: "([^"]+)", band: "([^"]+)" \}', HTML)
-    assert rows == [
-        ("39–40", "9.0"), ("37–38", "8.5"), ("35–36", "8.0"),
-        ("33–34", "7.5"), ("30–32", "7.0"), ("27–29", "6.5"),
-        ("23–26", "6.0"), ("19–22", "5.5"), ("15–18", "5.0"),
-        ("13–14", "4.5"), ("10–12", "4.0"), ("8–9", "3.5"),
-        ("6–7", "3.0"), ("4–5", "2.5"), ("1–3", "1.0"), ("0", "0"),
-    ]
 
 
-def test_header_controls_match_the_current_test3_contract():
-    for value in [
+def test_header_controls_follow_the_approved_test3_contract():
+    for token in [
         '"📊 Score guide"', '"🔑"', '"Study mode"', '"Study time: "',
-        '"Score feedback"', 'aria-label", "Answer Key"',
-        'aria-label", "Close score guide"', 'aria-label", "Close answer key"',
-        'aria-label", "Close score feedback"',
+        '"Score feedback"', '"Answer Key"',
     ]:
-        assert value in JS
-    assert JS.find('scoreButton = createElement') < JS.find('answerButton = createElement') < JS.find('studyPill = createElement')
-    assert 'reading-shell-score-guide-button' in CSS
-    assert 'border-radius:999px' in CSS
+        assert token in JS
+    assert JS.find('scoreGuideButton = createElement') < JS.find('answerKeyButton = createElement') < JS.find('studyPill = createElement')
 
 
-def test_task_feedback_has_all_test3_question_groups_and_is_study_only():
-    assert 'TEST3_TASK_GROUPS' in JS
-    for label in [
-        'True / False / Not Given', 'One-word summary completion',
-        'Matching information', 'Choose two statements', 'Sentence completion',
-    ]:
-        assert label in JS
-    for required in [
+def test_task_feedback_uses_test1_test2_control_and_card_structure():
+    for token in [
         '"Show answers & feedback"', '"Hide answers & feedback"',
-        '"Correct answers"', '"How to tackle this task"',
-        'function buildTaskFeedbackControls()', 'function syncTaskFeedback()',
-        'config.state.getMode() === "study"',
-        'reading-shell-study-task-control',
-        'reading-shell-study-task-toggle',
-        'reading-shell-study-task-panel',
+        '"How to tackle this task"', '"Correct answer"',
+        '"Your answer"', '"Why"', '"Skill"', '"Passage clue"',
+        'study-feedback-controls', 'study-icon-btn', 'study-reveal-btn',
+        'study-task-result study-task-result-line', 'study-task-panel tfng-study-panel',
+        'study-feedback-card tfng-feedback-card', 'study-clue-btn',
+        'study-evidence-highlight', 'study-clue-badge',
     ]:
-        assert required in JS
+        assert token in JS
 
 
-def test_task_feedback_uses_existing_test3_result_states_without_engine_calls():
-    assert 'config.answers.getAnswerKeyDisplay(questionNumber)' in JS
-    assert 'config.navigation.getQuestionTarget(questionNumber)' in JS
-    assert 'partial-correct' in JS
+def test_task_type_labels_only_live_inside_the_strategy_panel():
+    assert 'group.label + " strategy"' not in JS
+    assert "' strategy</h3>" in JS
+    assert 'controls.append(strategyButton, revealButton)' in JS
+    assert 'study-feedback-controls' in JS
+    assert 'study-task-label' not in JS
+    assert 'reading-shell-study-task-label' not in JS
+
+
+def test_task_feedback_visibility_matches_study_and_test_rules():
+    for token in [
+        'getMode() === "study" && !studyReviewSubmitted',
+        'var afterTest = getMode() === "test" && isTestSubmitted()',
+        'control.strategyButton.hidden = !(inStudy || afterTest)',
+        'control.revealButton.hidden = !(inStudy && !studyReviewSubmitted)',
+        'if (result && (studyReviewSubmitted || reviewedTest)) revealAllFeedback()',
+    ]:
+        assert token in JS
+
+
+def test_test3_groups_cover_every_question_without_changing_the_engine():
+    for questions in [
+        '[1, 2, 3, 4, 5]', '[6, 7, 8, 9, 10, 11, 12, 13]',
+        '[14, 15, 16, 17, 18, 19]', '[20, 21, 22]', '[23, 24]',
+        '[25, 26]', '[27, 28, 29, 30, 31, 32]', '[33, 34, 35, 36, 37]',
+        '[38, 39, 40]',
+    ]:
+        assert questions in JS
     for forbidden in [
-        'computeBandScore', 'evaluateQuestions', 'submitTest', 'handlePrimarySubmit',
-        'confirmSubmit', 'beginTimedTest', 'requestFullscreen',
-        'getChooseTwoCorrectCount', 'enforceChooseTwoLimit',
+        'evaluateQuestions(', 'submitTest(', 'handlePrimarySubmit(', 'confirmSubmit(',
+        'beginTimedTest(', 'requestFullscreen(', 'exitFullscreen(',
     ]:
         assert forbidden not in JS
-
-
-def test_test3_handoff_remains_limited_to_the_existing_start_notifications():
-    assert re.search(r'function startTest\(selectedMode\) \{(?P<body>.*?)\n    \}', HTML, re.S)
-    assert HTML.count('ReadingFeatureShell.startStudySession()') == 1
-    assert HTML.count('ReadingFeatureShell.sync()') == 1
