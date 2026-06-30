@@ -18,7 +18,7 @@ def test_shared_shell_files_exist():
 
 def test_shared_shell_exposes_expected_global_api():
     assert "global.ReadingFeatureShell" in SHELL_JS
-    for api_name in ["init", "getStatus", "validateConfig"]:
+    for api_name in ["init", "sync", "startStudySession", "getStatus", "validateConfig"]:
         assert re.search(rf"\b{api_name}\s*:\s*{api_name}\b", SHELL_JS)
 
 
@@ -32,6 +32,7 @@ def test_shell_uses_only_namespaced_future_dom_identifiers():
     assert all(name.startswith("reading-shell-") for name in flattened_classes)
 
     data_attrs = re.findall(r"data-[A-Za-z0-9_-]+", SHELL_JS + "\n" + SHELL_CSS)
+    assert data_attrs
     assert all(attr.startswith("data-reading-shell-") for attr in data_attrs)
 
 
@@ -56,12 +57,11 @@ def test_test3_loads_local_shell_assets():
 
 
 
-def test_test3_has_one_empty_hidden_mount():
+def test_test3_has_one_hidden_mount_in_top_right():
     assert TEST3_HTML.count("readingFeatureShellMount") == 1
-    assert re.search(
-        r'<div\s+id="readingFeatureShellMount"\s+aria-hidden="true"\s*>\s*</div>',
-        TEST3_HTML,
-    )
+    top_right = re.search(r'<div class="top-right">(?P<body>.*?)<div class="icon-group">', TEST3_HTML, re.S)
+    assert top_right
+    assert '<div id="readingFeatureShellMount" aria-hidden="true"></div>' in top_right.group("body")
 
 
 
@@ -79,6 +79,8 @@ def test_test3_has_single_required_config_object():
         "correctAnswerText[questionNumber]",
         "getQuestionTarget: (questionNumber)",
         "getQuestionTarget(questionNumber)",
+        "study: {",
+        "scoreGuide: {",
     ]:
         assert required in TEST3_HTML
 
@@ -90,7 +92,7 @@ def test_test3_initialises_feature_shell_once():
 
 
 
-def test_test3_has_no_visible_or_copied_shell_controls():
+def test_test3_has_no_copied_shell_control_identifiers():
     forbidden = [
         "scoreGuideButton",
         "answerKeyButton",
@@ -107,14 +109,19 @@ def test_test3_has_no_visible_or_copied_shell_controls():
 
 
 
-def test_shell_is_dormant_and_does_not_bind_interactive_listeners():
-    assert "addEventListener" not in SHELL_JS
-    assert "setInterval" not in SHELL_JS
-    assert "setTimeout" not in SHELL_JS
-    assert "querySelector" not in SHELL_JS
-    assert "createElement" not in SHELL_JS
-    assert ".innerHTML" not in SHELL_JS
-    assert ".append" not in SHELL_JS
-    assert "submitTest" not in SHELL_JS
-    assert "startTimer" not in SHELL_JS
-    assert "requestFullscreen" not in SHELL_JS
+def test_shell_does_not_touch_test_engine_boundaries():
+    forbidden = [
+        "submitTest",
+        "startTimer",
+        "pauseTimer",
+        "resumeTimer",
+        "requestFullscreen",
+        "computeBandScore",
+        "evaluateQuestions",
+        "handlePrimarySubmit",
+        "confirmSubmit",
+        "getChooseTwoCorrectCount",
+        "enforceChooseTwoLimit",
+    ]
+    for token in forbidden:
+        assert token not in SHELL_JS
