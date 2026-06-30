@@ -11,6 +11,7 @@
   var studyReviewSubmitted = false;
   var lastOpener = null;
   var resultObserver = null;
+  var reviewOverlayWasOpen = false;
   var taskControls = [];
   var revealedGroups = new Set();
 
@@ -69,15 +70,10 @@
     40: ["The model system was a mustard plant called Arabidopsis.", "Sentence completion", "using a mustard plant called Arabidopsis"]
   };
 
-  var VARIANTS = {
-    20: ["microorganisms", "micro-organisms"],
-    38: ["warm", "warm winter"],
-    40: ["mustard", "mustard plant", "mustard plants"]
-  };
+  var VARIANTS = { 20: ["microorganisms", "micro-organisms"], 38: ["warm", "warm winter"], 40: ["mustard", "mustard plant", "mustard plants"] };
   var CHOOSE_TWO = { 23: "B", 24: "C", 25: "A", 26: "C" };
 
   function isObject(value) { return Object.prototype.toString.call(value) === "[object Object]"; }
-  function isString(value) { return typeof value === "string" && Boolean(value.trim()); }
   function hasFunction(owner, name) { return Boolean(owner && typeof owner[name] === "function"); }
   function el(tag, className, text) { var node = global.document.createElement(tag); if (className) node.className = className; if (typeof text === "string") node.textContent = text; return node; }
   function html(value) { return String(value == null ? "" : value).replace(/[&<>"']/g, function (ch) { return ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[ch]; }); }
@@ -160,12 +156,7 @@
   function stopStudyTimer() { if (studyTimerId) { global.clearInterval(studyTimerId); studyTimerId = null; } }
   function startStudyTimer() { stopStudyTimer(); studyTimerId = global.setInterval(function () { if (!studySessionActive) return; studyElapsedSeconds += 1; updateTimer(); }, 1000); }
 
-  function closeDialog(backdrop, restore) {
-    if (!backdrop) return;
-    backdrop.hidden = true;
-    backdrop.setAttribute("aria-hidden", "true");
-    if (restore !== false && lastOpener && typeof lastOpener.focus === "function") lastOpener.focus();
-  }
+  function closeDialog(backdrop, restore) { if (!backdrop) return; backdrop.hidden = true; backdrop.setAttribute("aria-hidden", "true"); if (restore !== false && lastOpener && typeof lastOpener.focus === "function") lastOpener.focus(); }
   function openDialog(backdrop, closer) { lastOpener = global.document.activeElement; backdrop.hidden = false; backdrop.setAttribute("aria-hidden", "false"); closer.focus(); }
 
   function updateScoreGuide() {
@@ -193,8 +184,7 @@
 
   function navigateTo(questionNumber) {
     closeAnswerKey(false);
-    var part = sectionFor(questionNumber);
-    if (typeof global.switchSection === "function") global.switchSection(part);
+    if (typeof global.switchSection === "function") global.switchSection(sectionFor(questionNumber));
     global.setTimeout(function () {
       var target = config.navigation.getQuestionTarget(questionNumber);
       if (!target) return;
@@ -316,10 +306,7 @@
     return '<div class="reading-shell-study-strategy"><h3>' + html(group.label) + ' strategy</h3><p>' + html(group.purpose) + '</p><div class="reading-shell-study-strategy-grid">' + group.steps.map(function (step, index) { return '<div class="reading-shell-study-step"><span class="reading-shell-study-step-label"><span class="reading-shell-study-chip">' + (index + 1) + '</span>Step ' + (index + 1) + '</span><p>' + html(step) + '</p></div>'; }).join("") + '<div class="reading-shell-study-trap"><span class="reading-shell-study-step-label"><span class="reading-shell-study-chip">!</span>Common trap</span><p>' + html(group.trap) + '</p></div></div></div>';
   }
 
-  function removeQuestionCard(questionNumber) {
-    var card = global.document.getElementById("reading-shell-feedback-" + questionNumber);
-    if (card) card.remove();
-  }
+  function removeQuestionCard(questionNumber) { var card = global.document.getElementById("reading-shell-feedback-" + questionNumber); if (card) card.remove(); }
   function buildQuestionCard(questionNumber) {
     var host = cardHost(questionNumber);
     if (!host) return;
@@ -336,11 +323,7 @@
     card.querySelector(".reading-shell-study-clue-button").addEventListener("click", function () { showEvidence(questionNumber); });
   }
 
-  function clearEvidence(passage) {
-    passage.querySelectorAll(".reading-shell-evidence-highlight").forEach(function (mark) {
-      mark.replaceWith(global.document.createTextNode(mark.getAttribute("data-reading-shell-evidence-text") || ""));
-    });
-  }
+  function clearEvidence(passage) { passage.querySelectorAll(".reading-shell-evidence-highlight").forEach(function (mark) { mark.replaceWith(global.document.createTextNode(mark.getAttribute("data-reading-shell-evidence-text") || "")); }); }
   function showEvidence(questionNumber) {
     var detail = TEST3_DETAILS[questionNumber];
     if (!detail) return;
@@ -358,10 +341,7 @@
       } });
       var found = null;
       var node;
-      while ((node = walker.nextNode())) {
-        var index = node.nodeValue.indexOf(evidence);
-        if (index !== -1) { found = { node: node, index: index }; break; }
-      }
+      while ((node = walker.nextNode())) { var index = node.nodeValue.indexOf(evidence); if (index !== -1) { found = { node: node, index: index }; break; } }
       if (!found) return;
       var range = global.document.createRange();
       range.setStart(found.node, found.index);
@@ -385,6 +365,8 @@
     var score = rangeScore(group);
     control.result.textContent = scoreText(score) + " / " + group.questions.length + " correct";
     control.result.hidden = false;
+    control.revealButton.hidden = false;
+    control.revealButton.disabled = false;
     control.revealButton.textContent = "Hide answers & feedback";
     control.revealButton.setAttribute("aria-expanded", "true");
     group.questions.forEach(buildQuestionCard);
@@ -396,12 +378,14 @@
     revealedGroups.delete(group.id);
     if (control) {
       control.result.hidden = true;
+      control.revealButton.hidden = currentMode() !== "study";
+      control.revealButton.disabled = currentMode() !== "study";
       control.revealButton.textContent = "Show answers & feedback";
       control.revealButton.setAttribute("aria-expanded", "false");
     }
   }
   function toggleGroup(group) {
-    if (!(config.state.getMode() === "study" && !studyReviewSubmitted)) return;
+    if (currentMode() !== "study") return;
     if (revealedGroups.has(group.id)) hideGroup(group); else showGroup(group);
   }
   function revealAll() { TEST3_GROUPS.forEach(function (group) { if (!revealedGroups.has(group.id)) showGroup(group); }); }
@@ -412,8 +396,8 @@
     taskControls.forEach(function (control) {
       control.strategyButton.hidden = !(inStudy || afterTest);
       control.strategyButton.disabled = !(inStudy || afterTest);
-      control.revealButton.hidden = !(inStudy && !studyReviewSubmitted);
-      control.revealButton.disabled = !(inStudy && !studyReviewSubmitted);
+      control.revealButton.hidden = !inStudy;
+      control.revealButton.disabled = !inStudy;
       if (!(inStudy || afterTest)) {
         control.result.hidden = true;
         control.panel.hidden = true;
@@ -509,7 +493,9 @@
 
   function updateReviewFromOverlay() {
     var overlay = global.document.getElementById("resultsOverlay");
-    if (currentMode() === "study" && overlay && String(overlay.style.display || "") === "flex" && parsedResult()) studyReviewSubmitted = true;
+    var isOpen = Boolean(overlay && String(overlay.style.display || "") === "flex" && parsedResult());
+    if (currentMode() === "study" && isOpen && !reviewOverlayWasOpen) studyReviewSubmitted = true;
+    reviewOverlayWasOpen = isOpen;
   }
   function observeResults() {
     var overlay = global.document.getElementById("resultsOverlay");
@@ -545,6 +531,7 @@
     if (!initialized) return;
     studySessionActive = true;
     studyReviewSubmitted = false;
+    reviewOverlayWasOpen = false;
     studyElapsedSeconds = 0;
     TEST3_GROUPS.forEach(hideGroup);
     revealedGroups.clear();
@@ -562,6 +549,7 @@
     studyElapsedSeconds = 0;
     studySessionActive = false;
     studyReviewSubmitted = false;
+    reviewOverlayWasOpen = false;
     if (!buildUi()) { initialized = false; return { ok: false, error: lastError }; }
     observeResults();
     updateTimer();
