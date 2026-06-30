@@ -44,15 +44,17 @@ def test_task_type_labels_only_live_inside_the_strategy_panel():
     assert 'controls.append(strategyButton, revealButton)' in JS
 
 
-def test_task_feedback_visibility_matches_study_and_test_rules():
+def test_study_feedback_toggle_remains_available_after_revealing_a_group():
     for token in [
-        'config.state.getMode() === "study" && !studyReviewSubmitted',
-        'var afterTest = currentMode() === "test" && Boolean(config.state.isTestSubmitted())',
-        'control.strategyButton.hidden = !(inStudy || afterTest)',
-        'control.revealButton.hidden = !(inStudy && !studyReviewSubmitted)',
-        'if (result && (studyReviewSubmitted || completedTest)) revealAll()',
+        'if (currentMode() !== "study") return;',
+        'control.revealButton.hidden = !inStudy;',
+        'control.revealButton.disabled = !inStudy;',
+        'control.revealButton.textContent = "Hide answers & feedback"',
+        'control.revealButton.hidden = false;',
+        'control.revealButton.disabled = false;',
     ]:
         assert token in JS
+    assert 'control.revealButton.hidden = !(inStudy && !studyReviewSubmitted)' not in JS
 
 
 def test_blank_answers_are_never_treated_as_correct_in_study_feedback():
