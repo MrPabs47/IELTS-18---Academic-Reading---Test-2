@@ -4,6 +4,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 JS = (ROOT / "academic/shared/reading-feature-shell.js").read_text(encoding="utf-8")
 HTML = (ROOT / "academic/cambridge-16/test-3/IELTS16 Test 3 - Academic Reading.html").read_text(encoding="utf-8")
+CONTRACT = (ROOT / "academic/shared/READING_FEEDBACK_PARITY_CONTRACT.md").read_text(encoding="utf-8")
 
 
 def test_shared_shell_assets_and_public_api_remain_available():
@@ -63,6 +64,25 @@ def test_blank_answers_are_never_treated_as_correct_in_study_feedback():
     assert "if (!answer) return false" in JS
     assert '"Not answered · 0 points"' in JS
     assert "function rangeScore(group)" in JS
+
+
+def test_parity_contract_protects_the_rules_learned_from_test1_and_test2():
+    for rule in [
+        "Test 1 and Test 2 are the visual and behavioural references.",
+        "The shared layer must never create a second scoring implementation that can disagree with the test engine.",
+        "A later `Show answers & feedback` rebuilds the cards using the student's current answers.",
+        "A blank answer is always `Not answered · 0 points`.",
+        "Duplicate inline `Correct answer:` feedback must not appear alongside the cards.",
+        "Work on one question group at a time.",
+    ]:
+        assert rule in CONTRACT
+
+
+def test_next_group_data_is_present_for_part1_summary_completion():
+    assert 'id: "p1-summary"' in JS
+    assert 'questions: [6, 7, 8, 9, 10, 11, 12, 13]' in JS
+    for question_number in range(6, 14):
+        assert f"{question_number}: [" in JS
 
 
 def test_test3_groups_cover_every_question_without_engine_calls():
