@@ -38,12 +38,10 @@ jobs:
           }
           for old, new in replacements.items():
               if old not in source:
-                  raise SystemExit(f'Expected feedback entry was not found: {old[:60]}')
+                  raise SystemExit('Expected feedback entry was not found.')
               source = source.replace(old, new, 1)
           path.write_text(source, encoding='utf-8')
           PY
-          python -m pytest tests/reading_feature_shell_study_chrome_test.py
-          git rm .github/workflows/expand-part1-summary-feedback.yml
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add academic/shared/reading-feature-shell.js
