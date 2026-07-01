@@ -86,6 +86,28 @@ Status treatment:
 - Incorrect: red card and red status text.
 - Unanswered: neutral card and muted status text.
 
+## Feedback content quality
+
+Length is a guide, not the goal. The explanation must help a student see exactly why the answer is right and how to repeat the method next time.
+
+### Why
+
+- Normally aim for about **28–55 words**.
+- A very direct gap-fill answer may be shorter, but it must still identify the exact passage wording and explain the relevant grammar, paraphrase, contrast, word limit or distractor where useful.
+- Avoid bare statements such as `The answer is in paragraph B.`
+- Prefer a complete explanation: what the question needs, what the passage says, and why that wording produces the answer.
+
+### Skill
+
+- Normally use a specific, actionable phrase of about **6–14 words**.
+- Name the reading action and the feature that matters, for example: `Using comparison grammar to select the exact word form`.
+- Avoid generic labels such as `Reading for detail` or `Locating an exact word` unless they are expanded into a more precise skill.
+
+### Content review rule
+
+- Improve explanation and Skill text one approved question group at a time.
+- Before merge, complete a final content pass across every Test 3 group so earlier approved UI groups also reach the same explanation quality.
+
 ## Passage clue contract
 
 - A clue button marks only the configured evidence text in the relevant passage.
