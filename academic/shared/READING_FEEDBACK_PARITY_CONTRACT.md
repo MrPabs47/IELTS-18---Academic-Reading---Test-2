@@ -103,6 +103,15 @@ Length is a guide, not the goal. The explanation must help a student see exactly
 - Name the reading action and the feature that matters, for example: `Using comparison grammar to select the exact word form`.
 - Avoid generic labels such as `Reading for detail` or `Locating an exact word` unless they are expanded into a more precise skill.
 
+### Whole-test content audit
+
+- Do a content audit of **all questions** before treating any feedback set as generally ready.
+- Separate approval of interaction/visual behaviour from approval of feedback content. A group can be interaction-approved while its Why, Skill, or Passage clue content remains under review.
+- Identify every explanation that is too short, too generic, or does not teach a repeatable reading action.
+- Identify every Skill label that does not name a specific action and textual feature.
+- Identify every Passage clue that is too short, too broad, or does not make the relationship between the question and passage clear.
+- Record the remaining content work by question group, then revise and browser-check one group at a time.
+
 ### Content review rule
 
 - Improve explanation and Skill text one approved question group at a time.
@@ -127,8 +136,9 @@ Length is a guide, not the goal. The explanation must help a student see exactly
 
 ## Delivery workflow
 
-1. Work on one question group at a time.
-2. Compare the group against Test 1 and Test 2 before adding the next group.
-3. Test these states for every group: blank, correct, incorrect, hide/show refresh, full Study check, Test Mode before submission, Test Mode after submission.
-4. Keep the PR as a draft until the tested group matches the contract.
-5. Do not add new feedback controls, permanent task-type headers, alternative card layouts or new scoring paths unless Pablo explicitly requests them.
+1. Complete the whole-test content audit before claiming the feedback is generally ready.
+2. Work on one question group at a time.
+3. Compare the group against Test 1 and Test 2 before adding the next group.
+4. Test these states for every group: blank, correct, incorrect, hide/show refresh, full Study check, Test Mode before submission, Test Mode after submission.
+5. Keep the PR as a draft until the tested group matches the contract.
+6. Do not add new feedback controls, permanent task-type headers, alternative card layouts or new scoring paths unless Pablo explicitly requests them.
