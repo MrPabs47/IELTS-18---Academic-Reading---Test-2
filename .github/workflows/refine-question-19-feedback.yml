@@ -1,0 +1,41 @@
+name: Refine Question 19 Feedback
+
+on:
+  pull_request:
+    branches:
+      - main
+    paths:
+      - .github/workflows/refine-question-19-feedback.yml
+
+permissions:
+  contents: write
+
+jobs:
+  patch:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: feature/test3-study-task-feedback
+          persist-credentials: true
+      - name: Improve Question 19 explanation and evidence context
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+
+          path = Path('academic/shared/reading-feature-shell.js')
+          source = path.read_text(encoding='utf-8')
+          old = '''19: ["The question refers to researchers working quickly because their evidence is disappearing. Paragraph B says glacial archaeologists need to ‘race the clock’ as the ice melts. This figurative expression matches the urgency in the statement, so the answer is B.", "Recognising a figurative phrase and its paraphrased meaning", "glacial archaeologists need to race the clock"]'''
+          new = '''19: ["The statement refers to pressure to work quickly. Paragraph B explains that climate change is shrinking ice cover and that glacial archaeologists need to ‘race the clock’ to find, preserve, and study newly revealed artefacts. This phrase directly expresses the time pressure, so the answer is B.", "Recognising time-pressure language and matching it to a paraphrased statement", "With climate change shrinking ice cover around the world, glacial archaeologists need to race the clock to find newly revealed artefacts, preserve them, and study them"]'''
+          if old not in source:
+              raise SystemExit('Expected Question 19 feedback entry was not found.')
+          path.write_text(source.replace(old, new, 1), encoding='utf-8')
+          PY
+          node --check academic/shared/reading-feature-shell.js
+          git rm .github/workflows/refine-question-19-feedback.yml
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add academic/shared/reading-feature-shell.js
+          git commit -m "Improve Test 3 Question 19 feedback context"
+          git push
