@@ -1,0 +1,46 @@
+name: Expand Part 2 Summary Feedback
+
+on:
+  pull_request:
+    branches:
+      - main
+    paths:
+      - .github/workflows/expand-part2-summary-feedback.yml
+
+permissions:
+  contents: write
+
+jobs:
+  patch:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: feature/test3-study-task-feedback
+          persist-credentials: true
+      - name: Improve Questions 20 to 22 explanations skills and passage clues
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+
+          path = Path('academic/shared/reading-feature-shell.js')
+          source = path.read_text(encoding='utf-8')
+          replacements = {
+              '''20: ["Organic materials decay unless protected from microorganisms.", "Using an exact noun", "protected from the microorganisms that cause decay"]''': '''20: ["The phrase ‘protection against ___’ needs the cause of decay. Paragraph B says that organic materials do not last unless they are protected from ‘the microorganisms that cause decay’. Microorganisms is the exact plural noun from the passage and it fits the ONE WORD ONLY instruction.", "Using surrounding grammar to locate a cause-of-decay noun", "This is because unless they’re protected from the microorganisms that cause decay, they tend not to last long"]''',
+              '''21: ["Reindeer gathered on the ice patches in late summer.", "Locating a key noun", "Reindeer once congregated on these ice patches in the later summer months"]''': '''21: ["The summary says that animals gathered in the mountains during summer. Paragraph C states that ‘Reindeer once congregated on these ice patches in the later summer months’. Congregated is paraphrased as gathered, so reindeer is the exact one-word answer.", "Matching a paraphrased verb and time reference to the exact noun", "Reindeer once congregated on these ice patches in the later summer months to escape biting insects"]''',
+              '''22: ["The reindeer gathered there to escape biting insects.", "Using an exact noun", "to escape biting insects"]''': '''22: ["The summary says the animals went to the ice patches to avoid being attacked. The passage explains that they did this ‘to escape biting insects’. Insects is the required plural noun after ‘attacked by’; biting only describes the insects and cannot complete the gap.", "Using grammar to distinguish an adjective from the required noun", "Reindeer once congregated on these ice patches in the later summer months to escape biting insects"]''',
+          }
+          for old, new in replacements.items():
+              if old not in source:
+                  raise SystemExit('Expected Questions 20 to 22 entry was not found.')
+              source = source.replace(old, new, 1)
+          path.write_text(source, encoding='utf-8')
+          PY
+          node --check academic/shared/reading-feature-shell.js
+          git rm .github/workflows/expand-part2-summary-feedback.yml
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add academic/shared/reading-feature-shell.js
+          git commit -m "Expand Test 3 feedback for Questions 20 to 22"
+          git push
