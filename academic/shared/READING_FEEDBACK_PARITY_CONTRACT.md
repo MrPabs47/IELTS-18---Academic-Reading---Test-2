@@ -115,6 +115,16 @@ Length is a guide, not the goal. The explanation must help a student see exactly
 - The numbered badge returns the student to the relevant question or feedback card.
 - Existing group evidence is preserved when another clue is focused.
 
+### Passage clue quality
+
+- The clue must contain enough continuous wording to show **why** the answer is correct, not merely repeat the answer word.
+- Normally highlight a meaningful clause or sentence of about **10–30 words**. A shorter phrase is acceptable only when it is fully self-explanatory; a full paragraph is normally too broad.
+- For matching-information questions, the highlight should include the specific detail that matches the statement, not just a topic word from the paragraph.
+- For completion tasks, the highlight should include enough grammar around the answer to show why the exact word form and word limit fit.
+- For True / False / Not Given and choose-two tasks, the highlight should include the wording that proves agreement, contradiction, missing information, or the writer’s precise claim.
+- Evidence must be a contiguous, visible excerpt from the passage. It must remain legible after highlighting and must not be cut so tightly that the relationship becomes unclear.
+- Before approving a group, test the clue visually: it scrolls to the right passage location, the highlighted span is understandable in context, and the numbered badge returns to the relevant question.
+
 ## Delivery workflow
 
 1. Work on one question group at a time.
