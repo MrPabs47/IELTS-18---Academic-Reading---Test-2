@@ -1,9 +1,9 @@
 name: Expand Part 1 Summary Feedback
 
 on:
-  push:
+  pull_request:
     branches:
-      - feature/test3-study-task-feedback
+      - main
     paths:
       - .github/workflows/expand-part1-summary-feedback.yml
 
