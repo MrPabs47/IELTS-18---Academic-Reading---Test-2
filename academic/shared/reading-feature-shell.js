@@ -93,5 +93,5 @@
     }, true);
   }
 
-  document.write('<script src="' + escapeAttribute(coreSource) + '"><\\/script><script>('+ patchSharedEvidenceBadges.toString() +')();<\\/script>');
+  document.write('<script src="' + escapeAttribute(coreSource) + '"></script><script>(' + patchSharedEvidenceBadges.toString() + ')();</script>');
 }());
