@@ -2,7 +2,9 @@ import re
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
-JS = (ROOT / "academic/shared/reading-feature-shell.js").read_text(encoding="utf-8")
+LOADER_JS = (ROOT / "academic/shared/reading-feature-shell.js").read_text(encoding="utf-8")
+CORE_JS = (ROOT / "academic/shared/reading-feature-shell-core.js").read_text(encoding="utf-8")
+JS = CORE_JS + "\n" + LOADER_JS
 HTML = (ROOT / "academic/cambridge-16/test-3/IELTS16 Test 3 - Academic Reading.html").read_text(encoding="utf-8")
 CONTRACT = (ROOT / "academic/shared/READING_FEEDBACK_PARITY_CONTRACT.md").read_text(encoding="utf-8")
 
@@ -11,6 +13,7 @@ def test_shared_shell_assets_and_public_api_remain_available():
     assert HTML.count('../../shared/reading-feature-shell.css') == 1
     assert HTML.count('../../shared/reading-feature-shell.js') == 1
     assert HTML.count('id="readingFeatureShellMount"') == 1
+    assert 'reading-feature-shell-core.js' in LOADER_JS
     for name in ["init", "sync", "startStudySession", "getStatus", "validateConfig"]:
         assert re.search(rf"\b{name}\s*:\s*{name}\b", JS)
 
@@ -64,6 +67,19 @@ def test_blank_answers_are_never_treated_as_correct_in_study_feedback():
     assert "if (!answer) return false" in JS
     assert '"Not answered · 0 points"' in JS
     assert "function rangeScore(group)" in JS
+
+
+def test_shared_evidence_keeps_every_question_badge_for_the_same_clue():
+    for token in [
+        'snapshotVisibleEvidence',
+        'data-reading-shell-clue-question',
+        'entry.evidence && entry.evidence === evidence',
+        'entry.questions.forEach(function (question) { ensureBadge(currentMark, question); })',
+        'document.addEventListener("click"',
+        '}, true);',
+    ]:
+        assert token in LOADER_JS
+    assert 'clearEvidence(passage);' in CORE_JS
 
 
 def test_parity_contract_protects_the_rules_learned_from_test1_and_test2():
