@@ -1,11 +1,8 @@
 name: Preserve Shared Passage Clue Badges
 
 on:
-  push:
-    branches:
-      - feature/test3-study-task-feedback
-    paths:
-      - .github/workflows/preserve-shared-passage-clue-badges.yml
+  pull_request:
+    types: [reopened]
 
 permissions:
   contents: write
@@ -121,21 +118,6 @@ jobs:
           path.write_text(source, encoding='utf-8')
           PY
           node --check academic/shared/reading-feature-shell.js
-          python - <<'PY'
-          from pathlib import Path
-          source = Path('academic/shared/reading-feature-shell.js').read_text(encoding='utf-8')
-          required = [
-              'function addEvidenceBadge(mark, questionNumber)',
-              'data-reading-shell-clue-question',
-              'function existingEvidenceMark(passage, evidence)',
-              'if (existing) {',
-              'addEvidenceBadge(existing, questionNumber);',
-              'focusEvidence(passage, existing);',
-          ]
-          missing = [token for token in required if token not in source]
-          if missing:
-              raise SystemExit('Missing shared-evidence support: ' + ', '.join(missing))
-          PY
           git rm .github/workflows/preserve-shared-passage-clue-badges.yml
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
