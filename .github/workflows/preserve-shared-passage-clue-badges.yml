@@ -1,9 +1,9 @@
 name: Preserve Shared Passage Clue Badges
 
 on:
-  pull_request:
+  push:
     branches:
-      - main
+      - feature/test3-study-task-feedback
     paths:
       - .github/workflows/preserve-shared-passage-clue-badges.yml
 
