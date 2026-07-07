@@ -1,0 +1,144 @@
+name: Preserve Shared Passage Clue Badges
+
+on:
+  pull_request:
+    branches:
+      - main
+    paths:
+      - .github/workflows/preserve-shared-passage-clue-badges.yml
+
+permissions:
+  contents: write
+
+jobs:
+  patch:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: feature/test3-study-task-feedback
+          persist-credentials: true
+      - name: Keep all question badges on shared evidence
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+
+          path = Path('academic/shared/reading-feature-shell.js')
+          source = path.read_text(encoding='utf-8')
+          old = '''  function clearEvidence(passage) { passage.querySelectorAll(".reading-shell-evidence-highlight").forEach(function (mark) { mark.replaceWith(global.document.createTextNode(mark.getAttribute("data-reading-shell-evidence-text") || "")); }); }
+  function showEvidence(questionNumber) {
+    var detail = TEST3_DETAILS[questionNumber];
+    if (!detail) return;
+    var part = sectionFor(questionNumber);
+    if (typeof global.switchSection === "function") global.switchSection(part);
+    global.setTimeout(function () {
+      var passage = global.document.querySelector('.passage-section[data-section="' + part + '"]');
+      if (!passage) return;
+      clearEvidence(passage);
+      var evidence = detail[2];
+      var walker = global.document.createTreeWalker(passage, global.NodeFilter.SHOW_TEXT, { acceptNode: function (node) {
+        if (!node.nodeValue || !node.nodeValue.trim()) return global.NodeFilter.FILTER_REJECT;
+        if (node.parentElement && node.parentElement.closest("mark,button,input,select,textarea")) return global.NodeFilter.FILTER_REJECT;
+        return global.NodeFilter.FILTER_ACCEPT;
+      } });
+      var found = null;
+      var node;
+      while ((node = walker.nextNode())) { var index = node.nodeValue.indexOf(evidence); if (index !== -1) { found = { node: node, index: index }; break; } }
+      if (!found) return;
+      var range = global.document.createRange();
+      range.setStart(found.node, found.index);
+      range.setEnd(found.node, found.index + evidence.length);
+      var mark = el("mark", "reading-shell-evidence-highlight");
+      mark.setAttribute("data-reading-shell-evidence-text", evidence);
+      try { range.surroundContents(mark); } catch (error) { return; }
+      var badge = el("button", "reading-shell-clue-badge", String(questionNumber));
+      badge.type = "button";
+      badge.setAttribute("aria-label", "Return to question " + questionNumber);
+      badge.addEventListener("click", function (event) { event.stopPropagation(); navigateTo(questionNumber); });
+      mark.append(badge);
+      mark.classList.add("reading-shell-evidence-focus");
+      mark.scrollIntoView({ behavior: "smooth", block: "center" });
+    }, 90);
+  }'''
+          new = '''  function clearEvidence(passage) { passage.querySelectorAll(".reading-shell-evidence-highlight").forEach(function (mark) { mark.replaceWith(global.document.createTextNode(mark.getAttribute("data-reading-shell-evidence-text") || "")); }); }
+  function addEvidenceBadge(mark, questionNumber) {
+    if (mark.querySelector('[data-reading-shell-clue-question="' + questionNumber + '"]')) return;
+    var badge = el("button", "reading-shell-clue-badge", String(questionNumber));
+    badge.type = "button";
+    badge.setAttribute("data-reading-shell-clue-question", String(questionNumber));
+    badge.setAttribute("aria-label", "Return to question " + questionNumber);
+    badge.addEventListener("click", function (event) { event.stopPropagation(); navigateTo(questionNumber); });
+    mark.append(badge);
+  }
+  function focusEvidence(passage, mark) {
+    passage.querySelectorAll(".reading-shell-evidence-focus").forEach(function (item) { item.classList.remove("reading-shell-evidence-focus"); });
+    mark.classList.add("reading-shell-evidence-focus");
+    mark.scrollIntoView({ behavior: "smooth", block: "center" });
+  }
+  function existingEvidenceMark(passage, evidence) {
+    return Array.prototype.find.call(passage.querySelectorAll(".reading-shell-evidence-highlight"), function (mark) {
+      return mark.getAttribute("data-reading-shell-evidence-text") === evidence;
+    });
+  }
+  function showEvidence(questionNumber) {
+    var detail = TEST3_DETAILS[questionNumber];
+    if (!detail) return;
+    var part = sectionFor(questionNumber);
+    if (typeof global.switchSection === "function") global.switchSection(part);
+    global.setTimeout(function () {
+      var passage = global.document.querySelector('.passage-section[data-section="' + part + '"]');
+      if (!passage) return;
+      var evidence = detail[2];
+      var existing = existingEvidenceMark(passage, evidence);
+      if (existing) {
+        addEvidenceBadge(existing, questionNumber);
+        focusEvidence(passage, existing);
+        return;
+      }
+      var walker = global.document.createTreeWalker(passage, global.NodeFilter.SHOW_TEXT, { acceptNode: function (node) {
+        if (!node.nodeValue || !node.nodeValue.trim()) return global.NodeFilter.FILTER_REJECT;
+        if (node.parentElement && node.parentElement.closest("mark,button,input,select,textarea")) return global.NodeFilter.FILTER_REJECT;
+        return global.NodeFilter.FILTER_ACCEPT;
+      } });
+      var found = null;
+      var node;
+      while ((node = walker.nextNode())) { var index = node.nodeValue.indexOf(evidence); if (index !== -1) { found = { node: node, index: index }; break; } }
+      if (!found) return;
+      var range = global.document.createRange();
+      range.setStart(found.node, found.index);
+      range.setEnd(found.node, found.index + evidence.length);
+      var mark = el("mark", "reading-shell-evidence-highlight");
+      mark.setAttribute("data-reading-shell-evidence-text", evidence);
+      try { range.surroundContents(mark); } catch (error) { return; }
+      addEvidenceBadge(mark, questionNumber);
+      focusEvidence(passage, mark);
+    }, 90);
+  }'''
+          if old not in source:
+              raise SystemExit('Expected passage clue implementation was not found.')
+          source = source.replace(old, new, 1)
+          path.write_text(source, encoding='utf-8')
+          PY
+          node --check academic/shared/reading-feature-shell.js
+          python - <<'PY'
+          from pathlib import Path
+          source = Path('academic/shared/reading-feature-shell.js').read_text(encoding='utf-8')
+          required = [
+              'function addEvidenceBadge(mark, questionNumber)',
+              'data-reading-shell-clue-question',
+              'function existingEvidenceMark(passage, evidence)',
+              'if (existing) {',
+              'addEvidenceBadge(existing, questionNumber);',
+              'focusEvidence(passage, existing);',
+          ]
+          missing = [token for token in required if token not in source]
+          if missing:
+              raise SystemExit('Missing shared-evidence support: ' + ', '.join(missing))
+          PY
+          git rm .github/workflows/preserve-shared-passage-clue-badges.yml
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add academic/shared/reading-feature-shell.js
+          git commit -m "Preserve shared passage clue badges"
+          git push
