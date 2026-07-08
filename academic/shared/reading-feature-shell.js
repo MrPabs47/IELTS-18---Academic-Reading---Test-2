@@ -93,6 +93,60 @@
     }, true);
   }
 
+  function patchChooseTwoFeedbackText() {
+    var patches = {
+      23: {
+        oldWhy: "The writer says hunters continued going into the mountains even during extreme cold.",
+        why: "The question asks which statement the writer clearly makes about Barrett’s team’s discoveries. Option B is supported because Paragraph F says hunters ‘kept regularly venturing into the mountains even when the climate turned cold’. This matches the idea of entering the mountains during periods of extreme cold.",
+        oldSkill: "Checking writer claims",
+        skill: "Matching an option to the writer’s directly stated claim"
+      },
+      24: {
+        oldWhy: "The team found lots of artefacts in some periods and few or none in others.",
+        why: "Option C is supported because Paragraph E says some periods produced many artefacts, while other periods had ‘few or no signs of activity’. This matches the idea that the number of artefacts from certain time periods was relatively low.",
+        oldSkill: "Checking writer claims",
+        skill: "Comparing option wording with contrast in the passage"
+      }
+    };
+
+    function replaceText(root, from, to) {
+      if (!root || !from || from === to) return false;
+      var changed = false;
+      var walker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT, null);
+      var node;
+      while ((node = walker.nextNode())) {
+        if (node.nodeValue && node.nodeValue.indexOf(from) !== -1) {
+          node.nodeValue = node.nodeValue.split(from).join(to);
+          changed = true;
+        }
+      }
+      return changed;
+    }
+
+    function patchCard(questionNumber) {
+      var card = document.getElementById("reading-shell-feedback-" + questionNumber);
+      var patch = patches[questionNumber];
+      if (!card || !patch) return;
+      replaceText(card, patch.oldWhy, patch.why);
+      replaceText(card, patch.oldSkill, patch.skill);
+    }
+
+    function patchAll() {
+      patchCard(23);
+      patchCard(24);
+    }
+
+    document.addEventListener("DOMContentLoaded", patchAll, { once: true });
+    document.addEventListener("click", function () {
+      window.setTimeout(patchAll, 0);
+      window.setTimeout(patchAll, 80);
+    }, true);
+    [0, 120, 500, 1200].forEach(function (delay) { window.setTimeout(patchAll, delay); });
+    if (window.MutationObserver && document.body) {
+      new MutationObserver(patchAll).observe(document.body, { childList: true, subtree: true });
+    }
+  }
+
   function patchTestModeStudyControls() {
     function mode() {
       var config = window.readingFeatureShellConfig;
@@ -126,5 +180,5 @@
     }
   }
 
-  document.write('<script src="' + escapeAttribute(coreSource) + '"></script><script>(' + patchSharedEvidenceBadges.toString() + ')();(' + patchTestModeStudyControls.toString() + ')();</script>');
+  document.write('<script src="' + escapeAttribute(coreSource) + '"></script><script>(' + patchSharedEvidenceBadges.toString() + ')();(' + patchChooseTwoFeedbackText.toString() + ')();(' + patchTestModeStudyControls.toString() + ')();</script>');
 }());
