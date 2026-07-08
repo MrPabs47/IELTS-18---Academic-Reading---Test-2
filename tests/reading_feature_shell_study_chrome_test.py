@@ -82,6 +82,20 @@ def test_shared_evidence_keeps_every_question_badge_for_the_same_clue():
     assert 'clearEvidence(passage);' in CORE_JS
 
 
+def test_study_controls_are_forced_hidden_in_test_mode():
+    for token in [
+        'function patchTestModeStudyControls()',
+        'config.state.getMode()',
+        'if (mode() === "study") return;',
+        'controls.style.display = "none";',
+        'button.hidden = true;',
+        'button.disabled = true;',
+        'panel.hidden = true;',
+        'new MutationObserver(scheduleSync)',
+    ]:
+        assert token in LOADER_JS
+
+
 def test_parity_contract_protects_the_rules_learned_from_test1_and_test2():
     for rule in [
         "Test 1 and Test 2 are the visual and behavioural references.",
