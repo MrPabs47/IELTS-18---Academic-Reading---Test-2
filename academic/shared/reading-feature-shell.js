@@ -93,5 +93,38 @@
     }, true);
   }
 
-  document.write('<script src="' + escapeAttribute(coreSource) + '"></script><script>(' + patchSharedEvidenceBadges.toString() + ')();</script>');
+  function patchTestModeStudyControls() {
+    function mode() {
+      var config = window.readingFeatureShellConfig;
+      return config && config.state && typeof config.state.getMode === "function" ? config.state.getMode() : "";
+    }
+
+    function syncTestModeControls() {
+      if (mode() === "study") return;
+      document.querySelectorAll(".reading-shell-study-controls").forEach(function (controls) {
+        controls.style.display = "none";
+      });
+      document.querySelectorAll(".reading-shell-study-icon-button,.reading-shell-study-reveal-button").forEach(function (button) {
+        button.hidden = true;
+        button.disabled = true;
+        button.setAttribute("aria-expanded", "false");
+      });
+      document.querySelectorAll(".reading-shell-study-panel").forEach(function (panel) {
+        panel.hidden = true;
+      });
+    }
+
+    function scheduleSync() {
+      window.setTimeout(syncTestModeControls, 0);
+    }
+
+    document.addEventListener("DOMContentLoaded", scheduleSync, { once: true });
+    document.addEventListener("click", scheduleSync, true);
+    [0, 120, 500, 1200].forEach(function (delay) { window.setTimeout(syncTestModeControls, delay); });
+    if (window.MutationObserver && document.body) {
+      new MutationObserver(scheduleSync).observe(document.body, { attributes: true, childList: true, subtree: true, attributeFilter: ["hidden", "style"] });
+    }
+  }
+
+  document.write('<script src="' + escapeAttribute(coreSource) + '"></script><script>(' + patchSharedEvidenceBadges.toString() + ')();(' + patchTestModeStudyControls.toString() + ')();</script>');
 }());
