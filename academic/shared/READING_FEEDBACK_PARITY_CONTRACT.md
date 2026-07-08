@@ -67,7 +67,7 @@ The shared layer must never create a second scoring implementation that can disa
 - The page-owned scoring engine remains the source of the final result.
 - Review chrome becomes available only after the standard result flow.
 - Full review cards are visible.
-- Study Mode pill and Study timer remain hidden.
+- Study Mode pill, Study timer, strategy controls and reveal controls remain hidden.
 
 ## Feedback-card contract
 
