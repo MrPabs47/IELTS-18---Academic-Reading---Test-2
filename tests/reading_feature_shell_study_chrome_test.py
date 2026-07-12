@@ -30,8 +30,9 @@ def test_header_controls_follow_the_approved_test3_contract():
 def test_task_feedback_uses_test1_test2_control_and_card_structure():
     for token in [
         '"Show answers & feedback"', '"Hide answers & feedback"',
-        '"How to tackle this task"', '"Correct answer"',
-        '"Your answer"', '"Why"', '"Skill"', '"Passage clue"',
+        '"How to tackle this task"', '<dt>Your answer</dt>',
+        '<dt>Correct answer</dt>', '<dt>Why</dt>', '<dt>Skill</dt>',
+        'title="Passage clue"',
         'reading-shell-study-controls', 'reading-shell-study-icon-button',
         'reading-shell-study-reveal-button', 'reading-shell-study-result',
         'reading-shell-study-panel', 'reading-shell-study-feedback-card',
@@ -86,7 +87,9 @@ def test_study_controls_are_forced_hidden_in_test_mode():
     for token in [
         'function patchTestModeStudyControls()',
         'config.state.getMode()',
-        'if (mode() === "study") return;',
+        'if (mode() === "study") {',
+        'controls.style.display = "";',
+        'window.ReadingFeatureShell && typeof window.ReadingFeatureShell.sync === "function"',
         'controls.style.display = "none";',
         'button.hidden = true;',
         'button.disabled = true;',
@@ -94,6 +97,8 @@ def test_study_controls_are_forced_hidden_in_test_mode():
         'new MutationObserver(scheduleSync)',
     ]:
         assert token in LOADER_JS
+    assert LOADER_JS.find('controls.style.display = "";') < LOADER_JS.find('controls.style.display = "none";')
+    assert LOADER_JS.find('window.ReadingFeatureShell && typeof window.ReadingFeatureShell.sync === "function"') < LOADER_JS.find('controls.style.display = "none";')
 
 
 def test_parity_contract_protects_the_rules_learned_from_test1_and_test2():

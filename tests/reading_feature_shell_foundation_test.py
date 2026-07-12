@@ -3,10 +3,12 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 SHELL_JS_PATH = ROOT / "academic/shared/reading-feature-shell.js"
+SHELL_CORE_JS_PATH = ROOT / "academic/shared/reading-feature-shell-core.js"
 SHELL_CSS_PATH = ROOT / "academic/shared/reading-feature-shell.css"
 TEST3_PATH = ROOT / "academic/cambridge-16/test-3/IELTS16 Test 3 - Academic Reading.html"
 
 SHELL_JS = SHELL_JS_PATH.read_text(encoding="utf-8")
+SHELL_CORE_JS = SHELL_CORE_JS_PATH.read_text(encoding="utf-8")
 SHELL_CSS = SHELL_CSS_PATH.read_text(encoding="utf-8")
 TEST3_HTML = TEST3_PATH.read_text(encoding="utf-8")
 
@@ -17,9 +19,10 @@ def test_shared_shell_files_exist():
 
 
 def test_shared_shell_exposes_expected_global_api():
-    assert "global.ReadingFeatureShell" in SHELL_JS
+    assert "reading-feature-shell-core.js" in SHELL_JS
+    assert "global.ReadingFeatureShell" in SHELL_CORE_JS
     for api_name in ["init", "sync", "startStudySession", "getStatus", "validateConfig"]:
-        assert re.search(rf"\b{api_name}\s*:\s*{api_name}\b", SHELL_JS)
+        assert re.search(rf"\b{api_name}\s*:\s*{api_name}\b", SHELL_CORE_JS)
 
 
 def test_shell_uses_only_namespaced_future_dom_identifiers():
@@ -33,7 +36,8 @@ def test_shell_uses_only_namespaced_future_dom_identifiers():
 
     data_attrs = re.findall(r"data-[A-Za-z0-9_-]+", SHELL_JS + "\n" + SHELL_CSS)
     assert data_attrs
-    assert all(attr.startswith("data-reading-shell-") for attr in data_attrs)
+    assert "data-q" in data_attrs
+    assert all(attr == "data-q" or attr.startswith("data-reading-shell-") for attr in data_attrs)
 
 
 
