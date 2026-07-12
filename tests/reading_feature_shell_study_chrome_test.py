@@ -62,6 +62,25 @@ def test_study_feedback_toggle_remains_available_after_revealing_a_group():
     assert 'control.revealButton.hidden = !(inStudy && !studyReviewSubmitted)' not in JS
 
 
+def test_full_study_review_reveals_once_without_overriding_later_group_hides():
+    assert 'var studyReviewJustSubmitted = currentMode() === "study" && isOpen && !reviewOverlayWasOpen;' in CORE_JS
+    assert 'return studyReviewJustSubmitted;' in CORE_JS
+    assert 'var studyReviewJustSubmitted = updateReviewFromOverlay();' in CORE_JS
+    assert 'if (result && (studyReviewJustSubmitted || completedTest)) revealAll();' in CORE_JS
+    assert 'if (result && (studyReviewSubmitted || completedTest)) revealAll();' not in CORE_JS
+
+
+def test_legacy_inline_answers_are_suppressed_for_every_submitted_review():
+    assert "global.document.querySelectorAll('.correct-answer-text[id^=\"ca-\"]')" in CORE_JS
+    assert 'var hideLegacyAnswers = fullReviewAvailable();' in CORE_JS
+    assert 'answer.hidden = hideLegacyAnswers;' in CORE_JS
+    assert 'syncLegacyInlineAnswers();' in CORE_JS
+    assert '.correct-answer-text[hidden]{display:none!important}' in CORE_JS
+    helper = CORE_JS.split('function syncLegacyInlineAnswers()', 1)[1].split('function buildTaskFeedbackControls()', 1)[0]
+    assert '.textContent =' not in helper
+    assert '.remove()' not in helper
+
+
 def test_blank_answers_are_never_treated_as_correct_in_study_feedback():
     assert "input[type=\"radio\"][name=\"q" in JS
     assert "input[type=\"text\"][name=\"q" in JS
