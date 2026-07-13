@@ -106,7 +106,6 @@ def test_test3_has_no_copied_shell_control_identifiers():
         "scoreGuideOverlay",
         "answerKeyOverlay",
         "scoreFeedbackOverlay",
-        "passageClueToolbar",
     ]
     for token in forbidden:
         assert token not in TEST3_HTML

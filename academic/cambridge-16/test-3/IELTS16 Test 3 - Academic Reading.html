@@ -1470,7 +1470,10 @@
         <!-- Passage pane -->
         <div class="pane" id="passagePane">
           <div class="pane-header" id="passageHeader">
-            Part 1 <span>Read the text and answer questions 1–13.</span>
+            <div class="passage-header-line" id="passageHeaderLine">Part 1 <span>Read the text and answer questions 1–13.</span></div>
+            <div class="passage-clue-toolbar" id="passageClueToolbar" aria-label="Passage clue controls" hidden>
+              <button type="button" id="passageClueToggle" class="reading-shell-passage-clue-toggle" aria-pressed="false" hidden disabled>Show all passage clues</button>
+            </div>
           </div>
           <div class="pane-content" id="passageContent">
             <!-- Section 1 passage -->
@@ -2707,16 +2710,16 @@
           " answered)";
       }
 
-      const pHeader = document.getElementById("passageHeader");
-      if (pHeader) {
+      const pHeaderLine = document.getElementById("passageHeaderLine");
+      if (pHeaderLine) {
         if (activeSection === 1) {
-          pHeader.textContent =
+          pHeaderLine.textContent =
             "Part 1 – Read the text and answer questions 1–13.";
         } else if (activeSection === 2) {
-          pHeader.textContent =
+          pHeaderLine.textContent =
             "Part 2 – Read the text and answer questions 14–26.";
         } else {
-          pHeader.textContent =
+          pHeaderLine.textContent =
             "Part 3 – Read the text and answer questions 27–40.";
         }
       }
