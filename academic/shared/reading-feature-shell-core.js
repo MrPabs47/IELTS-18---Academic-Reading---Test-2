@@ -14,6 +14,8 @@
   var reviewOverlayWasOpen = false;
   var taskControls = [];
   var revealedGroups = new Set();
+  var fullPassageClueMaps = new Set();
+  var lastActiveCluePart = null;
 
   var TEST3_GROUPS = [
     { id: "p1-tfng", label: "True / False / Not Given", questions: [1, 2, 3, 4, 5], purpose: "Compare the whole meaning of each statement with the passage.", steps: ["Underline key limits such as most, all, only, or always.", "Find the relevant idea and compare the whole meaning, not one matching word.", "Choose FALSE for a contradiction and NOT GIVEN only when the passage does not provide enough information."], trap: "A statement can repeat familiar vocabulary but still change the writer’s meaning." },
@@ -323,7 +325,35 @@
     card.querySelector(".reading-shell-study-clue-button").addEventListener("click", function () { showEvidence(questionNumber); });
   }
 
-  function clearEvidence(passage) { passage.querySelectorAll(".reading-shell-evidence-highlight").forEach(function (mark) { mark.replaceWith(global.document.createTextNode(mark.getAttribute("data-reading-shell-evidence-text") || "")); }); }
+  function clearEvidence(passage) {
+    passage.querySelectorAll(".reading-shell-evidence-highlight").forEach(function (mark) {
+      mark.replaceWith(global.document.createTextNode(mark.getAttribute("data-reading-shell-evidence-text") || ""));
+    });
+    passage.normalize();
+  }
+  function clearEvidenceFocus(passage) {
+    if (!passage) return;
+    passage.querySelectorAll(".reading-shell-evidence-focus, .reading-shell-evidence-attention").forEach(function (mark) {
+      mark.classList.remove("reading-shell-evidence-focus", "reading-shell-evidence-attention");
+      mark.removeAttribute("tabindex");
+    });
+  }
+  function focusRenderedEvidence(passage, questionNumber) {
+    if (!passage) return null;
+    var target = Array.from(passage.querySelectorAll(".reading-shell-evidence-highlight")).find(function (mark) {
+      return String(mark.getAttribute("data-reading-shell-clue-questions") || "").split(/\s+/).filter(Boolean).indexOf(String(questionNumber)) !== -1;
+    });
+    if (!target) return null;
+    clearEvidenceFocus(passage);
+    target.classList.add("reading-shell-evidence-focus");
+    target.setAttribute("tabindex", "-1");
+    global.requestAnimationFrame(function () { target.classList.add("reading-shell-evidence-attention"); });
+    global.setTimeout(function () { target.classList.remove("reading-shell-evidence-attention"); }, 1400);
+    var reducedMotion = global.matchMedia && global.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    target.scrollIntoView({ behavior: reducedMotion ? "auto" : "smooth", block: "center" });
+    try { target.focus({ preventScroll: true }); } catch (error) { target.focus(); }
+    return target;
+  }
   function sharedEvidenceQuestions(evidence, part) {
     return Object.keys(TEST3_DETAILS).map(Number).filter(function (candidate) {
       return sectionFor(candidate) === part && TEST3_DETAILS[candidate][2] === evidence;
@@ -337,6 +367,128 @@
     badge.addEventListener("click", function (event) { event.stopPropagation(); navigateTo(questionNumber); });
     return badge;
   }
+  function questionsForPart(part) {
+    var range = config && config.test && config.test.partRanges ? config.test.partRanges[part] : null;
+    if (!range) return [];
+    var questions = [];
+    for (var questionNumber = range.from; questionNumber <= range.to; questionNumber++) questions.push(questionNumber);
+    return questions;
+  }
+  function passageForPart(part) { return global.document.querySelector('.passage-section[data-section="' + part + '"]'); }
+  function passageTextNodes(passage) {
+    var nodes = [];
+    var walker = global.document.createTreeWalker(passage, global.NodeFilter.SHOW_TEXT, { acceptNode: function (node) {
+      if (!node.nodeValue || !node.nodeValue.trim()) return global.NodeFilter.FILTER_REJECT;
+      if (node.parentElement && node.parentElement.closest("mark,button,input,select,textarea")) return global.NodeFilter.FILTER_REJECT;
+      return global.NodeFilter.FILTER_ACCEPT;
+    } });
+    var node;
+    while ((node = walker.nextNode())) nodes.push(node);
+    return nodes;
+  }
+  function locatePartEvidence(passage, part) {
+    var nodes = passageTextNodes(passage);
+    return questionsForPart(part).map(function (questionNumber) {
+      var evidence = TEST3_DETAILS[questionNumber] && TEST3_DETAILS[questionNumber][2];
+      if (!evidence) return null;
+      for (var index = 0; index < nodes.length; index++) {
+        var start = nodes[index].nodeValue.indexOf(evidence);
+        if (start !== -1) return { node: nodes[index], start: start, end: start + evidence.length, questionNumber: questionNumber };
+      }
+      return null;
+    }).filter(Boolean);
+  }
+  function mergeLocationRecords(records) {
+    var recordsByNode = new Map();
+    records.forEach(function (record) {
+      if (!recordsByNode.has(record.node)) recordsByNode.set(record.node, []);
+      recordsByNode.get(record.node).push(record);
+    });
+    var merged = [];
+    recordsByNode.forEach(function (nodeRecords, node) {
+      nodeRecords.sort(function (a, b) { return a.start - b.start || a.end - b.end || a.questionNumber - b.questionNumber; });
+      nodeRecords.forEach(function (record) {
+        var current = merged.length && merged[merged.length - 1].node === node ? merged[merged.length - 1] : null;
+        if (current && record.start < current.end) {
+          current.end = Math.max(current.end, record.end);
+          if (current.questions.indexOf(record.questionNumber) === -1) current.questions.push(record.questionNumber);
+        } else {
+          merged.push({ node: node, start: record.start, end: record.end, questions: [record.questionNumber] });
+        }
+      });
+    });
+    merged.forEach(function (record) { record.questions.sort(function (a, b) { return a - b; }); });
+    return merged;
+  }
+  function representedMapQuestions(passage) {
+    var questions = new Set();
+    passage.querySelectorAll(".reading-shell-evidence-highlight .reading-shell-clue-badge").forEach(function (badge) {
+      questions.add(Number(badge.getAttribute("data-reading-shell-clue-question")));
+    });
+    return questions;
+  }
+  function fullMapIsRendered(part) {
+    var passage = passageForPart(part);
+    if (!passage || passage.querySelector(".reading-shell-evidence-highlight .reading-shell-evidence-highlight")) return false;
+    var represented = representedMapQuestions(passage);
+    return questionsForPart(part).every(function (questionNumber) { return represented.has(questionNumber); });
+  }
+  function renderFullPassageClueMap(part) {
+    var passage = passageForPart(part);
+    if (!passage) return false;
+    clearEvidence(passage);
+    var records = locatePartEvidence(passage, part);
+    if (records.length !== questionsForPart(part).length) return false;
+    var merged = mergeLocationRecords(records);
+    var orderedRecords = [];
+    var recordsByNode = new Map();
+    merged.forEach(function (record) {
+      if (!recordsByNode.has(record.node)) recordsByNode.set(record.node, []);
+      recordsByNode.get(record.node).push(record);
+    });
+    recordsByNode.forEach(function (nodeRecords) {
+      nodeRecords.sort(function (a, b) { return b.start - a.start; }).forEach(function (record) { orderedRecords.push(record); });
+    });
+    try {
+      orderedRecords.forEach(function (record) {
+        var evidenceText = record.node.nodeValue.slice(record.start, record.end);
+        var range = global.document.createRange();
+        range.setStart(record.node, record.start);
+        range.setEnd(record.node, record.end);
+        var mark = el("mark", "reading-shell-evidence-highlight");
+        mark.setAttribute("data-reading-shell-evidence-text", evidenceText);
+        mark.setAttribute("data-reading-shell-clue-questions", record.questions.join(" "));
+        range.surroundContents(mark);
+        record.questions.forEach(function (questionNumber) { mark.append(evidenceBadge(questionNumber)); });
+      });
+    } catch (error) {
+      clearEvidence(passage);
+      return false;
+    }
+    if (fullMapIsRendered(part)) return true;
+    clearEvidence(passage);
+    return false;
+  }
+  function showAllPassageClues(part) {
+    var targetPart = Number(part || (config && config.state.getActivePart ? config.state.getActivePart() : 1));
+    if (renderFullPassageClueMap(targetPart)) {
+      fullPassageClueMaps.add(targetPart);
+    } else fullPassageClueMaps.delete(targetPart);
+  }
+  function hideAllPassageClues(part) {
+    var targetPart = Number(part || (config && config.state.getActivePart ? config.state.getActivePart() : 1));
+    var passage = passageForPart(targetPart);
+    if (passage) clearEvidence(passage);
+    fullPassageClueMaps.delete(targetPart);
+  }
+  function clearAllPassageClueMaps() {
+    global.document.querySelectorAll(".passage-section[data-section]").forEach(clearEvidence);
+    fullPassageClueMaps.clear();
+    lastActiveCluePart = null;
+  }
+  function restoreFullPassageClueMap(part) {
+    if (fullPassageClueMaps.has(part) && !fullMapIsRendered(part)) renderFullPassageClueMap(part);
+  }
   function showEvidence(questionNumber) {
     var detail = TEST3_DETAILS[questionNumber];
     if (!detail) return;
@@ -345,6 +497,12 @@
     global.setTimeout(function () {
       var passage = global.document.querySelector('.passage-section[data-section="' + part + '"]');
       if (!passage) return;
+      if (fullPassageClueMaps.has(part) && fullMapIsRendered(part)) {
+        focusRenderedEvidence(passage, questionNumber);
+        syncPassageClueToolbar(currentMode() === "study" || (currentMode() === "test" && Boolean(config.state.isTestSubmitted())));
+        return;
+      }
+      fullPassageClueMaps.delete(part);
       clearEvidence(passage);
       var evidence = detail[2];
       var walker = global.document.createTreeWalker(passage, global.NodeFilter.SHOW_TEXT, { acceptNode: function (node) {
@@ -361,10 +519,11 @@
       range.setEnd(found.node, found.index + evidence.length);
       var mark = el("mark", "reading-shell-evidence-highlight");
       mark.setAttribute("data-reading-shell-evidence-text", evidence);
+      mark.setAttribute("data-reading-shell-clue-questions", sharedEvidenceQuestions(evidence, part).join(" "));
       try { range.surroundContents(mark); } catch (error) { return; }
       sharedEvidenceQuestions(evidence, part).forEach(function (relatedQuestion) { mark.append(evidenceBadge(relatedQuestion)); });
-      mark.classList.add("reading-shell-evidence-focus");
-      mark.scrollIntoView({ behavior: "smooth", block: "center" });
+      focusRenderedEvidence(passage, questionNumber);
+      syncPassageClueToolbar(currentMode() === "study" || (currentMode() === "test" && Boolean(config.state.isTestSubmitted())));
     }, 90);
   }
 
@@ -519,6 +678,33 @@
     resultObserver.observe(overlay, { attributes: true, attributeFilter: ["style"] });
   }
 
+  function syncPassageClueToolbar(showToolbar) {
+    var toolbar = global.document.getElementById("passageClueToolbar");
+    var toggle = global.document.getElementById("passageClueToggle");
+    if (!toolbar || !toggle) return;
+    toolbar.hidden = !showToolbar;
+    toggle.hidden = !showToolbar;
+    toggle.disabled = !showToolbar;
+    toggle.setAttribute("aria-hidden", showToolbar ? "false" : "true");
+    var activePart = Number(config && config.state.getActivePart ? config.state.getActivePart() : 1);
+    var fullMapVisible = showToolbar && fullPassageClueMaps.has(activePart) && fullMapIsRendered(activePart);
+    toggle.setAttribute("aria-pressed", String(fullMapVisible));
+    toggle.textContent = fullMapVisible ? "Hide all passage clues" : "Show all passage clues";
+  }
+
+  function bindPassageClueToolbar() {
+    var toggle = global.document.getElementById("passageClueToggle");
+    if (!toggle || toggle.getAttribute("data-reading-shell-toolbar-bound") === "true") return;
+    toggle.setAttribute("data-reading-shell-toolbar-bound", "true");
+    toggle.addEventListener("click", function () {
+      if (toggle.hidden || toggle.disabled) return;
+      var activePart = Number(config && config.state.getActivePart ? config.state.getActivePart() : 1);
+      if (fullPassageClueMaps.has(activePart) && fullMapIsRendered(activePart)) hideAllPassageClues(activePart);
+      else showAllPassageClues(activePart);
+      syncPassageClueToolbar(true);
+    });
+  }
+
   function sync() {
     if (!initialized || !elements) return;
     var studyReviewJustSubmitted = updateReviewFromOverlay();
@@ -535,6 +721,13 @@
     elements.timer.hidden = !studyMode;
     elements.scoreFeedbackButton.hidden = !result;
     elements.scoreFeedbackButton.textContent = result ? result.rawScore + " / 40 · Band " + result.band : "";
+    var activeCluePart = Number(config.state.getActivePart ? config.state.getActivePart() : 1);
+    if (lastActiveCluePart !== null && lastActiveCluePart !== activeCluePart) {
+      clearEvidenceFocus(passageForPart(lastActiveCluePart));
+    }
+    lastActiveCluePart = activeCluePart;
+    if (showRoot) restoreFullPassageClueMap(activeCluePart);
+    syncPassageClueToolbar(showRoot);
     if (!studyMode) { studySessionActive = false; stopStudyTimer(); closeScoreGuide(false); }
     if (!showRoot) { closeAnswerKey(false); closeScoreFeedback(false); }
     if (result && (studyReviewJustSubmitted || completedTest)) revealAll();
@@ -548,6 +741,7 @@
     studySessionActive = true;
     studyReviewSubmitted = false;
     reviewOverlayWasOpen = false;
+    clearAllPassageClueMaps();
     studyElapsedSeconds = 0;
     TEST3_GROUPS.forEach(hideGroup);
     revealedGroups.clear();
@@ -566,13 +760,15 @@
     studySessionActive = false;
     studyReviewSubmitted = false;
     reviewOverlayWasOpen = false;
+    clearAllPassageClueMaps();
     if (!buildUi()) { initialized = false; return { ok: false, error: lastError }; }
+    bindPassageClueToolbar();
     observeResults();
     updateTimer();
     sync();
     return { ok: true, initialized: true };
   }
-  function getStatus() { return { initialized: initialized, hasConfig: Boolean(config), version: config ? config.version : null, testId: config && config.test ? config.test.id : "", studySessionActive: studySessionActive, studyElapsedSeconds: studyElapsedSeconds, lastError: lastError }; }
+  function getStatus() { return { initialized: initialized, hasConfig: Boolean(config), version: config ? config.version : null, testId: config && config.test ? config.test.id : "", studySessionActive: studySessionActive, studyElapsedSeconds: studyElapsedSeconds, fullPassageClueMapParts: Array.from(fullPassageClueMaps).sort(), lastError: lastError }; }
 
-  global.ReadingFeatureShell = { init: init, sync: sync, startStudySession: startStudySession, getStatus: getStatus, validateConfig: validateConfig };
+  global.ReadingFeatureShell = { init: init, sync: sync, startStudySession: startStudySession, showAllPassageClues: showAllPassageClues, hideAllPassageClues: hideAllPassageClues, getStatus: getStatus, validateConfig: validateConfig };
 })(window);

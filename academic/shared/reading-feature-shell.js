@@ -118,6 +118,7 @@
       document.querySelectorAll(".reading-shell-study-panel").forEach(function (panel) {
         panel.hidden = true;
       });
+      if (window.ReadingFeatureShell && typeof window.ReadingFeatureShell.sync === "function") window.ReadingFeatureShell.sync();
     }
 
     function scheduleSync() {
