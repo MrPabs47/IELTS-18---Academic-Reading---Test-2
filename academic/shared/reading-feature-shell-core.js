@@ -324,6 +324,19 @@
   }
 
   function clearEvidence(passage) { passage.querySelectorAll(".reading-shell-evidence-highlight").forEach(function (mark) { mark.replaceWith(global.document.createTextNode(mark.getAttribute("data-reading-shell-evidence-text") || "")); }); }
+  function sharedEvidenceQuestions(evidence, part) {
+    return Object.keys(TEST3_DETAILS).map(Number).filter(function (candidate) {
+      return sectionFor(candidate) === part && TEST3_DETAILS[candidate][2] === evidence;
+    }).sort(function (a, b) { return a - b; });
+  }
+  function evidenceBadge(questionNumber) {
+    var badge = el("button", "reading-shell-clue-badge", String(questionNumber));
+    badge.type = "button";
+    badge.setAttribute("data-reading-shell-clue-question", String(questionNumber));
+    badge.setAttribute("aria-label", "Return to question " + questionNumber);
+    badge.addEventListener("click", function (event) { event.stopPropagation(); navigateTo(questionNumber); });
+    return badge;
+  }
   function showEvidence(questionNumber) {
     var detail = TEST3_DETAILS[questionNumber];
     if (!detail) return;
@@ -349,11 +362,7 @@
       var mark = el("mark", "reading-shell-evidence-highlight");
       mark.setAttribute("data-reading-shell-evidence-text", evidence);
       try { range.surroundContents(mark); } catch (error) { return; }
-      var badge = el("button", "reading-shell-clue-badge", String(questionNumber));
-      badge.type = "button";
-      badge.setAttribute("aria-label", "Return to question " + questionNumber);
-      badge.addEventListener("click", function (event) { event.stopPropagation(); navigateTo(questionNumber); });
-      mark.append(badge);
+      sharedEvidenceQuestions(evidence, part).forEach(function (relatedQuestion) { mark.append(evidenceBadge(relatedQuestion)); });
       mark.classList.add("reading-shell-evidence-focus");
       mark.scrollIntoView({ behavior: "smooth", block: "center" });
     }, 90);

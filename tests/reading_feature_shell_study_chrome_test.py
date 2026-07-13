@@ -89,17 +89,20 @@ def test_blank_answers_are_never_treated_as_correct_in_study_feedback():
     assert "function rangeScore(group)" in JS
 
 
-def test_shared_evidence_keeps_every_question_badge_for_the_same_clue():
+def test_core_shared_evidence_creates_every_matching_question_badge():
     for token in [
-        'snapshotVisibleEvidence',
-        'data-reading-shell-clue-question',
-        'entry.evidence && entry.evidence === evidence',
-        'entry.questions.forEach(function (question) { ensureBadge(currentMark, question); })',
-        'document.addEventListener("click"',
-        '}, true);',
+        'function sharedEvidenceQuestions(evidence, part)',
+        'sectionFor(candidate) === part && TEST3_DETAILS[candidate][2] === evidence',
+        '.sort(function (a, b) { return a - b; })',
+        'function evidenceBadge(questionNumber)',
+        'badge.setAttribute("data-reading-shell-clue-question", String(questionNumber));',
+        'navigateTo(questionNumber)',
+        'sharedEvidenceQuestions(evidence, part).forEach(function (relatedQuestion) { mark.append(evidenceBadge(relatedQuestion)); });',
     ]:
-        assert token in LOADER_JS
+        assert token in CORE_JS
     assert 'clearEvidence(passage);' in CORE_JS
+    assert 'questionNumber === 21' not in CORE_JS
+    assert 'questionNumber === 22' not in CORE_JS
 
 
 def test_study_controls_are_forced_hidden_in_test_mode():
