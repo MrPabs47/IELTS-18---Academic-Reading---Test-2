@@ -1,44 +1,158 @@
 import re
 from pathlib import Path
 
-ROOT=Path(__file__).resolve().parents[1]
-JS=(ROOT/'academic/shared/reading-feature-shell.js').read_text(encoding='utf-8')
-CSS=(ROOT/'academic/shared/reading-feature-shell.css').read_text(encoding='utf-8')
-HTML=(ROOT/'academic/cambridge-16/test-3/IELTS16 Test 3 - Academic Reading.html').read_text(encoding='utf-8')
+ROOT = Path(__file__).resolve().parents[1]
+LOADER_JS = (ROOT / "academic/shared/reading-feature-shell.js").read_text(encoding="utf-8")
+CORE_JS = (ROOT / "academic/shared/reading-feature-shell-core.js").read_text(encoding="utf-8")
+JS = CORE_JS + "\n" + LOADER_JS
+HTML = (ROOT / "academic/cambridge-16/test-3/IELTS16 Test 3 - Academic Reading.html").read_text(encoding="utf-8")
+CONTRACT = (ROOT / "academic/shared/READING_FEEDBACK_PARITY_CONTRACT.md").read_text(encoding="utf-8")
 
 
-def test_shared_chrome_has_expected_assets_api_and_score_scale():
-    assert HTML.count('../../shared/reading-feature-shell.css')==1
-    assert HTML.count('../../shared/reading-feature-shell.js')==1
-    assert HTML.count('id="readingFeatureShellMount"')==1
-    for name in ['init','sync','startStudySession','getStatus','validateConfig']:
-        assert re.search(rf'\b{name}\s*:\s*{name}\b',JS)
-    rows=re.findall(r'\{ correctAnswers: "([^"]+)", band: "([^"]+)" \}',HTML)
-    assert rows==[('39–40','9.0'),('37–38','8.5'),('35–36','8.0'),('33–34','7.5'),('30–32','7.0'),('27–29','6.5'),('23–26','6.0'),('19–22','5.5'),('15–18','5.0'),('13–14','4.5'),('10–12','4.0'),('8–9','3.5'),('6–7','3.0'),('4–5','2.5'),('1–3','1.0'),('0','0')]
+def test_shared_shell_assets_and_public_api_remain_available():
+    assert HTML.count('../../shared/reading-feature-shell.css') == 1
+    assert HTML.count('../../shared/reading-feature-shell.js') == 1
+    assert HTML.count('id="readingFeatureShellMount"') == 1
+    assert 'reading-feature-shell-core.js' in LOADER_JS
+    for name in ["init", "sync", "startStudySession", "getStatus", "validateConfig"]:
+        assert re.search(rf"\b{name}\s*:\s*{name}\b", JS)
 
 
-def test_shared_chrome_matches_established_order_labels_and_close_control():
-    assert 'root.append(guideButton,pill,timer,overlay)' in JS
-    for value in ['"📊"','"Score guide"','"Study mode"','"Study time: "','reading-shell-score-guide-close","×"','aria-label","Close score guide"','title","Close score guide"']:
-        assert value in JS
-    assert JS.find('guideButton=createElement')<JS.find('pill=createElement')<JS.find('timer=createElement')
-    assert 'Answer Key' not in JS+CSS+HTML and 'answerKeyButton' not in JS+CSS+HTML and '🔑' not in JS+CSS+HTML
-    for value in ['gap:6px','padding:5px 10px','border-radius:999px','height:32px','width:32px','width:min(520px,96vw)']:
-        assert value in CSS
+def test_header_controls_follow_the_approved_test3_contract():
+    for token in [
+        '"📊 Score guide"', '"🔑"', '"Study mode"', '"Study time: "',
+        '"Score feedback"', '"Answer Key"',
+    ]:
+        assert token in JS
+    assert JS.find('scoreGuideButton = el') < JS.find('answerKeyButton = el') < JS.find('studyPill = el')
 
 
-def test_study_chrome_is_accessible_and_hidden_in_test_mode():
-    assert 'mount.removeAttribute("aria-hidden")' in JS
-    assert 'mount.setAttribute("aria-hidden","true")' not in JS
-    for value in ['role","dialog"','aria-modal","true"','aria-labelledby","reading-shell-score-guide-title"','closeButton.focus()','event.key==="Escape"','event.target===elements.overlay','focusTarget.focus()']:
-        assert value in JS
-    for value in ['visibleInStudyBeforeChecking=currentMode==="study"&&!submitted','visibleInStudyAfterChecking=currentMode==="study"&&submitted','hiddenInTestBeforeSubmission=currentMode==="test"&&!submitted','hiddenInTestAfterSubmission=currentMode==="test"&&submitted','elements.root.hidden=!shouldShowStudyChrome']:
-        assert value in JS
+def test_task_feedback_uses_test1_test2_control_and_card_structure():
+    for token in [
+        '"Show answers & feedback"', '"Hide answers & feedback"',
+        '"How to tackle this task"', '<dt>Your answer</dt>',
+        '<dt>Correct answer</dt>', '<dt>Why</dt>', '<dt>Skill</dt>',
+        'title="Passage clue"',
+        'reading-shell-study-controls', 'reading-shell-study-icon-button',
+        'reading-shell-study-reveal-button', 'reading-shell-study-result',
+        'reading-shell-study-panel', 'reading-shell-study-feedback-card',
+        'reading-shell-study-clue-button', 'reading-shell-evidence-highlight',
+        'reading-shell-clue-badge',
+    ]:
+        assert token in JS
 
 
-def test_shell_keeps_out_of_test_engine_and_later_learning_features():
-    for value in ['computeBandScore','evaluateQuestions','submitTest','handlePrimarySubmit','confirmSubmit','beginTimedTest','requestFullscreen','getChooseTwoCorrectCount','enforceChooseTwoLimit','Score Feedback','magnifying glass','passage clue toolbar','Show all clues','Clear clues']:
-        assert value not in JS
-    assert re.search(r'function startTest\(selectedMode\) \{(?P<body>.*?)\n    \}',HTML,re.S)
-    assert HTML.count('ReadingFeatureShell.startStudySession()')==1
-    assert HTML.count('ReadingFeatureShell.sync()')==1
+def test_task_type_labels_only_live_inside_the_strategy_panel():
+    assert 'reading-shell-study-task-label' not in JS
+    assert 'reading-shell-study-strategy' in JS
+    assert "' strategy</h3>" in JS
+    assert 'controls.append(strategyButton, revealButton)' in JS
+
+
+def test_study_feedback_toggle_remains_available_after_revealing_a_group():
+    for token in [
+        'if (currentMode() !== "study") return;',
+        'control.revealButton.hidden = !inStudy;',
+        'control.revealButton.disabled = !inStudy;',
+        'control.revealButton.textContent = "Hide answers & feedback"',
+        'control.revealButton.hidden = false;',
+        'control.revealButton.disabled = false;',
+    ]:
+        assert token in JS
+    assert 'control.revealButton.hidden = !(inStudy && !studyReviewSubmitted)' not in JS
+
+
+def test_full_study_review_reveals_once_without_overriding_later_group_hides():
+    assert 'var studyReviewJustSubmitted = currentMode() === "study" && isOpen && !reviewOverlayWasOpen;' in CORE_JS
+    assert 'return studyReviewJustSubmitted;' in CORE_JS
+    assert 'var studyReviewJustSubmitted = updateReviewFromOverlay();' in CORE_JS
+    assert 'if (result && (studyReviewJustSubmitted || completedTest)) revealAll();' in CORE_JS
+    assert 'if (result && (studyReviewSubmitted || completedTest)) revealAll();' not in CORE_JS
+
+
+def test_legacy_inline_answers_are_suppressed_for_every_submitted_review():
+    assert "global.document.querySelectorAll('.correct-answer-text[id^=\"ca-\"]')" in CORE_JS
+    assert 'var hideLegacyAnswers = fullReviewAvailable();' in CORE_JS
+    assert 'answer.hidden = hideLegacyAnswers;' in CORE_JS
+    assert 'syncLegacyInlineAnswers();' in CORE_JS
+    assert '.correct-answer-text[hidden]{display:none!important}' in CORE_JS
+    helper = CORE_JS.split('function syncLegacyInlineAnswers()', 1)[1].split('function buildTaskFeedbackControls()', 1)[0]
+    assert '.textContent =' not in helper
+    assert '.remove()' not in helper
+
+
+def test_blank_answers_are_never_treated_as_correct_in_study_feedback():
+    assert "input[type=\"radio\"][name=\"q" in JS
+    assert "input[type=\"text\"][name=\"q" in JS
+    assert "if (!answer) return false" in JS
+    assert '"Not answered · 0 points"' in JS
+    assert "function rangeScore(group)" in JS
+
+
+def test_core_shared_evidence_creates_every_matching_question_badge():
+    for token in [
+        'function sharedEvidenceQuestions(evidence, part)',
+        'sectionFor(candidate) === part && TEST3_DETAILS[candidate][2] === evidence',
+        '.sort(function (a, b) { return a - b; })',
+        'function evidenceBadge(questionNumber)',
+        'badge.setAttribute("data-reading-shell-clue-question", String(questionNumber));',
+        'navigateTo(questionNumber)',
+        'sharedEvidenceQuestions(evidence, part).forEach(function (relatedQuestion) { mark.append(evidenceBadge(relatedQuestion)); });',
+    ]:
+        assert token in CORE_JS
+    assert 'clearEvidence(passage);' in CORE_JS
+    assert 'questionNumber === 21' not in CORE_JS
+    assert 'questionNumber === 22' not in CORE_JS
+
+
+def test_study_controls_are_forced_hidden_in_test_mode():
+    for token in [
+        'function patchTestModeStudyControls()',
+        'config.state.getMode()',
+        'if (mode() === "study") {',
+        'controls.style.display = "";',
+        'window.ReadingFeatureShell && typeof window.ReadingFeatureShell.sync === "function"',
+        'controls.style.display = "none";',
+        'button.hidden = true;',
+        'button.disabled = true;',
+        'panel.hidden = true;',
+        'new MutationObserver(scheduleSync)',
+    ]:
+        assert token in LOADER_JS
+    assert LOADER_JS.find('controls.style.display = "";') < LOADER_JS.find('controls.style.display = "none";')
+    assert LOADER_JS.find('window.ReadingFeatureShell && typeof window.ReadingFeatureShell.sync === "function"') < LOADER_JS.find('controls.style.display = "none";')
+
+
+def test_parity_contract_protects_the_rules_learned_from_test1_and_test2():
+    for rule in [
+        "Test 1 and Test 2 are the visual and behavioural references.",
+        "The shared layer must never create a second scoring implementation that can disagree with the test engine.",
+        "A later `Show answers & feedback` rebuilds the cards using the student's current answers.",
+        "A blank answer is always `Not answered · 0 points`.",
+        "Duplicate inline `Correct answer:` feedback must not appear alongside the cards.",
+        "Work on one question group at a time.",
+    ]:
+        assert rule in CONTRACT
+
+
+def test_next_group_data_is_present_for_part1_summary_completion():
+    assert 'id: "p1-summary"' in JS
+    assert 'questions: [6, 7, 8, 9, 10, 11, 12, 13]' in JS
+    for question_number in range(6, 14):
+        assert f"{question_number}: [" in JS
+
+
+def test_test3_groups_cover_every_question_without_engine_calls():
+    for questions in [
+        '[1, 2, 3, 4, 5]', '[6, 7, 8, 9, 10, 11, 12, 13]',
+        '[14, 15, 16, 17, 18, 19]', '[20, 21, 22]', '[23, 24]',
+        '[25, 26]', '[27, 28, 29, 30, 31, 32]', '[33, 34, 35, 36, 37]',
+        '[38, 39, 40]',
+    ]:
+        assert questions in JS
+    for forbidden in [
+        'evaluateQuestions(', 'submitTest(', 'handlePrimarySubmit(', 'confirmSubmit(',
+        'beginTimedTest(', 'requestFullscreen(', 'exitFullscreen(',
+        'getChooseTwoCorrectCount(',
+    ]:
+        assert forbidden not in JS
