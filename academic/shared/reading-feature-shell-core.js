@@ -16,6 +16,9 @@
   var revealedGroups = new Set();
   var fullPassageClueMaps = new Set();
   var lastActiveCluePart = null;
+  var reportedErrors = new Set();
+  var submittedOutcomes = null;
+  var submittedOutcomeMode = null;
 
   var TEST3_GROUPS = [
     { id: "p1-tfng", label: "True / False / Not Given", questions: [1, 2, 3, 4, 5], purpose: "Compare the whole meaning of each statement with the passage.", steps: ["Underline key limits such as most, all, only, or always.", "Find the relevant idea and compare the whole meaning, not one matching word.", "Choose FALSE for a contradiction and NOT GIVEN only when the passage does not provide enough information."], trap: "A statement can repeat familiar vocabulary but still change the writer’s meaning." },
@@ -76,12 +79,95 @@
   var CHOOSE_TWO = { 23: "B", 24: "C", 25: "A", 26: "C" };
 
   function isObject(value) { return Object.prototype.toString.call(value) === "[object Object]"; }
+  function hasOwn(owner, name) { return Boolean(owner && Object.prototype.hasOwnProperty.call(owner, name)); }
   function hasFunction(owner, name) { return Boolean(owner && typeof owner[name] === "function"); }
   function el(tag, className, text) { var node = global.document.createElement(tag); if (className) node.className = className; if (typeof text === "string") node.textContent = text; return node; }
   function html(value) { return String(value == null ? "" : value).replace(/[&<>"']/g, function (ch) { return ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[ch]; }); }
   function normal(value) { return String(value || "").trim().toLowerCase().replace(/\s+/g, " "); }
   function scoreText(value) { return Number.isInteger(value) ? String(value) : String(value.toFixed(1)); }
   function timeText(seconds) { return String(Math.floor(seconds / 60)).padStart(2, "0") + ":" + String(seconds % 60).padStart(2, "0"); }
+
+  function partRangeEntries(value) {
+    var ranges = value && value.test && value.test.partRanges;
+    if (!isObject(ranges)) return [];
+    return Object.keys(ranges).map(function (part) {
+      return { part: Number(part), range: ranges[part] };
+    }).sort(function (a, b) { return a.part - b.part; });
+  }
+  function partNumbers() { return partRangeEntries(config).map(function (entry) { return entry.part; }); }
+  function rangeForPart(part, value) {
+    var entry = partRangeEntries(value || config).find(function (candidate) { return candidate.part === Number(part); });
+    return entry ? entry.range : null;
+  }
+  function sectionFor(questionNumber, value) {
+    var question = Number(questionNumber);
+    var entry = partRangeEntries(value || config).find(function (candidate) {
+      return question >= candidate.range.from && question <= candidate.range.to;
+    });
+    return entry ? entry.part : null;
+  }
+  function validatePartRanges(value) {
+    var entries = partRangeEntries(value);
+    if (!entries.length) return "ReadingFeatureShell config.test.partRanges must contain at least one part.";
+    var expectedQuestion = 1;
+    for (var index = 0; index < entries.length; index += 1) {
+      var entry = entries[index];
+      var range = entry.range;
+      if (!Number.isInteger(entry.part) || entry.part !== index + 1 || !isObject(range) || !Number.isInteger(range.from) || !Number.isInteger(range.to) || range.from > range.to) {
+        return "ReadingFeatureShell config.test.partRanges contains an invalid part range.";
+      }
+      if (range.from !== expectedQuestion) return "ReadingFeatureShell config.test.partRanges must cover every question once in order.";
+      expectedQuestion = range.to + 1;
+    }
+    if (expectedQuestion !== value.test.totalQuestions + 1) return "ReadingFeatureShell config.test.partRanges must cover every question once in order.";
+    return "";
+  }
+  function resolveControlHost(selector) {
+    if (typeof selector !== "string" || !selector.trim() || !global.document || typeof global.document.querySelector !== "function") return false;
+    try { return Boolean(global.document.querySelector(selector)); } catch (error) { return false; }
+  }
+  function validateStudyData(value) {
+    var study = value.study;
+    var hasGroups = hasOwn(study, "taskGroups");
+    var hasDetails = hasOwn(study, "questionDetails");
+    if (hasGroups !== hasDetails) return "ReadingFeatureShell config.study.taskGroups and questionDetails must be supplied together.";
+    if (!hasGroups) return "";
+    if (!Array.isArray(study.taskGroups) || !study.taskGroups.length) return "ReadingFeatureShell config.study.taskGroups must be a non-empty array.";
+    if (!isObject(study.questionDetails) || !Object.keys(study.questionDetails).length) return "ReadingFeatureShell config.study.questionDetails must be a non-empty object.";
+
+    var represented = new Map();
+    for (var groupIndex = 0; groupIndex < study.taskGroups.length; groupIndex += 1) {
+      var group = study.taskGroups[groupIndex];
+      var part = Number(group && group.part);
+      var passage = Number(group && group.passage);
+      var range = rangeForPart(part, value);
+      if (!isObject(group) || !String(group.id || "").trim() || !String(group.label || "").trim() || !String(group.purpose || "").trim() || !String(group.trap || "").trim() || !Array.isArray(group.steps) || !group.steps.length || group.steps.some(function (step) { return typeof step !== "string" || !step.trim(); }) || !Array.isArray(group.questions) || !group.questions.length) return "ReadingFeatureShell config.study.taskGroups contains an invalid group.";
+      if (!range || passage !== part) return "ReadingFeatureShell config.study task group " + group.id + " must have a valid part and passage.";
+      if (!resolveControlHost(group.controlHost)) return "ReadingFeatureShell config.study task group " + group.id + " has an unresolved controlHost selector.";
+      for (var questionIndex = 0; questionIndex < group.questions.length; questionIndex += 1) {
+        var question = Number(group.questions[questionIndex]);
+        if (!Number.isInteger(question) || question < 1 || question > value.test.totalQuestions || sectionFor(question, value) !== part) return "ReadingFeatureShell config.study task group " + group.id + " contains an invalid question number.";
+        represented.set(question, (represented.get(question) || 0) + 1);
+      }
+    }
+    for (var questionNumber = 1; questionNumber <= value.test.totalQuestions; questionNumber += 1) {
+      if (represented.get(questionNumber) !== 1) return "ReadingFeatureShell config.study.taskGroups must represent every question exactly once.";
+      var detail = study.questionDetails[questionNumber];
+      if (!Array.isArray(detail) || detail.length < 3 || detail.slice(0, 3).some(function (item) { return typeof item !== "string" || !item.trim(); })) {
+        return "ReadingFeatureShell config.study.questionDetails must provide Why, Skill, and evidence for every question.";
+      }
+    }
+    var detailKeys = Object.keys(study.questionDetails);
+    if (detailKeys.length !== value.test.totalQuestions || detailKeys.some(function (key) { var question = Number(key); return !Number.isInteger(question) || String(question) !== key || question < 1 || question > value.test.totalQuestions; })) {
+      return "ReadingFeatureShell config.study.questionDetails contains a question outside the configured test range.";
+    }
+    return "";
+  }
+  function reportErrorOnce(error) {
+    if (!error || reportedErrors.has(error)) return;
+    reportedErrors.add(error);
+    global.console.warn("ReadingFeatureShell: " + error);
+  }
 
   function validateConfig(value) {
     var error = "";
@@ -92,17 +178,21 @@
     else if (!isObject(value.answers) || !hasFunction(value.answers, "getAnswerKeyDisplay")) error = "ReadingFeatureShell config.answers.getAnswerKeyDisplay must be a function.";
     else if (!isObject(value.navigation) || !hasFunction(value.navigation, "getQuestionTarget")) error = "ReadingFeatureShell config.navigation.getQuestionTarget must be a function.";
     else if (!isObject(value.study) || !isObject(value.study.scoreGuide) || !Array.isArray(value.study.scoreGuide.rows)) error = "ReadingFeatureShell config.study.scoreGuide must be configured.";
+    if (!error) error = validatePartRanges(value);
+    if (!error) error = validateStudyData(value);
     return { ok: !error, error: error };
   }
 
   function currentMode() { return config ? config.state.getMode() : "test"; }
-  function sectionFor(questionNumber) { return questionNumber <= 13 ? 1 : questionNumber <= 26 ? 2 : 3; }
+  function taskGroups() { return config && config.study && Array.isArray(config.study.taskGroups) ? config.study.taskGroups : TEST3_GROUPS; }
+  function questionDetails() { return config && config.study && isObject(config.study.questionDetails) ? config.study.questionDetails : TEST3_DETAILS; }
   function isChooseTwo(questionNumber) { return Object.prototype.hasOwnProperty.call(CHOOSE_TWO, questionNumber); }
   function selectedLetters(questionNumber) {
     var groupName = questionNumber <= 24 ? "q23_24" : "q25_26";
     return Array.prototype.slice.call(global.document.querySelectorAll('input[type="checkbox"][name="' + groupName + '"]:checked')).map(function (input) { return String(input.value || "").trim().toUpperCase(); });
   }
   function answerFor(questionNumber) {
+    if (config && config.answers && hasFunction(config.answers, "getUserAnswer")) return String(config.answers.getUserAnswer(questionNumber) || "").trim();
     if (isChooseTwo(questionNumber)) return selectedLetters(questionNumber).join(", ");
     var radio = global.document.querySelector('input[type="radio"][name="q' + questionNumber + '"]:checked');
     if (radio) return String(radio.value || "").trim();
@@ -112,6 +202,7 @@
     return text ? String(text.value || "").trim() : "";
   }
   function correctFor(questionNumber) {
+    if (config && config.answers && hasFunction(config.answers, "isCorrect")) return Boolean(config.answers.isCorrect(questionNumber));
     var answer = answerFor(questionNumber);
     if (!answer) return false;
     if (isChooseTwo(questionNumber)) return selectedLetters(questionNumber).indexOf(CHOOSE_TWO[questionNumber]) !== -1;
@@ -119,6 +210,16 @@
     return accepted.some(function (item) { return normal(item) === normal(answer); });
   }
   function outcomeFor(questionNumber) { return correctFor(questionNumber) ? 1 : 0; }
+  function captureSubmittedOutcomes() {
+    submittedOutcomes = {};
+    submittedOutcomeMode = currentMode();
+    for (var questionNumber = 1; questionNumber <= config.test.totalQuestions; questionNumber += 1) {
+      submittedOutcomes[questionNumber] = outcomeFor(questionNumber);
+    }
+  }
+  function submittedOutcomeFor(questionNumber) {
+    return submittedOutcomes && hasOwn(submittedOutcomes, questionNumber) ? submittedOutcomes[questionNumber] : outcomeFor(questionNumber);
+  }
   function rangeScore(group) { return group.questions.reduce(function (total, questionNumber) { return total + outcomeFor(questionNumber); }, 0); }
   function targetFor(questionNumber) { return config.navigation.getQuestionTarget(questionNumber); }
   function cardHost(questionNumber) {
@@ -132,6 +233,10 @@
     return target && target.closest ? target.closest(".summary-box, .question-block") || target : target;
   }
   function instructionFor(group) {
+    if (group && group.controlHost) {
+      var configuredHost = global.document.querySelector(group.controlHost);
+      if (configuredHost) return configuredHost;
+    }
     var anchor = groupAnchor(group);
     if (!anchor) return null;
     var node = anchor.previousElementSibling;
@@ -249,8 +354,8 @@
     shell.titleGroup.append(el("p", "reading-shell-answer-key-intro", "Correct answers for Questions 1–40"));
     var scroll = el("div", "reading-shell-answer-key-scroll");
     var grid = el("div", "reading-shell-answer-key-grid");
-    [1, 2, 3].forEach(function (part) {
-      var range = config.test.partRanges[part];
+    partNumbers().forEach(function (part) {
+      var range = rangeForPart(part);
       var section = el("section", "reading-shell-answer-key-section");
       section.append(el("h3", "reading-shell-answer-key-section-title", "Part " + part + ": Questions " + range.from + "–" + range.to));
       var list = el("div", "reading-shell-answer-key-list");
@@ -279,6 +384,47 @@
   }
 
   function feedbackCard(parent, title) { var card = el("section", "reading-shell-score-feedback-card"); card.append(el("h3", "reading-shell-score-feedback-heading", title)); parent.append(card); return card; }
+  function feedbackGroupPart(group) {
+    var configuredPart = Number(group && (group.part || group.passage));
+    return configuredPart || sectionFor(group.questions[0]);
+  }
+  function feedbackGroupResult(group, order) {
+    var total = group.questions.length;
+    var correct = group.questions.reduce(function (sum, questionNumber) { return sum + submittedOutcomeFor(questionNumber); }, 0);
+    return { group: group, total: total, correct: correct, ratio: total ? correct / total : 0, order: order };
+  }
+  function rankFeedbackGroups(groups, type) {
+    return groups.filter(function (item) {
+      return item.total >= 3 && (type === "strength" ? item.ratio >= 0.75 : item.ratio < 0.60);
+    }).sort(function (a, b) {
+      var ratioOrder = type === "strength" ? b.ratio - a.ratio : a.ratio - b.ratio;
+      return ratioOrder || (b.total - a.total) || (a.order - b.order);
+    });
+  }
+  function selectPartFeedback(part) {
+    var groups = taskGroups().map(feedbackGroupResult).filter(function (item) { return feedbackGroupPart(item.group) === Number(part); });
+    var strength = rankFeedbackGroups(groups, "strength")[0] || null;
+    var focus = rankFeedbackGroups(groups, "focus").filter(function (item) { return !strength || item.group !== strength.group; })[0] || null;
+    return { strength: strength, focus: focus };
+  }
+  function strengthFeedbackAdvice(item) {
+    var group = item.group;
+    var detail = group.purpose || (group.steps && group.steps[0]) || "Keep using the same careful approach.";
+    return "You handled " + group.label + " accurately. " + detail;
+  }
+  function focusFeedbackAdvice(item) {
+    var group = item.group;
+    var step = group.steps && group.steps[0] ? group.steps[0] : group.purpose || "Review this question type carefully.";
+    return step + (group.trap ? " Avoid this common trap: " + group.trap : "");
+  }
+  function appendTaskTypeFeedback(parent, title, item) {
+    if (!item) return;
+    parent.append(
+      el("h4", "reading-shell-score-feedback-subheading", title),
+      el("p", "reading-shell-score-feedback-part-score", item.group.label + ": " + scoreText(item.correct) + " / " + item.total + " correct"),
+      el("p", "reading-shell-score-feedback-text", title === "What went well" ? strengthFeedbackAdvice(item) : focusFeedbackAdvice(item))
+    );
+  }
   function renderScoreFeedback() {
     var result = parsedResult();
     if (!result || !elements) return;
@@ -287,14 +433,18 @@
     var overall = feedbackCard(body, "Overall result");
     overall.append(el("p", "reading-shell-score-feedback-text", "You answered " + result.rawScore + " out of 40 questions correctly."), el("p", "reading-shell-score-feedback-text", "Estimated IELTS Academic Reading band: Band " + result.band + "."));
     var performance = feedbackCard(body, "Performance by part");
-    [1, 2, 3].forEach(function (part) {
-      var range = config.test.partRanges[part];
+    partNumbers().forEach(function (part) {
+      var range = rangeForPart(part);
       var total = 0;
-      for (var q = range.from; q <= range.to; q += 1) total += outcomeFor(q);
+      for (var q = range.from; q <= range.to; q += 1) total += submittedOutcomeFor(q);
       performance.append(el("p", "reading-shell-score-feedback-part-score", "Part " + part + ": " + scoreText(total) + " / " + (range.to - range.from + 1)));
       var card = feedbackCard(body, "Part " + part + " · " + scoreText(total) + " / " + (range.to - range.from + 1));
-      var strong = total / (range.to - range.from + 1) >= 0.75;
-      card.append(el("h4", "reading-shell-score-feedback-subheading", strong ? "What went well" : "Focus next"), el("p", "reading-shell-score-feedback-text", strong ? "You answered most questions in this part accurately. Keep comparing the question wording carefully with the passage." : "Use the detailed Study feedback to compare your answer, the correct answer, and the passage clue for each question."));
+      var selection = selectPartFeedback(part);
+      appendTaskTypeFeedback(card, "What went well", selection.strength);
+      appendTaskTypeFeedback(card, "Focus next", selection.focus);
+      if (!selection.strength && !selection.focus) {
+        card.append(el("p", "reading-shell-score-feedback-text", "Your question-type performance in this part was mixed. Review the detailed feedback before choosing the next task type to practise."));
+      }
     });
     if (currentMode() === "test") {
       var time = feedbackCard(body, "Time management");
@@ -317,7 +467,7 @@
     var correct = correctFor(questionNumber);
     var status = !user ? "unanswered" : correct ? "correct" : "incorrect";
     var statusText = !user ? "Not answered · 0 points" : (correct ? "✓ " : "✕ ") + user + (correct ? " · +1 point" : " · +0 points");
-    var detail = TEST3_DETAILS[questionNumber] || ["Compare the answer carefully with the passage wording.", "Reading for detail", ""];
+    var detail = questionDetails()[questionNumber] || ["Compare the answer carefully with the passage wording.", "Reading for detail", ""];
     var card = el("section", "reading-shell-study-feedback-card reading-shell-study-feedback-" + status);
     card.id = "reading-shell-feedback-" + questionNumber;
     card.innerHTML = '<h4>Question ' + questionNumber + '</h4><dl><dt>Your answer</dt><dd class="reading-shell-study-status reading-shell-study-status-' + status + '">' + html(statusText) + '</dd><dt>Correct answer</dt><dd>' + html(config.answers.getAnswerKeyDisplay(questionNumber) || "") + '</dd><dt>Why</dt><dd>' + html(detail[0]) + '</dd><dt>Skill</dt><dd>' + html(detail[1]) + '</dd></dl><div class="reading-shell-study-clue-row"><button class="reading-shell-study-clue-button" type="button" title="Passage clue" aria-label="Show passage clue for question ' + questionNumber + '"><svg aria-hidden="true" focusable="false" width="15" height="15" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" d="m15.5 15.5 4.5 4.5M10.5 17a6.5 6.5 0 1 1 0-13 6.5 6.5 0 0 1 0 13Z"/></svg></button></div>';
@@ -355,8 +505,9 @@
     return target;
   }
   function sharedEvidenceQuestions(evidence, part) {
-    return Object.keys(TEST3_DETAILS).map(Number).filter(function (candidate) {
-      return sectionFor(candidate) === part && TEST3_DETAILS[candidate][2] === evidence;
+    var details = questionDetails();
+    return Object.keys(details).map(Number).filter(function (candidate) {
+      return sectionFor(candidate) === part && details[candidate][2] === evidence;
     }).sort(function (a, b) { return a - b; });
   }
   function evidenceBadge(questionNumber) {
@@ -368,7 +519,7 @@
     return badge;
   }
   function questionsForPart(part) {
-    var range = config && config.test && config.test.partRanges ? config.test.partRanges[part] : null;
+    var range = rangeForPart(part);
     if (!range) return [];
     var questions = [];
     for (var questionNumber = range.from; questionNumber <= range.to; questionNumber++) questions.push(questionNumber);
@@ -389,7 +540,8 @@
   function locatePartEvidence(passage, part) {
     var nodes = passageTextNodes(passage);
     return questionsForPart(part).map(function (questionNumber) {
-      var evidence = TEST3_DETAILS[questionNumber] && TEST3_DETAILS[questionNumber][2];
+      var details = questionDetails();
+      var evidence = details[questionNumber] && details[questionNumber][2];
       if (!evidence) return null;
       for (var index = 0; index < nodes.length; index++) {
         var start = nodes[index].nodeValue.indexOf(evidence);
@@ -490,7 +642,7 @@
     if (fullPassageClueMaps.has(part) && !fullMapIsRendered(part)) renderFullPassageClueMap(part);
   }
   function showEvidence(questionNumber) {
-    var detail = TEST3_DETAILS[questionNumber];
+    var detail = questionDetails()[questionNumber];
     if (!detail) return;
     var part = sectionFor(questionNumber);
     if (typeof global.switchSection === "function") global.switchSection(part);
@@ -556,19 +708,23 @@
     if (currentMode() !== "study") return;
     if (revealedGroups.has(group.id)) hideGroup(group); else showGroup(group);
   }
-  function revealAll() { TEST3_GROUPS.forEach(function (group) { if (!revealedGroups.has(group.id)) showGroup(group); }); }
+  function revealAll() { taskGroups().forEach(function (group) { if (!revealedGroups.has(group.id)) showGroup(group); }); }
+  function refreshAllGroups() { taskGroups().forEach(showGroup); }
 
   function syncTaskFeedback() {
     var inStudy = currentMode() === "study";
     var afterTest = currentMode() === "test" && Boolean(config.state.isTestSubmitted());
+    var reviewComplete = fullReviewAvailable() && Array.isArray(config.study.taskGroups);
+    var showStrategies = inStudy || afterTest;
     taskControls.forEach(function (control) {
-      control.strategyButton.hidden = !(inStudy || afterTest);
-      control.strategyButton.disabled = !(inStudy || afterTest);
-      control.revealButton.hidden = !inStudy;
-      control.revealButton.disabled = !inStudy;
-      if (!(inStudy || afterTest)) {
+      control.strategyButton.hidden = !showStrategies;
+      control.strategyButton.disabled = !showStrategies;
+      control.revealButton.hidden = reviewComplete || !inStudy;
+      control.revealButton.disabled = reviewComplete || !inStudy;
+      if (!showStrategies) {
         control.result.hidden = true;
         control.panel.hidden = true;
+        control.strategyButton.setAttribute("aria-expanded", "false");
       }
     });
   }
@@ -580,7 +736,7 @@
     global.document.querySelectorAll(".reading-shell-study-controls,.reading-shell-study-result,.reading-shell-study-panel").forEach(function (node) { node.remove(); });
     taskControls = [];
     revealedGroups.clear();
-    TEST3_GROUPS.forEach(function (group) {
+    taskGroups().forEach(function (group) {
       var host = instructionFor(group);
       var anchor = groupAnchor(group);
       if (!host || !anchor || !anchor.parentNode) return;
@@ -728,12 +884,19 @@
     lastActiveCluePart = activeCluePart;
     if (showRoot) restoreFullPassageClueMap(activeCluePart);
     syncPassageClueToolbar(showRoot);
-    if (!studyMode) { studySessionActive = false; stopStudyTimer(); closeScoreGuide(false); }
-    if (!showRoot) { closeAnswerKey(false); closeScoreFeedback(false); }
-    if (result && (studyReviewJustSubmitted || completedTest)) revealAll();
+    if (!studyMode) { studySessionActive = false; stopStudyTimer(); }
+    if (!showRoot) { closeScoreGuide(false); closeAnswerKey(false); closeScoreFeedback(false); }
+    if (result && studyReviewJustSubmitted) {
+      captureSubmittedOutcomes();
+      refreshAllGroups();
+    } else if (result && completedTest) {
+      if (!submittedOutcomes || submittedOutcomeMode !== "test") captureSubmittedOutcomes();
+      revealAll();
+    }
     syncTaskFeedback();
     syncLegacyInlineAnswers();
     if (!elements.scoreGuideBackdrop.hidden) updateScoreGuide();
+    if (!elements.scoreFeedbackBackdrop.hidden) renderScoreFeedback();
   }
 
   function startStudySession() {
@@ -741,9 +904,11 @@
     studySessionActive = true;
     studyReviewSubmitted = false;
     reviewOverlayWasOpen = false;
+    submittedOutcomes = null;
+    submittedOutcomeMode = null;
     clearAllPassageClueMaps();
     studyElapsedSeconds = 0;
-    TEST3_GROUPS.forEach(hideGroup);
+    taskGroups().forEach(hideGroup);
     revealedGroups.clear();
     updateTimer();
     startStudyTimer();
@@ -752,7 +917,7 @@
 
   function init(value) {
     var check = validateConfig(value);
-    if (!check.ok) { config = null; initialized = false; lastError = check.error; global.console.warn("ReadingFeatureShell: " + check.error); return { ok: false, error: check.error }; }
+    if (!check.ok) { config = null; initialized = false; lastError = check.error; reportErrorOnce(check.error); return { ok: false, error: check.error }; }
     config = value;
     initialized = true;
     lastError = "";
@@ -760,6 +925,8 @@
     studySessionActive = false;
     studyReviewSubmitted = false;
     reviewOverlayWasOpen = false;
+    submittedOutcomes = null;
+    submittedOutcomeMode = null;
     clearAllPassageClueMaps();
     if (!buildUi()) { initialized = false; return { ok: false, error: lastError }; }
     bindPassageClueToolbar();
