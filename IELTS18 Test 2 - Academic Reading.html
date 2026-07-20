@@ -717,6 +717,73 @@
       display: none;
     }
 
+
+    .correct-answer-text .feedback-answer-line,
+    .correct-answer-text .feedback-evidence-line {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      flex-wrap: wrap;
+    }
+
+    .correct-answer-text .feedback-evidence-line {
+      margin-top: 3px;
+      color: var(--text-soft);
+    }
+
+    .evidence-control {
+      width: 24px;
+      height: 24px;
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      background: var(--bg);
+      color: var(--text);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0;
+      cursor: pointer;
+      flex: 0 0 auto;
+    }
+
+    .evidence-control:hover {
+      border-color: var(--accent);
+      background: var(--accent-soft);
+    }
+
+    .evidence-control:focus-visible {
+      outline: 2px solid var(--accent);
+      outline-offset: 2px;
+    }
+
+    .evidence-control svg {
+      width: 14px;
+      height: 14px;
+      stroke: currentColor;
+    }
+
+    .passage-evidence-highlight {
+      background: color-mix(in srgb, var(--highlight) 38%, transparent);
+      border-radius: 3px;
+      box-shadow: 0 0 0 1px color-mix(in srgb, var(--accent) 24%, transparent);
+    }
+
+    .passage-evidence-highlight.evidence-pulse {
+      animation: evidencePulse 700ms ease-out 1;
+    }
+
+    @keyframes evidencePulse {
+      0% { box-shadow: 0 0 0 1px color-mix(in srgb, var(--accent) 28%, transparent); }
+      45% { box-shadow: 0 0 0 5px color-mix(in srgb, var(--accent) 18%, transparent); }
+      100% { box-shadow: 0 0 0 1px color-mix(in srgb, var(--accent) 24%, transparent); }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .passage-evidence-highlight.evidence-pulse {
+        animation: none;
+      }
+    }
+
     /* Bottom navigation */
     .bottom-nav {
       position: fixed;
@@ -1679,6 +1746,39 @@
       38: "Roman",
       39: "Paris",
       40: "outwards"
+    };
+
+
+
+    const studyFeedback = {
+      1: {
+        infoButtonAfter: "which may have been fashioned out of deer antlers",
+        evidence: "which may have been fashioned out of deer antlers"
+      },
+      2: {
+        infoButtonAfter: "may have once held a ring of timber posts",
+        evidence: "may have once held a ring of timber posts"
+      },
+      3: {
+        infoButtonAfter: "fashioned sledges and rollers out of tree trunks",
+        evidence: "fashioned sledges and rollers out of tree trunks"
+      },
+      4: {
+        infoButtonAfter: "hauled by oxen",
+        evidence: "hauled by oxen"
+      },
+      5: {
+        infoButtonAfter: "it was glaciers, not humans, that carried the bluestones to Salisbury Plain",
+        evidence: "it was glaciers, not humans, that carried the bluestones to Salisbury Plain"
+      },
+      6: {
+        infoButtonAfter: "Stonehenge was the work of druids",
+        evidence: "Stonehenge was the work of druids"
+      },
+      7: {
+        infoButtonAfter: "Stonehenge once served the function of burial ground",
+        evidence: "Stonehenge once served the function of burial ground"
+      }
     };
 
     const correctAnswerText = {
@@ -2803,6 +2903,7 @@
      *****************/
     function switchSection(section) {
       if (![1, 2, 3].includes(section)) return;
+      clearActiveEvidenceHighlight();
       activeSection = section;
       visitedSections.add(section);
 
@@ -2923,6 +3024,93 @@
       return "";
     }
 
+
+    function escapeHtml(value) {
+      return String(value)
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#39;");
+    }
+
+    function evidenceIconSvg() {
+      return '<svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="6"></circle><line x1="16" y1="16" x2="21" y2="21"></line></svg>';
+    }
+
+    function buildFeedbackHtml(q, answerText) {
+      const feedback = studyFeedback[q];
+      let html = '<div class="feedback-answer-line"><strong>Correct answer:</strong> ' + escapeHtml(answerText) + '</div>';
+      if (feedback && feedback.infoButtonAfter) {
+        const relatedNote = feedback.relatedOnly
+          ? ' <span class="feedback-related-note">This related passage information does not confirm or contradict the extra claim in the statement.</span>'
+          : '';
+        html += '<div class="feedback-evidence-line"><strong>Evidence:</strong> <span>“' + escapeHtml(feedback.evidence || feedback.infoButtonAfter) + '”</span>' + relatedNote + '<button class="evidence-control" type="button" aria-label="Show evidence in passage" title="Show evidence in passage" data-evidence-q="' + q + '">' + evidenceIconSvg() + '</button></div>';
+      }
+      return html;
+    }
+
+    let activeEvidenceHighlight = null;
+
+    function clearActiveEvidenceHighlight() {
+      if (!activeEvidenceHighlight) return;
+      const parent = activeEvidenceHighlight.parentNode;
+      if (parent) {
+        while (activeEvidenceHighlight.firstChild) {
+          parent.insertBefore(activeEvidenceHighlight.firstChild, activeEvidenceHighlight);
+        }
+        parent.removeChild(activeEvidenceHighlight);
+        parent.normalize();
+      }
+      activeEvidenceHighlight = null;
+    }
+
+    function findTextRange(root, phrase) {
+      const walker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT, {
+        acceptNode(node) {
+          return node.nodeValue.includes(phrase) ? NodeFilter.FILTER_ACCEPT : NodeFilter.FILTER_REJECT;
+        }
+      });
+      const node = walker.nextNode();
+      if (!node) return null;
+      const start = node.nodeValue.indexOf(phrase);
+      const range = document.createRange();
+      range.setStart(node, start);
+      range.setEnd(node, start + phrase.length);
+      return range;
+    }
+
+    function showEvidenceInPassage(q) {
+      if (mode === "test" && isTestRunning && !testSubmitted) return;
+      const feedback = studyFeedback[q];
+      if (!feedback || !feedback.infoButtonAfter) return;
+      const passageSection = document.querySelector('.passage-section[data-section="1"]');
+      if (!passageSection) return;
+      const range = findTextRange(passageSection, feedback.infoButtonAfter);
+      if (!range) {
+        console.error('Evidence phrase not found in passage for question ' + q + ': ' + feedback.infoButtonAfter);
+        return;
+      }
+
+      clearActiveEvidenceHighlight();
+      const marker = document.createElement("mark");
+      marker.className = "passage-evidence-highlight evidence-pulse";
+      marker.setAttribute("tabindex", "-1");
+      marker.setAttribute("data-evidence-for", q);
+      range.surroundContents(marker);
+      activeEvidenceHighlight = marker;
+      marker.scrollIntoView({ behavior: "smooth", block: "center" });
+      marker.focus({ preventScroll: true });
+      window.setTimeout(() => marker.classList.remove("evidence-pulse"), 800);
+    }
+
+    document.addEventListener("click", (event) => {
+      const btn = event.target.closest(".evidence-control");
+      if (!btn) return;
+      event.preventDefault();
+      showEvidenceInPassage(Number(btn.dataset.evidenceQ));
+    });
+
     function evaluateQuestions() {
       let correctCount = 0;
 
@@ -2964,7 +3152,7 @@
         if (ca) {
           const txt = correctAnswerText[q];
           if (txt) {
-            ca.textContent = "Correct answer: " + txt;
+            ca.innerHTML = buildFeedbackHtml(q, txt);
           }
         }
       }
@@ -3060,6 +3248,7 @@
     }
 
     function submitTest() {
+      clearActiveEvidenceHighlight();
       const correctCount = evaluateQuestions();
 
       // In both modes, show correct answer text
@@ -3133,6 +3322,7 @@
     }
 
     function closeResults() {
+      clearActiveEvidenceHighlight();
       const overlay = document.getElementById("resultsOverlay");
       const studentLine = document.getElementById("studentLine");
       const fullScreenExitLine = document.getElementById("fullScreenExitLine");
