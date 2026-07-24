@@ -4,6 +4,7 @@
   <meta charset="UTF-8" />
   <title>IELTS Pabs Reading Test 2 – General Training – Cambridge 19</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link rel="stylesheet" href="../../../academic/shared/reading-feature-shell.css" />
   <style>
     :root {
       --bg: #ffffff;
@@ -187,59 +188,6 @@
       font-weight: 800;
       font-size: 1.4rem;
       letter-spacing: 0.08em;
-    }
-
-    /* IELTS Pabs animated logo */
-    .logo.home-link,
-    .logo-link .logo {
-      transition: color 0.2s ease, opacity 0.2s ease;
-    }
-
-    .logo.home-link:hover,
-    .home-link:hover,
-    .logo-link:hover .logo {
-      color: #e31837;
-      opacity: 1;
-    }
-
-    .logo-char {
-      display: inline-block;
-      opacity: 1;
-      transform: none;
-      filter: none;
-      will-change: transform, opacity, filter;
-    }
-
-    .logo.is-animating .logo-char {
-      animation: logoReveal 0.45s cubic-bezier(0.22, 1, 0.36, 1) forwards;
-      animation-delay: calc(var(--logo-char-index) * 200ms);
-    }
-
-    @keyframes logoReveal {
-      from {
-        opacity: 0;
-        transform: translateY(8px);
-        filter: blur(4px);
-      }
-      to {
-        opacity: 1;
-        transform: translateY(0);
-        filter: blur(0);
-      }
-    }
-
-    @media (prefers-reduced-motion: reduce) {
-      .logo-char {
-        opacity: 1;
-        transform: none;
-        filter: none;
-        animation: none;
-      }
-    }
-
-    .home-link {
-      cursor: pointer;
-      user-select: none;
     }
 
     .test-title {
@@ -525,63 +473,30 @@
     }
 
     .passage-divider {
-      margin: 32px 0 22px;
-      border-top: 2px solid var(--border);
-      padding-top: 22px;
-    }
-
-    .passage-divider h2 {
-      margin-top: 0;
-    }
-
-    .question-group-heading {
-      margin: 16px 0 10px;
-      padding: 8px 10px;
-      border-left: 4px solid var(--accent);
-      border-radius: 8px;
-      background: var(--accent-soft);
-      font-weight: 600;
-    }
-
-    .summary-box {
-      margin: 12px 0 14px;
-      padding: 14px 16px;
-      border: 1px solid var(--border);
-      border-radius: 10px;
-      background: var(--bg-secondary);
-      line-height: 1.65;
-    }
-
-    .summary-feedbacks {
-      margin-top: 8px;
-    }
-
-    .inline-question {
-      display: inline;
-      margin: 0 2px;
-      padding: 1px 2px;
-      border-radius: 6px;
-    }
-
-    .inline-question.current-question {
-      outline: 2px solid var(--accent);
-      background: var(--accent-soft);
+      margin: 24px 0 20px;
+      border-top: 1px solid var(--border);
+      padding-top: 18px;
     }
 
     .instruction-block {
-      margin-bottom: 10px;
+      margin-bottom: 12px;
     }
 
     .instruction-block p {
-      margin: 4px 0;
-      line-height: 1.45;
+      margin: 0 0 8px;
+      font-size: 1.05rem;
+      line-height: 1.4;
     }
 
-    .instruction-block .instruction-title,
+    .instruction-block .instruction-title {
+      font-size: 1.05rem;
+      font-weight: 800;
+    }
+
     .instruction-block .instruction-subtitle {
-      font-size: inherit;
-      font-weight: inherit;
-      margin: 4px 0;
+      font-size: 1.05rem;
+      font-weight: 800;
+      margin: 0 0 10px;
     }
 
     .instruction-block .instruction-note {
@@ -628,9 +543,7 @@
     }
 
     .options-row label {
-      display: flex;
-      align-items: center;
-      gap: 8px;
+      display: block;
       padding: 6px 8px;
       border-radius: 8px;
       margin: 0;
@@ -644,9 +557,7 @@
       padding: 6px 8px;
       border-radius: 6px;
       border: 1px solid var(--border);
-      font-family: inherit;
-      font-size: 1em;
-      line-height: 1.35;
+      font-size: 0.95rem;
       width: 100%;
       max-width: 260px;
       background: var(--bg);
@@ -701,20 +612,8 @@
     .inline-input input {
       width: 100%;
       padding-left: 46px;
-      min-height: 34px;
-      line-height: 1.35;
-    }
-
-    .inline-input.no-number {
-      min-width: 130px;
-    }
-
-    .inline-input.no-number::before {
-      content: none;
-    }
-
-    .inline-input.no-number input {
-      padding-left: 10px;
+      height: 34px;
+      line-height: 34px;
     }
 
     .drag-bank {
@@ -747,25 +646,6 @@
       outline: 2px solid var(--accent);
       outline-offset: 1px;
     }
-
-    .passage-match-source {
-      display: inline-block;
-      padding: 4px 8px;
-      border: 1px dashed transparent;
-      border-radius: 8px;
-      cursor: grab;
-      transition: background 0.15s, border-color 0.15s, color 0.15s;
-    }
-
-    .passage-match-source:hover,
-    .passage-match-source:focus,
-    .passage-match-source.selected {
-      border-color: var(--accent);
-      background: var(--accent-soft);
-      color: var(--accent);
-      outline: none;
-    }
-
 
     .drag-hint {
       color: var(--text-soft);
@@ -822,6 +702,25 @@
       width: 100%;
     }
 
+    /* Bottom navigation */
+    .bottom-nav {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background: var(--bg-secondary);
+      border-top: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      padding: 4px 10px;
+      font-size: 0.92rem;
+      z-index: 900;
+    }
+
+    .bottom-row {
+      width: 100%;
+    }
+
     .bottom-row-v2 {
       display: flex;
       align-items: center;
@@ -840,9 +739,7 @@
     .part-summary-row {
       display: flex;
       gap: 8px;
-      min-width: max-content;
-      flex: 0 0 auto;
-      white-space: nowrap;
+      min-width: 320px;
     }
 
     #questionNumbers {
@@ -864,13 +761,12 @@
       cursor: pointer;
       display: inline-flex;
       align-items: center;
-      gap: 8px;
+      gap: 6px;
       font-size: 0.94rem;
       justify-content: center;
       transition: background 0.1s, border-color 0.1s, color 0.1s;
       text-align: center;
-      width: auto;
-      flex: 0 0 auto;
+      width: 100%;
       min-height: 44px;
       white-space: nowrap;
     }
@@ -927,7 +823,7 @@
 
     .qnav.answered {
       border-color: var(--correct);
-      background: rgba(67,160,71,0.22);
+      background: rgba(67,160,71,0.12);
     }
 
     .qnav.unanswered {
@@ -1118,28 +1014,6 @@
       margin: 6px 0;
     }
 
-    #shortcutToast {
-      position: fixed;
-      left: 50%;
-      bottom: 86px;
-      transform: translateX(-50%);
-      padding: 9px 14px;
-      border-radius: 999px;
-      border: 1px solid var(--border);
-      background: var(--bg-secondary);
-      color: var(--text);
-      font-size: 0.85rem;
-      box-shadow: var(--shadow-soft);
-      opacity: 0;
-      pointer-events: none;
-      transition: opacity 0.2s ease;
-      z-index: 1600;
-    }
-
-    #shortcutToast.visible {
-      opacity: 1;
-    }
-
     /* Utility */
     .sr-only {
       position: absolute;
@@ -1160,21 +1034,6 @@
       .divider {
         display: none;
       }
-    }
-
-    .passage-section,
-    .passage-section p,
-    .pane-content {
-      word-break: normal;
-      overflow-wrap: normal;
-      hyphens: none;
-    }
-
-    .highlighted,
-    .note-anchor {
-      word-break: normal;
-      overflow-wrap: normal;
-      hyphens: none;
     }
 
     .divider {
@@ -1207,6 +1066,25 @@
       box-shadow: 0 1px 4px rgba(0,0,0,0.2);
     }
 
+    .question-text.gap-fill {
+      display: block;
+      line-height: 1.35;
+    }
+
+    .gap-bullet {
+      display: inline-block;
+      font-size: 1.2rem;
+      line-height: 1;
+      margin-right: 8px;
+      vertical-align: top;
+    }
+
+    .gap-answer-tail {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      white-space: nowrap;
+    }
 
     .drop-zone-row {
       display: flex;
@@ -1222,7 +1100,6 @@
       border-radius: 6px;
       padding: 4px 8px;
       cursor: pointer;
-      font-family: inherit;
       font-size: 0.82rem;
     }
   </style>
@@ -1230,8 +1107,8 @@
 <body data-theme="black-on-white">
   <!-- Mode selection -->
   <div id="modeScreen">
-    <div id="modeScreenInner">
-      <h1>IELTS Reading Simulation</h1>
+    <div id="modeScreenInner" role="dialog" aria-modal="true" aria-labelledby="mode-screen-title">
+      <h1 id="mode-screen-title">IELTS Reading Simulation</h1>
       <p>Select how you want to use this test.</p>
       <div class="mode-buttons">
         <button
@@ -1268,12 +1145,13 @@
     <!-- Top bar -->
     <header class="top-bar">
       <div class="top-left">
-        <div class="logo home-link" onclick="confirmGoHome()" title="Return to home">IELTS Pabs</div>
+        <div class="logo">IELTS Pabs</div>
         <div class="test-title">
           Reading Test 2 – General Training – Cambridge 19
         </div>
       </div>
       <div class="top-right">
+        <div id="readingFeatureShellMount" aria-live="polite"></div>
         <div id="timerContainer" role="status" aria-live="polite" aria-atomic="true" aria-hidden="true"><span id="timerPrefix">Time left:</span> <span id="timerDisplay">60:00</span></div>
         <div class="icon-group">
           <span class="icon" title="Connection status">
@@ -1316,12 +1194,12 @@
     </header>
 
     <!-- Options overlay -->
-    <div id="optionsOverlay">
-      <div id="optionsPanel">
+    <div id="optionsOverlay" role="presentation">
+      <div id="optionsPanel" role="dialog" aria-modal="true" aria-labelledby="options-title">
         <button class="options-close" onclick="toggleOptions(false)">✕</button>
-        <h2>Options</h2>
+        <h2 id="options-title">Options</h2>
 
-        <button class="submit-button" onclick="handlePrimarySubmit()">
+        <button class="submit-button" id="optionsSubmitBtn" onclick="handlePrimarySubmit()">
           ✔ Submit test &amp; check answers
         </button>
 
@@ -1363,23 +1241,29 @@
         <!-- Passage pane -->
         <div class="pane" id="passagePane">
           <div class="pane-header" id="passageHeader">
-            Part 1 <span>Read the text and answer questions 1–14.</span>
+            <div id="passageHeaderLine">Section 1 <span>Read the texts and answer Questions 1–14.</span></div>
+            <div class="passage-clue-toolbar" id="passageClueToolbar" aria-label="Text clue controls" hidden>
+              <button type="button" id="passageClueToggle" class="reading-shell-passage-clue-toggle" aria-pressed="false" hidden disabled>Show all section clues</button>
+            </div>
           </div>
           <div class="pane-content" id="passageContent">
             <!-- Section 1 passages -->
             <div class="passage-section" data-section="1">
+              <div class="reading-text" id="text-s1-campsites" data-reading-text="s1-campsites">
               <h2>Local campsites</h2>
-              <p><strong class="passage-match-source" draggable="true" data-value="A" tabindex="0" role="button" aria-label="Use campsite A, Prettycoat Farm, as an answer">A Prettycoat Farm</strong> This well-known campsite in the wild near Browbourne is a winner with campers who are looking for time out from their fast-paced jobs in the capital. Despite its limited facilities, the site, with its large tent pitches, is an ideal base for exploring the area and driving to the rock museum, the craft workshops or Gaydon Castle. Just follow the signs.</p>
 
-              <p><strong class="passage-match-source" draggable="true" data-value="B" tabindex="0" role="button" aria-label="Use campsite B, Newgammon Wild, as an answer">B Newgammon Wild</strong> This campsite looks like it’s going to be a winner. It only opened last year, but already the website has some very positive reviews from the handful of campers who know about it so far. It offers splendid views over some of the country’s most attractive beaches, which can be accessed by steep, narrow cliff steps. You need a good level of fitness for these, and don’t forget to leave some energy for the return trip at the end of the day.</p>
+              <p><strong>A Prettycoat Farm</strong> This well-known campsite in the wild near Browbourne is a winner with campers who are looking for time out from their fast-paced jobs in the capital. Despite its limited facilities, the site, with its large tent pitches, is an ideal base for exploring the area and driving to the rock museum, the craft workshops or Gaydon Castle. Just follow the signs.</p>
 
-              <p><strong class="passage-match-source" draggable="true" data-value="C" tabindex="0" role="button" aria-label="Use campsite C, Oakerly Estate, as an answer">C Oakerly Estate</strong> You won’t be disappointed when you reach Oakerly, despite the problems of getting there by car on such narrow roads. You’ll see quite a lot of motorhomes when you hit the clifftop, but there’s still plenty of room for tents on the spacious lawn that also offers a camp kitchen, restaurant and bar. Make sure you stay safe and pitch your tent within the white line around the cliff edge, though.</p>
+              <p><strong>B Newgammon Wild</strong> This campsite looks like it’s going to be a winner. It only opened last year, but already the website has some very positive reviews from the handful of campers who know about it so far. It offers splendid views over some of the country’s most attractive beaches, which can be accessed by steep, narrow cliff steps. You need a good level of fitness for these, and don’t forget to leave some energy for the return trip at the end of the day.</p>
 
-              <p><strong class="passage-match-source" draggable="true" data-value="D" tabindex="0" role="button" aria-label="Use campsite D, South Turnbull, as an answer">D South Turnbull</strong> The emphasis at this site is on back-to-basics camping. It’s advisable to come in a group as there are few facilities and you need to do all your own cooking. The area is rather exposed, and in periods of bad weather it can’t be reached at all so check on the website before you go.</p>
+              <p><strong>C Oakerly Estate</strong> You won’t be disappointed when you reach Oakerly, despite the problems of getting there by car on such narrow roads. You’ll see quite a lot of motorhomes when you hit the clifftop, but there’s still plenty of room for tents on the spacious lawn that also offers a camp kitchen, restaurant and bar. Make sure you stay safe and pitch your tent within the white line around the cliff edge, though.</p>
 
-              <p><strong class="passage-match-source" draggable="true" data-value="E" tabindex="0" role="button" aria-label="Use campsite E, Boxer Trepis, as an answer">E Boxer Trepis</strong> The 20-metre high rockfaces that surround this site are especially attractive to rock climbers, who come here to camp from hundreds of miles away so that they can attempt the climb – and not always with success, according to the website! It’s not compulsory, of course, and there are plenty of other activities for campers to get involved in, such as birdwatching and bathing in the sea.</p>
+              <p><strong>D South Turnbull</strong> The emphasis at this site is on back-to-basics camping. It’s advisable to come in a group as there are few facilities and you need to do all your own cooking. The area is rather exposed, and in periods of bad weather it can’t be reached at all so check on the website before you go.</p>
 
-              <div class="passage-divider">
+              <p><strong>E Boxer Trepis</strong> The 20-metre high rockfaces that surround this site are especially attractive to rock climbers, who come here to camp from hundreds of miles away so that they can attempt the climb – and not always with success, according to the website! It’s not compulsory, of course, and there are plenty of other activities for campers to get involved in, such as birdwatching and bathing in the sea.</p>
+
+              </div>
+              <div class="passage-divider reading-text" id="text-s1-newsletter" data-reading-text="s1-newsletter">
               <h2>Durridge Heights (OH) Newsletter</h2>
 
               <p><em>Newsletter for people living in the seven-storey block of flats at Durridge Heights</em></p>
@@ -1398,6 +1282,7 @@
 
             <!-- Section 2 passages -->
             <div class="passage-section" data-section="2" style="display:none;">
+              <div class="reading-text" id="text-s2-care" data-reading-text="s2-care">
               <h2>A day in the life of a care worker</h2>
               <p>Care workers in Britain provide elderly and disabled people with the opportunity to remain independent at home, rather than moving into a care home. For those interested in the work, here is what a typical day could be like for a trained care worker.</p>
               <p>Care workers often start early, as the first client of the day may need help getting out of bed and putting on their clothes; they may suffer from a condition that prevents them from doing this easily. Providing these services helps clients to look and feel as good as possible when beginning their day. The care worker may then help to cook breakfast for the client, and this is often a good time to enjoy a conversation and catch up on how they are feeling. Many clients appreciate being able to chat to someone regularly, as some may have no family members or friends living nearby. Next, the care worker may take the opportunity to do some basic housework for the client. Housework is often something that elderly people or people with disabilities may not be able to do themselves. Even something as simple as hoovering the living room can make a huge difference to a client’s day. Of course, there may be the breakfast dishes to do as well.</p>
@@ -1405,7 +1290,8 @@
               <p>During the afternoon, a care worker may help a third client with an outdoor activity, which could involve going for a short walk in the local area or taking the laundry to the launderette. Elderly people may not feel confident going far on their own, so having company can be a great help.</p>
               <p>The care worker may participate in cooking dinner with their last client and, before going home, they may also get out their client’s medication. This ensures the client remembers to take it before going to bed.</p>
 
-              <div class="passage-divider">
+              </div>
+              <div class="passage-divider reading-text" id="text-s2-balance" data-reading-text="s2-balance">
               <h2>How to find a good balance between your work and your personal life</h2>
               <p>A good work-life balance is beneficial to everyone. But how can it be achieved? The first step is to take a serious look at the amount of time you are devoting to work and set about reducing it. The main benefit most people notice once they stop working too much is an improvement in their general health and wellbeing.</p>
               <p><strong>Tips for a healthy work-life balance</strong></p>
@@ -1421,7 +1307,7 @@
             </div>
 
             <!-- Section 3 passages -->
-            <div class="passage-section" data-section="3" style="display:none;">
+            <div class="passage-section reading-text" id="text-s3-henry" data-reading-text="s3-henry" data-section="3" style="display:none;">
               <h2>City’s ‘Henry’ programme gives children choices while helping parents stay in the driving seat</h2>
               <p>Leeds has become the first city in the UK to report a drop in childhood obesity after introducing a programme called ‘Henry’ to help parents set boundaries for their children and put them off sweets and junk food. Only a few cities in the world, notably Amsterdam, have managed to cut child obesity. As in Amsterdam, the decline in Leeds is most marked among families living in the most deprived areas, where the problem is worst and hardest to tackle.</p>
               <p>‘The improvement in the most deprived children in Leeds is startling,’ said Susan Jebb, a professor of diet and population health at Oxford University, whose team has analysed the city’s data. Over four years, obesity has dropped from 11.5% to 10.5% and the trajectory is steadily downwards. Among the more affluent families, there was also a decline from 6.8% to 6%. Overall the drop was from 9.4% to 8.8%. The data comes from the national child measurement programme (NCMP), which requires all children to be weighed at the start and end of primary school. The biggest decline in obesity in Leeds is 6.4% in the reception class, at about the age of four.</p>
@@ -1440,21 +1326,19 @@
         <!-- Questions pane -->
         <div class="pane" id="questionPane">
           <div class="pane-header" id="questionHeader">
-            SECTION 1 Questions 1–14
+            Questions 1–14
           </div>
           <div class="pane-content" id="questionContent">
             <!-- Section 1 questions -->
             <div data-section="1">
-              <div class="instruction-block">
-                <p><strong>SECTION 1</strong></p>
-                <p><strong>Questions 1–7</strong></p>
+              <div class="instruction-block" id="study-instruction-s1-campsites">
+                <p class="instruction-title"><strong>SECTION 1 Questions 1–14</strong></p>
+                <p class="instruction-subtitle"><strong>Questions 1–7</strong></p>
                 <p>Look at the five descriptions of campsites, A–E.</p>
                 <p>For which campsite are the following statements true?</p>
-                <p>Choose the correct letter, A–E, in boxes 1–7.</p>
+                <p>Choose the correct letter, A–E, in questions 1–7.</p>
                 <p class="instruction-note">NB You may use any letter more than once.</p>
               </div>
-
-              <p class="question-group-heading">Read “Local campsites” and answer Questions 1 to 7.</p>
 
               <!-- Q1–7 matching -->
               <div class="question-block" data-q="1">
@@ -1462,7 +1346,7 @@
                   <span class="question-number-label">1.</span>
                   The site is impossible to get to at certain times.
                 </div>
-                <select class="sr-only" name="q1">
+                <select name="q1">
                   <option value="">Select…</option>
                   <option value="A">A. Prettycoat Farm</option>
                   <option value="B">B. Newgammon Wild</option>
@@ -1470,7 +1354,6 @@
                   <option value="D">D. South Turnbull</option>
                   <option value="E">E. Boxer Trepis</option>
                 </select>
-                <div class="drop-zone-row"><div class="drop-zone" data-for="q1" tabindex="0" role="button" aria-label="Answer box for question 1">Drop here</div><button type="button" class="clear-drop-btn" data-clear-for="q1">Clear</button></div>
                 <div class="correct-answer-text" id="ca-1"></div>
               </div>
 
@@ -1479,7 +1362,7 @@
                   <span class="question-number-label">2.</span>
                   It is in a convenient place for going by car to various tourist spots.
                 </div>
-                <select class="sr-only" name="q2">
+                <select name="q2">
                   <option value="">Select…</option>
                   <option value="A">A. Prettycoat Farm</option>
                   <option value="B">B. Newgammon Wild</option>
@@ -1487,7 +1370,6 @@
                   <option value="D">D. South Turnbull</option>
                   <option value="E">E. Boxer Trepis</option>
                 </select>
-                <div class="drop-zone-row"><div class="drop-zone" data-for="q2" tabindex="0" role="button" aria-label="Answer box for question 2">Drop here</div><button type="button" class="clear-drop-btn" data-clear-for="q2">Clear</button></div>
                 <div class="correct-answer-text" id="ca-2"></div>
               </div>
 
@@ -1496,7 +1378,7 @@
                   <span class="question-number-label">3.</span>
                   You should camp somewhere inside the marked zone.
                 </div>
-                <select class="sr-only" name="q3">
+                <select name="q3">
                   <option value="">Select…</option>
                   <option value="A">A. Prettycoat Farm</option>
                   <option value="B">B. Newgammon Wild</option>
@@ -1504,7 +1386,6 @@
                   <option value="D">D. South Turnbull</option>
                   <option value="E">E. Boxer Trepis</option>
                 </select>
-                <div class="drop-zone-row"><div class="drop-zone" data-for="q3" tabindex="0" role="button" aria-label="Answer box for question 3">Drop here</div><button type="button" class="clear-drop-btn" data-clear-for="q3">Clear</button></div>
                 <div class="correct-answer-text" id="ca-3"></div>
               </div>
 
@@ -1513,7 +1394,7 @@
                   <span class="question-number-label">4.</span>
                   Campers who enjoy a particular physical challenge come here.
                 </div>
-                <select class="sr-only" name="q4">
+                <select name="q4">
                   <option value="">Select…</option>
                   <option value="A">A. Prettycoat Farm</option>
                   <option value="B">B. Newgammon Wild</option>
@@ -1521,7 +1402,6 @@
                   <option value="D">D. South Turnbull</option>
                   <option value="E">E. Boxer Trepis</option>
                 </select>
-                <div class="drop-zone-row"><div class="drop-zone" data-for="q4" tabindex="0" role="button" aria-label="Answer box for question 4">Drop here</div><button type="button" class="clear-drop-btn" data-clear-for="q4">Clear</button></div>
                 <div class="correct-answer-text" id="ca-4"></div>
               </div>
 
@@ -1530,7 +1410,7 @@
                   <span class="question-number-label">5.</span>
                   The difficult journey to the site is worth the effort.
                 </div>
-                <select class="sr-only" name="q5">
+                <select name="q5">
                   <option value="">Select…</option>
                   <option value="A">A. Prettycoat Farm</option>
                   <option value="B">B. Newgammon Wild</option>
@@ -1538,7 +1418,6 @@
                   <option value="D">D. South Turnbull</option>
                   <option value="E">E. Boxer Trepis</option>
                 </select>
-                <div class="drop-zone-row"><div class="drop-zone" data-for="q5" tabindex="0" role="button" aria-label="Answer box for question 5">Drop here</div><button type="button" class="clear-drop-btn" data-clear-for="q5">Clear</button></div>
                 <div class="correct-answer-text" id="ca-5"></div>
               </div>
 
@@ -1547,7 +1426,7 @@
                   <span class="question-number-label">6.</span>
                   Few people have heard of this site.
                 </div>
-                <select class="sr-only" name="q6">
+                <select name="q6">
                   <option value="">Select…</option>
                   <option value="A">A. Prettycoat Farm</option>
                   <option value="B">B. Newgammon Wild</option>
@@ -1555,7 +1434,6 @@
                   <option value="D">D. South Turnbull</option>
                   <option value="E">E. Boxer Trepis</option>
                 </select>
-                <div class="drop-zone-row"><div class="drop-zone" data-for="q6" tabindex="0" role="button" aria-label="Answer box for question 6">Drop here</div><button type="button" class="clear-drop-btn" data-clear-for="q6">Clear</button></div>
                 <div class="correct-answer-text" id="ca-6"></div>
               </div>
 
@@ -1564,7 +1442,7 @@
                   <span class="question-number-label">7.</span>
                   Some physical effort is needed to enjoy nearby coastal areas.
                 </div>
-                <select class="sr-only" name="q7">
+                <select name="q7">
                   <option value="">Select…</option>
                   <option value="A">A. Prettycoat Farm</option>
                   <option value="B">B. Newgammon Wild</option>
@@ -1572,18 +1450,17 @@
                   <option value="D">D. South Turnbull</option>
                   <option value="E">E. Boxer Trepis</option>
                 </select>
-                <div class="drop-zone-row"><div class="drop-zone" data-for="q7" tabindex="0" role="button" aria-label="Answer box for question 7">Drop here</div><button type="button" class="clear-drop-btn" data-clear-for="q7">Clear</button></div>
                 <div class="correct-answer-text" id="ca-7"></div>
               </div>
 
-              <p class="question-group-heading">Read “Durridge Heights (OH) Newsletter” and answer Questions 8 to 14.</p>
-
+              <div class="instruction-block" id="study-instruction-s1-tfng">
               <p><strong>Questions 8–14</strong></p>
-              <p>Do the following statements agree with the information given in the text?</p>
+              <p>Do the following statements agree with the information given in the text <strong>Durridge Heights (OH) Newsletter</strong>?</p>
               <p>In questions 8–14, choose:</p>
               <p><strong>TRUE</strong> if the statement agrees with the information<br>
               <strong>FALSE</strong> if the statement contradicts the information<br>
               <strong>NOT GIVEN</strong> if there is no information on this</p>
+              </div>
 
               <!-- Q8–14 TRUE/FALSE/NOT GIVEN -->
               <!-- (rest of questions + sections 2 & 3 will be in Part 2) -->
@@ -1605,13 +1482,13 @@
         <div class="bottom-left">
           <div class="part-summary-row">
             <div class="part-chip active" data-section-chip="1" onclick="switchSection(1)">
-              Part 1 <span class="count" id="part1Count">0 of 14</span>
+              Section 1 <span class="count" id="part1Count">0 of 14</span>
             </div>
             <div class="part-chip unopened" data-section-chip="2" onclick="switchSection(2)">
-              Part 2 <span class="count" id="part2Count">0 of 13</span>
+              Section 2 <span class="count" id="part2Count">0 of 13</span>
             </div>
             <div class="part-chip unopened" data-section-chip="3" onclick="switchSection(3)">
-              Part 3 <span class="count" id="part3Count">0 of 13</span>
+              Section 3 <span class="count" id="part3Count">0 of 13</span>
             </div>
           </div>
 
@@ -1619,40 +1496,41 @@
         </div>
 
         <div class="section-arrows">
-          <button class="arrow-btn" onclick="prevSection()" title="Previous part">←</button>
-          <button class="arrow-btn" onclick="nextSection()" title="Next part">→</button>
-          <button class="check-btn" onclick="handlePrimarySubmit()" title="Submit test and check answers">✔ Check answers</button>
+          <button class="arrow-btn" onclick="prevSection()" title="Previous section" aria-label="Previous section">←</button>
+          <button class="arrow-btn" onclick="nextSection()" title="Next section" aria-label="Next section">→</button>
+          <button class="check-btn" id="primarySubmitBtn" onclick="handlePrimarySubmit()" title="Submit answers">✔ Submit answers</button>
         </div>
       </div>
     </footer>
   </div>
 
 
-  <div id="fullscreenLockOverlay" role="dialog" aria-modal="true" aria-live="assertive">
+  <div id="fullscreenLockOverlay" role="dialog" aria-modal="true" aria-live="assertive" aria-labelledby="fullscreen-lock-title">
     <div id="fullscreenLockPanel">
-      <h2>Test paused</h2>
+      <h2 id="fullscreen-lock-title">Test paused</h2>
       <p>You have left full screen. Return to full screen to continue your test.</p>
       <button class="mode-btn" type="button" onclick="returnToFullscreenAndResume()">Return to full screen</button>
     </div>
   </div>
 
   <!-- Results overlay -->
-  <div id="resultsOverlay">
-    <div id="resultsPanel">
-      <h2>Your IELTS Reading result</h2>
+  <div id="resultsOverlay" role="presentation">
+    <div id="resultsPanel" role="dialog" aria-modal="true" aria-labelledby="results-title">
+      <h2 id="results-title">Your IELTS Reading result</h2>
       <p id="studentLine"></p>
       <p id="fullScreenExitLine"></p>
       <p id="focusViolationLine"></p>
       <p id="totalTimeLine"></p>
       <p id="scoreLine"></p>
+      <p id="sectionScoresLine"></p>
       <p id="bandLine"></p>
       <p id="descriptorLine"></p>
-      <button style="margin-top:10px;" onclick="closeResults()">Close</button>
+      <button id="resultsCloseBtn" style="margin-top:10px;" onclick="closeResults()">Close</button>
     </div>
   </div>
 
-  <div id="shortcutToast" role="status" aria-live="polite" aria-atomic="true"></div>
-
+  <script src="study-feedback.js"></script>
+  <script src="../../../academic/shared/reading-feature-shell-core.js"></script>
   <script>
     /***************
      * GLOBAL STATE
@@ -1662,6 +1540,7 @@
     let timerSeconds = 60 * 60;
     let timerId = null;
     let testSubmitted = false;
+    let studyHasSubmitted = false;
     let pendingMode = null;
     let studentName = "";
     let isTestRunning = false;
@@ -1870,6 +1749,8 @@
 
     function startTest(selectedMode) {
       mode = selectedMode;
+      testSubmitted = false;
+      studyHasSubmitted = false;
       const timerContainer = document.getElementById("timerContainer");
 
       visitedSections.clear();
@@ -1906,6 +1787,13 @@
       setupDividerDrag();
       updateThemeButtons();
       updateFontButtons();
+      if (window.ReadingFeatureShell) {
+        if (mode === "study" && typeof window.ReadingFeatureShell.startStudySession === "function") {
+          window.ReadingFeatureShell.startStudySession();
+        } else if (typeof window.ReadingFeatureShell.sync === "function") {
+          window.ReadingFeatureShell.sync();
+        }
+      }
       window.addEventListener("beforeunload", (e) => {
         if (!testSubmitted) {
           e.preventDefault();
@@ -1922,8 +1810,6 @@
     window.returnToFullscreenAndResume = returnToFullscreenAndResume;
     window.confirmSubmit = confirmSubmit;
     window.handlePrimarySubmit = handlePrimarySubmit;
-
-    let shortcutToastTimer = null;
 
     function wireModeButtons() {
       const buttons = document.querySelectorAll(".mode-btn[data-mode]");
@@ -2026,9 +1912,19 @@
       startTimer();
     }
 
+    let optionsOpener = null;
     function toggleOptions(show) {
       const overlay = document.getElementById("optionsOverlay");
+      if (!overlay) return;
+      if (show) optionsOpener = document.activeElement;
       overlay.style.display = show ? "flex" : "none";
+      overlay.setAttribute("aria-hidden", show ? "false" : "true");
+      if (show) {
+        const close = overlay.querySelector(".options-close");
+        if (close) close.focus();
+      } else if (optionsOpener && typeof optionsOpener.focus === "function") {
+        optionsOpener.focus();
+      }
     }
 
     document.getElementById("optionsBtn").addEventListener("click", () => {
@@ -2284,20 +2180,21 @@
         "beforeend",
         `
         <div data-section="2" style="display:none;">
-          <p><strong>SECTION 2</strong></p>
-          <p class="question-group-heading">Read “A day in the life of a care worker” and answer Questions 15 to 20.</p>
+          <div class="instruction-block" id="study-instruction-s2-flowchart">
+          <p><strong>SECTION 2 Questions 15–27</strong></p>
           <p><strong>Questions 15–20</strong></p>
           <p>Complete the flowchart below.</p>
-          <p>Choose <strong>ONE WORD ONLY</strong> from the text for each answer.</p>
+          <p>Choose ONE WORD ONLY from the text for each answer.</p>
           <p>Write your answers in boxes 15–20.</p>
 
           <p><strong>A day in the life of a care worker</strong></p>
+          </div>
 
           <div class="question-block" data-q="15">
             <div class="question-text">
               <span class="question-number-label">15.</span>
               It’s an early start for the first client. You may have to help the client get up and dressed if they have a
-              <span class="inline-input no-number"><input type="text" name="q15" /></span>
+              <span class="inline-input"><input type="text" name="q15" /></span>
               that makes this challenging.
             </div>
             <div class="correct-answer-text" id="ca-15"></div>
@@ -2307,7 +2204,7 @@
             <div class="question-text">
               <span class="question-number-label">16.</span>
               The next task may be cooking breakfast and it’s nice to have some
-              <span class="inline-input no-number"><input type="text" name="q16" /></span>
+              <span class="inline-input"><input type="text" name="q16" /></span>
               at this time.
             </div>
             <div class="correct-answer-text" id="ca-16"></div>
@@ -2317,7 +2214,7 @@
             <div class="question-text">
               <span class="question-number-label">17.</span>
               It may be a good idea to do some housework after this, such as
-              <span class="inline-input no-number"><input type="text" name="q17" /></span>
+              <span class="inline-input"><input type="text" name="q17" /></span>
               and washing up.
             </div>
             <div class="correct-answer-text" id="ca-17"></div>
@@ -2327,7 +2224,7 @@
             <div class="question-text">
               <span class="question-number-label">18.</span>
               You may then visit a second client and help them get a
-              <span class="inline-input no-number"><input type="text" name="q18" /></span>
+              <span class="inline-input"><input type="text" name="q18" /></span>
               lunch ready.
             </div>
             <div class="correct-answer-text" id="ca-18"></div>
@@ -2337,7 +2234,7 @@
             <div class="question-text">
               <span class="question-number-label">19.</span>
               Lunch may be followed by some
-              <span class="inline-input no-number"><input type="text" name="q19" /></span>.
+              <span class="inline-input"><input type="text" name="q19" /></span>.
             </div>
             <div class="correct-answer-text" id="ca-19"></div>
           </div>
@@ -2346,24 +2243,24 @@
             <div class="question-text">
               <span class="question-number-label">20.</span>
               Afterwards, a third client may need help with an activity that involves going out of their home, such as doing their
-              <span class="inline-input no-number"><input type="text" name="q20" /></span>.
+              <span class="inline-input"><input type="text" name="q20" /></span>.
             </div>
             <div class="correct-answer-text" id="ca-20"></div>
           </div>
 
-          <p class="question-group-heading">Read “How to find a good balance between your work and your personal life” and answer Questions 21 to 27.</p>
-
+          <div class="instruction-block" id="study-instruction-s2-sentences">
           <p><strong>Questions 21–27</strong></p>
           <p>Complete the sentences below.</p>
-          <p>Choose <strong>ONE WORD ONLY</strong> from the text for each answer.</p>
+          <p>Choose ONE WORD ONLY from the text for each answer.</p>
           <p>Write your answers in boxes 21–27.</p>
           <p><strong>How to find a good balance between your work and your personal life</strong></p>
+          </div>
 
           <div class="question-block" data-q="21">
             <div class="question-text">
               <span class="question-number-label">21.</span>
               People who cut down the hours they work gain most from feeling better physically and experiencing an increased sense of
-              <span class="inline-input no-number"><input type="text" name="q21" /></span>.
+              <span class="inline-input"><input type="text" name="q21" /></span>.
             </div>
             <div class="correct-answer-text" id="ca-21"></div>
           </div>
@@ -2372,7 +2269,7 @@
             <div class="question-text">
               <span class="question-number-label">22.</span>
               It is important that those who work at desks avoid
-              <span class="inline-input no-number"><input type="text" name="q22" /></span>
+              <span class="inline-input"><input type="text" name="q22" /></span>
               by checking their chair, work surface and screen are in the best position.
             </div>
             <div class="correct-answer-text" id="ca-22"></div>
@@ -2382,7 +2279,7 @@
             <div class="question-text">
               <span class="question-number-label">23.</span>
               Having targets to work towards is useful but they should be
-              <span class="inline-input no-number"><input type="text" name="q23" /></span>.
+              <span class="inline-input"><input type="text" name="q23" /></span>.
             </div>
             <div class="correct-answer-text" id="ca-23"></div>
           </div>
@@ -2391,7 +2288,7 @@
             <div class="question-text">
               <span class="question-number-label">24.</span>
               When there are many different tasks to do, the ability to
-              <span class="inline-input no-number"><input type="text" name="q24" /></span>
+              <span class="inline-input"><input type="text" name="q24" /></span>
               them is vital.
             </div>
             <div class="correct-answer-text" id="ca-24"></div>
@@ -2401,7 +2298,7 @@
             <div class="question-text">
               <span class="question-number-label">25.</span>
               People who give up all treats in their personal time may find their
-              <span class="inline-input no-number"><input type="text" name="q25" /></span>
+              <span class="inline-input"><input type="text" name="q25" /></span>
               decreases.
             </div>
             <div class="correct-answer-text" id="ca-25"></div>
@@ -2411,7 +2308,7 @@
             <div class="question-text">
               <span class="question-number-label">26.</span>
               It is wise to use the full amount of
-              <span class="inline-input no-number"><input type="text" name="q26" /></span>
+              <span class="inline-input"><input type="text" name="q26" /></span>
               allowance every year.
             </div>
             <div class="correct-answer-text" id="ca-26"></div>
@@ -2421,7 +2318,7 @@
             <div class="question-text">
               <span class="question-number-label">27.</span>
               Making time to do things with close companions, relatives or
-              <span class="inline-input no-number"><input type="text" name="q27" /></span>
+              <span class="inline-input"><input type="text" name="q27" /></span>
               is a great way to relax.
             </div>
             <div class="correct-answer-text" id="ca-27"></div>
@@ -2435,10 +2332,12 @@
         "beforeend",
         `
         <div data-section="3" style="display:none;">
+          <div class="instruction-block" id="study-instruction-s3-mc">
           <p><strong>SECTION 3 Questions 28–40</strong></p>
           <p><strong>Questions 28–31</strong></p>
-          <p>Choose the correct letter, A, B, C or D, in questions 28-31</p>
-         
+          <p>Choose the correct letter, A, B, C or D.</p>
+          <p>Write the correct letter in boxes 28–31.</p>
+          </div>
 
           <div class="question-block" data-q="28">
             <div class="question-text">
@@ -2496,12 +2395,13 @@
             <div class="correct-answer-text" id="ca-31"></div>
           </div>
 
+          <div class="instruction-block" id="study-instruction-s3-people">
           <p><strong>Questions 32–35</strong></p>
-          <p>Look at the following statements and the list of people below.</p>
-          <p>Match each statement with the correct person.</p>
-          <p>Drag a name into each answer box, or click a name then click a box.</p>
-          <p><em>NB You may use any name more than once.</em></p>
+          <p>Look at the following statements (Questions 32–35) and the list of people below.</p>
+          <p>Match each statement with the correct person, A, B, C or D by dragging a name into each answer box, or clicking a name then clicking a box.</p>
+          <p><em>NB You may use any letter more than once.</em></p>
           <p><strong>List of People</strong></p>
+          </div>
 
           <div class="drag-bank" aria-label="Drag answers for questions 32 to 35">
             <div class="drag-item" draggable="true" data-value="A" data-label="Susan Jebb">Susan Jebb</div>
@@ -2574,32 +2474,56 @@
             <div class="correct-answer-text" id="ca-35"></div>
           </div>
 
+          <div class="instruction-block" id="study-instruction-s3-summary">
           <p><strong>Questions 36–39</strong></p>
-          <p>Complete the summary below. Choose <strong>ONE WORD ONLY</strong> from the text for each answer. Write your answers in boxes 36–39.</p>
-
-          <div class="summary-box">
-            <p>
-              ‘Henry’ was used in Leeds from 2009 in the fight against childhood obesity. The programme focuses on situations such as mealtimes and bedtimes, and it encourages parents to set firm
-              <span class="question-block inline-question" data-q="36"><span class="inline-input" data-q="36"><input type="text" name="q36" /></span></span>
-              during these periods. According to Kim Roberts, ‘Henry’ aims to help people become more
-              <span class="question-block inline-question" data-q="37"><span class="inline-input" data-q="37"><input type="text" name="q37" /></span></span>
-              as parents. In this way, they do not instruct children to do things, nor give them total freedom of choice as in a
-              <span class="question-block inline-question" data-q="38"><span class="inline-input" data-q="38"><input type="text" name="q38" /></span></span>
-              parenting style. Instead, they allow children to make some decisions for themselves. This might be a choice of vegetable at the dinner table or a decision about where a
-              <span class="question-block inline-question" data-q="39"><span class="inline-input" data-q="39"><input type="text" name="q39" /></span></span>
-              should be enjoyed in the evening.
-            </p>
-            <div class="summary-feedbacks">
-              <div class="correct-answer-text" id="ca-36"></div>
-              <div class="correct-answer-text" id="ca-37"></div>
-              <div class="correct-answer-text" id="ca-38"></div>
-              <div class="correct-answer-text" id="ca-39"></div>
-            </div>
+          <p>Complete the summary below. Choose ONE WORD ONLY from the text for each answer. Write your answers in boxes 36–39.</p>
           </div>
 
-          <p><strong>Question 40</strong></p>
-          <p>Choose the correct letter, A, B, C or D.</p>
+          <div class="question-block" data-q="36">
+            <div class="question-text">
+              <span class="question-number-label">36.</span>
+              ‘Henry’ was used in Leeds from 2009 in the fight against childhood obesity. The programme focuses on situations such as mealtimes and bedtimes, and it encourages parents to set firm
+              <span class="inline-input"><input type="text" name="q36" /></span>
+              during these periods.
+            </div>
+            <div class="correct-answer-text" id="ca-36"></div>
+          </div>
 
+          <div class="question-block" data-q="37">
+            <div class="question-text">
+              <span class="question-number-label">37.</span>
+              According to Kim Roberts, ‘Henry’ aims to help people become more
+              <span class="inline-input"><input type="text" name="q37" /></span>
+              as parents.
+            </div>
+            <div class="correct-answer-text" id="ca-37"></div>
+          </div>
+
+          <div class="question-block" data-q="38">
+            <div class="question-text">
+              <span class="question-number-label">38.</span>
+              In this way, they do not instruct children to do things, nor give them total freedom of choice as in a
+              <span class="inline-input"><input type="text" name="q38" /></span>
+              parenting style.
+            </div>
+            <div class="correct-answer-text" id="ca-38"></div>
+          </div>
+
+          <div class="question-block" data-q="39">
+            <div class="question-text">
+              <span class="question-number-label">39.</span>
+              Instead, they allow children to make some decisions for themselves. This might be a choice of vegetable at the dinner table or a decision about where a
+              <span class="inline-input"><input type="text" name="q39" /></span>
+              should be enjoyed in the evening.
+            </div>
+            <div class="correct-answer-text" id="ca-39"></div>
+          </div>
+
+          <div class="instruction-block" id="study-instruction-s3-title">
+          <p><strong>Question 40</strong></p>
+          <p>Choose the correct letter, A, B, C or D in question 40.</p>
+          </div>
+          
           <div class="question-block" data-q="40">
             <div class="question-text">
               <span class="question-number-label">40.</span>
@@ -2633,22 +2557,18 @@
       if (dragMatchReady) return;
       dragMatchReady = true;
       let picked = "";
-      const labelByLetter = {
-        A: "Susan Jebb",
-        B: "Kim Roberts",
-        C: "Janice Burberry",
-        D: "Seema Kennedy",
-        E: "E. Boxer Trepis",
-      };
-      document.querySelectorAll(".drag-item, .passage-match-source").forEach((item) => {
+      const nameByLetter = { A: "Susan Jebb", B: "Kim Roberts", C: "Janice Burberry", D: "Seema Kennedy" };
+      document.querySelectorAll(".drag-item").forEach((item) => {
         item.addEventListener("dragstart", (e) => {
+          if (mode === "test" && testSubmitted) { e.preventDefault(); return; }
           e.dataTransfer.setData("text/plain", item.dataset.value);
           e.dataTransfer.effectAllowed = "copy";
         });
         item.addEventListener("click", () => {
+          if (mode === "test" && testSubmitted) return;
           const isAlreadySelected = item.classList.contains("selected");
           document
-            .querySelectorAll(".drag-item, .passage-match-source")
+            .querySelectorAll(".drag-item")
             .forEach((i) => i.classList.remove("selected"));
           if (isAlreadySelected) {
             picked = "";
@@ -2657,30 +2577,23 @@
           item.classList.add("selected");
           picked = item.dataset.value;
         });
-        item.addEventListener("keydown", (event) => {
-          if (event.key === "Enter" || event.key === " ") {
-            event.preventDefault();
-            item.click();
-          }
-        });
       });
 
       function apply(zone, val) {
+        if (mode === "test" && testSubmitted) return;
+        if (!/^[ABCD]$/.test(val)) return;
         const qName = zone.dataset.for;
         const sel = document.querySelector('select[name="' + qName + '"]');
         if (sel) {
-          const allowedOption = Array.from(sel.options).find((o) => o.value === val);
-          if (!allowedOption) return;
           sel.value = val;
           sel.dispatchEvent(new Event("change", { bubbles: true }));
-          zone.textContent = allowedOption.textContent && allowedOption.textContent !== val ? allowedOption.textContent : (labelByLetter[val] || val);
-        } else {
-          zone.textContent = labelByLetter[val] || val;
         }
+        zone.textContent = nameByLetter[val] || val;
         zone.classList.add("filled");
       }
 
       function clear(zone) {
+        if (mode === "test" && testSubmitted) return;
         const qName = zone.dataset.for;
         const sel = document.querySelector('select[name="' + qName + '"]');
         if (sel) {
@@ -2719,7 +2632,7 @@
         });
         zone.addEventListener("keydown", (e) => {
           if (e.key === "Backspace" || e.key === "Delete") clear(zone);
-          if (/^[abcdeABCDE]$/.test(e.key)) apply(zone, e.key.toUpperCase());
+          if (/^[abcdABCD]$/.test(e.key)) apply(zone, e.key.toUpperCase());
         });
         zone.addEventListener("dblclick", () => clear(zone));
       });
@@ -2756,9 +2669,44 @@
       });
     }
 
-    // Build all questions immediately after DOM loads (script is at the end)
+    function convertGapFillNumbersToBullets() {
+      document.querySelectorAll(".question-block[data-q]").forEach((block) => {
+        const qNum = parseInt(block.getAttribute("data-q"), 10);
+        if (!((qNum >= 15 && qNum <= 27) || (qNum >= 36 && qNum <= 39))) return;
+        const label = block.querySelector(".question-number-label");
+        const text = block.querySelector(".question-text");
+        if (!text) return;
+        if (label) label.remove();
+        text.classList.add("gap-fill");
+
+        if (!text.querySelector(".gap-bullet")) {
+          const bullet = document.createElement("span");
+          bullet.className = "gap-bullet";
+          bullet.setAttribute("aria-hidden", "true");
+          bullet.textContent = "•";
+          text.prepend(bullet);
+        }
+
+        const inputWrap = text.querySelector(".inline-input");
+        if (!inputWrap || text.querySelector(".gap-answer-tail")) return;
+
+        const tail = document.createElement("span");
+        tail.className = "gap-answer-tail";
+        inputWrap.after(tail);
+        tail.appendChild(inputWrap);
+
+        let node = tail.nextSibling;
+        while (node) {
+          const next = node.nextSibling;
+          tail.appendChild(node);
+          node = next;
+        }
+      });
+    }
+// Build all questions immediately after DOM loads (script is at the end)
     buildRemainingQuestions();
     stampInlineInputNumbers();
+    convertGapFillNumbersToBullets();
     setupDragMatch();
     enableRadioToggleOff();
 
@@ -2770,6 +2718,7 @@
       if (!qPane) return;
 
       stampInlineInputNumbers();
+      convertGapFillNumbersToBullets();
 
       // Listen to changes on all inputs/selects/radios
       qPane
@@ -2781,14 +2730,6 @@
           }
         });
 
-
-      qPane.addEventListener("focusin", (event) => {
-        setCurrentQuestionFromElement(event.target);
-      });
-      qPane.addEventListener("click", (event) => {
-        setCurrentQuestionFromElement(event.target);
-      });
-
       // Start on section 1, question 1
       switchSection(1);
       highlightCurrentQuestion(1);
@@ -2796,22 +2737,18 @@
       buildQuestionNav();
     }
 
-
-    function setCurrentQuestionFromElement(el) {
-      const block = el.closest(".question-block[data-q]");
-      if (!block) return;
-      const q = parseInt(block.dataset.q, 10);
-      if (Number.isNaN(q)) return;
-      currentQuestion = q;
-      highlightCurrentQuestion(q);
-      buildQuestionNav();
-    }
-
     function onAnswerChange(e) {
       const name = e.target.name || "";
+      let changedQuestion = null;
       if (name.startsWith("q")) {
         const num = parseInt(name.substring(1), 10);
-        if (!isNaN(num)) currentQuestion = num;
+        if (!isNaN(num)) {
+          currentQuestion = num;
+          changedQuestion = num;
+        }
+      }
+      if (changedQuestion !== null && window.ReadingFeatureShell && typeof window.ReadingFeatureShell.sync === "function") {
+        window.ReadingFeatureShell.sync();
       }
       updateCounts();
       buildQuestionNav();
@@ -2862,7 +2799,7 @@
         if (answered[sec] === totals[sec]) {
           chip.classList.add("complete");
           span.textContent = "✓";
-          span.setAttribute("aria-label", "Part " + sec + " complete");
+          span.setAttribute("aria-label", "Section " + sec + " complete");
         } else {
           span.textContent = countText;
           span.removeAttribute("aria-label");
@@ -2893,17 +2830,14 @@
           " answered)";
       }
 
-      const pHeader = document.getElementById("passageHeader");
+      const pHeader = document.getElementById("passageHeaderLine");
       if (pHeader) {
         if (activeSection === 1) {
-          pHeader.textContent =
-            "Part 1 – Read the text and answer questions 1–14.";
+          pHeader.textContent = "Section 1 – Read the texts and answer Questions 1–14.";
         } else if (activeSection === 2) {
-          pHeader.textContent =
-            "Part 2 – Read the text and answer questions 15–27.";
+          pHeader.textContent = "Section 2 – Read the texts and answer Questions 15–27.";
         } else {
-          pHeader.textContent =
-            "Part 3 – Read the text and answer questions 28–40.";
+          pHeader.textContent = "Section 3 – Read the text and answer Questions 28–40.";
         }
       }
     }
@@ -2999,6 +2933,7 @@
       updateCounts();
       highlightCurrentQuestion(currentQuestion);
       buildQuestionNav();
+      if (window.ReadingFeatureShell) window.ReadingFeatureShell.sync();
     }
 
     function prevSection() {
@@ -3064,73 +2999,6 @@
       },
     };
 
-    function getBandDescriptor(band) {
-      if (bandDescriptors[band]) return bandDescriptors[band];
-
-      const halfBandDescriptors = {
-        8.5: {
-          level: "Very good user developing towards Expert user",
-          description:
-            "This result is stronger than a typical Band 8, but it has not yet reached Band 9. It suggests very strong reading ability, with only occasional difficulty in highly complex or detailed texts.",
-        },
-        7.5: {
-          level: "Good user developing towards Very good user",
-          description:
-            "This result is stronger than a typical Band 7, but it has not yet reached Band 8. It suggests strong reading ability, with occasional difficulty in complex passages, detail, or inference.",
-        },
-        6.5: {
-          level: "Competent user developing towards Good user",
-          description:
-            "This result is stronger than a typical Band 6, but it has not yet reached Band 7. It suggests generally effective reading ability, though detail, paraphrasing, and complex ideas may still cause some problems.",
-        },
-        5.5: {
-          level: "Modest user developing towards Competent user",
-          description:
-            "This result is stronger than a typical Band 5, but it has not yet reached Band 6. It suggests you can understand the general meaning of many reading texts, but details, synonyms, and longer passages may still be difficult.",
-        },
-        4.5: {
-          level: "Limited user developing towards Modest user",
-          description:
-            "This result is stronger than a typical Band 4, but it has not yet reached Band 5. It suggests you can understand some familiar reading tasks, but you may still have frequent problems with detail, paraphrasing, and unfamiliar vocabulary.",
-        },
-        3.5: {
-          level: "Extremely limited user developing towards Limited user",
-          description:
-            "This result is stronger than a typical Band 3, but it has not yet reached Band 4. It suggests you may understand basic information in familiar contexts, but many reading tasks are still difficult.",
-        },
-        2.5: {
-          level: "Intermittent user developing towards Extremely limited user",
-          description:
-            "This result is stronger than a typical Band 2, but it has not yet reached Band 3. It suggests only basic or isolated information is understood at this stage.",
-        },
-      };
-
-      if (halfBandDescriptors[band]) return halfBandDescriptors[band];
-
-      const lower = Math.floor(band);
-      const upper = Math.ceil(band);
-      const lowerDesc = bandDescriptors[lower];
-      const upperDesc = bandDescriptors[upper];
-
-      if (lowerDesc && upperDesc) {
-        return {
-          level: "Between " + lowerDesc.level + " and " + upperDesc.level,
-          description:
-            "This half band sits between Band " +
-            lower +
-            " (" +
-            lowerDesc.level +
-            ") and Band " +
-            upper +
-            " (" +
-            upperDesc.level +
-            ").",
-        };
-      }
-
-      return bandDescriptors[0];
-    }
-
     function getUserAnswer(qNum) {
       const name = "q" + qNum;
       const radios = document.querySelectorAll(
@@ -3147,92 +3015,73 @@
       return "";
     }
 
+    function isUserAnswerCorrect(qNum, suppliedAnswer) {
+      const user = suppliedAnswer === undefined ? getUserAnswer(qNum) : String(suppliedAnswer || "").trim();
+      const key = answerKey[qNum];
+      if (!user) return false;
+      if (Array.isArray(key)) {
+        return key.some((accepted) => user.toLowerCase() === String(accepted).toLowerCase());
+      }
+      if (typeof key !== "string") return false;
+      if (/^(TRUE|FALSE|NOT GIVEN|YES|NO)$/.test(key)) return user.toUpperCase() === key;
+      if (key.length === 1) return user.toUpperCase() === key.toUpperCase();
+      return user.toLowerCase() === key.toLowerCase();
+    }
+
     function evaluateQuestions() {
       let correctCount = 0;
+      const answers = {};
+      const outcomes = {};
+      const sectionScores = { 1: 0, 2: 0, 3: 0 };
 
       for (let q = 1; q <= 40; q++) {
         const user = getUserAnswer(q);
-        const key = answerKey[q];
-        let isCorrect = false;
+        const isCorrect = isUserAnswerCorrect(q, user);
+        const section = q <= 14 ? 1 : q <= 27 ? 2 : 3;
+        answers[q] = user;
+        outcomes[q] = isCorrect ? 1 : 0;
 
-        if (!user) {
-          isCorrect = false;
-        } else if (Array.isArray(key)) {
-          isCorrect = key.some(
-            (k) => user.toLowerCase() === String(k).toLowerCase()
-          );
-        } else if (typeof key === "string") {
-          if (/^(TRUE|FALSE|NOT GIVEN)$/.test(key)) {
-            isCorrect = user.toUpperCase() === key;
-          } else if (key.length === 1) {
-            isCorrect = user.toUpperCase() === key.toUpperCase();
-          } else {
-            isCorrect = user.toLowerCase() === key.toLowerCase();
-          }
+        const block = document.querySelector('.question-block[data-q="' + q + '"]');
+        if (block) {
+          block.classList.remove("correct", "incorrect", "reading-shell-provisional-unanswered");
+          block.removeAttribute("data-provisional");
+          if (isCorrect) block.classList.add("correct");
+          else if (user) block.classList.add("incorrect");
         }
 
-        const block = document.querySelector(
-          '.question-block[data-q="' + q + '"]'
-        );
-        if (block) {
-          block.classList.remove("correct", "incorrect");
-          if (isCorrect) {
-            block.classList.add("correct");
-            correctCount++;
-          } else if (user) {
-            block.classList.add("incorrect");
-          }
+        if (isCorrect) {
+          correctCount++;
+          sectionScores[section]++;
         }
 
         const ca = document.getElementById("ca-" + q);
-        if (ca) {
-          const txt = correctAnswerText[q];
-          if (txt) {
-            ca.textContent = "Correct answer: " + txt;
-          }
-        }
+        if (ca && correctAnswerText[q]) ca.textContent = "Correct answer: " + correctAnswerText[q];
       }
 
-      return correctCount;
+      return { correctCount, answers, outcomes, sectionScores };
     }
 
     function computeBandScore(correct) {
-      /*
-       * IELTS General Training Reading raw score to band conversion
-       * 40 = 9
-       * 39 = 8.5
-       * 37-38 = 8
-       * 36 = 7.5
-       * 34-35 = 7
-       * 32-33 = 6.5
-       * 30-31 = 6
-       * 27-29 = 5.5
-       * 23-26 = 5
-       * 19-22 = 4.5
-       * 15-18 = 4
-       * 12-14 = 3.5
-       * 9-11 = 3
-       * 6-8 = 2.5
-       */
-
-      if (correct === 40) return 9;
-      if (correct === 39) return 8.5;
-      if (correct >= 37) return 8;
-      if (correct >= 36) return 7.5;
-      if (correct >= 34) return 7;
-      if (correct >= 32) return 6.5;
-      if (correct >= 30) return 6;
-      if (correct >= 27) return 5.5;
-      if (correct >= 23) return 5;
-      if (correct >= 19) return 4.5;
-      if (correct >= 15) return 4;
-      if (correct >= 12) return 3.5;
-      if (correct >= 9) return 3;
-      if (correct >= 6) return 2.5;
-      if (correct === 0) return 0;
-      return 1;
+      if (correct === 40) return "9";
+      if (correct === 39) return "8.5";
+      if (correct >= 37) return "8";
+      if (correct === 36) return "7.5";
+      if (correct >= 34) return "7";
+      if (correct >= 32) return "6.5";
+      if (correct >= 30) return "6";
+      if (correct >= 27) return "5.5";
+      if (correct >= 23) return "5";
+      if (correct >= 19) return "4.5";
+      if (correct >= 15) return "4";
+      if (correct >= 12) return "3.5";
+      if (correct >= 9) return "3";
+      return "Below 3";
     }
 
+    function descriptorForBand(band) {
+      const numeric = Number.parseFloat(band);
+      return Number.isFinite(numeric) ? (bandDescriptors[Math.floor(numeric)] || bandDescriptors[0]) : bandDescriptors[0];
+    }
 
 
     function formatDuration(totalSeconds) {
@@ -3243,132 +3092,121 @@
       return `${sign}${m}:${sec}`;
     }
 
-    function showShortcutToast(message) {
-      const toast = document.getElementById("shortcutToast");
-      if (!toast) return;
-
-      toast.textContent = message;
-      toast.classList.add("visible");
-
-      if (shortcutToastTimer) {
-        clearTimeout(shortcutToastTimer);
-      }
-
-      shortcutToastTimer = setTimeout(() => {
-        toast.classList.remove("visible");
-      }, 1800);
-    }
-
     function handlePrimarySubmit() {
-      if (mode === "test" && isTestRunning && !testSubmitted) {
+      if (mode === "test") {
+        if (testSubmitted || !isTestRunning) return;
         confirmSubmit();
         return;
       }
       submitTest();
     }
 
-    document.addEventListener("keydown", (event) => {
-      const isFindShortcut =
-        (event.ctrlKey || event.metaKey) &&
-        String(event.key).toLowerCase() === "f";
-
-      if (!isFindShortcut) return;
-      if (!(mode === "test" && isTestRunning && !testSubmitted)) return;
-
-      event.preventDefault();
-      showShortcutToast("Find (CTRL + F) is disabled in Test mode.");
-    }, true);
-
     function confirmSubmit() {
+      if (mode !== "test" || testSubmitted || !isTestRunning) return;
       const ok = window.confirm("Are you sure you want to submit your test now? You will not be able to continue answering in Test mode.");
       if (!ok) return;
       submitTest();
     }
 
-    function submitTest() {
-      const correctCount = evaluateQuestions();
+    function lockTestControls() {
+      document.querySelectorAll("#questionContent select, #questionContent input").forEach((control) => { control.disabled = true; });
+      document.querySelectorAll(".drag-item").forEach((item) => {
+        item.draggable = false;
+        item.classList.add("reading-shell-locked");
+        item.setAttribute("aria-disabled", "true");
+      });
+      document.querySelectorAll(".drop-zone").forEach((zone) => {
+        zone.classList.add("reading-shell-locked");
+        zone.setAttribute("aria-disabled", "true");
+        zone.setAttribute("tabindex", "-1");
+      });
+      document.querySelectorAll(".clear-drop-btn").forEach((button) => { button.disabled = true; });
+      ["primarySubmitBtn", "optionsSubmitBtn"].forEach((id) => {
+        const button = document.getElementById(id);
+        if (button) {
+          button.disabled = true;
+          button.setAttribute("aria-disabled", "true");
+          button.title = "Test already submitted";
+          button.textContent = "✓ Test submitted";
+        }
+      });
+    }
 
-      // In both modes, show correct answer text
+    function submitTest() {
+      if (mode === "test" && testSubmitted) return;
+      const evaluation = evaluateQuestions();
+      const correctCount = evaluation.correctCount;
+      const shellStatus = window.ReadingFeatureShell && typeof window.ReadingFeatureShell.getStatus === "function"
+        ? window.ReadingFeatureShell.getStatus()
+        : null;
+      const shellAvailable = Boolean(shellStatus && shellStatus.initialized);
+
       Object.keys(correctAnswerText).forEach((q) => {
-        const el = document.getElementById("ca-" + q);
-        if (el) el.style.display = "block";
+        const answer = document.getElementById("ca-" + q);
+        if (answer) answer.style.display = shellAvailable ? "none" : "block";
       });
 
       updateCounts();
       buildQuestionNav();
 
       const band = computeBandScore(correctCount);
-      const desc = getBandDescriptor(band);
-
+      const desc = descriptorForBand(band);
       const studentLine = document.getElementById("studentLine");
       const fullScreenExitLine = document.getElementById("fullScreenExitLine");
       const focusViolationLine = document.getElementById("focusViolationLine");
       const totalTimeLine = document.getElementById("totalTimeLine");
       const scoreLine = document.getElementById("scoreLine");
+      const sectionScoresLine = document.getElementById("sectionScoresLine");
       const bandLine = document.getElementById("bandLine");
       const descriptorLine = document.getElementById("descriptorLine");
       const resultsOverlay = document.getElementById("resultsOverlay");
 
-      if (studentLine) {
-        studentLine.textContent = studentName
-          ? "Student: " + studentName
-          : "Student: Not provided";
-      }
-      if (fullScreenExitLine) {
-        fullScreenExitLine.textContent = "Full screen exits: " + fullScreenExits;
-      }
-      if (focusViolationLine) {
-        focusViolationLine.textContent = "Tab switches / focus losses: " + focusViolations;
-      }
+      if (studentLine) studentLine.textContent = mode === "test" ? "Student: " + (studentName || "Not provided") : "Mode: Study";
+      if (fullScreenExitLine) fullScreenExitLine.textContent = mode === "test" ? "Full screen exits: " + fullScreenExits : "";
+      if (focusViolationLine) focusViolationLine.textContent = mode === "test" ? "Tab switches / focus losses: " + focusViolations : "";
       if (totalTimeLine) {
         const elapsedSeconds = 60 * 60 - timerSeconds;
-        totalTimeLine.textContent = "Total time when submitted: " + formatDuration(elapsedSeconds);
+        totalTimeLine.textContent = mode === "test" ? "Total time when submitted: " + formatDuration(elapsedSeconds) : "";
       }
-
-      if (scoreLine)
-        scoreLine.textContent =
-          "You answered " + correctCount + " out of 40 questions correctly.";
-      if (bandLine)
-        bandLine.textContent =
-          "Estimated IELTS Reading band: " +
-          band +
-          ". Skill level: " +
-          desc.level;
-      if (descriptorLine) descriptorLine.textContent = desc.description;
-
-      if (resultsOverlay) resultsOverlay.style.display = "flex";
+      if (scoreLine) scoreLine.textContent = "You answered " + correctCount + " out of 40 questions correctly.";
+      if (sectionScoresLine) sectionScoresLine.textContent = "Section 1: " + evaluation.sectionScores[1] + "/14 · Section 2: " + evaluation.sectionScores[2] + "/13 · Section 3: " + evaluation.sectionScores[3] + "/13";
+      if (bandLine) bandLine.textContent = band === "Below 3" ? "Estimated IELTS General Training Reading band: 2.5 or below (below Band 3)." : "Estimated IELTS General Training Reading band: " + band + ". Skill level: " + desc.level;
+      if (descriptorLine) descriptorLine.textContent = band === "Below 3" ? "The published conversion table does not provide a finer estimate below Band 3." : desc.description;
 
       if (mode === "test") {
         testSubmitted = true;
         isTestRunning = false;
         isTimerPaused = false;
         hideFullscreenLockOverlay();
-        if (timerId) {
-          clearInterval(timerId);
-          timerId = null;
-        }
+        if (timerId) { clearInterval(timerId); timerId = null; }
         exitAppFullscreen();
-        // Disable further changes in test mode
-        document
-          .querySelectorAll("#questionContent select, #questionContent input")
-          .forEach((el) => (el.disabled = true));
+        lockTestControls();
+      } else {
+        studyHasSubmitted = true;
       }
 
-      // Close options overlay if open
+      if (resultsOverlay) {
+        resultsOverlay.style.display = "flex";
+        resultsOverlay.setAttribute("aria-hidden", "false");
+        const close = document.getElementById("resultsCloseBtn");
+        if (close) close.focus();
+      }
+      if (window.ReadingFeatureShell && typeof window.ReadingFeatureShell.sync === "function") {
+        window.setTimeout(() => window.ReadingFeatureShell.sync(), 0);
+      }
       toggleOptions(false);
     }
 
     function closeResults() {
       const overlay = document.getElementById("resultsOverlay");
-      const studentLine = document.getElementById("studentLine");
-      const fullScreenExitLine = document.getElementById("fullScreenExitLine");
-      const focusViolationLine = document.getElementById("focusViolationLine");
-      const totalTimeLine = document.getElementById("totalTimeLine");
-      if (studentLine) studentLine.textContent = "";
-      if (fullScreenExitLine) fullScreenExitLine.textContent = "";
-      if (focusViolationLine) focusViolationLine.textContent = "";
-      if (totalTimeLine) totalTimeLine.textContent = "";
-      if (overlay) overlay.style.display = "none";
+      if (overlay) {
+        overlay.style.display = "none";
+        overlay.setAttribute("aria-hidden", "true");
+      }
+      const target = ["primarySubmitBtn", "readingShellScoreFeedbackBtn", "readingShellScoreGuideBtn", "optionsBtn"]
+        .map((id) => document.getElementById(id))
+        .find((element) => element && !element.disabled && !element.hidden);
+      if (target) target.focus();
     }
 
     /**********************
@@ -3703,58 +3541,99 @@
     // Ensure option buttons reflect the current theme and font selections on load.
     updateThemeButtons();
     updateFontButtons();
-    ensureModeWiring();
 
-        // IELTS Pabs animated logo
-    function initAnimatedLogo() {
-      const logoNodes = document.querySelectorAll('.logo.home-link, .logo-link .logo');
-      if (!logoNodes.length) return;
-      const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const gtStudyFeedback = window.IELTS19GTTest2StudyFeedback;
+    const gtTaskGroups = gtStudyFeedback.taskGroups.map((group) => ({
+      ...group,
+      part: group.section,
+      passage: group.section
+    }));
+    const gtQuestionDetails = Object.fromEntries(
+      Object.entries(gtStudyFeedback.questions).map(([questionNumber, detail]) => [
+        questionNumber,
+        [detail.explanation, detail.skill, detail.evidence]
+      ])
+    );
 
-      logoNodes.forEach((logoNode) => {
-        const rawText = (logoNode.textContent || '').trim();
-        if (rawText !== 'IELTS Pabs') return;
+    window.readingFeatureShellConfig = {
+      version: 1,
+      test: {
+        id: "cambridge-19-general-training-reading-test-2",
+        title: "IELTS 19 General Training Reading Test 2",
+        totalQuestions: 40,
+        partRanges: sectionRanges
+      },
+      state: {
+        getMode: () => mode,
+        isTestSubmitted: () => testSubmitted,
+        getActivePart: () => activeSection
+      },
+      answers: {
+        getAnswerKeyDisplay: (questionNumber) => correctAnswerText[questionNumber] || "",
+        getUserAnswer: (questionNumber) => getUserAnswer(questionNumber),
+        isCorrect: (questionNumber) => isUserAnswerCorrect(questionNumber)
+      },
+      navigation: {
+        getQuestionTarget: (questionNumber) => document.querySelector('.question-block[data-q="' + questionNumber + '"]')
+      },
+      study: {
+        taskGroups: gtTaskGroups,
+        questionDetails: gtQuestionDetails,
+        scoreGuide: gtStudyFeedback.scoreGuide
+      }
+    };
 
-        logoNode.setAttribute('aria-label', 'IELTS Pabs');
-
-        const fragment = document.createDocumentFragment();
-        Array.from(rawText).forEach((char, index) => {
-          const span = document.createElement('span');
-          span.className = 'logo-char';
-          span.setAttribute('aria-hidden', 'true');
-          span.style.setProperty('--logo-char-index', String(index));
-          span.textContent = char === ' ' ? ' ' : char;
-          fragment.appendChild(span);
-        });
-
-        logoNode.textContent = '';
-        logoNode.appendChild(fragment);
-
-        if (reducedMotion) {
-          logoNode.classList.remove('is-animating');
-          return;
-        }
-
-        logoNode.addEventListener('mouseenter', () => {
-          logoNode.classList.remove('is-animating');
-          void logoNode.offsetWidth;
-          logoNode.classList.add('is-animating');
-        });
-
-        logoNode.addEventListener('mouseleave', () => {
-          logoNode.classList.remove('is-animating');
-        });
+    function localiseReadingFeatureShell() {
+      const replacements = [
+        [/IELTS Academic Reading/g, "IELTS General Training Reading"],
+        [/Academic Reading/g, "General Training Reading"],
+        [/Performance by part/g, "Performance by section"],
+        [/\bPart (\d+)/g, "Section $1"],
+        [/\bparts\b/gi, (match) => match[0] === "P" ? "Sections" : "sections"],
+        [/passage clues/gi, (match) => match[0] === "P" ? "Section clues" : "section clues"]
+      ];
+      document.querySelectorAll(
+        ".reading-shell-answer-key-section-title," +
+        ".reading-shell-score-feedback-intro," +
+        ".reading-shell-score-feedback-heading," +
+        ".reading-shell-score-feedback-part-score," +
+        ".reading-shell-score-feedback-text," +
+        "#passageClueToggle"
+      ).forEach((node) => {
+        let value = node.textContent || "";
+        replacements.forEach(([pattern, replacement]) => { value = value.replace(pattern, replacement); });
+        if (node.textContent !== value) node.textContent = value;
       });
     }
 
-
-    initAnimatedLogo();
-
-    function confirmGoHome() {
-      const ok = window.confirm("Are you sure you want to leave this test and return to the home page? Your current answers may not be saved.");
-      if (ok) window.location.href = "../../../index.html";
+    function wrapReadingShellLocalisation() {
+      if (!window.ReadingFeatureShell || window.ReadingFeatureShell.__gtLocalised) return;
+      ["init", "sync", "startStudySession", "showAllPassageClues", "hideAllPassageClues"].forEach((methodName) => {
+        const original = window.ReadingFeatureShell[methodName];
+        if (typeof original !== "function") return;
+        window.ReadingFeatureShell[methodName] = function (...args) {
+          const result = original.apply(this, args);
+          window.setTimeout(localiseReadingFeatureShell, 0);
+          return result;
+        };
+      });
+      window.ReadingFeatureShell.__gtLocalised = true;
+      new MutationObserver(() => window.setTimeout(localiseReadingFeatureShell, 0)).observe(document.body, {
+        childList: true,
+        subtree: true,
+        characterData: true
+      });
     }
 
+    wrapReadingShellLocalisation();
+    if (window.ReadingFeatureShell) {
+      const shellInit = window.ReadingFeatureShell.init(window.readingFeatureShellConfig);
+      if (!shellInit || shellInit.ok !== true) {
+        console.warn("IELTS 19 GT Study Mode could not initialise.", shellInit && shellInit.error);
+      }
+    }
+    ensureModeWiring();
+    localiseReadingFeatureShell();
   </script>
 </body>
 </html>
