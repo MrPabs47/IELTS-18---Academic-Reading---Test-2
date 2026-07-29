@@ -1,68 +1,28 @@
-name: Build GT19 Test 1 Study Mode
+name: Finalise GT19 Test 1 Study Mode
 
 on:
   push:
     branches: [agent/add-gt19-test1-study-mode]
     paths: [.github/workflows/build-gt19-test1-study.yml]
-  pull_request:
-    branches: [main]
 
 permissions:
   contents: write
 
 jobs:
-  build-test-publish:
+  cleanup:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
         with:
           ref: agent/add-gt19-test1-study-mode
           fetch-depth: 0
-
-      - name: Reconstruct sources and tests
+      - name: Remove temporary build assets
         shell: bash
         run: |
-          for prefix in data bootstrap patch static browser; do
-            echo "Validating staged asset: $prefix"
-            cat .tmp/gt19-test1/${prefix}-*.part | tr -d '\n\r ' | base64 -d > /tmp/${prefix}.gz
-            gzip -t /tmp/${prefix}.gz
-          done
-          mkdir -p general-training/cambridge-19/test-1
-          gzip -dc /tmp/data.gz > general-training/cambridge-19/test-1/study-feedback-data.js
-          gzip -dc /tmp/bootstrap.gz > general-training/cambridge-19/test-1/study-feedback.js
-          gzip -dc /tmp/patch.gz > /tmp/patch.py
-          gzip -dc /tmp/static.gz > /tmp/static.py
-          gzip -dc /tmp/browser.gz > /tmp/browser.js
-          python /tmp/patch.py
-
-      - name: Validate JavaScript and content contract
-        shell: bash
-        run: |
-          node --check general-training/cambridge-19/test-1/study-feedback-data.js
-          node --check general-training/cambridge-19/test-1/study-feedback.js
-          python /tmp/static.py
-
-      - name: Run browser lifecycle
-        shell: bash
-        run: |
-          CHROME_BIN="$(command -v google-chrome-stable || command -v google-chrome || command -v chromium || true)"
-          test -n "$CHROME_BIN"
-          npm install --prefix /tmp/gt19-browser --no-save puppeteer-core@24.16.0 >/dev/null
-          python -m http.server 8765 --bind 127.0.0.1 >/tmp/gt19-http.log 2>&1 &
-          SERVER_PID=$!
-          trap 'kill $SERVER_PID 2>/dev/null || true' EXIT
-          sleep 2
-          CHROME_BIN="$CHROME_BIN" node /tmp/browser.js
-
-      - name: Commit tested website files
-        shell: bash
-        run: |
+          rm -rf .tmp/gt19-test1
+          rm -f .github/workflows/build-gt19-test1-study.yml
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add "general-training/cambridge-19/test-1/IELTS19 Test 1 - Reading - GT.html" \
-                  general-training/cambridge-19/test-1/study-feedback.js \
-                  general-training/cambridge-19/test-1/study-feedback-data.js
-          if ! git diff --cached --quiet; then
-            git commit -m "Add IELTS 19 GT Test 1 Study mode"
-            git push origin HEAD:agent/add-gt19-test1-study-mode
-          fi
+          git add -A
+          git commit -m "Clean GT19 Test 1 build assets"
+          git push origin HEAD:agent/add-gt19-test1-study-mode
