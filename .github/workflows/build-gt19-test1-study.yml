@@ -2,13 +2,10 @@ name: Build GT19 Test 1 Study Mode
 
 on:
   push:
-    branches:
-      - agent/add-gt19-test1-study-mode
-    paths:
-      - .github/workflows/build-gt19-test1-study.yml
+    branches: [agent/add-gt19-test1-study-mode]
+    paths: [.github/workflows/build-gt19-test1-study.yml]
   pull_request:
-    branches:
-      - main
+    branches: [main]
 
 permissions:
   contents: write
@@ -22,23 +19,23 @@ jobs:
           ref: agent/add-gt19-test1-study-mode
           fetch-depth: 0
 
-      - name: Reconstruct Study Mode assets
+      - name: Reconstruct sources and tests
         shell: bash
         run: |
-          python - <<'PYDATA'
+          python - <<'PY'
           from pathlib import Path
-          import base64,gzip
-          source=Path('.tmp/gt19-test1')
-          target=Path('general-training/cambridge-19/test-1')
-          for prefix,name in [('data','study-feedback-data.js'),('bootstrap','study-feedback.js')]:
-              encoded=''.join(path.read_text().strip() for path in sorted(source.glob(prefix+'-*.part')))
-              (target/name).write_bytes(gzip.decompress(base64.b64decode(encoded)))
-          PYDATA
-          python - <<'PYPATCH'
-          from pathlib import Path
-          import base64,gzip
-          Path('/tmp/patch.py').write_bytes(gzip.decompress(base64.b64decode('H4sIAIqYaWoC/51SwWrDMAy95yu0XpyWOCG3dTSFDkIZFDbWHAfDdZTWa+wEW2UtY/8+u+mho5cxHYye9PxkSW5sp6EXtGvVBpTuO0vw4mEUYkXwYrZFg1a0nKxQRpltJoXeWFVvkefTjNARz7OnclWt8ylUHkIOHF5R1J7svWWV7ki3bBwRHqkIyqn12fcAYzSyC8SCHajh956lhd2jLRjAzEmrepq/GfCWTX7bEIUJLFfPj4sVrKtFVbLIYt8KiRoNXWmAs7IYOTrUJ94g1hsh9+mHG81n2VWRfxVUDbA/V2FgOgJlIDT/EAU9fz+AVHYHQ/HQ/RjuCsiHfDA/eoewPjlCXR4VxQ0rjz1Kwho6g16wVQb55RWDRgKNV6zh61b92485yJ4Xck5fpnYhJFdDTPLx+Tekn1YRDksLR3K7uR8cJNkqTgIAAA==')))
-          PYPATCH
+          import base64, gzip
+          source = Path('.tmp/gt19-test1')
+          target = Path('general-training/cambridge-19/test-1')
+          def restore(prefix, destination):
+              encoded = ''.join(p.read_text().strip() for p in sorted(source.glob(prefix + '-*.part')))
+              Path(destination).write_bytes(gzip.decompress(base64.b64decode(encoded)))
+          restore('data', target / 'study-feedback-data.js')
+          restore('bootstrap', target / 'study-feedback.js')
+          restore('patch', '/tmp/patch.py')
+          restore('static', '/tmp/static.py')
+          restore('browser', '/tmp/browser.js')
+          PY
           python /tmp/patch.py
 
       - name: Validate JavaScript and content contract
@@ -46,11 +43,6 @@ jobs:
         run: |
           node --check general-training/cambridge-19/test-1/study-feedback-data.js
           node --check general-training/cambridge-19/test-1/study-feedback.js
-          python - <<'PYTEST'
-          from pathlib import Path
-          import base64,gzip
-          Path('/tmp/static.py').write_bytes(gzip.decompress(base64.b64decode('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')))
-          PYTEST
           python /tmp/static.py
 
       - name: Run browser lifecycle
@@ -59,11 +51,6 @@ jobs:
           CHROME_BIN="$(command -v google-chrome-stable || command -v google-chrome || command -v chromium || true)"
           test -n "$CHROME_BIN"
           npm install --prefix /tmp/gt19-browser --no-save puppeteer-core@24.16.0 >/dev/null
-          python - <<'PYBROWSER'
-          from pathlib import Path
-          import base64,gzip
-          Path('/tmp/browser.js').write_bytes(gzip.decompress(base64.b64decode('H4sIAFSYaWoC/81X/0/bRhT/nb/iUjTZ1mKbsHZdg7IJUOiYaEGEaj9QVl3sl/jE+c69OwMR7f++92yTLxCHdZu0qUrxnd/393lfnGhlHSu4ywYGPpfCgO/RyQv2tpL6XVkU4ADMgiB2eRFPXe9NODb61oKJlU7hU67TUoKN5xxhog2QJJ/bmUr8YPDz/RarxcIdJKXjYwmDwugErI1A3USHv56fvht+Ojh+v7fFxMTvLOgC5jJUxxTcsqEx2vjegprlwlqhpqSt0dDYNuC3XCy5EUleqiTz7zPgKZpr+86U0F3oOUP3+4tjl5up7V96Yah0aLlKx/rO6+IxFZbehynchDbLw9LyKXhXXxcWFHjRqG+MidD4M7z1iYheR1r5HlFrCV43t1MMEfmNT5GbFUg4GAw8IHe9gDWEEdTun+2/HbLh+fnpeb/ijRzcOT8I9tiSEaWRAy9zrujHcW/3dbSD/3r9n17/+CqeggLDZegMFwqDFyc8HxuRTiHsvYkdWBf24uPhycWo9+a73Z0LvMA/PfyF+DvH+CFTc3p7EWUulx7qbQJO3k210z5a0L2nuw/KCdn3FLhbba4FRn/Hqyxd4qCnI21GICFx5GSEsIJw7NRlyh0P6TR4YV2Zzl5ceY+YEymS629jafQdISacwGQQSKfgDnVelA7SkZtJ8FOdlDkoF+GboQR6PJgdp77Hi8ILggihUEg+62CqlFbgPeuTqWOHuAEpQ6O16yvt/MtMpCmoq2AJxpXdgyVpcMNlyR1UpvpYUIwondHS9ueGfi7BzB4U7kv5RGclNhTIGY5L57TygkiCmrqsSxKnRpfFRnmXIv2jiWoo0FBTVgEMKcTLknJdKtfvdFpj2Nh1BNyVBkZk3Tvi8YKK30Il94SPAR3cN4bPoonRub/J14IbFyaZqLKT88K/G/x8V5XHIYaKmJwROZZKpULqqW5xFWXR2yjTOYRSqGsv+GVFjgHMfAJ+/LHc2eE78bTrMQxALX4LCzGoG1kVqOghUYiU11++1Hd1qOubTn1VxWx+WokAph/Nq/2xDt20vwuX+d6oJkJ/H+SS3YTIqoDZGR9bb00LHREtS/A6B2qiOXdJxrzvfxudvkcFBjMjJrPa/GB9uQmFpXKpeI5V9rn34uqSAIrPR/sno2Frka5w7S64Ls4/rGGqeuEjTa+QrOsh8Kxr0bFdYBo4ZrMc58IdOPXvVr8BW0pnTzEjWP1LjYB69kTC3VIZ17Qb6tjSsOy36qpenwhqLsv46zbgsBs4a4oRCbBrJIxxprVz09unTHNYd+JdpkvH9IS93Ikjmhl+7WpUWYxo7MQNNlmvz3of497LR3SNByukuzXpDxtI39bTi10004s1A4mRyat8dBO0gr8m2gD+mqAF/dsNCg6lttAOsUVD2V5txBOAdMyT67DntSpYT8/WtvQEq2je0r9tDsGNwOmTQJiJaSbx55YATHJb4dvaPJ9XsNpOhUI9KVjfy7icMK5YpkvD+MSBwfwBmwhDxgg3Y+PS4nQwNyJBdD7gkcxck+lho7lyg024kJA+Ds+KR/e3QqX6ljo2qswHdDfh0sLe15al4/GcaAyqaHAF8oMl5+rdyluHyRMUwxKOtkqm+I2Y8qogFib/wwVr045EZrX13m2CF6boPXbfY+rD2HsP6q2W0WbYhl6SOaJBNUoMgGJzxf/FJvb3JtazwKAviDZc/I9mkNTJNaTP7JJVbFq3oceR8yp99B2U1tta5WX7OHkajEf81Cf6nb/YT2hxRgn11lyvcrQkfZP6p0vh0tbWqUMWVW7j0GmOtZdLZ7KGZhIVQhMDTF0zhBqiyrR1FV8xEdGGEVTLWBpBDx+UCY0d/yHH9HGIfcifV6YUE0hmiYQ+O9sfjQgMXwNsRQmp8fE7EgG9+lWJ/wd780/yO+H8XlBh+0/xEJRfKxAAAA==')))
-          PYBROWSER
           python -m http.server 8765 --bind 127.0.0.1 >/tmp/gt19-http.log 2>&1 &
           SERVER_PID=$!
           trap 'kill $SERVER_PID 2>/dev/null || true' EXIT
