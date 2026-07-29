@@ -6,6 +6,9 @@ on:
       - agent/add-gt19-test1-study-mode
     paths:
       - .github/workflows/build-gt19-test1-study.yml
+  pull_request:
+    branches:
+      - main
 
 permissions:
   contents: write
