@@ -1,0 +1,89 @@
+name: Build GT19 Test 1 Study Mode
+
+on:
+  push:
+    branches:
+      - agent/add-gt19-test1-study-mode
+    paths:
+      - .github/workflows/build-gt19-test1-study.yml
+
+permissions:
+  contents: write
+
+jobs:
+  build-test-publish:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: agent/add-gt19-test1-study-mode
+          fetch-depth: 0
+
+      - name: Write Study Mode assets
+        shell: bash
+        run: |
+          python - <<'PYDATA'
+          from pathlib import Path
+          import base64, gzip
+          root=Path('general-training/cambridge-19/test-1')
+          payloads={'study-feedback-data.js':'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','study-feedback.js':'H4sIAAuYaWoC/8087XLbyJH/9ynGSCoCyyRlkk7trrTalCzLXiday2dqU3clK1sgMCKxAgEGA0pm1qq6d8jfe4/8z6PkSa57vjAzGICknbq6qi2ZGHT39Nd09/QMNrxd53GVFjkJe+TXrwgJ1owSVpVpXAXHX8FAUsTrJc2r4UOZVjQ8+C5L8ztS0uwkYNUmo2xBaRWQRUlvT4Lh8FD8F8VR...TRUNCATED...'}
+          for name,payload in payloads.items():
+              (root/name).write_bytes(gzip.decompress(base64.b64decode(payload)))
+          PYDATA
+
+      - name: Connect the Study Mode loader
+        shell: bash
+        run: |
+          python - <<'PYPATCH'
+          from pathlib import Path
+          import base64,gzip
+          Path('/tmp/patch_gt19_test1_html.py').write_bytes(gzip.decompress(base64.b64decode('H4sIAIqYaWoC/51SwWrDMAy95yu0XpyWOCG3dTSFDkIZFDbWHAfDdZTWa+wEW2UtY/8+u+mho5cxHYye9PxkSW5sp6EXtGvVBpTuO0vw4mEUYkXwYrZFg1a0nKxQRpltJoXeWFVvkefTjNARz7OnclWt8ylUHkIOHF5R1J7svWWV7ki3bBwRHqkIyqn12fcAYzSyC8SCHajh956lhd2jLRjAzEmrepq/GfCWTX7bEIUJLFfPj4sVrKtFVbLIYt8KiRoNXWmAs7IYOTrUJ94g1hsh9+mHG81n2VWRfxVUDbA/V2FgOgJlIDT/EAU9fz+AVHYHQ/HQ/RjuCsiHfDA/eoewPjlCXR4VxQ0rjz1Kwho6g16wVQb55RWDRgKNV6zh61b92485yJ4Xck5fpnYhJFdDTPLx+Tekn1YRDksLR3K7uR8cJNkqTgIAAA==')))
+          PYPATCH
+          python /tmp/patch_gt19_test1_html.py
+
+      - name: Validate JavaScript and content contract
+        shell: bash
+        run: |
+          node --check general-training/cambridge-19/test-1/study-feedback-data.js
+          node --check general-training/cambridge-19/test-1/study-feedback.js
+          python - <<'PYTEST'
+          from pathlib import Path
+          import base64,gzip
+          Path('/tmp/test_gt19_test1_static.py').write_bytes(gzip.decompress(base64.b64decode('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')))
+          PYTEST
+          python /tmp/test_gt19_test1_static.py
+
+      - name: Run browser lifecycle
+        shell: bash
+        run: |
+          CHROME_BIN="$(command -v google-chrome-stable || command -v google-chrome || command -v chromium || true)"
+          if [ -z "$CHROME_BIN" ]; then
+            echo "Chrome executable not found" >&2
+            exit 1
+          fi
+          npm install --prefix /tmp/gt19-browser --no-save puppeteer-core@24.16.0 >/dev/null
+          python - <<'PYBROWSER'
+          from pathlib import Path
+          import base64,gzip
+          Path('/tmp/test_gt19_test1_browser.js').write_bytes(gzip.decompress(base64.b64decode('H4sIAFSYaWoC/81X/0/bRhT/nb/iUjTZ1mKbsHZdg7IJUOiYaEGEaj9QVl3sl/jE+c69OwMR7f++92yTLxCHdZu0qUrxnd/393lfnGhlHSu4ywYGPpfCgO/RyQv2tpL6XVkU4ADMgiB2eRFPXe9NODb61oKJlU7hU67TUoKN5xxhog2QJJ/bmUr8YPDz/RarxcIdJKXjYwmDwugErI1A3USHv56fvht+Ojh+v7fFxMTvLOgC5jJUxxTcsqEx2vjegprlwlqhpqSt0dDYNuC3XCy5EUleqiTz7zPgKZpr+86U0F3oOUP3+4tjl5up7V96Yah0aLlKx/rO6+IxFZbehynchDbLw9LyKXhXXxcWFHjRqG+MidD4M7z1iYheR1r5HlFrCV43t1MMEfmNT5GbFUg4GAw8IHe9gDWEEdTun+2/HbLh+fnpeb/ijRzcOT8I9tiSEaWRAy9zrujHcW/3dbSD/3r9n17/+CqeggLDZegMFwqDFyc8HxuRTiHsvYkdWBf24uPhycWo9+a73Z0LvMA/PfyF+DvH+CFTc3p7EWUulx7qbQJO3k210z5a0L2nuw/KCdn3FLhbba4FRn/Hqyxd4qCnI21GICFx5GSEsIJw7NRlyh0P6TR4YV2Zzl5ceY+YEymS629jafQdISacwGQQSKfgDnVelA7SkZtJ8FOdlDkoF+GboQR6PJgdp77Hi8ILggihUEg+62CqlFbgPeuTqWOHuAEpQ6O16yvt/MtMpCmoq2AJxpXdgyVpcMNlyR1UpvpYUIwondHS9ueGfi7BzB4U7kv5RGclNhTIGY5L57TygkiCmrqsSxKnRpfFRnmXIv2jiWoo0FBTVgEMKcTLknJdKtfvdFpj2Nh1BNyVBkZk3Tvi8YKK30Il94SPAR3cN4bPoonRub/J14IbFyaZqLKT88K/G/x8V5XHIYaKmJwROZZKpULqqW5xFWXR2yjTOYRSqGsv+GVFjgHMfAJ+/LHc2eE78bTrMQxALX4LCzGoG1kVqOghUYiU11++1Hd1qOubTn1VxWx+WokAph/Nq/2xDt20vwuX+d6oJkJ/H+SS3YTIqoDZGR9bb00LHREtS/A6B2qiOXdJxrzvfxudvkcFBjMjJrPa/GB9uQmFpXKpeI5V9rn34uqSAIrPR/sno2Frka5w7S64Ls4/rGGqeuEjTa+QrOsh8Kxr0bFdYBo4ZrMc58IdOPXvVr8BW0pnTzEjWP1LjYB69kTC3VIZ17Qb6tjSsOy36qpenwhqLsv46zbgsBs4a4oRCbBrJIxxprVz09unTHNYd+JdpkvH9IS93Ikjmhl+7WpUWYxo7MQNNlmvz3of497LR3SNByukuzXpDxtI39bTi10004s1A4mRyat8dBO0gr8m2gD+mqAF/dsNCg6lttAOsUVD2V5txBOAdMyT67DntSpYT8/WtvQEq2je0r9tDsGNwOmTQJiJaSbx55YATHJb4dvaPJ9XsNpOhUI9KVjfy7icMK5YpkvD+MSBwfwBmwhDxgg3Y+PS4nQwNyJBdD7gkcxck+lho7lyg024kJA+Ds+KR/e3QqX6ljo2qswHdDfh0sLe15al4/GcaAyqaHAF8oMl5+rdyluHyRMUwxKOtkqm+I2Y8qogFib/wwVr045EZrX13m2CF6boPXbfY+rD2HsP6q2W0WbYhl6SOaJBNUoMgGJzxf/FJvb3JtazwKAviDZc/I9mkNTJNaTP7JJVbFq3oceR8yp99B2U1tta5WX7OHkajEf81Cf6nb/YT2hxRgn11lyvcrQkfZP6p0vh0tbWqUMWVW7j0GmOtZdLZ7KGZhIVQhMDTF0zhBqiyrR1FV8xEdGGEVTLWBpBDx+UCY0d/yHH9HGIfcifV6YUE0hmiYQ+O9sfjQgMXwNsRQmp8fE7EgG9+lWJ/wd780/yO+H8XlBh+0/xEJRfKxAAAA==')))
+          PYBROWSER
+          python -m http.server 8765 --bind 127.0.0.1 >/tmp/gt19-http.log 2>&1 &
+          SERVER_PID=$!
+          trap 'kill $SERVER_PID 2>/dev/null || true' EXIT
+          sleep 2
+          CHROME_BIN="$CHROME_BIN" node /tmp/test_gt19_test1_browser.js
+
+      - name: Commit tested website files
+        shell: bash
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add "general-training/cambridge-19/test-1/IELTS19 Test 1 - Reading - GT.html" \
+                  general-training/cambridge-19/test-1/study-feedback.js \
+                  general-training/cambridge-19/test-1/study-feedback-data.js
+          if git diff --cached --quiet; then
+            echo "No website changes to commit"
+          else
+            git commit -m "Add IELTS 19 GT Test 1 Study mode"
+            git push origin HEAD:agent/add-gt19-test1-study-mode
+          fi
