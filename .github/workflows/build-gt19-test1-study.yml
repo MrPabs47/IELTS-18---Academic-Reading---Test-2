@@ -22,20 +22,17 @@ jobs:
       - name: Reconstruct sources and tests
         shell: bash
         run: |
-          python - <<'PY'
-          from pathlib import Path
-          import base64, gzip
-          source = Path('.tmp/gt19-test1')
-          target = Path('general-training/cambridge-19/test-1')
-          def restore(prefix, destination):
-              encoded = ''.join(p.read_text().strip() for p in sorted(source.glob(prefix + '-*.part')))
-              Path(destination).write_bytes(gzip.decompress(base64.b64decode(encoded)))
-          restore('data', target / 'study-feedback-data.js')
-          restore('bootstrap', target / 'study-feedback.js')
-          restore('patch', '/tmp/patch.py')
-          restore('static', '/tmp/static.py')
-          restore('browser', '/tmp/browser.js')
-          PY
+          for prefix in data bootstrap patch static browser; do
+            echo "Validating staged asset: $prefix"
+            cat .tmp/gt19-test1/${prefix}-*.part | tr -d '\n\r ' | base64 -d > /tmp/${prefix}.gz
+            gzip -t /tmp/${prefix}.gz
+          done
+          mkdir -p general-training/cambridge-19/test-1
+          gzip -dc /tmp/data.gz > general-training/cambridge-19/test-1/study-feedback-data.js
+          gzip -dc /tmp/bootstrap.gz > general-training/cambridge-19/test-1/study-feedback.js
+          gzip -dc /tmp/patch.gz > /tmp/patch.py
+          gzip -dc /tmp/static.gz > /tmp/static.py
+          gzip -dc /tmp/browser.gz > /tmp/browser.js
           python /tmp/patch.py
 
       - name: Validate JavaScript and content contract
