@@ -5,204 +5,44 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>IELTS Pabs Practice Hub</title>
   <style>
-    :root {
-      --bg:#f3f5fb; --panel:#fff; --border:#e6e8ef; --text:#141824; --soft:#687386;
-      --muted:#a4acbb; --blue:#2359d4; --blue-soft:#eef3ff; --green:#0b8f63;
-      --green-soft:#ebfaf4; --purple:#7656d8; --purple-soft:#f2efff;
-      --shadow:0 14px 32px rgba(15,23,42,.08);
-    }
-    *{box-sizing:border-box}
-    html{scroll-behavior:smooth}
-    body{margin:0;font-family:Arial,Helvetica,sans-serif;background:linear-gradient(180deg,#f8faff 0%,var(--bg) 240px);color:var(--text)}
-    button,a{font:inherit}
-    .site-header{position:sticky;top:0;z-index:20;background:rgba(248,250,255,.92);backdrop-filter:blur(8px);border-bottom:1px solid rgba(230,232,239,.85)}
-    .header-inner{max-width:1500px;margin:0 auto;padding:14px 18px;display:flex;align-items:center;justify-content:space-between;gap:20px}
-    .logo{color:#111;text-decoration:none;font-size:1.2rem;font-weight:800;letter-spacing:.01em;transition:color .2s ease}
-    .logo:hover,.logo:focus-visible{color:#e31837}
-    .main-nav{display:inline-flex;align-items:center;gap:6px;padding:5px;border:1px solid var(--border);border-radius:999px;background:#fff;box-shadow:0 6px 18px rgba(31,42,68,.05)}
-    .nav-pill{border:0;border-radius:999px;padding:9px 15px;color:#344054;background:transparent;cursor:pointer;font-weight:750;transition:.18s ease}
-    .nav-pill:hover{background:#f4f6fb}
-    .nav-pill.active{background:var(--blue);color:#fff;box-shadow:0 8px 18px rgba(35,89,212,.2)}
-    .page{max-width:1500px;margin:0 auto;padding:24px 18px 46px}
-    .book-section{margin-top:4px}
-    .book-heading{display:flex;align-items:center;justify-content:space-between;gap:18px;margin-bottom:14px}
-    .heading-title{display:flex;align-items:center}
-    .book-badge{display:inline-flex;align-items:center;justify-content:center;width:42px;height:42px;border-radius:14px;background:var(--blue-soft);color:var(--blue);font-weight:900;margin-right:10px}
-    .book-heading h2{margin:0;font-size:1.48rem;letter-spacing:-.02em}
-    .test-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:15px}
-    .test-card{background:var(--panel);border:1px solid var(--border);border-radius:22px;box-shadow:var(--shadow);padding:16px;min-width:0}
-    .test-title{display:flex;align-items:center;gap:9px;margin-bottom:14px}
-    .test-icon{width:34px;height:34px;border-radius:11px;display:inline-flex;align-items:center;justify-content:center;color:var(--blue);background:var(--blue-soft);font-weight:900;font-size:.82rem}
-    .test-title h3{margin:0;font-size:1.13rem}
-    .pathways{display:grid;grid-template-columns:minmax(0,1fr) 1px minmax(0,1fr);gap:10px}
-    .vertical-rule{background:var(--border);border-radius:99px}
-    .pathway{min-width:0}
-    .pathway-heading{display:flex;align-items:center;gap:6px;margin-bottom:7px;font-size:.78rem;font-weight:850;white-space:nowrap}
-    .academic .pathway-heading{color:var(--blue)} .general .pathway-heading{color:var(--green)}
-    .pathway-mark{min-width:27px;height:27px;padding:0 6px;border-radius:9px;display:inline-flex;align-items:center;justify-content:center;font-size:.7rem;font-weight:900}
-    .academic .pathway-mark{background:var(--blue-soft)} .general .pathway-mark{background:var(--green-soft)}
-    .skill-row{display:grid;grid-template-columns:minmax(58px,1fr) auto;align-items:center;gap:6px;min-height:43px;padding:5px 4px;border-radius:12px;transition:transform .16s ease,background .16s ease,box-shadow .16s ease}
-    .skill-row.available:hover{transform:translateY(-2px);background:#f9fbff;box-shadow:0 8px 16px rgba(31,42,68,.07)}
-    .skill-name{font-weight:700;font-size:.88rem;min-width:0}
-    .skill-meta{display:flex;align-items:center;justify-content:flex-end;gap:4px;flex-wrap:wrap}
-    .score-chip{display:inline-flex;align-items:center;min-height:22px;padding:2px 5px;border-radius:7px;background:#f1f4f8;color:#475467;font-size:.67rem;font-weight:800}
-    .action{min-width:60px;border-radius:8px;padding:6px 7px;text-align:center;text-decoration:none;font-size:.71rem;font-weight:850;border:1px solid currentColor;background:#fff;transition:transform .16s ease,color .16s ease,background .16s ease}
-    .skill-row:hover .action{transform:scale(1.04)}
-    .academic .action{color:var(--blue)} .academic .skill-row:hover .action{background:var(--blue);color:#fff}
-    .general .action{color:var(--green)} .general .skill-row:hover .action{background:var(--green);color:#fff}
-    .neutral .action{color:var(--purple)} .neutral .skill-row:hover .action{background:var(--purple);color:#fff}
-    .soon-text{min-width:70px;text-align:center;padding:6px 6px;border-radius:8px;background:#f3f5f8;color:var(--muted);font-size:.68rem;font-weight:800}
-    .skill-row.unavailable{color:#7f8999}
-    .shared-divider{width:60%;height:1px;margin:12px auto 9px;background:var(--border)}
-    .neutral-skills{width:78%;margin:0 auto}
-    .neutral .skill-row{grid-template-columns:minmax(78px,1fr) auto}
-    .skill-label{display:inline-flex;align-items:center;gap:6px}.skill-symbol{width:18px;text-align:center;color:#5a6b8d}
-    .history-popover{position:fixed;z-index:50;display:none;width:270px;padding:14px;border-radius:15px;border:1px solid var(--border);background:#fff;box-shadow:0 18px 45px rgba(31,42,68,.18)}
-    .history-popover.visible{display:block}.history-popover h4{margin:0 0 8px}.history-popover p{margin:5px 0;color:var(--soft);font-size:.86rem}
-    .older-book{margin-top:16px;border:1px solid var(--border);background:rgba(255,255,255,.82);border-radius:20px;overflow:hidden}
-    .older-book summary{list-style:none;cursor:pointer;padding:17px 19px;display:flex;align-items:center;justify-content:space-between;font-weight:850;font-size:1.1rem}
-    .older-book summary::-webkit-details-marker{display:none}.older-content{padding:0 18px 18px}
-    .panel{display:none;margin-top:6px;background:#fff;border:1px solid var(--border);border-radius:24px;padding:24px;box-shadow:var(--shadow)}
-    .panel.visible{display:block}.panel h2{margin-top:0}
-    .practice-options{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
-    .practice-option{padding:17px;border-radius:16px;background:#f8f9fd;border:1px solid var(--border)}
-    .practice-option strong{display:block;margin-bottom:5px}.practice-option small{color:var(--soft)}
-    @media(max-width:1250px){.test-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
-    @media(max-width:760px){
-      .header-inner{align-items:flex-start;flex-direction:column}
-      .main-nav{width:100%;overflow-x:auto}
-      .nav-pill{white-space:nowrap}
-      .test-grid{grid-template-columns:1fr}
-      .practice-options{grid-template-columns:repeat(2,1fr)}
-    }
-    @media(max-width:470px){
-      .page{padding:18px 12px 36px}.test-card{padding:14px 11px}
-      .pathways{gap:7px}.skill-row{grid-template-columns:1fr}.skill-meta{justify-content:flex-start}
-      .neutral-skills{width:88%}.neutral .skill-row{grid-template-columns:1fr}
-      .practice-options{grid-template-columns:1fr}
-    }
+    :root{--bg:#f3f5fb;--panel:#fff;--border:#e6e8ef;--text:#141824;--soft:#687386;--muted:#a4acbb;--blue:#2359d4;--blue-soft:#eef3ff;--green:#0b8f63;--green-soft:#ebfaf4;--purple:#7656d8;--shadow:0 8px 22px rgba(15,23,42,.07)}
+    *{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;font-family:Arial,Helvetica,sans-serif;background:linear-gradient(180deg,#f8faff 0,var(--bg) 220px);color:var(--text)}button,a{font:inherit}
+    .site-header{position:sticky;top:0;z-index:20;background:rgba(248,250,255,.94);backdrop-filter:blur(8px);border-bottom:1px solid rgba(230,232,239,.9)}
+    .header-inner{max-width:1540px;margin:0 auto;padding:14px 18px;display:grid;grid-template-columns:1fr auto 1fr;align-items:center;gap:20px}
+    .logo{justify-self:start;color:#111;text-decoration:none;font-size:1.2rem;font-weight:800;letter-spacing:.01em;transition:color .2s ease}.logo:hover,.logo:focus-visible{color:#e31837}
+    .main-nav{justify-self:center;display:inline-flex;align-items:center;gap:6px;padding:5px;border:1px solid var(--border);border-radius:999px;background:#fff;box-shadow:0 5px 15px rgba(31,42,68,.05)}
+    .nav-pill{border:0;border-radius:999px;padding:9px 15px;color:#344054;background:transparent;cursor:pointer;font-weight:750;transition:.18s ease}.nav-pill:hover{background:#f4f6fb}.nav-pill.active{background:var(--blue);color:#fff;box-shadow:0 7px 16px rgba(35,89,212,.18)}
+    .header-balance{min-width:1px}
+    .page{max-width:1540px;margin:0 auto;padding:24px 18px 46px}.book-section{margin:0 0 30px}.book-heading{display:flex;align-items:center;margin-bottom:12px}.book-badge{display:inline-flex;align-items:center;justify-content:center;width:40px;height:40px;border-radius:12px;background:var(--blue-soft);color:var(--blue);font-weight:900;margin-right:10px}.book-heading h2{margin:0;font-size:1.4rem;letter-spacing:-.02em}
+    .test-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px}.test-card{background:var(--panel);border:1px solid var(--border);border-radius:19px;box-shadow:var(--shadow);padding:15px;min-width:0}.test-title{display:flex;align-items:center;gap:8px;margin-bottom:12px}.test-icon{width:32px;height:32px;border-radius:10px;display:inline-flex;align-items:center;justify-content:center;color:var(--blue);background:var(--blue-soft);font-weight:900;font-size:.76rem}.test-title h3{margin:0;font-size:1.08rem}
+    .pathways{display:grid;grid-template-columns:minmax(0,1fr) 1px minmax(0,1fr);gap:9px}.vertical-rule{background:var(--border);border-radius:99px}.pathway{min-width:0}.pathway-heading{display:flex;align-items:center;gap:5px;margin-bottom:6px;font-size:.75rem;font-weight:850;white-space:nowrap}.academic .pathway-heading{color:var(--blue)}.general .pathway-heading{color:var(--green)}.pathway-mark{min-width:26px;height:26px;padding:0 6px;border-radius:8px;display:inline-flex;align-items:center;justify-content:center;font-size:.67rem;font-weight:900}.academic .pathway-mark{background:var(--blue-soft)}.general .pathway-mark{background:var(--green-soft)}
+    .skill-row{display:grid;grid-template-columns:minmax(54px,1fr) auto;align-items:center;gap:5px;min-height:41px;padding:4px;border-radius:10px;transition:transform .16s ease,background .16s ease,box-shadow .16s ease}.skill-row.available:hover{transform:translateY(-1px);background:#f9fbff;box-shadow:0 6px 13px rgba(31,42,68,.06)}.skill-name{font-weight:700;font-size:.84rem;min-width:0}.skill-meta{display:flex;align-items:center;justify-content:flex-end;gap:4px;flex-wrap:wrap}.score-chip{display:inline-flex;align-items:center;min-height:21px;padding:2px 5px;border-radius:7px;background:#f1f4f8;color:#475467;font-size:.64rem;font-weight:800}.action{min-width:57px;border-radius:8px;padding:5px 6px;text-align:center;text-decoration:none;font-size:.68rem;font-weight:850;border:1px solid currentColor;background:#fff;transition:.16s ease}.skill-row:hover .action{transform:scale(1.03)}.academic .action{color:var(--blue)}.academic .skill-row:hover .action{background:var(--blue);color:#fff}.general .action{color:var(--green)}.general .skill-row:hover .action{background:var(--green);color:#fff}.neutral .action{color:var(--purple)}.neutral .skill-row:hover .action{background:var(--purple);color:#fff}.soon-text{min-width:67px;text-align:center;padding:5px;border-radius:8px;background:#f3f5f8;color:var(--muted);font-size:.65rem;font-weight:800}.skill-row.unavailable{color:#7f8999}
+    .shared-divider{width:58%;height:1px;margin:11px auto 8px;background:var(--border)}.neutral-skills{width:78%;margin:0 auto}.neutral .skill-row{grid-template-columns:minmax(75px,1fr) auto}.skill-label{display:inline-flex;align-items:center;gap:5px}.skill-symbol{width:17px;text-align:center;color:#5a6b8d}
+    .history-popover{position:fixed;z-index:50;display:none;width:270px;padding:14px;border-radius:15px;border:1px solid var(--border);background:#fff;box-shadow:0 18px 45px rgba(31,42,68,.18)}.history-popover.visible{display:block}.history-popover h4{margin:0 0 8px}.history-popover p{margin:5px 0;color:var(--soft);font-size:.86rem}
+    .panel{display:none;margin-top:6px;background:#fff;border:1px solid var(--border);border-radius:22px;padding:24px;box-shadow:var(--shadow)}.panel.visible{display:block}.panel h2{margin-top:0}.practice-options{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}.practice-option{padding:17px;border-radius:16px;background:#f8f9fd;border:1px solid var(--border)}.practice-option strong{display:block;margin-bottom:5px}.practice-option small{color:var(--soft)}
+    @media(max-width:1320px){.test-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+    @media(max-width:760px){.header-inner{grid-template-columns:1fr}.logo,.main-nav{justify-self:center}.header-balance{display:none}.main-nav{width:100%;overflow-x:auto}.nav-pill{white-space:nowrap}.test-grid{grid-template-columns:1fr}.practice-options{grid-template-columns:repeat(2,1fr)}}
+    @media(max-width:470px){.page{padding:18px 12px 36px}.test-card{padding:14px 11px}.pathways{gap:7px}.skill-row{grid-template-columns:1fr}.skill-meta{justify-content:flex-start}.neutral-skills{width:88%}.neutral .skill-row{grid-template-columns:1fr}.practice-options{grid-template-columns:1fr}}
   </style>
 </head>
 <body>
-  <header class="site-header">
-    <div class="header-inner">
-      <a class="logo" href="#mock-tests">IELTS Pabs</a>
-      <nav class="main-nav" aria-label="Primary navigation">
-        <button class="nav-pill active" data-panel="mock-tests">Mock Tests</button>
-        <button class="nav-pill" data-panel="practice-lab">Practice Lab</button>
-        <button class="nav-pill" data-panel="progress">My Progress</button>
-      </nav>
-    </div>
-  </header>
-
-  <main class="page">
-    <section id="mock-tests"><div id="booksContainer"></div></section>
-
-    <section id="practice-lab" class="panel" aria-labelledby="practiceTitle">
-      <h2 id="practiceTitle">Practice Lab</h2>
-      <p>Games and focused practice for vocabulary, grammar, pronunciation and other IELTS skills.</p>
-      <div class="practice-options">
-        <div class="practice-option"><strong>🎮 IELTS Games</strong><small>Vocabulary races and multiplayer challenges</small></div>
-        <div class="practice-option"><strong>🧠 Vocabulary</strong><small>Topic words, collocations and paraphrasing</small></div>
-        <div class="practice-option"><strong>📝 Grammar</strong><small>Accuracy practice for Speaking and Writing</small></div>
-        <div class="practice-option"><strong>🗣 Pronunciation</strong><small>Sounds, stress, rhythm and clarity</small></div>
-      </div>
-    </section>
-
-    <section id="progress" class="panel" aria-labelledby="progressTitle">
-      <h2 id="progressTitle">My Progress</h2>
-      <p>Your two most recent attempts will appear beside each skill. Permanent cross-device tracking can be connected later through Cloudflare.</p>
-    </section>
-  </main>
-
-  <div class="history-popover" id="historyPopover" role="dialog" aria-live="polite"></div>
-
-  <script>
-    const books=[19,18,17,16], tests=[1,2,3,4];
-    const links={
-      academicReading:{
-        '16-1':'./academic/cambridge-16/test-1/IELTS16%20Test%201%20-%20Academic%20Reading.html','16-2':'./academic/cambridge-16/test-2/IELTS16%20Test%202%20-%20Academic%20Reading.html','16-3':'./academic/cambridge-16/test-3/IELTS16%20Test%203%20-%20Academic%20Reading.html','16-4':'./academic/cambridge-16/test-4/IELTS16%20Test%204%20-%20Academic%20Reading.html',
-        '17-1':'./academic/cambridge-17/test-1/IELTS17%20Test%201%20-%20Academic%20Reading.html','17-2':'./academic/cambridge-17/test-2/IELTS17%20Test%202%20-%20Academic%20Reading.html','17-3':'./academic/cambridge-17/test-3/IELTS17%20Test%203%20-%20Academic%20Reading.html','17-4':'./academic/cambridge-17/test-4/IELTS17%20Test%204%20-%20Academic%20Reading.html',
-        '18-1':'./academic/cambridge-18/test-1/IELTS18%20Test%201%20-%20Academic%20Reading.html','18-2':'./academic/cambridge-18/test-2/IELTS18%20Test%202%20-%20Academic%20Reading.html','18-3':'./academic/cambridge-18/test-3/IELTS18%20Test%203%20-%20Academic%20Reading.html','18-4':'./academic/cambridge-18/test-4/IELTS18%20Test%204%20-%20Academic%20Reading.html',
-        '19-1':'./academic/cambridge-19/test-1/IELTS19%20Test%201%20-%20Academic%20Reading.html','19-2':'./academic/cambridge-19/test-2/IELTS19%20Test%202%20-%20Academic%20Reading.html','19-3':'./academic/cambridge-19/test-3/IELTS19%20Test%203%20-%20Academic%20Reading.html','19-4':'./academic/cambridge-19/test-4/IELTS19%20Test%204%20-%20Academic%20Reading.html'
-      },
-      generalReading:{
-        '16-1':'./general-training/cambridge-16/test-1/IELTS16%20Test%201%20-%20Reading%20-%20GT.html','16-2':'./general-training/cambridge-16/test-2/IELTS16%20Test%202%20-%20Reading%20-%20GT.html','16-3':'./general-training/cambridge-16/test-3/IELTS16%20Test%203%20-%20Reading%20-%20GT.html','16-4':'./general-training/cambridge-16/test-4/IELTS16%20Test%204%20-%20Reading%20-%20GT.html',
-        '17-1':'./general-training/cambridge-17/test-1/IELTS17%20Test%201%20-%20Reading%20-%20GT.html','17-2':'./general-training/cambridge-17/test-2/IELTS17%20Test%202%20-%20Reading%20-%20GT.html','17-3':'./general-training/cambridge-17/test-3/IELTS17%20Test%203%20-%20Reading%20-%20GT.html','17-4':'./general-training/cambridge-17/test-4/IELTS17%20Test%204%20-%20Reading%20-%20GT.html',
-        '18-1':'./general-training/cambridge-18/test-1/IELTS18%20Test%201%20-%20Reading%20-%20GT.html','18-2':'./general-training/cambridge-18/test-2/IELTS18%20Test%202%20-%20Reading%20-%20GT.html','18-3':'./general-training/cambridge-18/test-3/IELTS18%20Test%203%20-%20Reading%20-%20GT.html','18-4':'./general-training/cambridge-18/test-4/IELTS18%20Test%204%20-%20Reading%20-%20GT.html',
-        '19-1':'./general-training/cambridge-19/test-1/IELTS19%20Test%201%20-%20Reading%20-%20GT.html','19-2':'./general-training/cambridge-19/test-2/IELTS19%20Test%202%20-%20Reading%20-%20GT.html','19-3':'./general-training/cambridge-19/test-3/IELTS19%20Test%203%20-%20Reading%20-%20GT.html','19-4':'./general-training/cambridge-19/test-4/IELTS19%20Test%204%20-%20Reading%20-%20GT.html'
-      },
-      listening:{
-        '16-1':'./listening/cambridge-16/test-1/IELTS16%20Test%201%20-%20Listening.html','16-2':'./listening/cambridge-16/test-2/IELTS16%20Test%202%20-%20Listening.html','16-3':'./listening/cambridge-16/test-3/IELTS16%20Test%203%20-%20Listening.html','16-4':'./listening/cambridge-16/test-4/IELTS16%20Test%204%20-%20Listening.html',
-        '17-1':'./listening/cambridge-17/test-1/IELTS17%20Test%201%20-%20Listening.html','17-2':'./listening/cambridge-17/test-2/IELTS17%20Test%202%20-%20Listening.html','17-3':'./listening/cambridge-17/test-3/IELTS17%20Test%203%20-%20Listening.html','17-4':'./listening/cambridge-17/test-4/IELTS17%20Test%204%20-%20Listening.html',
-        '18-1':'./listening/cambridge-18/test-1/IELTS18%20Test%201%20-%20Listening.html','18-2':'./listening/cambridge-18/test-2/IELTS18%20Test%202%20-%20Listening.html','18-3':'./listening/cambridge-18/test-3/IELTS18%20Test%203%20-%20Listening.html','18-4':'./listening/cambridge-18/test-4/IELTS18%20Test%204%20-%20Listening.html',
-        '19-2':'./listening/cambridge-19/test-2/IELTS19%20Test%202%20-%20Listening.html','19-3':'./listening/cambridge-19/test-3/IELTS19%20Test%203%20-%20Listening.html','19-4':'./listening/cambridge-19/test-4/IELTS19%20Test%204%20-%20Listening.html'
-      },
-      academicWriting:{},generalWriting:{},speaking:{}
-    };
-    const results=JSON.parse(localStorage.getItem('ielts-pabs-results')||'{}');
-    const attemptData=id=>Array.isArray(results[id])?results[id].slice(-2):[];
-    const actionLabel=a=>!a.length?'Start':a.length===1?'Attempt 2':'Review';
-
-    function skillRow({book,test,type,label,symbol}){
-      const key=`${book}-${test}`,href=links[type][key],id=`${book}-${test}-${type}`,attempts=attemptData(id);
-      const row=document.createElement('div');
-      row.className=`skill-row ${href?'available':'unavailable'}`;
-      row.dataset.historyId=id;row.dataset.skillLabel=label;
-      const scores=attempts.length?attempts.map((a,i)=>`<span class="score-chip">${i+1} · ${a.band??a.score??'—'}</span>`).join(''):'';
-      const control=href?`<a class="action" href="${href}">${actionLabel(attempts)}</a>`:`<span class="soon-text">Coming soon</span>`;
-      row.innerHTML=`<span class="skill-name"><span class="skill-label">${symbol?`<span class="skill-symbol">${symbol}</span>`:''}${label}</span></span><span class="skill-meta">${scores}${control}</span>`;
-      return row;
-    }
-
-    function testCard(book,test){
-      const card=document.createElement('article');card.className='test-card';
-      card.innerHTML=`<div class="test-title"><span class="test-icon">T${test}</span><h3>Test ${test}</h3></div>
-      <div class="pathways">
-        <div class="pathway academic" data-zone="academic"><div class="pathway-heading"><span class="pathway-mark">AC</span>Academic</div></div>
-        <div class="vertical-rule" aria-hidden="true"></div>
-        <div class="pathway general" data-zone="general"><div class="pathway-heading"><span class="pathway-mark">GT</span>General Training</div></div>
-      </div>
-      <div class="shared-divider" aria-hidden="true"></div>
-      <div class="neutral-skills neutral" data-zone="neutral"></div>`;
-      card.querySelector('[data-zone="academic"]').append(skillRow({book,test,type:'academicReading',label:'Reading'}),skillRow({book,test,type:'academicWriting',label:'Writing'}));
-      card.querySelector('[data-zone="general"]').append(skillRow({book,test,type:'generalReading',label:'Reading'}),skillRow({book,test,type:'generalWriting',label:'Writing'}));
-      card.querySelector('[data-zone="neutral"]').append(skillRow({book,test,type:'listening',label:'Listening',symbol:'🎧'}),skillRow({book,test,type:'speaking',label:'Speaking',symbol:'🎙'}));
-      return card;
-    }
-
-    function bookBlock(book,open=false){
-      const content=document.createElement('div');content.className='test-grid';tests.forEach(t=>content.appendChild(testCard(book,t)));
-      if(open){
-        const section=document.createElement('section');section.className='book-section';
-        section.innerHTML=`<div class="book-heading"><div class="heading-title"><span class="book-badge">${book}</span><h2>Cambridge IELTS ${book}</h2></div></div>`;
-        section.appendChild(content);return section;
-      }
-      const details=document.createElement('details');details.className='older-book';
-      details.innerHTML=`<summary><span>Cambridge IELTS ${book}</span><span aria-hidden="true">⌄</span></summary>`;
-      const inner=document.createElement('div');inner.className='older-content';inner.appendChild(content);details.appendChild(inner);return details;
-    }
-
-    function renderBooks(){const c=document.getElementById('booksContainer');books.forEach((b,i)=>c.appendChild(bookBlock(b,i===0)))}
-    function switchPanel(id){
-      document.querySelectorAll('.nav-pill').forEach(btn=>btn.classList.toggle('active',btn.dataset.panel===id));
-      document.getElementById('mock-tests').style.display=id==='mock-tests'?'block':'none';
-      document.querySelectorAll('.panel').forEach(p=>p.classList.toggle('visible',p.id===id));
-      history.replaceState(null,'',`#${id}`);window.scrollTo({top:0,behavior:'smooth'});
-    }
-    document.querySelectorAll('.nav-pill').forEach(btn=>btn.addEventListener('click',()=>switchPanel(btn.dataset.panel)));
-    const popover=document.getElementById('historyPopover');
-    document.addEventListener('mouseover',e=>{
-      const row=e.target.closest('.skill-row.available');if(!row)return;
-      const attempts=attemptData(row.dataset.historyId);if(!attempts.length)return;
-      const r=row.getBoundingClientRect();
-      popover.innerHTML=`<h4>${row.dataset.skillLabel} history</h4>`+attempts.map((a,i)=>`<p><strong>Attempt ${i+1}:</strong> Band ${a.band??a.score??'—'}${a.raw?` · ${a.raw}`:''}${a.date?`<br>${a.date}`:''}</p>`).join('');
-      popover.style.left=`${Math.min(innerWidth-286,Math.max(12,r.left))}px`;popover.style.top=`${Math.min(innerHeight-180,r.bottom+8)}px`;popover.classList.add('visible');
-    });
-    document.addEventListener('mouseout',e=>{if(e.target.closest('.skill-row.available'))popover.classList.remove('visible')});
-    renderBooks();
-    const initial=['practice-lab','progress'].includes(location.hash.slice(1))?location.hash.slice(1):'mock-tests';
-    switchPanel(initial);
-  </script>
+<header class="site-header"><div class="header-inner"><a class="logo" href="#mock-tests">IELTS Pabs</a><nav class="main-nav" aria-label="Primary navigation"><button class="nav-pill active" data-panel="mock-tests">Mock Tests</button><button class="nav-pill" data-panel="practice-lab">Practice Lab</button><button class="nav-pill" data-panel="progress">My Progress</button></nav><span class="header-balance" aria-hidden="true"></span></div></header>
+<main class="page">
+  <section id="mock-tests"><div id="booksContainer"></div></section>
+  <section id="practice-lab" class="panel"><h2>Practice Lab</h2><p>Games and focused practice for vocabulary, grammar, pronunciation and other IELTS skills.</p><div class="practice-options"><div class="practice-option"><strong>🎮 IELTS Games</strong><small>Vocabulary races and multiplayer challenges</small></div><div class="practice-option"><strong>🧠 Vocabulary</strong><small>Topic words, collocations and paraphrasing</small></div><div class="practice-option"><strong>📝 Grammar</strong><small>Accuracy practice for Speaking and Writing</small></div><div class="practice-option"><strong>🗣 Pronunciation</strong><small>Sounds, stress, rhythm and clarity</small></div></div></section>
+  <section id="progress" class="panel"><h2>My Progress</h2><p>Your two most recent attempts will appear beside each skill. Permanent cross-device tracking can be connected later through Cloudflare.</p></section>
+</main>
+<div class="history-popover" id="historyPopover" role="dialog" aria-live="polite"></div>
+<script>
+const books=[19,18,17,16],tests=[1,2,3,4];
+const links={academicReading:{'16-1':'./academic/cambridge-16/test-1/IELTS16%20Test%201%20-%20Academic%20Reading.html','16-2':'./academic/cambridge-16/test-2/IELTS16%20Test%202%20-%20Academic%20Reading.html','16-3':'./academic/cambridge-16/test-3/IELTS16%20Test%203%20-%20Academic%20Reading.html','16-4':'./academic/cambridge-16/test-4/IELTS16%20Test%204%20-%20Academic%20Reading.html','17-1':'./academic/cambridge-17/test-1/IELTS17%20Test%201%20-%20Academic%20Reading.html','17-2':'./academic/cambridge-17/test-2/IELTS17%20Test%202%20-%20Academic%20Reading.html','17-3':'./academic/cambridge-17/test-3/IELTS17%20Test%203%20-%20Academic%20Reading.html','17-4':'./academic/cambridge-17/test-4/IELTS17%20Test%204%20-%20Academic%20Reading.html','18-1':'./academic/cambridge-18/test-1/IELTS18%20Test%201%20-%20Academic%20Reading.html','18-2':'./academic/cambridge-18/test-2/IELTS18%20Test%202%20-%20Academic%20Reading.html','18-3':'./academic/cambridge-18/test-3/IELTS18%20Test%203%20-%20Academic%20Reading.html','18-4':'./academic/cambridge-18/test-4/IELTS18%20Test%204%20-%20Academic%20Reading.html','19-1':'./academic/cambridge-19/test-1/IELTS19%20Test%201%20-%20Academic%20Reading.html','19-2':'./academic/cambridge-19/test-2/IELTS19%20Test%202%20-%20Academic%20Reading.html','19-3':'./academic/cambridge-19/test-3/IELTS19%20Test%203%20-%20Academic%20Reading.html','19-4':'./academic/cambridge-19/test-4/IELTS19%20Test%204%20-%20Academic%20Reading.html'},generalReading:{'16-1':'./general-training/cambridge-16/test-1/IELTS16%20Test%201%20-%20Reading%20-%20GT.html','16-2':'./general-training/cambridge-16/test-2/IELTS16%20Test%202%20-%20Reading%20-%20GT.html','16-3':'./general-training/cambridge-16/test-3/IELTS16%20Test%203%20-%20Reading%20-%20GT.html','16-4':'./general-training/cambridge-16/test-4/IELTS16%20Test%204%20-%20Reading%20-%20GT.html','17-1':'./general-training/cambridge-17/test-1/IELTS17%20Test%201%20-%20Reading%20-%20GT.html','17-2':'./general-training/cambridge-17/test-2/IELTS17%20Test%202%20-%20Reading%20-%20GT.html','17-3':'./general-training/cambridge-17/test-3/IELTS17%20Test%203%20-%20Reading%20-%20GT.html','17-4':'./general-training/cambridge-17/test-4/IELTS17%20Test%204%20-%20Reading%20-%20GT.html','18-1':'./general-training/cambridge-18/test-1/IELTS18%20Test%201%20-%20Reading%20-%20GT.html','18-2':'./general-training/cambridge-18/test-2/IELTS18%20Test%202%20-%20Reading%20-%20GT.html','18-3':'./general-training/cambridge-18/test-3/IELTS18%20Test%203%20-%20Reading%20-%20GT.html','18-4':'./general-training/cambridge-18/test-4/IELTS18%20Test%204%20-%20Reading%20-%20GT.html','19-1':'./general-training/cambridge-19/test-1/IELTS19%20Test%201%20-%20Reading%20-%20GT.html','19-2':'./general-training/cambridge-19/test-2/IELTS19%20Test%202%20-%20Reading%20-%20GT.html','19-3':'./general-training/cambridge-19/test-3/IELTS19%20Test%203%20-%20Reading%20-%20GT.html','19-4':'./general-training/cambridge-19/test-4/IELTS19%20Test%204%20-%20Reading%20-%20GT.html'},listening:{'16-1':'./listening/cambridge-16/test-1/IELTS16%20Test%201%20-%20Listening.html','16-2':'./listening/cambridge-16/test-2/IELTS16%20Test%202%20-%20Listening.html','16-3':'./listening/cambridge-16/test-3/IELTS16%20Test%203%20-%20Listening.html','16-4':'./listening/cambridge-16/test-4/IELTS16%20Test%204%20-%20Listening.html','17-1':'./listening/cambridge-17/test-1/IELTS17%20Test%201%20-%20Listening.html','17-2':'./listening/cambridge-17/test-2/IELTS17%20Test%202%20-%20Listening.html','17-3':'./listening/cambridge-17/test-3/IELTS17%20Test%203%20-%20Listening.html','17-4':'./listening/cambridge-17/test-4/IELTS17%20Test%204%20-%20Listening.html','18-1':'./listening/cambridge-18/test-1/IELTS18%20Test%201%20-%20Listening.html','18-2':'./listening/cambridge-18/test-2/IELTS18%20Test%202%20-%20Listening.html','18-3':'./listening/cambridge-18/test-3/IELTS18%20Test%203%20-%20Listening.html','18-4':'./listening/cambridge-18/test-4/IELTS18%20Test%204%20-%20Listening.html','19-2':'./listening/cambridge-19/test-2/IELTS19%20Test%202%20-%20Listening.html','19-3':'./listening/cambridge-19/test-3/IELTS19%20Test%203%20-%20Listening.html','19-4':'./listening/cambridge-19/test-4/IELTS19%20Test%204%20-%20Listening.html'},academicWriting:{},generalWriting:{},speaking:{}};
+const results=JSON.parse(localStorage.getItem('ielts-pabs-results')||'{}');const attemptData=id=>Array.isArray(results[id])?results[id].slice(-2):[];const actionLabel=a=>!a.length?'Start':a.length===1?'Attempt 2':'Review';
+function skillRow({book,test,type,label,symbol}){const key=`${book}-${test}`,href=links[type][key],id=`${book}-${test}-${type}`,attempts=attemptData(id),row=document.createElement('div');row.className=`skill-row ${href?'available':'unavailable'}`;row.dataset.historyId=id;row.dataset.skillLabel=label;const scores=attempts.length?attempts.map((a,i)=>`<span class="score-chip">${i+1} · ${a.band??a.score??'—'}</span>`).join(''):'';const control=href?`<a class="action" href="${href}">${actionLabel(attempts)}</a>`:`<span class="soon-text">Coming soon</span>`;row.innerHTML=`<span class="skill-name"><span class="skill-label">${symbol?`<span class="skill-symbol">${symbol}</span>`:''}${label}</span></span><span class="skill-meta">${scores}${control}</span>`;return row}
+function testCard(book,test){const card=document.createElement('article');card.className='test-card';card.innerHTML=`<div class="test-title"><span class="test-icon">T${test}</span><h3>Test ${test}</h3></div><div class="pathways"><div class="pathway academic" data-zone="academic"><div class="pathway-heading"><span class="pathway-mark">AC</span>Academic</div></div><div class="vertical-rule"></div><div class="pathway general" data-zone="general"><div class="pathway-heading"><span class="pathway-mark">GT</span>General Training</div></div></div><div class="shared-divider"></div><div class="neutral-skills neutral" data-zone="neutral"></div>`;card.querySelector('[data-zone="academic"]').append(skillRow({book,test,type:'academicReading',label:'Reading'}),skillRow({book,test,type:'academicWriting',label:'Writing'}));card.querySelector('[data-zone="general"]').append(skillRow({book,test,type:'generalReading',label:'Reading'}),skillRow({book,test,type:'generalWriting',label:'Writing'}));card.querySelector('[data-zone="neutral"]').append(skillRow({book,test,type:'listening',label:'Listening',symbol:'🎧'}),skillRow({book,test,type:'speaking',label:'Speaking',symbol:'🎙'}));return card}
+function bookBlock(book){const section=document.createElement('section');section.className='book-section';section.innerHTML=`<div class="book-heading"><span class="book-badge">${book}</span><h2>Cambridge IELTS ${book}</h2></div>`;const grid=document.createElement('div');grid.className='test-grid';tests.forEach(test=>grid.appendChild(testCard(book,test)));section.appendChild(grid);return section}
+function renderBooks(){const c=document.getElementById('booksContainer');books.forEach(book=>c.appendChild(bookBlock(book)))}
+function switchPanel(id){document.querySelectorAll('.nav-pill').forEach(btn=>btn.classList.toggle('active',btn.dataset.panel===id));document.getElementById('mock-tests').style.display=id==='mock-tests'?'block':'none';document.querySelectorAll('.panel').forEach(p=>p.classList.toggle('visible',p.id===id));history.replaceState(null,'',`#${id}`);window.scrollTo({top:0,behavior:'smooth'})}
+document.querySelectorAll('.nav-pill').forEach(btn=>btn.addEventListener('click',()=>switchPanel(btn.dataset.panel)));const popover=document.getElementById('historyPopover');document.addEventListener('mouseover',e=>{const row=e.target.closest('.skill-row.available');if(!row)return;const attempts=attemptData(row.dataset.historyId);if(!attempts.length)return;const r=row.getBoundingClientRect();popover.innerHTML=`<h4>${row.dataset.skillLabel} history</h4>`+attempts.map((a,i)=>`<p><strong>Attempt ${i+1}:</strong> Band ${a.band??a.score??'—'}${a.raw?` · ${a.raw}`:''}${a.date?`<br>${a.date}`:''}</p>`).join('');popover.style.left=`${Math.min(innerWidth-286,Math.max(12,r.left))}px`;popover.style.top=`${Math.min(innerHeight-180,r.bottom+8)}px`;popover.classList.add('visible')});document.addEventListener('mouseout',e=>{if(e.target.closest('.skill-row.available'))popover.classList.remove('visible')});renderBooks();switchPanel(['practice-lab','progress'].includes(location.hash.slice(1))?location.hash.slice(1):'mock-tests');
+</script>
 </body>
 </html>
