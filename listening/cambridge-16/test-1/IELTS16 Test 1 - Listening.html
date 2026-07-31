@@ -17,6 +17,9 @@
       --correct: #1b5e20;
       --correct-soft: rgba(67,160,71,0.18);
       --incorrect: #b71c1c;
+      --danger: #c62828;
+      --highlight: #ffcc66;
+      --note-underline: #ff9900;
       --shadow-soft: 0 2px 10px rgba(0,0,0,0.08);
       --font-size-base: 15px;
       --footer-h: 72px;
@@ -67,6 +70,8 @@
       --correct: #7dd97d;
       --correct-soft: #17331b;
       --incorrect: #ff8a80;
+      --highlight: #ffcc66;
+      --note-underline: #ffcc66;
       --shadow-soft: 0 2px 12px rgba(0,0,0,0.45);
     }
     body[data-theme="yellow-on-black"] {
@@ -81,6 +86,8 @@
       --correct: #a7ff83;
       --correct-soft: #1f3518;
       --incorrect: #ffb3a7;
+      --highlight: #ffeb3b;
+      --note-underline: #ffeb3b;
       --shadow-soft: 0 2px 12px rgba(0,0,0,0.45);
     }
     body[data-theme="white-on-black"] .notes-panel,
@@ -1109,6 +1116,168 @@
       box-shadow: 0 0 0 2px color-mix(in srgb, #2563eb 24%, transparent);
       border-radius: 6px;
     }
+    #selectionToolbar {
+      position: fixed;
+      z-index: 1600;
+      display: flex;
+      gap: 4px;
+      max-width: calc(100vw - 16px);
+      padding: 4px 6px;
+      border: 1px solid rgba(255,255,255,0.2);
+      border-radius: 999px;
+      background: #222;
+      color: #fff;
+      box-shadow: 0 4px 16px rgba(0,0,0,0.3);
+      transform: translateX(-50%);
+    }
+    #selectionToolbar[hidden] { display: none !important; }
+    #selectionToolbar button {
+      min-height: 32px;
+      padding: 4px 10px;
+      border: 0;
+      border-radius: 999px;
+      background: transparent;
+      color: inherit;
+      font: inherit;
+      font-size: 0.82rem;
+      font-weight: 700;
+      cursor: pointer;
+      white-space: nowrap;
+    }
+    #selectionToolbar button:hover { background: rgba(255,255,255,0.18); }
+    #selectionToolbar button:focus-visible {
+      outline: 3px solid #9fd0ff;
+      outline-offset: 1px;
+    }
+    .highlighted {
+      background: var(--highlight);
+      color: #111;
+      border-radius: 2px;
+      box-decoration-break: clone;
+      -webkit-box-decoration-break: clone;
+    }
+    .note-anchor {
+      position: relative;
+      text-decoration: underline;
+      text-decoration-color: var(--note-underline);
+      text-decoration-style: solid;
+      text-decoration-thickness: 2px;
+      text-underline-offset: 2px;
+      cursor: pointer;
+    }
+    .note-anchor:focus-visible {
+      outline: 2px solid var(--accent);
+      outline-offset: 2px;
+      border-radius: 2px;
+    }
+    .note-anchor .note-delete {
+      position: absolute;
+      z-index: 1;
+      top: -10px;
+      right: -10px;
+      display: none;
+      width: 16px;
+      height: 16px;
+      padding: 0;
+      border: none;
+      border-radius: 50%;
+      background: var(--danger);
+      color: #fff;
+      font: inherit;
+      font-size: 0.7rem;
+      line-height: 16px;
+      text-align: center;
+      cursor: pointer;
+    }
+    .note-anchor:hover .note-delete,
+    .note-anchor:focus .note-delete,
+    .note-anchor:focus-within .note-delete {
+      display: inline-block;
+    }
+    .note-anchor .note-delete:focus-visible {
+      outline: 3px solid var(--accent);
+      outline-offset: 1px;
+    }
+    .note-window {
+      position: fixed;
+      z-index: 1650;
+      display: flex;
+      flex-direction: column;
+      width: min(340px, calc(100vw - 24px));
+      max-height: min(360px, calc(100vh - 24px));
+      overflow: hidden;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      background: var(--bg);
+      color: var(--text);
+      box-shadow: 0 10px 30px rgba(0,0,0,0.32);
+    }
+    .note-window[hidden] { display: none !important; }
+    .note-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      padding: 8px 10px;
+      border-bottom: 1px solid var(--border);
+      background: var(--bg-secondary);
+      font-weight: 800;
+      cursor: move;
+      touch-action: none;
+    }
+    .note-header button,
+    .note-footer button {
+      min-height: 32px;
+      padding: 5px 10px;
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      background: var(--bg);
+      color: var(--text);
+      font: inherit;
+      font-weight: 700;
+      cursor: pointer;
+    }
+    .note-header button {
+      width: 32px;
+      padding: 0;
+      font-size: 1.15rem;
+      line-height: 1;
+    }
+    .note-header button:focus-visible,
+    .note-footer button:focus-visible,
+    .note-body textarea:focus-visible {
+      outline: 3px solid var(--accent);
+      outline-offset: 2px;
+    }
+    .note-body {
+      min-height: 120px;
+      padding: 10px;
+    }
+    .note-body label {
+      display: block;
+      margin-bottom: 6px;
+      font-weight: 700;
+    }
+    .note-body textarea {
+      width: 100%;
+      min-height: 110px;
+      padding: 8px;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      background: var(--bg);
+      color: var(--text);
+      font: inherit;
+      resize: vertical;
+    }
+    .note-footer {
+      display: flex;
+      justify-content: flex-end;
+      gap: 7px;
+      padding: 8px 10px;
+      border-top: 1px solid var(--border);
+      background: var(--bg-secondary);
+    }
+    #deleteNoteBtn { color: var(--incorrect); margin-right: auto; }
     .notes-panel, .table-panel { width: min(1220px, 100%); border: 1.5px solid #666; background: #fff; color: #111; }
     .notes-panel .title-row, .table-panel .title-row {
       border-bottom: 1px solid #666;
@@ -1505,6 +1674,16 @@
       .audioscript-body { max-height: 300px; padding-left: 10px; padding-right: 10px; }
       .audioscript-segment { grid-template-columns: minmax(0, 1fr); gap: 2px; }
       .audioscript-speaker-spacer { display: none; }
+      #selectionToolbar {
+        max-width: calc(100vw - 12px);
+        padding: 4px;
+      }
+      #selectionToolbar button { min-height: 36px; padding-inline: 9px; }
+      .note-window {
+        width: calc(100vw - 16px);
+        max-height: calc(100vh - 16px);
+      }
+      .note-header { cursor: default; }
     }
     @media (max-width: 900px) {
       .study-workspace,
@@ -1749,6 +1928,27 @@
         </div>
       </div>
     </main>
+
+    <div id="selectionToolbar" role="toolbar" aria-label="Text annotation actions" hidden>
+      <button type="button" id="highlightSelectionBtn" aria-label="Highlight selected text">Highlight</button>
+      <button type="button" id="noteSelectionBtn" aria-label="Add note to selected text">Add note</button>
+    </div>
+
+    <div class="note-window" id="noteWindow" role="dialog" aria-modal="false" aria-labelledby="noteWindowTitle" hidden>
+      <div class="note-header" id="noteWindowHeader">
+        <span id="noteWindowTitle">Note</span>
+        <button type="button" id="closeNoteBtn" aria-label="Close note editor">&#215;</button>
+      </div>
+      <div class="note-body">
+        <label for="noteText">Note text</label>
+        <textarea id="noteText" rows="6"></textarea>
+      </div>
+      <div class="note-footer">
+        <button type="button" id="deleteNoteBtn">Delete</button>
+        <button type="button" id="cancelNoteBtn">Cancel</button>
+        <button type="button" id="saveNoteBtn">Save</button>
+      </div>
+    </div>
 
     <div class="floating-nav"><button type="button" class="nav-arrow prev" id="prevSectionBtn" aria-label="Previous section">←</button><button type="button" class="nav-arrow" id="nextSectionBtn" aria-label="Next section">→</button></div>
     <footer class="footer-bar"><div class="footer-main" id="footerMain"></div><div class="submit-corner"><button type="button" id="footerSubmitBtn" aria-label="Submit test"><span aria-hidden="true">&#10003;</span></button></div></footer>
@@ -2906,6 +3106,390 @@
       if(submittedReview && submittedResultSnapshot) revealAllListeningStudyGroups(true);
     }
     function fullscreenElement(){ return document.fullscreenElement || document.webkitFullscreenElement || document.msFullscreenElement || null; }
+
+    const LISTENING_ANNOTATION_SCOPE = 'ielts16-listening-test1';
+    const LISTENING_ANNOTATION_BOUNDARY_SELECTOR = [
+      '.instruction-heading',
+      '.instruction-copy',
+      '.notes-panel > .title-row',
+      '.notes-section-title',
+      '.bullet-list > li',
+      '.small-heading',
+      '.radio-option > span',
+      '.checkbox-option > span',
+      '.map-answer-row > label',
+      '.drag-help',
+      '.drag-question-row > div:not(.matching-num):not(.drag-slot)'
+    ].join(',');
+    const LISTENING_ANNOTATION_EXCLUDED_SELECTOR = [
+      'input',
+      'textarea',
+      'select',
+      'button',
+      '.inline-answer',
+      '.drag-slot',
+      '.drag-clear',
+      '.drag-bank',
+      '.drag-choice',
+      '.matching-num',
+      '.correct-answer',
+      '.listening-study-feedback-host',
+      '.reading-shell-study-panel',
+      '.reading-shell-study-feedback-card',
+      '[contenteditable]',
+      '[draggable="true"]'
+    ].join(',');
+    const selectionToolbar = document.getElementById('selectionToolbar');
+    const highlightSelectionBtn = document.getElementById('highlightSelectionBtn');
+    const noteSelectionBtn = document.getElementById('noteSelectionBtn');
+    const noteWindow = document.getElementById('noteWindow');
+    const noteWindowHeader = document.getElementById('noteWindowHeader');
+    const noteText = document.getElementById('noteText');
+    const closeNoteBtn = document.getElementById('closeNoteBtn');
+    const deleteNoteBtn = document.getElementById('deleteNoteBtn');
+    const cancelNoteBtn = document.getElementById('cancelNoteBtn');
+    const saveNoteBtn = document.getElementById('saveNoteBtn');
+    const notesStore = {};
+    let listeningAnnotationId = 0;
+    let currentNoteId = 0;
+    let pendingAnnotationRange = null;
+    let pendingAnnotationBoundary = null;
+    let currentOpenNoteId = null;
+    let noteEditorOpener = null;
+    let suppressQuestionClickUntil = 0;
+    let selectionControlSnapshot = null;
+
+    function annotationElementFromNode(node){
+      if(node instanceof Element) return node;
+      return node && node.parentElement ? node.parentElement : null;
+    }
+    function getAnnotationBoundary(node){
+      const element=annotationElementFromNode(node);
+      if(!element || !studyQuestionPane.contains(element)) return null;
+      return element.closest(LISTENING_ANNOTATION_BOUNDARY_SELECTOR);
+    }
+    function rangeIntersectsElement(range,element){
+      try{ return range.intersectsNode(element); }
+      catch(error){ return false; }
+    }
+    function isValidAnnotationRange(range){
+      if(!range || range.collapsed || !range.toString().trim()) return false;
+      const startBoundary=getAnnotationBoundary(range.startContainer);
+      const endBoundary=getAnnotationBoundary(range.endContainer);
+      if(!startBoundary || startBoundary!==endBoundary || !studyQuestionPane.contains(startBoundary)) return false;
+      if(annotationElementFromNode(range.commonAncestorContainer)?.closest(LISTENING_ANNOTATION_EXCLUDED_SELECTOR)) return false;
+      return !Array.from(startBoundary.querySelectorAll(LISTENING_ANNOTATION_EXCLUDED_SELECTOR))
+        .some((element)=>rangeIntersectsElement(range,element));
+    }
+    function annotationNodeForEndpoint(node,selector){
+      const element=annotationElementFromNode(node);
+      return element ? element.closest(selector) : null;
+    }
+    function singleAnnotationIdForRange(range,selector,datasetKey){
+      if(!range) return null;
+      const start=annotationNodeForEndpoint(range.startContainer,selector);
+      const end=annotationNodeForEndpoint(range.endContainer,selector);
+      if(!start || start!==end) return null;
+      return start.dataset[datasetKey] || null;
+    }
+    function clearBrowserSelection(){
+      const selection=window.getSelection();
+      if(selection) selection.removeAllRanges();
+    }
+    function hideSelectionToolbar({clearSelection=false}={}){
+      selectionToolbar.hidden=true;
+      pendingAnnotationRange=null;
+      pendingAnnotationBoundary=null;
+      if(clearSelection) clearBrowserSelection();
+    }
+    function annotationSelectionRect(range){
+      const rect=range.getBoundingClientRect();
+      if(rect.width || rect.height) return rect;
+      return range.getClientRects()[0] || null;
+    }
+    function positionSelectionToolbar(range){
+      const rect=annotationSelectionRect(range);
+      if(!rect) return false;
+      selectionToolbar.hidden=false;
+      const toolbarRect=selectionToolbar.getBoundingClientRect();
+      const halfWidth=toolbarRect.width/2;
+      const left=Math.min(window.innerWidth-halfWidth-8,Math.max(halfWidth+8,rect.left+(rect.width/2)));
+      let top=rect.top-toolbarRect.height-8;
+      if(top<8) top=rect.bottom+8;
+      top=Math.min(window.innerHeight-toolbarRect.height-8,Math.max(8,top));
+      selectionToolbar.style.left=`${left}px`;
+      selectionToolbar.style.top=`${top}px`;
+      return true;
+    }
+    function showSelectionToolbarForRange(range,{fromPointer=false}={}){
+      if(!isValidAnnotationRange(range)){ hideSelectionToolbar(); return; }
+      pendingAnnotationRange=range.cloneRange();
+      pendingAnnotationBoundary=getAnnotationBoundary(range.startContainer);
+      const highlightId=singleAnnotationIdForRange(range,'.highlighted','annotationId');
+      const noteId=singleAnnotationIdForRange(range,'.note-anchor','noteId');
+      highlightSelectionBtn.textContent=highlightId ? 'Remove highlight' : 'Highlight';
+      highlightSelectionBtn.setAttribute('aria-label',highlightId ? 'Remove highlight from selected text' : 'Highlight selected text');
+      noteSelectionBtn.textContent=noteId ? 'Edit note' : 'Add note';
+      noteSelectionBtn.setAttribute('aria-label',noteId ? 'Edit note for selected text' : 'Add note to selected text');
+      if(!positionSelectionToolbar(range)){ hideSelectionToolbar(); return; }
+      if(fromPointer) suppressQuestionClickUntil=Date.now()+350;
+    }
+    function updateSelectionToolbar({fromPointer=false}={}){
+      const selection=window.getSelection();
+      if(!selection || selection.rangeCount!==1){ hideSelectionToolbar(); return; }
+      showSelectionToolbarForRange(selection.getRangeAt(0),{fromPointer});
+    }
+    function captureSelectionControlState(event){
+      const control=event.target.closest('label')?.querySelector('input,select');
+      if(!control){
+        selectionControlSnapshot=null;
+        return;
+      }
+      if(event.detail>1 && selectionControlSnapshot?.control===control && Date.now()-selectionControlSnapshot.at<700) return;
+      selectionControlSnapshot={
+        control,
+        checked:'checked' in control ? control.checked : null,
+        value:control.value,
+        at:Date.now()
+      };
+    }
+    function restoreSelectionControlState(){
+      const snapshot=selectionControlSnapshot;
+      if(!snapshot?.control?.isConnected) return;
+      if(snapshot.checked!==null) snapshot.control.checked=snapshot.checked;
+      snapshot.control.value=snapshot.value;
+    }
+    function collectAnnotationTextSegments(range,skipSelector){
+      const boundary=getAnnotationBoundary(range.startContainer);
+      if(!boundary) return [];
+      const walker=document.createTreeWalker(boundary,NodeFilter.SHOW_TEXT);
+      const segments=[];
+      let node;
+      while((node=walker.nextNode())){
+        if(!node.nodeValue || !node.nodeValue.trim()) continue;
+        const parent=node.parentElement;
+        if(parent?.closest(LISTENING_ANNOTATION_EXCLUDED_SELECTOR)) continue;
+        if(skipSelector && parent?.closest(skipSelector)) continue;
+        if(!rangeIntersectsElement(range,node)) continue;
+        const start=node===range.startContainer ? range.startOffset : 0;
+        const end=node===range.endContainer ? range.endOffset : node.nodeValue.length;
+        if(end>start && node.nodeValue.slice(start,end).trim()) segments.push({node,start,end});
+      }
+      return segments;
+    }
+    function wrapAnnotationSegments(range,className,dataKey,id,skipSelector){
+      const segments=collectAnnotationTextSegments(range,skipSelector);
+      segments.reverse().forEach(({node,start,end})=>{
+        if(!node.isConnected) return;
+        const segmentRange=document.createRange();
+        segmentRange.setStart(node,start);
+        segmentRange.setEnd(node,end);
+        const wrapper=document.createElement('span');
+        wrapper.className=className;
+        wrapper.dataset[dataKey]=id;
+        segmentRange.surroundContents(wrapper);
+      });
+      return segments.length>0;
+    }
+    function unwrapAnnotationNodes(selector){
+      const parents=new Set();
+      document.querySelectorAll(selector).forEach((wrapper)=>{
+        const parent=wrapper.parentNode;
+        if(!parent) return;
+        parents.add(parent);
+        while(wrapper.firstChild) parent.insertBefore(wrapper.firstChild,wrapper);
+        wrapper.remove();
+      });
+      parents.forEach((parent)=>parent.normalize());
+    }
+    function applyOrRemoveHighlight(){
+      if(!pendingAnnotationRange || !isValidAnnotationRange(pendingAnnotationRange)){ hideSelectionToolbar({clearSelection:true}); return; }
+      const existingId=singleAnnotationIdForRange(pendingAnnotationRange,'.highlighted','annotationId');
+      if(existingId){
+        unwrapAnnotationNodes(`.highlighted[data-annotation-id="${existingId}"]`);
+      } else {
+        listeningAnnotationId+=1;
+        const id=`${LISTENING_ANNOTATION_SCOPE}-highlight-${listeningAnnotationId}`;
+        wrapAnnotationSegments(pendingAnnotationRange,'highlighted','annotationId',id,'.highlighted');
+      }
+      hideSelectionToolbar({clearSelection:true});
+    }
+    function noteAnchorNodes(noteId){
+      return Array.from(document.querySelectorAll(`.note-anchor[data-note-id="${noteId}"]`));
+    }
+    function prepareNoteAnchors(noteId){
+      const anchors=noteAnchorNodes(noteId);
+      anchors.forEach((anchor)=>{
+        anchor.tabIndex=0;
+        anchor.setAttribute('aria-label','Open note for selected text');
+      });
+      const firstAnchor=anchors[0];
+      if(!firstAnchor) return null;
+      const deleteControl=document.createElement('button');
+      deleteControl.type='button';
+      deleteControl.className='note-delete';
+      deleteControl.dataset.noteId=noteId;
+      deleteControl.setAttribute('aria-label','Delete note for selected text');
+      deleteControl.title='Delete note';
+      deleteControl.textContent='\u00D7';
+      firstAnchor.appendChild(deleteControl);
+      return firstAnchor;
+    }
+    function positionNoteWindow(anchor){
+      noteWindow.hidden=false;
+      const anchorRect=anchor?.getBoundingClientRect();
+      const editorRect=noteWindow.getBoundingClientRect();
+      const left=Math.min(window.innerWidth-editorRect.width-12,Math.max(12,(anchorRect?.left ?? 12)));
+      let top=(anchorRect?.bottom ?? 12)+10;
+      if(top+editorRect.height>window.innerHeight-12) top=(anchorRect?.top ?? window.innerHeight)-editorRect.height-10;
+      top=Math.min(window.innerHeight-editorRect.height-12,Math.max(12,top));
+      noteWindow.style.left=`${left}px`;
+      noteWindow.style.top=`${top}px`;
+    }
+    function openNoteEditor(noteId,opener){
+      if(!notesStore[noteId]) return;
+      currentOpenNoteId=noteId;
+      noteEditorOpener=opener instanceof HTMLElement ? opener : document.activeElement;
+      noteText.value=notesStore[noteId].text;
+      const anchor=noteAnchorNodes(noteId)[0] || noteEditorOpener;
+      positionNoteWindow(anchor);
+      noteText.focus({preventScroll:true});
+    }
+    function closeNoteEditor({restoreFocus=true}={}){
+      if(noteWindow.hidden) return;
+      noteWindow.hidden=true;
+      const opener=noteEditorOpener;
+      currentOpenNoteId=null;
+      noteEditorOpener=null;
+      if(restoreFocus && opener instanceof HTMLElement && opener.isConnected) opener.focus({preventScroll:true});
+    }
+    function createOrEditNote(){
+      if(!pendingAnnotationRange || !isValidAnnotationRange(pendingAnnotationRange)){ hideSelectionToolbar({clearSelection:true}); return; }
+      const existingId=singleAnnotationIdForRange(pendingAnnotationRange,'.note-anchor','noteId');
+      if(existingId){
+        const opener=noteAnchorNodes(existingId)[0];
+        hideSelectionToolbar({clearSelection:true});
+        openNoteEditor(existingId,opener);
+        return;
+      }
+      currentNoteId+=1;
+      const noteId=`${LISTENING_ANNOTATION_SCOPE}-note-${currentNoteId}`;
+      if(!wrapAnnotationSegments(pendingAnnotationRange,'note-anchor','noteId',noteId,'.note-anchor')){
+        hideSelectionToolbar({clearSelection:true});
+        return;
+      }
+      notesStore[noteId]={text:''};
+      const anchor=prepareNoteAnchors(noteId);
+      hideSelectionToolbar({clearSelection:true});
+      openNoteEditor(noteId,anchor);
+    }
+    function saveCurrentNote(){
+      if(!currentOpenNoteId || !notesStore[currentOpenNoteId]) return;
+      notesStore[currentOpenNoteId].text=noteText.value;
+      closeNoteEditor({restoreFocus:true});
+    }
+    function deleteNote(noteId){
+      if(!noteId || !notesStore[noteId]) return;
+      const anchors=noteAnchorNodes(noteId);
+      document.querySelectorAll(`.note-delete[data-note-id="${noteId}"]`).forEach((control)=>control.remove());
+      unwrapAnnotationNodes(`.note-anchor[data-note-id="${noteId}"]`);
+      delete notesStore[noteId];
+      if(currentOpenNoteId===noteId) closeNoteEditor({restoreFocus:false});
+    }
+    function deleteCurrentNote(){
+      if(currentOpenNoteId) deleteNote(currentOpenNoteId);
+    }
+    function setupNoteWindowDragging(){
+      let dragState=null;
+      noteWindowHeader.addEventListener('pointerdown',(event)=>{
+        if(window.innerWidth<=560 || event.button!==0 || event.target.closest('button')) return;
+        const rect=noteWindow.getBoundingClientRect();
+        dragState={pointerId:event.pointerId,offsetX:event.clientX-rect.left,offsetY:event.clientY-rect.top};
+        noteWindowHeader.setPointerCapture?.(event.pointerId);
+        event.preventDefault();
+      });
+      noteWindowHeader.addEventListener('pointermove',(event)=>{
+        if(!dragState || dragState.pointerId!==event.pointerId) return;
+        const rect=noteWindow.getBoundingClientRect();
+        const left=Math.min(window.innerWidth-rect.width-8,Math.max(8,event.clientX-dragState.offsetX));
+        const top=Math.min(window.innerHeight-rect.height-8,Math.max(8,event.clientY-dragState.offsetY));
+        noteWindow.style.left=`${left}px`;
+        noteWindow.style.top=`${top}px`;
+      });
+      const stopDragging=(event)=>{
+        if(!dragState || dragState.pointerId!==event.pointerId) return;
+        noteWindowHeader.releasePointerCapture?.(event.pointerId);
+        dragState=null;
+      };
+      noteWindowHeader.addEventListener('pointerup',stopDragging);
+      noteWindowHeader.addEventListener('pointercancel',stopDragging);
+    }
+    function setupListeningAnnotations(){
+      selectionToolbar.addEventListener('pointerdown',(event)=>event.preventDefault());
+      highlightSelectionBtn.addEventListener('click',applyOrRemoveHighlight);
+      noteSelectionBtn.addEventListener('click',createOrEditNote);
+      closeNoteBtn.addEventListener('click',()=>closeNoteEditor({restoreFocus:true}));
+      cancelNoteBtn.addEventListener('click',()=>closeNoteEditor({restoreFocus:true}));
+      saveNoteBtn.addEventListener('click',saveCurrentNote);
+      deleteNoteBtn.addEventListener('click',deleteCurrentNote);
+      studyQuestionPane.addEventListener('click',(event)=>{
+        const deleteControl=event.target.closest('.note-delete[data-note-id]');
+        const anchor=event.target.closest('.note-anchor[data-note-id]');
+        if(!deleteControl && !anchor) return;
+        event.preventDefault();
+        event.stopPropagation();
+        if(deleteControl){
+          deleteNote(deleteControl.dataset.noteId);
+          return;
+        }
+        openNoteEditor(anchor.dataset.noteId,anchor);
+      },true);
+      studyQuestionPane.addEventListener('keydown',(event)=>{
+        const anchor=event.target.closest('.note-anchor[data-note-id]');
+        if(!anchor || event.target.closest('.note-delete')) return;
+        if(event.key!=='Enter' && event.key!==' ') return;
+        event.preventDefault();
+        event.stopPropagation();
+        openNoteEditor(anchor.dataset.noteId,anchor);
+      },true);
+      studyQuestionPane.addEventListener('click',(event)=>{
+        if(Date.now()>suppressQuestionClickUntil) return;
+        event.preventDefault();
+        event.stopImmediatePropagation();
+      },true);
+      studyQuestionPane.addEventListener('mousedown',captureSelectionControlState,true);
+      document.addEventListener('mouseup',(event)=>{
+        if(selectionToolbar.contains(event.target) || noteWindow.contains(event.target)) return;
+        const selection=window.getSelection();
+        if(studyQuestionPane.contains(event.target) && selection?.rangeCount===1 && isValidAnnotationRange(selection.getRangeAt(0))){
+          restoreSelectionControlState();
+          suppressQuestionClickUntil=Date.now()+350;
+        }
+        requestAnimationFrame(()=>updateSelectionToolbar({fromPointer:studyQuestionPane.contains(event.target)}));
+      });
+      document.addEventListener('keyup',(event)=>{
+        if(!event.shiftKey || !['ArrowLeft','ArrowRight','ArrowUp','ArrowDown','Home','End'].includes(event.key)) return;
+        requestAnimationFrame(()=>updateSelectionToolbar());
+      });
+      document.addEventListener('selectionchange',()=>{
+        const selection=window.getSelection();
+        if(!selection || selection.rangeCount!==1 || selection.isCollapsed) hideSelectionToolbar();
+      });
+      document.addEventListener('pointerdown',(event)=>{
+        if(selectionToolbar.contains(event.target) || noteWindow.contains(event.target)) return;
+        if(!event.target.closest('.note-anchor')) hideSelectionToolbar();
+      });
+      studyQuestionPane.addEventListener('scroll',()=>hideSelectionToolbar(),{passive:true});
+      window.addEventListener('resize',()=>{
+        hideSelectionToolbar();
+        if(!noteWindow.hidden && currentOpenNoteId){
+          const anchor=noteAnchorNodes(currentOpenNoteId)[0];
+          if(anchor) positionNoteWindow(anchor);
+        }
+      });
+      setupNoteWindowDragging();
+    }
+
     function fullscreenEnabled(){ return Boolean(document.fullscreenEnabled || document.webkitFullscreenEnabled || document.msFullscreenEnabled); }
     function isFullscreenApiSupported(){
       const el=document.documentElement;
@@ -3962,7 +4546,7 @@
     function isTestAnswerLocked(){ return mode==='test' && submitted; }
     function enforceSubmittedReviewAnswerLock(){
       if(!submittedReview || !submitted) return;
-      document.querySelectorAll('input, textarea, select').forEach((el)=>{ el.disabled=true; });
+      document.querySelectorAll('input, textarea, select').forEach((el)=>{ if(el===noteText) return; el.disabled=true; });
       document.querySelectorAll('[contenteditable="true"]').forEach((el)=>{ el.setAttribute('contenteditable','false'); });
       setCustomDragLocked(true);
     }
@@ -4153,6 +4737,7 @@
     setupWheelFallback();
     setupStudySplitDivider();
     setupActiveQuestionInteractions();
+    setupListeningAnnotations();
     setupTranscriptFollowingInteractions();
     setupTranscriptSeekInteractions();
     buildListeningStudyTaskControls();
@@ -4207,6 +4792,8 @@
     window.addEventListener('blur', recordFocusLoss);
     document.addEventListener('keydown',(event)=>{
       if(event.key!=='Escape') return;
+      if(!noteWindow.hidden){ event.preventDefault(); closeNoteEditor({restoreFocus:true}); return; }
+      if(!selectionToolbar.hidden){ event.preventDefault(); hideSelectionToolbar({clearSelection:true}); return; }
       if(activeStudyDialog){ event.preventDefault(); closeStudyDialog(true); return; }
       if(resultsOverlay.style.display==='flex'){ event.preventDefault(); closeResultsSummary(); }
     });
