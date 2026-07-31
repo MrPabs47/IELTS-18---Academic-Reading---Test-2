@@ -1553,7 +1553,7 @@
 
             <!-- Section 1 questions -->
             <div data-section="1">
-              <div class="instruction-block">
+              <div class="instruction-block" id="study-instruction-p1-tfng">
                 <p><strong>READING PASSAGE 1 : Questions 1-13</strong></p>
                 <p>Do the following statements agree with the information given in Reading Passage 1?</p>
                 <p>In boxes 1-5 on your answer sheet, write</p>
@@ -1588,7 +1588,7 @@
                 <div class="correct-answer-text" id="ca-5"></div>
               </div>
 
-              <div class="instruction-block">
+              <div class="instruction-block" id="study-instruction-p1-summary">
                 <p><strong>Questions 6-13</strong></p>
                 <p>Complete the summary below.</p>
                 <p>Choose <strong>ONE WORD ONLY</strong> from the passage for each answer.</p>
@@ -1610,7 +1610,7 @@
 
             <!-- Section 2 questions -->
             <div data-section="2" style="display:none;">
-              <div class="instruction-block">
+              <div class="instruction-block" id="study-instruction-p2-matching">
                 <p><strong>READING PASSAGE 2 : Questions 14-26</strong></p>
                 <p>Reading Passage 2 has eight sections, A-H.</p>
                 <p>Which section contains the following information?</p>
@@ -1648,7 +1648,7 @@
                 <div class="correct-answer-text" id="ca-19"></div>
               </div>
 
-              <div class="instruction-block">
+              <div class="instruction-block" id="study-instruction-p2-summary">
                 <p><strong>Questions 20-22</strong></p>
                 <p>Complete the summary below.</p>
                 <p>Choose <strong>ONE WORD ONLY</strong> from the passage for each answer.</p>
@@ -1663,7 +1663,7 @@
               <div class="question-block feedback-only" data-q="21"><div class="correct-answer-text" id="ca-21"></div></div>
               <div class="question-block feedback-only" data-q="22"><div class="correct-answer-text" id="ca-22"></div></div>
 
-              <div class="instruction-block">
+              <div class="instruction-block" id="study-instruction-p2-choose-a">
                 <p><strong>Questions 23 and 24</strong></p>
                 <p>Choose TWO letters, A-E.</p>
                 <p>Write the correct letters in boxes 23 and 24 on your answer sheet.</p>
@@ -1682,7 +1682,7 @@
                 <div class="correct-answer-text" id="ca-24"></div>
               </div>
 
-              <div class="instruction-block">
+              <div class="instruction-block" id="study-instruction-p2-choose-b">
                 <p><strong>Questions 25 and 26</strong></p>
                 <p>Choose TWO letters, A-E.</p>
                 <p>Write the correct letters in boxes 25 and 26 on your answer sheet.</p>
@@ -1704,7 +1704,7 @@
 
             <!-- Section 3 questions -->
             <div data-section="3" style="display:none;">
-              <div class="instruction-block">
+              <div class="instruction-block" id="study-instruction-p3-tfng">
                 <p><strong>READING PASSAGE 3 : Questions 27-40</strong></p>
                 <p>Do the following statements agree with the information given in Reading Passage 3?</p>
                 <p>In boxes 27-32 on your answer sheet, write</p>
@@ -1773,7 +1773,7 @@
                 <div class="correct-answer-text" id="ca-32"></div>
               </div>
 
-              <div class="instruction-block">
+              <div class="instruction-block" id="study-instruction-p3-matching">
                 <p><strong>Questions 33-37</strong></p>
                 <p>Reading Passage 3 has eight sections, A-H.</p>
                 <p>Which section contains the following information?</p>
@@ -1810,7 +1810,7 @@
                 <div class="correct-answer-text" id="ca-37"></div>
               </div>
 
-              <div class="instruction-block">
+              <div class="instruction-block" id="study-instruction-p3-sentence">
                 <p><strong>Questions 38-40</strong></p>
                 <p>Complete the sentences below.</p>
                 <p>Choose NO MORE THAN TWO WORDS from the passage for each answer.</p>
@@ -1898,6 +1898,7 @@
 
   <div id="shortcutToast" role="status" aria-live="polite" aria-atomic="true"></div>
 
+  <script src="study-feedback.js"></script>
   <script src="../../shared/reading-feature-shell.js"></script>
   <script>
     /***************
@@ -2992,6 +2993,29 @@
       return Array.from(selected).filter((letter) => correct.has(letter)).length;
     }
 
+    function isUserAnswerCorrect(qNum) {
+      const feedback = window.IELTS16AcademicTest3StudyFeedback;
+      const chooseTwoAnswer = feedback && feedback.chooseTwoAnswers
+        ? feedback.chooseTwoAnswers[qNum]
+        : null;
+      if (chooseTwoAnswer) {
+        return getUserAnswer(qNum)
+          .split(",")
+          .map((letter) => letter.trim().toUpperCase())
+          .includes(String(chooseTwoAnswer).toUpperCase());
+      }
+      const user = getUserAnswer(qNum);
+      const key = answerKey[qNum];
+      if (!user) return false;
+      if (Array.isArray(key)) {
+        return key.some((accepted) => user.toLowerCase() === String(accepted).toLowerCase());
+      }
+      if (typeof key !== "string") return false;
+      if (/^(TRUE|FALSE|NOT GIVEN|YES|NO)$/.test(key)) return user.toUpperCase() === key;
+      if (key.length === 1) return user.toUpperCase() === key.toUpperCase();
+      return user.toLowerCase() === key.toLowerCase();
+    }
+
     function setQuestionFeedback(q, state) {
       const block = getQuestionTarget(q);
       const feedbackBlock = document.querySelector(
@@ -3139,6 +3163,7 @@
     }
 
     function handlePrimarySubmit() {
+      if (mode === "test" && testSubmitted) return;
       if (mode === "test" && isTestRunning && !testSubmitted) {
         confirmSubmit();
         return;
@@ -3210,12 +3235,21 @@
     }
 
     function confirmSubmit() {
+      if (mode === "test" && testSubmitted) return;
       const ok = window.confirm("Are you sure you want to submit your test now? You will not be able to continue answering in Test mode.");
       if (!ok) return;
       submitTest();
     }
 
+    function disablePrimarySubmitControls() {
+      document.querySelectorAll(".submit-button, .check-btn").forEach((button) => {
+        button.disabled = true;
+        button.setAttribute("aria-disabled", "true");
+      });
+    }
+
     function submitTest() {
+      if (mode === "test" && testSubmitted) return;
       const correctCount = evaluateQuestions();
 
       // In both modes, show correct answer text
@@ -3282,6 +3316,7 @@
         document
           .querySelectorAll("#questionContent select, #questionContent input")
           .forEach((el) => (el.disabled = true));
+        disablePrimarySubmitControls();
       }
 
       // Close options overlay if open
@@ -3871,12 +3906,15 @@
 
 
 
+    const test3StudyFeedback = window.IELTS16AcademicTest3StudyFeedback;
+
     window.readingFeatureShellConfig = {
       version: 1,
       test: {
         id: "cambridge-16-academic-reading-test-3",
         title: "IELTS 16 Academic Reading Test 3",
         totalQuestions: 40,
+        partLabel: "Part",
         partRanges: {
           1: { from: 1, to: 13 },
           2: { from: 14, to: 26 },
@@ -3890,13 +3928,21 @@
       },
       answers: {
         getAnswerKeyDisplay: (questionNumber) =>
-          correctAnswerText[questionNumber] || ""
+          correctAnswerText[questionNumber] || "",
+        getUserAnswer: (questionNumber) => getUserAnswer(questionNumber),
+        isCorrect: (questionNumber) => isUserAnswerCorrect(questionNumber)
       },
       navigation: {
         getQuestionTarget: (questionNumber) =>
-          getQuestionTarget(questionNumber)
+          getQuestionTarget(questionNumber),
+        getTextTarget: (_textId, group) =>
+          document.querySelector(`.passage-section[data-section="${group.part}"]`)
       },
       study: {
+        completeQuestionCoverage: true,
+        completeClueCoverage: true,
+        taskGroups: test3StudyFeedback && test3StudyFeedback.taskGroups,
+        questionDetails: test3StudyFeedback && test3StudyFeedback.questions,
         scoreGuide: {
           title: "Academic Reading score guide",
           intro: "Your raw score out of 40 is converted using the scale below.",
@@ -3919,6 +3965,10 @@
             { correctAnswers: "0", band: "0" }
           ]
         }
+      },
+      compatibility: {
+        // Transitional support while this legacy page still exposes results through its existing overlay.
+        allowDomSubmittedResult: true
       }
     };
 

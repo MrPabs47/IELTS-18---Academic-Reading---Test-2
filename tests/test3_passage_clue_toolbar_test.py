@@ -45,7 +45,12 @@ def test_visibility_contract_covers_study_active_test_and_submitted_test():
     assert 'var studyMode = mode === "study";' in CORE
     assert 'var completedTest = mode === "test" && Boolean(config.state.isTestSubmitted());' in CORE
     assert "var showRoot = studyMode || completedTest;" in CORE
-    assert "syncPassageClueToolbar(showRoot);" in CORE
+    assert "var learningResources = studyMode || (completedTest && hasSubmission);" in CORE
+    assert (
+        "syncPassageClueToolbar(learningResources && capabilities.hasPassageClues && cluesAvailable);"
+        in CORE
+    )
+    assert "showToolbar = Boolean(showToolbar && activeState && activeState.available !== false);" in CORE
     for token in [
         "toolbar.hidden = !showToolbar;",
         "toggle.hidden = !showToolbar;",
@@ -80,7 +85,7 @@ def test_shared_css_matches_reference_desktop_hierarchy():
 
 
 def test_toolbar_and_clue_map_remain_separate_from_scoring_engine():
-    toolbar_code = CORE.split("function questionsForPart", 1)[1].split("function showGroup", 1)[0]
+    toolbar_code = CORE.split("function questionsForClueMap", 1)[1].split("function showGroup", 1)[0]
     for forbidden in [
         "evaluateQuestions", "submitTest", "handlePrimarySubmit", "confirmSubmit",
         "answerKey", "correctAnswerText", "getChooseTwoCorrectCount",

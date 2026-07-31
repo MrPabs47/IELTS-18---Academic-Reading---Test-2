@@ -6,6 +6,7 @@ SHELL_JS_PATH = ROOT / "academic/shared/reading-feature-shell.js"
 SHELL_CORE_JS_PATH = ROOT / "academic/shared/reading-feature-shell-core.js"
 SHELL_CSS_PATH = ROOT / "academic/shared/reading-feature-shell.css"
 TEST3_PATH = ROOT / "academic/cambridge-16/test-3/IELTS16 Test 3 - Academic Reading.html"
+TEST3_DATA_PATH = ROOT / "academic/cambridge-16/test-3/study-feedback.js"
 
 SHELL_JS = SHELL_JS_PATH.read_text(encoding="utf-8")
 SHELL_CORE_JS = SHELL_CORE_JS_PATH.read_text(encoding="utf-8")
@@ -57,6 +58,11 @@ def test_shell_css_has_no_generic_selectors():
 
 def test_test3_loads_local_shell_assets():
     assert '<link rel="stylesheet" href="../../shared/reading-feature-shell.css" />' in TEST3_HTML
+    assert TEST3_DATA_PATH.exists()
+    assert TEST3_HTML.count('<script src="study-feedback.js"></script>') == 1
+    assert TEST3_HTML.index('<script src="study-feedback.js"></script>') < TEST3_HTML.index(
+        '<script src="../../shared/reading-feature-shell.js"></script>'
+    )
     assert '<script src="../../shared/reading-feature-shell.js"></script>' in TEST3_HTML
 
 
@@ -75,6 +81,7 @@ def test_test3_has_single_required_config_object():
         'id: "cambridge-16-academic-reading-test-3"',
         'title: "IELTS 16 Academic Reading Test 3"',
         "totalQuestions: 40",
+        'partLabel: "Part"',
         "partRanges",
         "getMode: () => mode",
         "isTestSubmitted: () => testSubmitted",
@@ -84,9 +91,23 @@ def test_test3_has_single_required_config_object():
         "getQuestionTarget: (questionNumber)",
         "getQuestionTarget(questionNumber)",
         "study: {",
+        "taskGroups: test3StudyFeedback && test3StudyFeedback.taskGroups",
+        "questionDetails: test3StudyFeedback && test3StudyFeedback.questions",
         "scoreGuide: {",
     ]:
         assert required in TEST3_HTML
+
+
+def test_test3_uses_explicit_page_owned_feedback_and_correctness_data():
+    assert TEST3_DATA_PATH.exists()
+    data = TEST3_DATA_PATH.read_text(encoding="utf-8")
+    assert "IELTS16AcademicTest3StudyFeedback" in data
+    assert "acceptedVariants" in data
+    assert "chooseTwoGroups" in data
+    assert "getUserAnswer: (questionNumber) => getUserAnswer(questionNumber)" in TEST3_HTML
+    assert "isCorrect: (questionNumber) => isUserAnswerCorrect(questionNumber)" in TEST3_HTML
+    for forbidden in ["TEST3_GROUPS", "TEST3_DETAILS"]:
+        assert forbidden not in SHELL_CORE_JS
 
 
 

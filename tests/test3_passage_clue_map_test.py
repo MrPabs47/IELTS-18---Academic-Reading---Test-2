@@ -8,12 +8,13 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 HTML = (ROOT / "academic/cambridge-16/test-3/IELTS16 Test 3 - Academic Reading.html").read_text(encoding="utf-8")
 CORE = (ROOT / "academic/shared/reading-feature-shell-core.js").read_text(encoding="utf-8")
+TEST3_DATA = (ROOT / "academic/cambridge-16/test-3/study-feedback.js").read_text(encoding="utf-8")
 LOADER = (ROOT / "academic/shared/reading-feature-shell.js").read_text(encoding="utf-8")
 
 
 def _details():
     details = {}
-    block = CORE.split("var TEST3_DETAILS = {", 1)[1].split("\n  };", 1)[0]
+    block = TEST3_DATA.split("const questions = {", 1)[1].split("\n  };", 1)[0]
     for match in re.finditer(r"(?m)^\s*(\d+):\s*(\[.*\]),?$", block):
         details[int(match.group(1))] = json.loads(match.group(2))
     assert sorted(details) == list(range(1, 41))
@@ -134,7 +135,7 @@ def test_merged_locations_never_nest_or_duplicate_passage_wording():
 
 def test_production_renderer_is_dom_location_aware_and_reversible():
     for token in [
-        "function locatePartEvidence(passage, part)",
+        "function locateTextEvidence(passage, questions)",
         "function mergeLocationRecords(records)",
         "recordsByNode.has(record.node)",
         "record.start < current.end",
@@ -149,14 +150,15 @@ def test_production_renderer_is_dom_location_aware_and_reversible():
     assert "startsWith" not in CORE
 
 
-def test_full_map_state_is_independent_per_part_and_restored_on_switch():
+def test_full_map_state_is_independent_per_text_identity_and_restored_on_switch():
     for token in [
         "var fullPassageClueMaps = new Set();",
-        "fullPassageClueMaps.add(targetPart);",
-        "fullPassageClueMaps.delete(targetPart);",
-        "function restoreFullPassageClueMap(part)",
-        "fullPassageClueMaps.has(part) && !fullMapIsRendered(part)",
-        "restoreFullPassageClueMap(activeCluePart);",
+        "fullPassageClueMaps.add(context.key);",
+        "fullPassageClueMaps.delete(context.key);",
+        "function restoreFullPassageClueMap(selection)",
+        "fullPassageClueMaps.has(context.key)",
+        "if (available && fullPassageClueMaps.has(context.key)) restoreFullPassageClueMap(context);",
+        "suspendRenderedClueContext(nextKey, nextTarget);",
         'toggle.setAttribute("aria-pressed", String(fullMapVisible));',
     ]:
         assert token in CORE
@@ -165,8 +167,8 @@ def test_full_map_state_is_independent_per_part_and_restored_on_switch():
 
 def test_hide_all_clears_marks_and_badges_navigate_to_question():
     for token in [
-        "function hideAllPassageClues(part)",
-        "if (passage) clearEvidence(passage);",
+        "function hideAllPassageClues(selection)",
+        "if (context.target) clearEvidence(context.target);",
         'badge.setAttribute("data-reading-shell-clue-question", String(questionNumber));',
         "navigateTo(questionNumber)",
         "showAllPassageClues: showAllPassageClues",

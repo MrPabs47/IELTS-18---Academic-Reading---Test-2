@@ -4085,6 +4085,7 @@
         id: "cambridge-16-academic-reading-test-4",
         title: "IELTS 16 Academic Reading Test 4",
         totalQuestions: 40,
+        partLabel: "Part",
         partRanges: sectionRanges
       },
       state: {
@@ -4098,9 +4099,13 @@
         isCorrect: (questionNumber) => isUserAnswerCorrect(questionNumber)
       },
       navigation: {
-        getQuestionTarget: (questionNumber) => getQuestionTarget(questionNumber)
+        getQuestionTarget: (questionNumber) => getQuestionTarget(questionNumber),
+        getTextTarget: (_textId, group) =>
+          document.querySelector(`.passage-section[data-section="${group.part}"]`)
       },
       study: {
+        completeQuestionCoverage: true,
+        completeClueCoverage: true,
         taskGroups: test4StudyFeedback && test4StudyFeedback.taskGroups,
         questionDetails: test4StudyFeedback && test4StudyFeedback.questions,
         scoreGuide: {
@@ -4125,6 +4130,10 @@
             { correctAnswers: "0", band: "0" }
           ]
         }
+      },
+      compatibility: {
+        // Transitional support while this legacy page still exposes results through its existing overlay.
+        allowDomSubmittedResult: true
       }
     };
 

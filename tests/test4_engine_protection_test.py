@@ -265,3 +265,28 @@ def test_shared_shell_is_an_adapter_and_cannot_introduce_test4_scoring():
     assert "isCorrect: (questionNumber) => isUserAnswerCorrect(questionNumber)" in config
     for forbidden in ["function evaluateQuestions", "function submitTest", "function computeBandScore", "const answerKey", "const correctAnswerText"]:
         assert forbidden not in CORE
+
+
+def test_test4_dom_result_compatibility_preserves_approved_score_guide_policy():
+    config = HTML.split("window.readingFeatureShellConfig =", 1)[1].split("function initReadingFeatureShell", 1)[0]
+    sync = CORE.split("function sync()", 1)[1].split("function startStudySession()", 1)[0]
+    guide = CORE.split("function updateScoreGuide()", 1)[1].split("function openScoreGuide()", 1)[0]
+    feedback = CORE.split("function renderScoreFeedback()", 1)[1].split("function strategyMarkup", 1)[0]
+    assert 'partLabel: "Part"' in config
+    assert "allowDomSubmittedResult: true" in config
+    assert "getSubmittedResult" not in config
+    assert re.search(
+        r"scoreGuideButton\.hidden\s*=\s*!\(\s*showRoot\s*&&\s*capabilities\.hasScoreGuide\s*\)\s*;",
+        sync,
+    )
+    assert re.search(r"showRoot\s*=\s*studyMode\s*\|\|\s*completedTest", sync)
+    assert "var result = fullReviewAvailable() ? activeSubmittedResult : null;" in guide
+    assert "scoreGuideSummary.hidden = !result;" in guide
+    assert "var current = Boolean(result && result.rawScore" in guide
+    assert "reading-shell-current-score-row" in guide
+    assert "scoreFeedbackButton.hidden = !result;" in sync
+    assert "if (!result || !elements) return;" in feedback
+    assert "result.partScores[part].score" in feedback
+    assert "if (!finalTestSubmittedResult && candidate) finalTestSubmittedResult = candidate;" in sync
+    assert "activeSubmittedResult = finalTestSubmittedResult;" in sync
+    assert "elements.answerKeyButton.hidden = !(learningResources && capabilities.hasAnswerKey);" in CORE
