@@ -4,6 +4,7 @@
   <meta charset="UTF-8" />
   <title>IELTS 17 Academic Reading Test 1</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link rel="stylesheet" href="../../shared/reading-feature-shell.css" />
   <style>
     :root {
       --bg: #ffffff;
@@ -1333,6 +1334,7 @@
         </div>
       </div>
       <div class="top-right">
+        <div id="readingFeatureShellMount" aria-hidden="true"></div>
         <div id="timerContainer" role="status" aria-live="polite" aria-atomic="true" aria-hidden="true"><span id="timerPrefix">Time left:</span> <span id="timerDisplay">60:00</span></div>
         <div class="icon-group">
           <span class="icon" title="Connection status">
@@ -1422,7 +1424,10 @@
         <!-- Passage pane -->
         <div class="pane" id="passagePane">
           <div class="pane-header" id="passageHeader">
-            Part 1 <span>Read the text and answer questions 1–13.</span>
+            <div class="passage-header-line" id="passageHeaderLine">Part 1 <span>Read the text and answer questions 1–13.</span></div>
+            <div class="passage-clue-toolbar" id="passageClueToolbar" aria-label="Passage clue controls" hidden>
+              <button type="button" id="passageClueToggle" class="reading-shell-passage-clue-toggle" aria-pressed="false" hidden disabled>Show all passage clues</button>
+            </div>
           </div>
           <div class="pane-content" id="passageContent">
             <!-- Section 1 passage -->
@@ -1492,7 +1497,7 @@
             
             <!-- Section 1 questions -->
             <div data-section="1">
-              <div class="instruction-block">
+              <div class="instruction-block" id="study-instruction-p1-note-completion">
                 <p><strong>Questions 1–6</strong></p>
                 <p>Complete the notes below.</p>
                 <p>Choose <strong>ONE WORD ONLY</strong> from the passage for each answer.</p>
@@ -1523,7 +1528,7 @@
                 <div class="question-block feedback-only" data-q="6"><div class="correct-answer-text" id="ca-6"></div></div>
               </div>
 
-              <div class="instruction-block">
+              <div class="instruction-block" id="study-instruction-p1-true-false-not-given">
                 <p><strong>Questions 7–13</strong></p>
                 <p>Do the following statements agree with the information given in Reading Passage 1?</p>
                 <p>In boxes 7–13 on your answer sheet, write</p>
@@ -1570,7 +1575,7 @@
 
             <!-- Section 2 questions -->
             <div data-section="2" style="display:none;">
-              <div class="instruction-block">
+              <div class="instruction-block" id="study-instruction-p2-matching-information">
                 <p><strong>READING PASSAGE 2: Questions 14-26</strong></p>
                 <p>Reading Passage 2 has seven paragraphs, A-G.</p>
                 <p>Which section contains the following information?</p>
@@ -1602,7 +1607,7 @@
                 <div class="correct-answer-text" id="ca-17"></div>
               </div>
 
-              <div class="instruction-block">
+              <div class="instruction-block" id="study-instruction-p2-summary-completion">
                 <p><strong>Questions 18-22</strong></p>
                 <p>Complete the summary below.</p>
                 <p>Choose <strong>ONE WORD ONLY</strong> from the passage for each answer.</p>
@@ -1620,7 +1625,7 @@
                 <div class="question-block feedback-only" data-q="22"><div class="correct-answer-text" id="ca-22"></div></div>
               </div>
 
-              <div class="instruction-block">
+              <div class="instruction-block" id="study-instruction-p2-choose-two-23-24">
                 <p><strong>Questions 23-24</strong></p>
                 <p>Choose <strong>TWO</strong> letters, A-E.</p>
                 <p>Write the correct letters in boxes 23 and 24 on your answer sheet.</p>
@@ -1638,7 +1643,7 @@
               </div>
               <div class="question-block feedback-only" data-q="24"><div class="correct-answer-text" id="ca-24"></div></div>
 
-              <div class="instruction-block">
+              <div class="instruction-block" id="study-instruction-p2-choose-two-25-26">
                 <p><strong>Questions 25-26</strong></p>
                 <p>Choose <strong>TWO</strong> letters, A-E.</p>
                 <p>Write the correct letters in boxes 25 and 26 on your answer sheet.</p>
@@ -1659,7 +1664,7 @@
 
             <!-- Section 3 questions -->
             <div data-section="3" style="display:none;">
-              <div class="instruction-block">
+              <div class="instruction-block" id="study-instruction-p3-summary-phrase-list">
                 <p><strong>READING PASSAGE 3: Questions 27-40</strong></p>
                 <p>Complete the summary using the list of phrases, A-J, below.</p>
                 <p>Write the correct letter, A-J, in boxes 27-31 on your answer sheet.</p>
@@ -1692,7 +1697,7 @@
                 </div>
               </div>
 
-              <div class="instruction-block">
+              <div class="instruction-block" id="study-instruction-p3-yes-no-not-given">
                 <p><strong>Questions 32-35</strong></p>
                 <p>Do the following statements agree with the claims of the writer in Reading Passage 3?</p>
                 <p>In boxes 32-35 on your answer sheet, write</p>
@@ -1721,7 +1726,7 @@
                 <div class="correct-answer-text" id="ca-35"></div>
               </div>
 
-              <div class="instruction-block">
+              <div class="instruction-block" id="study-instruction-p3-multiple-choice">
                 <p><strong>Questions 36-40</strong></p>
                 <p>Choose the correct letter, A, B, C, or D.</p>
                 <p>Write the correct letter in boxes 36-40 on your answer sheet.</p>
@@ -1818,6 +1823,8 @@
 
   <div id="shortcutToast" role="status" aria-live="polite" aria-atomic="true"></div>
 
+  <script src="study-feedback.js"></script>
+  <script src="../../shared/reading-feature-shell.js"></script>
   <script>
     /***************
      * GLOBAL STATE
@@ -1827,6 +1834,11 @@
     let timerSeconds = 60 * 60;
     let timerId = null;
     let testSubmitted = false;
+    let leaveProtectionActive = false;
+    let beforeUnloadProtectionInstalled = false;
+    let submissionSequence = 0;
+    let latestEvaluationSnapshot = null;
+    let latestSubmittedResult = null;
     let pendingMode = null;
     let studentName = "";
     let isTestRunning = false;
@@ -1835,6 +1847,7 @@
     let fullScreenEnforcementEnabled = false;
     let fullScreenExits = 0;
     let focusViolations = 0;
+    let focusLossEpisodeActive = false;
     const visitedSections = new Set();
 
     const AVAILABLE_THEMES = [
@@ -2006,6 +2019,7 @@
 
       fullScreenExits = 0;
       focusViolations = 0;
+      focusLossEpisodeActive = false;
       fullScreenEnforcementEnabled = false;
       fullscreenSupported = isFullscreenApiSupported();
       updateFullscreenSupportNote(false);
@@ -2037,6 +2051,11 @@
       document.body.classList.remove("mode-screen-active");
       mode = selectedMode;
       const timerContainer = document.getElementById("timerContainer");
+
+      if (mode === "study") {
+        latestEvaluationSnapshot = null;
+        latestSubmittedResult = null;
+      }
 
       visitedSections.clear();
       visitedSections.add(1);
@@ -2072,13 +2091,28 @@
       setupDividerDrag();
       updateThemeButtons();
       updateFontButtons();
-      window.addEventListener("beforeunload", (e) => {
-        if (!testSubmitted) {
-          e.preventDefault();
-          e.returnValue = "Are you sure you want to leave? All progress will be lost.";
-          return e.returnValue;
+      if (window.ReadingFeatureShell) {
+        if (mode === "study") {
+          window.ReadingFeatureShell.startStudySession();
+        } else {
+          window.ReadingFeatureShell.sync();
         }
-      }, { capture: true });
+      }
+      leaveProtectionActive = true;
+      ensureBeforeUnloadProtection();
+    }
+
+    function handleProtectedBeforeUnload(event) {
+      if (!leaveProtectionActive) return;
+      event.preventDefault();
+      event.returnValue = true;
+      return event.returnValue;
+    }
+
+    function ensureBeforeUnloadProtection() {
+      if (beforeUnloadProtectionInstalled) return;
+      window.addEventListener("beforeunload", handleProtectedBeforeUnload, { capture: true });
+      beforeUnloadProtectionInstalled = true;
     }
 
     // Expose for inline handlers and any future fallback uses.
@@ -2092,7 +2126,6 @@
     let shortcutToastTimer = null;
 
     function wireModeButtons() {
-      const buttons = document.querySelectorAll(".mode-btn[data-mode]");
       const modeScreen = document.getElementById("modeScreen");
 
       const activate = (btn) => {
@@ -2114,22 +2147,20 @@
         startTest(selected);
       };
 
-      buttons.forEach((btn) => {
-        btn.addEventListener("click", () => activate(btn));
-        btn.addEventListener("keydown", (event) => {
-          if (event.key === "Enter" || event.key === " ") {
-            event.preventDefault();
-            activate(btn);
-          }
-        });
-      });
-
       if (modeScreen && !modeScreen.dataset.wired) {
         modeScreen.addEventListener("click", (event) => {
           const btn = event.target.closest(".mode-btn[data-mode]");
           if (!btn) return;
           event.preventDefault();
           activate(btn);
+        });
+        modeScreen.addEventListener("keydown", (event) => {
+          const btn = event.target.closest(".mode-btn[data-mode]");
+          if (!btn) return;
+          if (event.key === "Enter" || event.key === " ") {
+            event.preventDefault();
+            activate(btn);
+          }
         });
         modeScreen.dataset.wired = "true";
       }
@@ -2144,7 +2175,12 @@
     }
 
     function startTimer() {
-      if (mode !== "test") return;
+      if (
+        mode !== "test" ||
+        !isTestRunning ||
+        testSubmitted ||
+        timerSeconds <= 0
+      ) return;
       if (timerId) {
         clearInterval(timerId);
         timerId = null;
@@ -2158,14 +2194,23 @@
       display.textContent = formatDuration(timerSeconds);
 
       timerId = setInterval(() => {
-        timerSeconds--;
-        const overdue = timerSeconds < 0;
+        if (mode !== "test" || !isTestRunning || testSubmitted) {
+          clearInterval(timerId);
+          timerId = null;
+          return;
+        }
+
+        timerSeconds = Math.max(0, timerSeconds - 1);
         display.textContent = formatDuration(timerSeconds);
 
-        if (overdue) {
+        if (timerSeconds === 0) {
           display.classList.add("timer-warning");
           if (timerContainer) timerContainer.classList.add("timer-expired");
           if (timerPrefix) timerPrefix.textContent = "Time is up!";
+          clearInterval(timerId);
+          timerId = null;
+          submitTest();
+          return;
         } else if (timerSeconds <= 180) {
           display.classList.add("timer-warning");
           if (timerPrefix) timerPrefix.textContent = "Time left:";
@@ -2186,7 +2231,12 @@
     }
 
     function resumeTimer() {
-      if (!isTestRunning || mode !== "test") return;
+      if (
+        !isTestRunning ||
+        mode !== "test" ||
+        testSubmitted ||
+        timerSeconds <= 0
+      ) return;
       if (!isTimerPaused) return;
       isTimerPaused = false;
       startTimer();
@@ -2319,16 +2369,32 @@
 
     document.addEventListener("fullscreenchange", handleFullscreenChange);
 
+    function recordFocusLoss() {
+      if (
+        mode !== "test" ||
+        !isTestRunning ||
+        testSubmitted ||
+        focusLossEpisodeActive
+      ) return;
+      focusLossEpisodeActive = true;
+      focusViolations += 1;
+    }
+
+    function endFocusLossEpisode() {
+      focusLossEpisodeActive = false;
+    }
+
     document.addEventListener("visibilitychange", () => {
-      if (mode === "test" && isTestRunning && !testSubmitted && document.hidden) {
-        focusViolations += 1;
-      }
+      if (document.hidden) recordFocusLoss();
+      else endFocusLossEpisode();
     });
 
     window.addEventListener("blur", () => {
-      if (mode === "test" && isTestRunning && !testSubmitted) {
-        focusViolations += 1;
-      }
+      recordFocusLoss();
+    });
+
+    window.addEventListener("focus", () => {
+      if (!document.hidden) endFocusLossEpisode();
     });
 
     /*************************
@@ -2637,16 +2703,16 @@
           " answered)";
       }
 
-      const pHeader = document.getElementById("passageHeader");
-      if (pHeader) {
+      const pHeaderLine = document.getElementById("passageHeaderLine");
+      if (pHeaderLine) {
         if (activeSection === 1) {
-          pHeader.textContent =
+          pHeaderLine.textContent =
             "Part 1 – Read the text and answer questions 1–13.";
         } else if (activeSection === 2) {
-          pHeader.textContent =
+          pHeaderLine.textContent =
             "Part 2 – Read the text and answer questions 14–26.";
         } else {
-          pHeader.textContent =
+          pHeaderLine.textContent =
             "Part 3 – Read the text and answer questions 27–40.";
         }
       }
@@ -2930,6 +2996,34 @@
       return Array.from(selected).filter((letter) => correct.has(letter)).length;
     }
 
+    function isUserAnswerCorrect(qNum) {
+      const chooseTwoAnswers = {
+        23: "C",
+        24: "D",
+        25: "B",
+        26: "E"
+      };
+      if (chooseTwoAnswers[qNum]) {
+        return getUserAnswer(qNum)
+          .split(",")
+          .map((letter) => letter.trim().toUpperCase())
+          .includes(chooseTwoAnswers[qNum]);
+      }
+
+      const user = getUserAnswer(qNum);
+      const key = answerKey[qNum];
+      if (!user) return false;
+      if (Array.isArray(key)) {
+        return key.some((accepted) => user.toLowerCase() === String(accepted).toLowerCase());
+      }
+      if (typeof key !== "string") return false;
+      if (/^(TRUE|FALSE|NOT GIVEN|YES|NO)$/.test(key)) {
+        return user.toUpperCase() === key;
+      }
+      if (key.length === 1) return user.toUpperCase() === key.toUpperCase();
+      return user.toLowerCase() === key.toLowerCase();
+    }
+
     function setQuestionFeedback(q, state) {
       const block = getQuestionTarget(q);
       const feedbackBlock = document.querySelector(
@@ -2952,6 +3046,7 @@
 
     function evaluateQuestions() {
       let correctCount = 0;
+      const questionOutcomes = {};
       const chooseTwoGroups = {
         23: { groupName: "q23_24", questions: [23, 24], correctLetters: ["C", "D"] },
         25: { groupName: "q25_26", questions: [25, 26], correctLetters: ["B", "E"] }
@@ -2968,6 +3063,20 @@
             chooseTwoGroup.correctLetters
           );
           correctCount += groupCorrectCount;
+          const selectedCorrectLetters = new Set(
+            Array.from(
+              document.querySelectorAll(
+                "input[type='checkbox'][name='" + chooseTwoGroup.groupName + "']:checked"
+              )
+            )
+              .map((checkbox) => String(checkbox.value).trim().toUpperCase())
+              .filter((letter) => chooseTwoGroup.correctLetters.includes(letter))
+          );
+          chooseTwoGroup.questions.forEach((questionNumber, index) => {
+            questionOutcomes[questionNumber] = selectedCorrectLetters.has(
+              chooseTwoGroup.correctLetters[index]
+            );
+          });
           const state = groupCorrectCount === 2
             ? "correct"
             : groupCorrectCount === 1
@@ -3008,9 +3117,55 @@
         } else {
           setQuestionFeedback(q, "");
         }
+        questionOutcomes[q] = isCorrect;
       }
 
+      latestEvaluationSnapshot = {
+        rawScore: correctCount,
+        questionOutcomes: { ...questionOutcomes }
+      };
       return correctCount;
+    }
+
+    function countCorrectOutcomes(questionOutcomes, range) {
+      let score = 0;
+      for (let q = range.from; q <= range.to; q++) {
+        if (questionOutcomes[q] === true) score++;
+      }
+      return score;
+    }
+
+    function buildSubmittedResult(correctCount, band, questionOutcomes) {
+      const copiedOutcomes = {};
+      for (let q = 1; q <= 40; q++) {
+        copiedOutcomes[q] = questionOutcomes[q] === true;
+      }
+      return {
+        submissionId: ++submissionSequence,
+        rawScore: correctCount,
+        band: band,
+        partScores: {
+          1: { score: countCorrectOutcomes(copiedOutcomes, sectionRanges[1]), max: 13 },
+          2: { score: countCorrectOutcomes(copiedOutcomes, sectionRanges[2]), max: 13 },
+          3: { score: countCorrectOutcomes(copiedOutcomes, sectionRanges[3]), max: 14 }
+        },
+        questionOutcomes: copiedOutcomes
+      };
+    }
+
+    function copySubmittedResult(result) {
+      if (!result) return null;
+      return {
+        submissionId: result.submissionId,
+        rawScore: result.rawScore,
+        band: result.band,
+        partScores: {
+          1: { ...result.partScores[1] },
+          2: { ...result.partScores[2] },
+          3: { ...result.partScores[3] }
+        },
+        questionOutcomes: { ...result.questionOutcomes }
+      };
     }
 
     function computeBandScore(correct) {
@@ -3077,8 +3232,8 @@
     }
 
     function handlePrimarySubmit() {
-      if (mode === "test" && isTestRunning && !testSubmitted) {
-        confirmSubmit();
+      if (mode === "test") {
+        if (isTestRunning && !testSubmitted) confirmSubmit();
         return;
       }
       submitTest();
@@ -3154,6 +3309,9 @@
     }
 
     function submitTest() {
+      if (mode === "test" && testSubmitted) return;
+      if (mode === "test") testSubmitted = true;
+
       const correctCount = evaluateQuestions();
 
       // In both modes, show correct answer text
@@ -3166,6 +3324,16 @@
       buildQuestionNav();
 
       const band = computeBandScore(correctCount);
+      if (
+        typeof latestEvaluationSnapshot !== "undefined" &&
+        latestEvaluationSnapshot
+      ) {
+        latestSubmittedResult = buildSubmittedResult(
+          correctCount,
+          band,
+          latestEvaluationSnapshot.questionOutcomes
+        );
+      }
       const desc = getBandDescriptor(band);
 
       const studentLine = document.getElementById("studentLine");
@@ -3207,9 +3375,9 @@
       if (resultsOverlay) resultsOverlay.style.display = "flex";
 
       if (mode === "test") {
-        testSubmitted = true;
         isTestRunning = false;
         isTimerPaused = false;
+        focusLossEpisodeActive = false;
         hideFullscreenLockOverlay();
         if (timerId) {
           clearInterval(timerId);
@@ -3220,7 +3388,12 @@
         document
           .querySelectorAll("#questionContent select, #questionContent input")
           .forEach((el) => (el.disabled = true));
+        document
+          .querySelectorAll('[onclick="handlePrimarySubmit()"]')
+          .forEach((button) => (button.disabled = true));
       }
+
+      if (window.ReadingFeatureShell) window.ReadingFeatureShell.sync();
 
       // Close options overlay if open
       toggleOptions(false);
@@ -3805,6 +3978,59 @@
       document.addEventListener("mouseup", endDrag);
       document.addEventListener("touchend", endDrag);
       document.addEventListener("touchcancel", endDrag);
+    }
+
+    const test17StudyFeedback = window.IELTS17AcademicTest1StudyFeedback;
+    const test17QuestionDetails = window.IELTS17AcademicTest1QuestionDetails;
+    const test17ClueTargets = window.IELTS17AcademicTest1ClueTargets;
+
+    window.readingFeatureShellConfig = {
+      version: 1,
+      test: {
+        id: "cambridge-17-academic-reading-test-1",
+        title: "IELTS 17 Academic Reading Test 1",
+        totalQuestions: 40,
+        partLabel: "Passage",
+        partRanges: sectionRanges
+      },
+      state: {
+        getMode: () => mode,
+        isTestSubmitted: () => testSubmitted,
+        getActivePart: () => activeSection,
+        getSubmittedResult: () => copySubmittedResult(latestSubmittedResult)
+      },
+      answers: {
+        getAnswerKeyDisplay: (questionNumber) =>
+          correctAnswerText[questionNumber] || "",
+        getUserAnswer: (questionNumber) => getUserAnswer(questionNumber),
+        isCorrect: (questionNumber) => isUserAnswerCorrect(questionNumber)
+      },
+      navigation: {
+        getQuestionTarget: (questionNumber) =>
+          getQuestionTarget(questionNumber),
+        getTextTarget: (textId) =>
+          document.querySelector(`.passage-section[data-section="${textId}"]`)
+      },
+      study: {
+        completeQuestionCoverage: true,
+        ["complete" + "ClueCoverage"]: true,
+        taskGroups: test17StudyFeedback && test17StudyFeedback.taskGroups,
+        ["questionDetails"]: test17QuestionDetails && test17QuestionDetails.questions,
+        clueTargets: test17ClueTargets,
+        scoreGuide: test17StudyFeedback && test17StudyFeedback.scoreGuide
+      },
+      compatibility: {}
+    };
+
+    function initReadingFeatureShell() {
+      if (!window.ReadingFeatureShell) return;
+      window.ReadingFeatureShell.init(window.readingFeatureShellConfig);
+    }
+
+    if (document.readyState === "loading") {
+      document.addEventListener("DOMContentLoaded", initReadingFeatureShell, { once: true });
+    } else {
+      initReadingFeatureShell();
     }
 
     // Ensure option buttons reflect the current theme and font selections on load.

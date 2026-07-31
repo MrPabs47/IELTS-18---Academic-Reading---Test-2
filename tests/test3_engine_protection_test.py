@@ -1,9 +1,13 @@
 import json
 import re
+import subprocess
 from pathlib import Path
 
 HTML_PATH = Path("academic/cambridge-16/test-3/IELTS16 Test 3 - Academic Reading.html")
 HTML = HTML_PATH.read_text(encoding="utf-8")
+DATA_PATH = Path("academic/cambridge-16/test-3/study-feedback.js")
+DATA_JS = DATA_PATH.read_text(encoding="utf-8")
+CORE_JS = Path("academic/shared/reading-feature-shell-core.js").read_text(encoding="utf-8")
 
 EXPECTED_ANSWER_KEY = {
     1: "FALSE", 2: "NOT GIVEN", 3: "FALSE", 4: "TRUE", 5: "TRUE",
@@ -181,3 +185,116 @@ def test_navigation_contract():
     assert ".question-block[data-q=\"" in target
     assert ".inline-answer[data-q=\"" in target
     assert "data-pair-targets" in target
+
+
+def test_test3_feedback_is_explicit_complete_and_not_shared_fallback_data():
+    assert DATA_PATH.exists()
+    assert HTML.count('<script src="study-feedback.js"></script>') == 1
+    assert HTML.index('<script src="study-feedback.js"></script>') < HTML.index(
+        '<script src="../../shared/reading-feature-shell.js"></script>'
+    )
+    assert len(re.findall(r"^\s+\d+: \[", DATA_JS, re.M)) == 40
+    for group_id in [
+        "p1-tfng", "p1-summary", "p2-matching", "p2-summary", "p2-choose-a",
+        "p2-choose-b", "p3-tfng", "p3-matching", "p3-sentence",
+    ]:
+        assert f'id: "{group_id}"' in DATA_JS
+    for forbidden in ["TEST3_GROUPS", "TEST3_DETAILS", "VARIANTS", "CHOOSE_TWO"]:
+        assert forbidden not in CORE_JS
+
+
+def test_test3_explicit_variants_choose_two_and_page_correctness_adapter():
+    assert 'const acceptedVariants = { 20: ["microorganisms", "micro-organisms"], 38: ["warm", "warm winter"], 40: ["mustard", "mustard plant", "mustard plants"] };' in DATA_JS
+    assert 'const chooseTwoAnswers = { 23: "B", 24: "C", 25: "A", 26: "C" };' in DATA_JS
+    adapter = _function_body("isUserAnswerCorrect")
+    assert "getUserAnswer(qNum)" in adapter
+    assert "answerKey[qNum]" in adapter
+    assert "feedback.chooseTwoAnswers" in adapter
+    assert "isCorrect: (questionNumber) => isUserAnswerCorrect(questionNumber)" in HTML
+
+
+def test_r1_completed_test_submission_is_guarded_and_all_submit_controls_lock():
+    primary = _function_body("handlePrimarySubmit")
+    submit = _function_body("submitTest")
+    assert 'if (mode === "test" && testSubmitted) return;' in primary
+    assert 'if (mode === "test" && testSubmitted) return;' in submit
+    assert submit.index('if (mode === "test" && testSubmitted) return;') < submit.index(
+        "evaluateQuestions()"
+    )
+    assert "disablePrimarySubmitControls()" in submit
+    lock = _function_body("disablePrimarySubmitControls")
+    assert ".submit-button" in lock
+    assert ".check-btn" in lock
+    assert "button.disabled = true" in lock
+
+
+def test_r1_test3_migrated_feedback_exactly_matches_head_shared_fallbacks():
+    head = subprocess.run(
+        ["git", "show", "HEAD:academic/shared/reading-feature-shell-core.js"],
+        check=True,
+        capture_output=True,
+        text=True,
+        encoding="utf-8",
+    ).stdout
+    harness = r'''
+const assert = require("assert");
+const fs = require("fs");
+const vm = require("vm");
+const payload = JSON.parse(fs.readFileSync(0, "utf8"));
+const marker = "  function isObject(value)";
+assert(payload.head.includes(marker), "HEAD fallback export marker missing");
+const exportedHead = payload.head.replace(marker, `  global.__headFeedback = {
+    groups: TEST3_GROUPS,
+    questions: TEST3_DETAILS,
+    acceptedVariants: VARIANTS,
+    chooseTwoAnswers: CHOOSE_TWO
+  };
+  function isObject(value)`);
+const headContext = { window: {} };
+vm.createContext(headContext);
+vm.runInContext(exportedHead, headContext);
+const dataContext = { window: {} };
+vm.createContext(dataContext);
+vm.runInContext(payload.data, dataContext);
+const before = headContext.window.__headFeedback;
+const after = dataContext.window.IELTS16AcademicTest3StudyFeedback;
+function projectGroup(group) {
+  return {
+    id: group.id,
+    label: group.label,
+    questions: group.questions,
+    purpose: group.purpose,
+    steps: group.steps,
+    trap: group.trap
+  };
+}
+assert.deepStrictEqual(
+  JSON.parse(JSON.stringify(after.taskGroups.map(projectGroup))),
+  JSON.parse(JSON.stringify(before.groups.map(projectGroup))),
+  "all nine migrated group records must exactly match HEAD fallbacks"
+);
+assert.deepStrictEqual(
+  JSON.parse(JSON.stringify(after.questions)),
+  JSON.parse(JSON.stringify(before.questions)),
+  "all 40 Why, Skill, and Evidence values must exactly match HEAD fallbacks"
+);
+assert.deepStrictEqual(
+  JSON.parse(JSON.stringify(after.acceptedVariants)),
+  JSON.parse(JSON.stringify(before.acceptedVariants)),
+  "accepted variants must exactly match HEAD fallbacks"
+);
+assert.deepStrictEqual(
+  JSON.parse(JSON.stringify(after.chooseTwoAnswers)),
+  JSON.parse(JSON.stringify(before.chooseTwoAnswers)),
+  "choose-two metadata must exactly match HEAD fallbacks"
+);
+'''
+    completed = subprocess.run(
+        ["node", "-e", harness],
+        input=json.dumps({"head": head, "data": DATA_JS}),
+        check=True,
+        capture_output=True,
+        text=True,
+        encoding="utf-8",
+    )
+    assert completed.stdout == ""
