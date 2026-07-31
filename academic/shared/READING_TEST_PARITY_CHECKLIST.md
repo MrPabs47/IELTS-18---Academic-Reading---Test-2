@@ -1,5 +1,7 @@
 # Academic Reading parity checklist
 
+Companion workflow: [`IELTS_READING_FAST_TRACK_WORKFLOW.md`](./IELTS_READING_FAST_TRACK_WORKFLOW.md)
+
 Every future Academic Reading test must be compared with this checklist before content implementation begins and again before commit.
 
 ## A. Source and data integrity
