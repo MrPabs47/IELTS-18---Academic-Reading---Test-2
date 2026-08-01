@@ -1,0 +1,64 @@
+{
+  "version": 1,
+  "books": [19, 18, 17, 16],
+  "tests": [1, 2, 3, 4],
+  "categories": {
+    "academicReading": {
+      "filesystem_template": "academic/cambridge-{book}/test-{test}/IELTS{book} Test {test} - Academic Reading.html",
+      "index_route_fragment": "if(type==='academicReading')return`./academic/cambridge-${book}/test-${test}/IELTS${book}%20Test%20${test}%20-%20Academic%20Reading.html`",
+      "excluded": []
+    },
+    "generalReading": {
+      "filesystem_template": "general-training/cambridge-{book}/test-{test}/IELTS{book} Test {test} - Reading - GT.html",
+      "index_route_fragment": "if(type==='generalReading')return`./general-training/cambridge-${book}/test-${test}/IELTS${book}%20Test%20${test}%20-%20Reading%20-%20GT.html`",
+      "excluded": []
+    },
+    "listening": {
+      "filesystem_template": "listening/cambridge-{book}/test-{test}/IELTS{book} Test {test} - Listening.html",
+      "index_route_fragment": "if(type==='listening')return`./listening/cambridge-${book}/test-${test}/IELTS${book}%20Test%20${test}%20-%20Listening.html`",
+      "excluded": ["19-1"]
+    }
+  },
+  "protected_references": [
+    {
+      "path": "academic/shared/reading-feature-shell.css",
+      "git_blob_sha": "ac6fad0720dbd24bce312bfc59cdb6455485e62a",
+      "reason": "Shared Reading feature-shell stylesheet"
+    },
+    {
+      "path": "academic/shared/reading-feature-shell.js",
+      "git_blob_sha": "bd03e2e4147bb0347b5db987ac003cb1bac4cbfb",
+      "reason": "Shared Reading feature-shell engine"
+    },
+    {
+      "path": "academic/cambridge-16/test-4/IELTS16 Test 4 - Academic Reading.html",
+      "git_blob_sha": "38174040b07084032e09cdcbad09505f4af40af5",
+      "reason": "Academic Reading visible parity reference"
+    },
+    {
+      "path": "academic/cambridge-17/test-1/IELTS17 Test 1 - Academic Reading.html",
+      "git_blob_sha": "1a5726938165b996a71af53ca301a6d5f9d52ed2",
+      "reason": "Completed Academic Reading Study/Test parity release"
+    },
+    {
+      "path": "general-training/cambridge-19/test-1/IELTS19 Test 1 - Reading - GT.html",
+      "git_blob_sha": "99bb0dc3e64d9e5b790b0b355a7ed8d03440554b",
+      "reason": "Restored GT Study Mode reference"
+    },
+    {
+      "path": "general-training/cambridge-19/test-2/IELTS19 Test 2 - Reading - GT.html",
+      "git_blob_sha": "5f60bc5469ae2d9e75559dcd6c4bae8515c17d36",
+      "reason": "Restored GT Study Mode reference"
+    },
+    {
+      "path": "general-training/cambridge-19/test-3/IELTS19 Test 3 - Reading - GT.html",
+      "git_blob_sha": "25f9bc67da6f90c8ae59bd73adcd916863d21c3f",
+      "reason": "Completed GT Study Mode reference"
+    },
+    {
+      "path": "listening/cambridge-16/test-1/IELTS16 Test 1 - Listening.html",
+      "git_blob_sha": "9b6c2f9ed17254ca3f9a33869b1ce99c0a2b1f8b",
+      "reason": "Completed Listening parity reference"
+    }
+  ]
+}
