@@ -145,8 +145,12 @@ This is the short pass/fail specification for every General Training Reading pro
 - [ ] Strategy purpose is task-specific.
 - [ ] Numbered steps are practical.
 - [ ] Trap is realistic.
-- [ ] Why explains question-specific text logic.
-- [ ] Skill is concise and actionable.
+- [ ] Every Q1–40 clue/Why/Skill trio passes the Aha test.
+- [ ] Why explicitly bridges question wording to source wording and then to the answer.
+- [ ] Why identifies the decisive contrast, paraphrase, missing detail or logical relationship.
+- [ ] Why addresses the likely distractor or misunderstanding where useful.
+- [ ] Skill is concise, actionable and tells the learner what to do differently next time.
+- [ ] Skill names the specific reading operation and the feature to check, not a generic instruction such as `look carefully` or `scan for keywords`.
 - [ ] Correct-answer display does not imply unaccepted synonyms.
 - [ ] TRUE explains agreement.
 - [ ] FALSE identifies the contradiction.
@@ -163,6 +167,11 @@ This is the short pass/fail specification for every General Training Reading pro
 - [ ] No clue relies on whole-section searching when multiple texts exist.
 - [ ] Every Q1–40 has a valid clue target.
 - [ ] Every clue target resolves in the correct root.
+- [ ] Every clue highlights the minimum sufficient evidence span, not merely an isolated answer word.
+- [ ] Every clue includes enough context to preserve the subject, action and logical relationship.
+- [ ] Decisive negation, qualifier, comparison, condition, cause, time marker or reference word is included when relevant.
+- [ ] No hard clue-length target is used; clarity and logical completeness determine the span.
+- [ ] A learner can understand why the evidence matters without guessing the omitted context.
 - [ ] Targets are distinctive and not dependent on brittle positional selectors.
 - [ ] Shared targets correctly represent every related question.
 - [ ] Clue button highlights the intended passage text.
@@ -234,6 +243,9 @@ This is the short pass/fail specification for every General Training Reading pro
 - [ ] Existing shared Reading regression suite passes at phase gates.
 - [ ] JavaScript syntax checks pass.
 - [ ] Q1–40 detail validator passes.
+- [ ] Human editorial review covers all 40 clue/Why/Skill trios.
+- [ ] The reviewer checks each trio from the perspective of a plausible learner who chose the wrong answer.
+- [ ] No trio leaves the reasonable questions `But why?`, `Which words matter?` or `What do I do next time?` unanswered.
 - [ ] Task-group coverage validator passes.
 - [ ] Text-root and clue-target validator passes.
 - [ ] Browser lifecycle test covers Fresh/checked Study and Fresh/completed Test.
@@ -252,6 +264,7 @@ This is the short pass/fail specification for every General Training Reading pro
 - [ ] All sections visited.
 - [ ] Every independent source text reviewed.
 - [ ] Representative early, middle and late clue buttons checked.
+- [ ] Highlighted clue spans are neither misleadingly short nor unnecessarily broad.
 - [ ] Section-level clue control checked in each section/context.
 - [ ] Custom matching/drag/drop locking checked.
 - [ ] Desktop checked.

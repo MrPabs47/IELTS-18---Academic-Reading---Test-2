@@ -43,12 +43,13 @@ The final quality is strong, but the route exposed several avoidable delays:
 - Legacy result reading required an explicit compatibility opt-in.
 - Clue controls disappeared until complete question and clue coverage were declared.
 - A visible Evidence row was added even though the magnifying-glass highlight already showed the supporting passage text.
+- Some clue spans and Why/Skill explanations were technically correct but too compressed to resolve the learner's misunderstanding.
 - General Training sections contain multiple independent text roots, so Academic assumptions about one passage per section are unsafe.
 - Custom drag/drop and matching controls require explicit final Test locking.
 
 The central lesson is:
 
-**Use the shared Reading shell, but audit the General Training page as its own product. Do not treat it as Academic Reading with different text.**
+**Use the shared Reading shell, but audit the General Training page as its own product. Do not treat it as Academic Reading with different text, and do not treat technically correct feedback as sufficient unless it produces a clear learner 'aha'.**
 
 For the next General Training Reading target, the expected normal path is:
 
@@ -172,6 +173,7 @@ Use this pattern only when direct integration would create unnecessary risk. Kee
 | Legacy submitted result | Older pages depended on DOM result compatibility | Prefer an authoritative snapshot; otherwise opt into the approved compatibility path explicitly and test it |
 | Clue capability | Clues disappeared when completeness flags were missing | Require complete Q1–40 detail and clue coverage before activation |
 | Visible Evidence | Evidence text duplicated the highlighted passage | Keep evidence internally; show Correct answer, Why, Skill and the clue button only |
+| Instructional clarity | Some clues and explanations were too short or generic to resolve the learner's exact misunderstanding | Apply the Aha test to every Q1–40 clue/Why/Skill trio; use the shortest wording that still makes the logic explicit |
 | Multiple text roots | Whole-section searching could target the wrong notice/review | Give each source text a stable root and resolve clues within that root |
 | Custom locking | Native inputs locked but drag/drop could remain interactive | Include every custom control in final Test locking tests |
 | Home route | Test 2’s clickable home logo needed a separate repair | Treat the home route and leave warning as a standard parity item |
@@ -507,8 +509,8 @@ Each question requires:
 
 - accepted answer display;
 - Why explanation;
-- concise Skill;
-- internal evidence target;
+- concise but instructionally resolving Skill;
+- internal evidence target with enough context to make the logic clear;
 - correct text root;
 - group ID.
 
@@ -546,6 +548,57 @@ Skill should be concise, specific and teachable, for example:
 - predicting noun form from grammar;
 - separating a main idea from one example.
 
+The Skill line must also tell the learner what to do differently next time. A label such as `scan for keywords` is not enough unless it identifies the decisive relationship the learner must compare.
+
+### 7.6 Instructional resolution standard — the Aha test
+
+The clue, Why and Skill form one teaching sequence. Together they must move a learner from confusion to a clear understanding of both the answer and the reading move that produced it.
+
+#### Clue
+
+The highlighted clue must show the **minimum sufficient evidence span**:
+
+- include the decisive word or phrase;
+- include enough surrounding text to preserve the subject, action and logical relationship;
+- include a negation, qualifier, comparison, condition, cause, time marker or reference word when it changes the meaning;
+- do not highlight only the answer word or a fragment that forces the learner to infer the missing logic;
+- do not make the span unnecessarily broad.
+
+There is no fixed word count. The correct length is the shortest span that makes the evidence self-explanatory in context.
+
+#### Why
+
+Why must create an explicit reasoning bridge:
+
+1. identify the important wording or claim in the question;
+2. identify the matching, contrasting or missing information in the source;
+3. explain the logical relationship;
+4. state why that relationship produces the answer;
+5. where useful, name the likely distractor or misunderstanding.
+
+#### Skill
+
+Skill must convert the question-specific lesson into a reusable action. It should name the reading operation and the concrete feature to check next time, such as a time boundary, negation, degree word, pronoun reference, grammar fit or difference between a rule and an example.
+
+#### Pass/fail question
+
+A trio fails the Aha test when a plausible learner who chose the wrong answer could read it and still reasonably ask:
+
+- `But why is that the answer?`
+- `Which exact words changed the meaning?`
+- `What should I do differently on the next question?`
+
+Avoid vague endings such as `look carefully`, `scan for keywords`, `read the paragraph` or `the text says so` unless the explanation also identifies the exact relationship that matters.
+
+Generic example:
+
+- Weak clue: `after Monday`.
+- Clearer clue: `Applications received after Monday will not be considered.`
+- Weak Why: `The passage says the statement is false.`
+- Clearer Why: `The question says applications are accepted after Monday, but the text says applications received after Monday will not be considered. The time condition is opposite, so the statement is FALSE.`
+- Weak Skill: `Scan for keywords.`
+- Clearer Skill: `Compare the time marker and the rule attached to it; matching nouns do not help when after reverses the condition.`
+
 ---
 
 ## 8. Text-root and clue standard
@@ -562,7 +615,10 @@ The target fragment must:
 - be distinctive enough to resolve once;
 - preserve exact punctuation where required by the renderer;
 - survive normal whitespace normalisation;
-- support shared evidence where several questions genuinely use the same phrase.
+- support shared evidence where several questions genuinely use the same phrase;
+- include the minimum sufficient context for the learner to understand the logic without reconstructing omitted words;
+- include decisive qualifiers, negation, comparison, condition, cause or time language when relevant;
+- avoid an isolated answer word or a misleadingly short fragment.
 
 ### 8.3 Complete coverage
 
@@ -687,9 +743,10 @@ Add:
 - internal evidence/clue targets;
 - complete text-root mappings;
 - score guide;
-- target data validators.
+- target data validators;
+- a human Aha-test review of every Q1–40 clue/Why/Skill trio from the perspective of a plausible wrong-answer learner.
 
-Activate complete coverage only after all targets resolve.
+Activate complete coverage only after all targets resolve and every trio is instructionally clear, not merely present.
 
 ### Phase 4 — browser QA
 
@@ -739,11 +796,11 @@ Prefer a small target-specific suite:
 |---|---|
 | `test_gt_reading_testX_foundation.py` | Identity, 40 questions, ranges, loader, shared assets, terminology and no learning leak |
 | `test_gt_reading_testX_scoring.py` | Answer key, accepted variants, GT band, section totals, special scoring and final locking |
-| `test_gt_reading_testX_study_data.py` | Task groups, Q1–40 Correct answer/Why/Skill, visible Evidence suppression and score guide |
+| `test_gt_reading_testX_study_data.py` | Task groups, Q1–40 Correct answer/Why/Skill, visible Evidence suppression, score guide and structural completeness |
 | `test_gt_reading_testX_clues.py` | Text roots, all 40 targets, clue buttons, section control and highlight rendering |
 | `test_gt_reading_testX_browser_lifecycle.py` | Fresh/checked Study, Fresh/completed Test, resubmission, duplication and custom-control locking |
 
-Add a new deep module only for a genuinely new question-control mechanism.
+Add a new deep module only for a genuinely new question-control mechanism. Automated checks can prove completeness and target resolution, but they cannot prove that a learner will understand the explanation; the all-40 Aha-test editorial review remains mandatory.
 
 ### 10.3 Phase-gate testing
 
@@ -918,6 +975,9 @@ Report:
 | Reusing Academic band thresholds | Target GT evaluator and approved GT guide |
 | One root for a section with several texts | Stable root per notice/review/advertisement/text |
 | Showing an Evidence row and a passage highlight | Keep internal evidence; show clue button only |
+| Highlighting only the answer word or an undersized fragment | Highlight the shortest complete evidence unit, including the decisive qualifier or relationship |
+| Why that merely repeats the answer | Bridge question wording to source wording and explain the conclusion |
+| Generic Skill such as `scan for keywords` | Name the reusable operation and the exact feature to compare next time |
 | Activating clues with partial data | Complete Q1–40 target audit first |
 | Missing `partLabel: "Section"` | Explicit terminology config |
 | Silent DOM score parsing | Authoritative snapshot or explicit approved compatibility |
@@ -991,6 +1051,8 @@ Expected normal outcome for subsequent GT tests:
 - define exact task groups;
 - write Correct answer, Why and Skill for Q1–40;
 - map exact internal evidence targets to the correct text roots;
+- apply the Aha test to every clue/Why/Skill trio;
+- ensure each clue is the shortest complete evidence span, not simply the shortest possible span;
 - set `showEvidenceText: false`;
 - activate complete coverage only after validation.
 
@@ -1029,6 +1091,8 @@ general-training/shared/GT_READING_TEST_PARITY_CHECKLIST.md
 Treat them as the required workflow and parity specification.
 
 Use Cambridge IELTS 19 General Training Reading Test 2 on current main as the preferred direct-integration reference and Test 1 as the legacy-adapter reference. The target test HTML, source files, answer key, accepted variants and evaluator remain authoritative for target-specific content.
+
+For every question, make the clue, Why and Skill pass the Aha test: use the shortest complete evidence span, explicitly bridge question wording to source wording and conclusion, and give a reusable next-step reading action. Technically correct but vague or under-explained feedback does not pass.
 
 Model: 5.6 Sol
 Effort: Medium
