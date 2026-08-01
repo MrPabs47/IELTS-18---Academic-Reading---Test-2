@@ -1,0 +1,40 @@
+/*
+  IELTS Pabs seasonal theme layer
+  --------------------------------
+  The normal hub intentionally has no seasonal overrides.
+
+  For Christmas, Lunar New Year, Halloween, Australia Day or another
+  special date, change this file (and optionally add local files under
+  hub/assets/) instead of editing test pages or the hub routing script.
+
+  Keep the theme decorative and lightweight:
+  - do not hide or move test links;
+  - do not change Academic/General Training meaning;
+  - do not load external fonts, scripts or images;
+  - keep text contrast and mobile layout readable;
+  - restore this file to the neutral state after the event.
+
+  Example starting points (leave commented until needed):
+
+  Christmas palette:
+
+  :root {
+    --seasonal-red: #b4232f;
+    --seasonal-green: #1f6b4f;
+  }
+
+  .site-header {
+    box-shadow: 0 1px 0 rgba(255,255,255,.04), 0 10px 30px rgba(180,35,47,.08);
+  }
+
+  .intro-star {
+    color: #f4d58d;
+  }
+
+  .intro-line::after {
+    content: "  ·  Season's greetings";
+    color: #cfd3da;
+    font-size: .82rem;
+    font-weight: 600;
+  }
+*/
