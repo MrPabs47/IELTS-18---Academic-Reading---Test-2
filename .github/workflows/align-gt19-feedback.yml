@@ -17,6 +17,19 @@ jobs:
           ref: agent/align-gt19-t1-t2-feedback-with-academic
           fetch-depth: 0
 
+      - name: Install test dependencies
+        run: |
+          python -m pip install --quiet pytest
+          mkdir -p /tmp/gt19-parity
+          cd /tmp/gt19-parity
+          npm init -y >/dev/null 2>&1
+          npm install --silent playwright
+          npx playwright install --with-deps chromium >/dev/null
+          CHROME_BIN="$(find "$HOME/.cache/ms-playwright" -type f -name chrome -perm -111 | head -n 1)"
+          test -n "$CHROME_BIN"
+          sudo ln -sf "$CHROME_BIN" /usr/local/bin/chrome
+          chrome --version
+
       - name: Separate visible feedback from passage clue evidence
         run: |
           python - <<'PY'
@@ -67,19 +80,10 @@ jobs:
               assert 'completeClueCoverage: true' in text, path
           print('GT19 feedback parity structural contract passed.')
           PY
-          python -m pip install --quiet pytest
           python -m pytest -q \
             tests/reading_feature_shell_config_validation_test.py \
             tests/reading_feature_shell_foundation_test.py \
             tests/reading_feature_shell_study_chrome_test.py
-
-      - name: Install browser test dependency
-        run: |
-          mkdir -p /tmp/gt19-parity
-          cd /tmp/gt19-parity
-          npm init -y >/dev/null 2>&1
-          npm install --silent playwright
-          npx playwright install --with-deps chromium >/dev/null
 
       - name: Run Study Mode browser parity for Tests 1 and 2
         run: |
