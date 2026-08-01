@@ -1,0 +1,273 @@
+name: Build IELTS 19 GT Test 3 Study Mode
+
+on:
+  push:
+    branches:
+      - agent/add-gt19-test3-study-mode
+    paths:
+      - .github/workflows/build-gt19-test3-study.yml
+
+permissions:
+  contents: write
+
+jobs:
+  build-test-publish:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: agent/add-gt19-test3-study-mode
+          fetch-depth: 0
+
+      - name: Write Test 3 Study Mode data
+        shell: bash
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          import base64, gzip
+
+          payload = '''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'''
+          target = Path('general-training/cambridge-19/test-3/study-feedback-data.js')
+          target.write_bytes(gzip.decompress(base64.b64decode(payload)))
+          PY
+
+      - name: Generate Test 3 Study Mode adapter
+        shell: bash
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          import re
+
+          source = Path('general-training/cambridge-19/test-1/study-feedback.js').read_text(encoding='utf-8')
+          source = source.replace('IELTS19GTTest1StudyFeedback', 'IELTS19GTTest3StudyFeedback')
+          source = source.replace('cambridge-19-general-training-reading-test-1', 'cambridge-19-general-training-reading-test-3')
+          source = source.replace('IELTS 19 General Training Reading Test 1', 'IELTS 19 General Training Reading Test 3')
+          source = source.replace('__gtTest1Localised', '__gtTest3Localised')
+          source = source.replace('IELTS 19 GT Test 1 Study Mode assets could not load.', 'IELTS 19 GT Test 3 Study Mode assets could not load.')
+          source = source.replace('IELTS 19 GT Test 1 Study Mode could not initialise.', 'IELTS 19 GT Test 3 Study Mode could not initialise.')
+
+          instruction_function = '''  function prepareInstructionHosts() {
+    var s1 = document.querySelector('#questionContent > div[data-section="1"]');
+    var s2 = document.querySelector('#questionContent > div[data-section="2"]');
+    var s3 = document.querySelector('#questionContent > div[data-section="3"]');
+
+    if (s1) {
+      wrapRange(s1, directChildByText(s1, "p", "SECTION 1 Questions"), s1.querySelector('.question-block[data-q="1"]'), "study-instruction-s1-films");
+      wrapRange(s1, directChildByText(s1, "p.question-group-heading", "Sports events in New Zealand"), s1.querySelector('.question-block[data-q="9"]'), "study-instruction-s1-sports");
+    }
+    if (s2) {
+      wrapRange(s2, directChildByText(s2, "p", "SECTION 2 Questions"), s2.querySelector('.question-block[data-q="15"]'), "study-instruction-s2-redundancy");
+      wrapRange(s2, directChildByText(s2, "p.question-group-heading", "Palvin"), s2.querySelector('.question-block[data-q="22"]'), "study-instruction-s2-restaurant");
+    }
+    if (s3) {
+      wrapRange(s3, directChildByText(s3, "p", "SECTION 3 Questions"), s3.querySelector('.question-block[data-q="28"]'), "study-instruction-s3-mc");
+      wrapRange(s3, directChildByText(s3, "p", "Questions 33 to 36"), s3.querySelector('.question-block[data-q="33"]'), "study-instruction-s3-paragraphs");
+      wrapRange(s3, directChildByText(s3, "p", "Questions 37 to 40"), s3.querySelector('.summary-box'), "study-instruction-s3-summary");
+    }
+  }
+'''
+          source, count = re.subn(r'  function prepareInstructionHosts\(\) \{.*?\n  \}\n\n(?=  function prepareTextRoots)', instruction_function + '\n', source, count=1, flags=re.S)
+          if count != 1:
+              raise SystemExit('Could not replace prepareInstructionHosts')
+
+          roots_function = '''  function prepareTextRoots() {
+    var s1 = document.querySelector('.passage-section[data-section="1"]');
+    var s2 = document.querySelector('.passage-section[data-section="2"]');
+    var s3 = document.querySelector('.passage-section[data-section="3"]');
+
+    function wrapBeforeDivider(section, id) {
+      if (!section || document.getElementById(id)) return;
+      var divider = section.querySelector(":scope > .passage-divider");
+      if (!divider) return;
+      var wrapper = document.createElement("div");
+      wrapper.className = "reading-text";
+      wrapper.id = id;
+      section.insertBefore(wrapper, section.firstChild);
+      while (wrapper.nextSibling && wrapper.nextSibling !== divider) wrapper.appendChild(wrapper.nextSibling);
+    }
+
+    wrapBeforeDivider(s1, "text-s1-films");
+    if (s1) {
+      var sports = s1.querySelector(":scope > .passage-divider");
+      if (sports) { sports.id = "text-s1-sports"; sports.classList.add("reading-text"); }
+    }
+    wrapBeforeDivider(s2, "text-s2-redundancy");
+    if (s2) {
+      var restaurant = s2.querySelector(":scope > .passage-divider");
+      if (restaurant) { restaurant.id = "text-s2-restaurant"; restaurant.classList.add("reading-text"); }
+    }
+    if (s3) { s3.id = "text-s3-women"; s3.classList.add("reading-text"); }
+  }
+'''
+          source, count = re.subn(r'  function prepareTextRoots\(\) \{.*?\n  \}\n\n(?=  function prepareInlineFeedbackHosts)', roots_function + '\n', source, count=1, flags=re.S)
+          if count != 1:
+              raise SystemExit('Could not replace prepareTextRoots')
+
+          source = source.replace('for (var question = 33; question <= 37; question += 1)', 'for (var question = 37; question <= 40; question += 1)', 1)
+
+          guard = '''  function installSubmittedInteractionGuard() {
+    ["click", "keydown", "dragstart", "drop"].forEach(function (type) {
+      document.addEventListener(type, function (event) {
+        if (mode !== "test" || !testSubmitted) return;
+        var target = event.target && event.target.closest ? event.target.closest(".drag-item,.drop-zone,.clear-drop-btn") : null;
+        if (!target) return;
+        event.preventDefault();
+        event.stopImmediatePropagation();
+      }, true);
+    });
+  }
+
+'''
+          source = source.replace('  function initStudyMode() {', guard + '  function initStudyMode() {', 1)
+          source = source.replace('    prepareInlineFeedbackHosts();\n    patchPageFunctions();', '    prepareInlineFeedbackHosts();\n    installSubmittedInteractionGuard();\n    patchPageFunctions();', 1)
+
+          Path('general-training/cambridge-19/test-3/study-feedback.js').write_text(source, encoding='utf-8')
+          PY
+
+      - name: Connect Study Mode loader
+        shell: bash
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+
+          path = Path('general-training/cambridge-19/test-3/IELTS19 Test 3 - Reading - GT.html')
+          text = path.read_text(encoding='utf-8')
+          loader = '  <script src="study-feedback.js"></script>\n'
+          if loader not in text:
+              needle = '  <script>\n    /***************'
+              if needle not in text:
+                  raise SystemExit('Could not locate the main inline script')
+              text = text.replace(needle, loader + needle, 1)
+          path.write_text(text, encoding='utf-8')
+          PY
+
+      - name: Run static checks
+        shell: bash
+        run: |
+          node --check general-training/cambridge-19/test-3/study-feedback-data.js
+          node --check general-training/cambridge-19/test-3/study-feedback.js
+          node - <<'JS'
+          global.window = {};
+          require('./general-training/cambridge-19/test-3/study-feedback-data.js');
+          const data = window.IELTS19GTTest3StudyFeedback;
+          if (!data || Object.keys(data.questions).length !== 40) throw new Error('Expected 40 feedback records');
+          const represented = data.taskGroups.flatMap(group => group.questions);
+          if (represented.length !== 40 || new Set(represented).size !== 40) throw new Error('Task groups must cover Questions 1–40 exactly once');
+          for (let q = 1; q <= 40; q += 1) {
+            const record = data.questions[q];
+            if (!record || !record.answer || !record.explanation || !record.skill || !record.evidence || !record.evidenceRoot) throw new Error('Incomplete Question ' + q);
+          }
+          console.log('Static Test 3 Study Mode contract passed.');
+          JS
+          grep -q 'script src="study-feedback.js"' "general-training/cambridge-19/test-3/IELTS19 Test 3 - Reading - GT.html"
+          grep -q 'completeClueCoverage: true' general-training/cambridge-19/test-3/study-feedback.js
+
+      - name: Run browser lifecycle checks
+        shell: bash
+        run: |
+          CHROME_BIN="$(command -v google-chrome-stable || command -v google-chrome || command -v chromium || true)"
+          test -n "$CHROME_BIN"
+          npm install --prefix /tmp/gt19-test3-browser --no-save puppeteer-core@24.16.0 >/dev/null
+          cat > /tmp/gt19-test3-browser/check.js <<'JS'
+          const puppeteer = require('/tmp/gt19-test3-browser/node_modules/puppeteer-core');
+          const url = 'http://127.0.0.1:8765/general-training/cambridge-19/test-3/IELTS19%20Test%203%20-%20Reading%20-%20GT.html';
+
+          async function newBrowser() {
+            return puppeteer.launch({ executablePath: process.env.CHROME_BIN, headless: true, args: ['--no-sandbox', '--disable-setuid-sandbox'] });
+          }
+
+          async function studyLifecycle() {
+            const browser = await newBrowser();
+            try {
+              const page = await browser.newPage();
+              const errors = [];
+              page.on('pageerror', error => errors.push(String(error)));
+              await page.goto(url, { waitUntil: 'networkidle0' });
+              await page.waitForFunction(() => Array.from(document.querySelectorAll('button')).some(button => /study mode/i.test(button.textContent || '')));
+              await page.evaluate(() => Array.from(document.querySelectorAll('button')).find(button => /study mode/i.test(button.textContent || '')).click());
+              await page.waitForFunction(() => document.getElementById('app') && getComputedStyle(document.getElementById('app')).display !== 'none');
+              await page.waitForFunction(() => window.ReadingFeatureShell && window.readingFeatureShellConfig);
+
+              await page.evaluate(() => {
+                const q1 = document.querySelector('select[name="q1"]');
+                q1.value = 'E';
+                q1.dispatchEvent(new Event('change', { bubbles: true }));
+                const q15 = document.querySelector('input[name="q15"]');
+                q15.value = 'list';
+                q15.dispatchEvent(new Event('input', { bubbles: true }));
+                window.submitTest();
+              });
+
+              await page.waitForFunction(() => document.querySelectorAll('.reading-shell-study-clue-button').length === 40);
+              const state = await page.evaluate(() => {
+                const clues = Array.from(document.querySelectorAll('.reading-shell-study-clue-button'));
+                const toggle = document.getElementById('passageClueToggle');
+                return {
+                  visibleClues: clues.filter(button => !button.hidden && !button.disabled).length,
+                  toggleReady: Boolean(toggle && !toggle.hidden && !toggle.disabled),
+                  feedbackCards: document.querySelectorAll('.reading-shell-study-feedback-card').length,
+                  scoreText: (document.getElementById('readingShellScorePill') || {}).textContent || ''
+                };
+              });
+              if (state.visibleClues !== 40 || !state.toggleReady || state.feedbackCards !== 40) throw new Error('Incomplete Study Mode: ' + JSON.stringify(state));
+              await page.evaluate(() => document.querySelector('.reading-shell-study-clue-button').click());
+              await page.waitForFunction(() => document.querySelector('.reading-shell-evidence-highlight'));
+              if (errors.length) throw new Error(errors.join(' | '));
+              console.log('Study Mode lifecycle passed:', JSON.stringify(state));
+            } finally {
+              await browser.close();
+            }
+          }
+
+          async function testLifecycle() {
+            const browser = await newBrowser();
+            try {
+              const page = await browser.newPage();
+              await page.goto(url, { waitUntil: 'networkidle0' });
+              await page.evaluate(() => window.startTest('test'));
+              await page.evaluate(() => {
+                const q1 = document.querySelector('select[name="q1"]');
+                q1.value = 'E';
+                q1.dispatchEvent(new Event('change', { bubbles: true }));
+                window.submitTest();
+              });
+              await page.waitForFunction(() => window.testSubmitted === true || document.querySelector('select[name="q1"]').disabled);
+              const locked = await page.evaluate(() => ({
+                inputDisabled: document.querySelector('select[name="q1"]').disabled,
+                submitDisabled: Boolean(document.getElementById('primarySubmitBtn') && document.getElementById('primarySubmitBtn').disabled),
+                dragLocked: document.querySelector('.drop-zone').getAttribute('aria-disabled') === 'true'
+              }));
+              if (!locked.inputDisabled || !locked.submitDisabled || !locked.dragLocked) throw new Error('Test Mode did not lock: ' + JSON.stringify(locked));
+              console.log('Test Mode lifecycle passed:', JSON.stringify(locked));
+            } finally {
+              await browser.close();
+            }
+          }
+
+          (async () => {
+            await studyLifecycle();
+            await testLifecycle();
+          })().catch(error => {
+            console.error(error);
+            process.exit(1);
+          });
+          JS
+          python -m http.server 8765 --bind 127.0.0.1 >/tmp/gt19-test3-http.log 2>&1 &
+          SERVER_PID=$!
+          trap 'kill $SERVER_PID 2>/dev/null || true' EXIT
+          sleep 2
+          CHROME_BIN="$CHROME_BIN" node /tmp/gt19-test3-browser/check.js
+
+      - name: Commit tested Test 3 files
+        shell: bash
+        run: |
+          rm -f .github/workflows/build-gt19-test3-study.yml
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add \
+            "general-training/cambridge-19/test-3/IELTS19 Test 3 - Reading - GT.html" \
+            general-training/cambridge-19/test-3/study-feedback.js \
+            general-training/cambridge-19/test-3/study-feedback-data.js \
+            .github/workflows/build-gt19-test3-study.yml
+          git commit -m "Add IELTS 19 GT Test 3 Study mode"
+          git push origin HEAD:agent/add-gt19-test3-study-mode
