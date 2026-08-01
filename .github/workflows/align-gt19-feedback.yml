@@ -1,0 +1,165 @@
+name: Align IELTS 19 GT feedback with Academic Reading
+
+on:
+  pull_request:
+    branches: [main]
+
+permissions:
+  contents: write
+
+jobs:
+  align-and-verify:
+    if: github.head_ref == 'agent/align-gt19-t1-t2-feedback-with-academic'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: agent/align-gt19-t1-t2-feedback-with-academic
+          fetch-depth: 0
+
+      - name: Separate visible feedback from passage clue evidence
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+
+          core_path = Path('academic/shared/reading-feature-shell-core.js')
+          core = core_path.read_text(encoding='utf-8')
+          old = """    card.innerHTML = '<h4>Question ' + questionNumber + '</h4><dl>' +
+              (official ? '<dt>Your answer</dt><dd class=\"reading-shell-study-status reading-shell-study-status-' + status + '\">' + html(statusText) + '</dd>' : \"\") +
+              '<dt>Correct answer</dt><dd>' + html(config.answers.getAnswerKeyDisplay(questionNumber) || \"\") + '</dd><dt>Why</dt><dd>' + html(detail[0]) + '</dd><dt>Skill</dt><dd>' + html(detail[1]) + '</dd><dt>Evidence</dt><dd>' + html(detail[2]) + '</dd></dl>';
+          """
+          new = """    card.innerHTML = '<h4>Question ' + questionNumber + '</h4><dl>' +
+              (official ? '<dt>Your answer</dt><dd class=\"reading-shell-study-status reading-shell-study-status-' + status + '\">' + html(statusText) + '</dd>' : \"\") +
+              '<dt>Correct answer</dt><dd>' + html(config.answers.getAnswerKeyDisplay(questionNumber) || \"\") + '</dd><dt>Why</dt><dd>' + html(detail[0]) + '</dd><dt>Skill</dt><dd>' + html(detail[1]) + '</dd>' +
+              ((config.study && config.study.showEvidenceText === false) ? '' : '<dt>Evidence</dt><dd>' + html(detail[2]) + '</dd>') + '</dl>';
+          """
+          if old not in core:
+              raise SystemExit('Could not find the shared feedback-card renderer')
+          core_path.write_text(core.replace(old, new, 1), encoding='utf-8')
+
+          targets = [
+              Path('general-training/cambridge-19/test-1/study-feedback.js'),
+              Path('general-training/cambridge-19/test-2/IELTS19 Test 2 - Reading - GT.html'),
+          ]
+          marker = """        completeQuestionCoverage: true,
+                  completeClueCoverage: true,
+          """
+          replacement = marker + "        showEvidenceText: false,\n"
+          for path in targets:
+              text = path.read_text(encoding='utf-8')
+              if 'showEvidenceText: false' in text:
+                  continue
+              if marker not in text:
+                  raise SystemExit(f'Could not find Study Mode coverage settings in {path}')
+              path.write_text(text.replace(marker, replacement, 1), encoding='utf-8')
+          PY
+
+      - name: Run structural and shared-shell tests
+        run: |
+          node --check academic/shared/reading-feature-shell-core.js
+          node --check general-training/cambridge-19/test-1/study-feedback.js
+          python - <<'PY'
+          from pathlib import Path
+
+          core = Path('academic/shared/reading-feature-shell-core.js').read_text(encoding='utf-8')
+          assert "config.study.showEvidenceText === false" in core
+          assert "<dt>Evidence</dt>" in core, 'Default evidence rendering must remain available for existing pages'
+          for path in (
+              'general-training/cambridge-19/test-1/study-feedback.js',
+              'general-training/cambridge-19/test-2/IELTS19 Test 2 - Reading - GT.html',
+          ):
+              text = Path(path).read_text(encoding='utf-8')
+              assert text.count('showEvidenceText: false') == 1, path
+              assert 'completeQuestionCoverage: true' in text, path
+              assert 'completeClueCoverage: true' in text, path
+          print('GT19 feedback parity structural contract passed.')
+          PY
+          python -m pytest -q \
+            tests/reading_feature_shell_config_validation_test.py \
+            tests/reading_feature_shell_foundation_test.py \
+            tests/reading_feature_shell_study_chrome_test.py
+
+      - name: Install browser test dependency
+        run: |
+          mkdir -p /tmp/gt19-parity
+          cd /tmp/gt19-parity
+          npm init -y >/dev/null 2>&1
+          npm install --silent playwright
+          npx playwright install --with-deps chromium >/dev/null
+
+      - name: Run Study Mode browser parity for Tests 1 and 2
+        run: |
+          python -m http.server 4173 >/tmp/gt19-http.log 2>&1 &
+          SERVER_PID=$!
+          trap 'kill $SERVER_PID || true' EXIT
+          sleep 2
+          cat >/tmp/gt19-parity/check.mjs <<'JS'
+          import { chromium } from 'playwright';
+
+          const tests = [
+            ['GT19 Test 1', 'http://127.0.0.1:4173/general-training/cambridge-19/test-1/IELTS19%20Test%201%20-%20Reading%20-%20GT.html'],
+            ['GT19 Test 2', 'http://127.0.0.1:4173/general-training/cambridge-19/test-2/IELTS19%20Test%202%20-%20Reading%20-%20GT.html']
+          ];
+
+          const browser = await chromium.launch({ headless: true });
+          for (const [name, url] of tests) {
+            const page = await browser.newPage({ viewport: { width: 1440, height: 1000 } });
+            const errors = [];
+            page.on('pageerror', error => errors.push(String(error)));
+            await page.goto(url, { waitUntil: 'domcontentloaded' });
+            await page.locator('button[data-mode="study"]').click();
+            await page.waitForSelector('.reading-shell-study-reveal-button', { timeout: 15000 });
+
+            const revealButtons = page.locator('.reading-shell-study-reveal-button');
+            for (let index = 0; index < await revealButtons.count(); index += 1) {
+              const button = revealButtons.nth(index);
+              if (await button.isVisible()) await button.click();
+            }
+
+            await page.waitForFunction(() => document.querySelectorAll('.reading-shell-study-feedback-card').length === 40, null, { timeout: 15000 });
+            const result = await page.evaluate(() => {
+              const cards = [...document.querySelectorAll('.reading-shell-study-feedback-card')];
+              const labels = cards.flatMap(card => [...card.querySelectorAll('dt')].map(dt => dt.textContent.trim()));
+              return {
+                cards: cards.length,
+                why: labels.filter(label => label === 'Why').length,
+                skill: labels.filter(label => label === 'Skill').length,
+                evidence: labels.filter(label => label === 'Evidence').length,
+                visibleClues: [...document.querySelectorAll('.reading-shell-study-clue-button')].filter(button => !button.hidden && !button.disabled).length,
+                sectionToggleReady: Boolean(document.querySelector('#passageClueToggle:not([hidden]):not(:disabled)')),
+                resultText: (document.querySelector('.reading-shell-score-feedback-summary') || {}).textContent || ''
+              };
+            });
+
+            if (result.cards !== 40 || result.why !== 40 || result.skill !== 40 || result.evidence !== 0) {
+              throw new Error(`${name} feedback mismatch: ${JSON.stringify(result)}`);
+            }
+            if (result.visibleClues !== 40 || !result.sectionToggleReady) {
+              throw new Error(`${name} clue controls mismatch: ${JSON.stringify(result)}`);
+            }
+
+            await page.locator('.reading-shell-study-clue-button:not([hidden]):not(:disabled)').first().click();
+            await page.waitForSelector('.reading-shell-evidence-highlight', { timeout: 10000 });
+            const highlighted = await page.locator('.reading-shell-evidence-highlight').count();
+            if (!highlighted) throw new Error(`${name} did not highlight passage evidence`);
+            if (errors.length) throw new Error(`${name} page errors: ${errors.join(' | ')}`);
+            console.log(`${name} passed: ${JSON.stringify({ ...result, highlighted })}`);
+            await page.close();
+          }
+          await browser.close();
+          JS
+          cd /tmp/gt19-parity
+          node check.mjs
+
+      - name: Commit only the verified parity change
+        run: |
+          rm -f .github/workflows/align-gt19-feedback.yml
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add \
+            academic/shared/reading-feature-shell-core.js \
+            general-training/cambridge-19/test-1/study-feedback.js \
+            "general-training/cambridge-19/test-2/IELTS19 Test 2 - Reading - GT.html" \
+            .github/workflows/align-gt19-feedback.yml
+          git commit -m "Align IELTS 19 GT feedback with Academic Reading"
+          git push origin HEAD:agent/align-gt19-t1-t2-feedback-with-academic
