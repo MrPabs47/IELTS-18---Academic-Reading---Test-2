@@ -878,7 +878,7 @@
     card.id = "reading-shell-feedback-" + questionNumber;
     card.innerHTML = '<h4>Question ' + questionNumber + '</h4><dl>' +
       (official ? '<dt>Your answer</dt><dd class="reading-shell-study-status reading-shell-study-status-' + status + '">' + html(statusText) + '</dd>' : "") +
-      '<dt>Correct answer</dt><dd>' + html(config.answers.getAnswerKeyDisplay(questionNumber) || "") + '</dd><dt>Why</dt><dd>' + html(detail[0]) + '</dd><dt>Skill</dt><dd>' + html(detail[1]) + '</dd><dt>Evidence</dt><dd>' + html(detail[2]) + '</dd></dl>';
+      '<dt>Correct answer</dt><dd>' + html(config.answers.getAnswerKeyDisplay(questionNumber) || "") + '</dd><dt>Why</dt><dd>' + html(detail[0]) + '</dd><dt>Skill</dt><dd>' + html(detail[1]) + '</dd>' + ((config.study && config.study.showEvidenceText === false) ? '' : '<dt>Evidence</dt><dd>' + html(detail[2]) + '</dd>') + '</dl>';
     if (!capabilities.hasPassageClues) {
       host.append(card);
       return;
