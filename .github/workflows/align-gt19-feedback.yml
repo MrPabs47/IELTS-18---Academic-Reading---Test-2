@@ -27,7 +27,8 @@ jobs:
           npx playwright install --with-deps chromium >/dev/null
           CHROME_BIN="$(find "$HOME/.cache/ms-playwright" -type f -name chrome -perm -111 | head -n 1)"
           test -n "$CHROME_BIN"
-          sudo ln -sf "$CHROME_BIN" /usr/local/bin/chrome
+          printf '#!/bin/sh\nexec "%s" --no-sandbox "$@"\n' "$CHROME_BIN" | sudo tee /usr/local/bin/chrome >/dev/null
+          sudo chmod +x /usr/local/bin/chrome
           chrome --version
 
       - name: Separate visible feedback from passage clue evidence
