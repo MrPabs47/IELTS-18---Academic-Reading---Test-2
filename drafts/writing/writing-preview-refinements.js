@@ -1,11 +1,37 @@
 (() => {
   const teacherEmail = "pablo.jaramillo@ilsc.com.au";
+  const activeSessionKey = "ielts-pabs-writing-16-2-active-tab-v1";
   const byId = (id) => document.getElementById(id);
   let reportOverlay = null;
   let reportText = null;
   let reportName = null;
   let reportEmail = null;
   let copyStatus = null;
+
+  const resumeThisTab = sessionStorage.getItem(activeSessionKey) === "1";
+  if (!resumeThisTab) {
+    clearInterval(timerId);
+    timerId = null;
+    state = {
+      ...state,
+      mode: null,
+      task: 1,
+      answers: { 1: "", 2: "" },
+      candidate: "",
+      deadline: null,
+      submitted: false,
+      submissions: [],
+      editedAfterSubmission: false
+    };
+    const app = byId("app");
+    const modeScreen = byId("modeScreen");
+    const testStartScreen = byId("testStartScreen");
+    const fullscreenLockOverlay = byId("fullscreenLockOverlay");
+    if (app) app.style.display = "none";
+    if (modeScreen) modeScreen.style.display = "flex";
+    if (testStartScreen) testStartScreen.style.display = "none";
+    if (fullscreenLockOverlay) fullscreenLockOverlay.style.display = "none";
+  }
 
   const clampSplit = (value) => {
     const number = Number(value);
@@ -177,6 +203,18 @@
     banner.querySelector("button").addEventListener("click", openReport);
   };
 
+  const originalStartAttempt = startAttempt;
+  startAttempt = function refinedStartAttempt(mode) {
+    sessionStorage.setItem(activeSessionKey, "1");
+    state.answers = { 1: "", 2: "" };
+    state.task = 1;
+    state.submitted = false;
+    state.submissions = [];
+    state.editedAfterSubmission = false;
+    if (mode !== "test") state.candidate = "";
+    originalStartAttempt(mode);
+  };
+
   const originalRenderTask = renderTask;
   renderTask = function refinedRenderTask() {
     originalRenderTask();
@@ -243,9 +281,12 @@
   };
 
   const installStableDivider = () => {
-    const divider = byId("divider");
+    const previousDivider = byId("divider");
     const main = byId("mainInner");
-    if (!divider || !main) return;
+    if (!previousDivider || !main) return;
+
+    const divider = previousDivider.cloneNode(true);
+    previousDivider.replaceWith(divider);
     let activePointer = null;
 
     const applyFromPointer = (clientX) => {
@@ -287,6 +328,14 @@
       }
     });
 
+    divider.addEventListener("keydown", (event) => {
+      if (event.key !== "ArrowLeft" && event.key !== "ArrowRight") return;
+      event.preventDefault();
+      state.split = clampSplit(state.split + (event.key === "ArrowRight" ? 2 : -2));
+      document.documentElement.style.setProperty("--split", `${state.split}%`);
+      saveState(false);
+    });
+
     state.split = clampSplit(state.split);
     requestAnimationFrame(() => {
       document.documentElement.style.setProperty("--split", `${state.split}%`);
@@ -303,6 +352,13 @@
 
   ensureReportOverlay();
   installStableDivider();
-  renderChrome();
-  renderTask();
+  if (state.mode) {
+    renderChrome();
+    renderTask();
+  } else {
+    const app = byId("app");
+    const modeScreen = byId("modeScreen");
+    if (app) app.style.display = "none";
+    if (modeScreen) modeScreen.style.display = "flex";
+  }
 })();
