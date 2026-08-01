@@ -1,17 +1,16 @@
 name: Run IELTS 19 GT Test 3 builder
 
 on:
-  push:
+  pull_request:
     branches:
-      - agent/add-gt19-test3-study-mode
-    paths:
-      - .github/workflows/run-gt19-test3-builder.yml
+      - main
 
 permissions:
   contents: write
 
 jobs:
   run-builder:
+    if: github.head_ref == 'agent/add-gt19-test3-study-mode'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
