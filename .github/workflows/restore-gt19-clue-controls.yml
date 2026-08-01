@@ -6,6 +6,9 @@ on:
       - agent/restore-gt19-clue-controls
     paths:
       - .github/workflows/restore-gt19-clue-controls.yml
+  pull_request:
+    branches:
+      - main
 
 permissions:
   contents: write
@@ -85,7 +88,7 @@ jobs:
 
           const pages = [
             'general-training/cambridge-19/test-1/IELTS19%20Test%201%20-%20Reading%20-%20GT.html',
-            'general-training/cambridge-19/test-2/IELTS19%20Test%202%20-%20Reading%20%20-%20GT.html'
+            'general-training/cambridge-19/test-2/IELTS19%20Test%202%20-%20Reading%20-%20GT.html'
           ];
 
           async function run(path) {
@@ -154,6 +157,7 @@ jobs:
           CHROME_BIN="$CHROME_BIN" node /tmp/gt19-clue-test/check.js
 
       - name: Commit only the tested fixes
+        if: github.event_name == 'push'
         shell: bash
         run: |
           rm -f .github/workflows/restore-gt19-clue-controls.yml
