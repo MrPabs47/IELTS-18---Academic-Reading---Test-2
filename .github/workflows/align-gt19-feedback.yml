@@ -67,6 +67,7 @@ jobs:
               assert 'completeClueCoverage: true' in text, path
           print('GT19 feedback parity structural contract passed.')
           PY
+          python -m pip install --quiet pytest
           python -m pytest -q \
             tests/reading_feature_shell_config_validation_test.py \
             tests/reading_feature_shell_foundation_test.py \
