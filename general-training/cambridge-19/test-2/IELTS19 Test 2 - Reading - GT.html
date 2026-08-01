@@ -3561,6 +3561,7 @@
         id: "cambridge-19-general-training-reading-test-2",
         title: "IELTS 19 General Training Reading Test 2",
         totalQuestions: 40,
+        partLabel: "Section",
         partRanges: sectionRanges
       },
       state: {
@@ -3575,6 +3576,9 @@
       },
       navigation: {
         getQuestionTarget: (questionNumber) => document.querySelector('.question-block[data-q="' + questionNumber + '"]')
+      },
+      compatibility: {
+        allowDomSubmittedResult: true
       },
       study: {
         taskGroups: gtTaskGroups,
