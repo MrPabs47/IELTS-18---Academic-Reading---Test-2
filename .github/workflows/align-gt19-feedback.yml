@@ -103,15 +103,8 @@ jobs:
             page.on('pageerror', error => errors.push(String(error)));
             await page.goto(url, { waitUntil: 'domcontentloaded' });
             await page.locator('button[data-mode="study"]').click();
-            await page.waitForSelector('.reading-shell-study-reveal-button', { timeout: 15000 });
-
-            const revealButtons = page.locator('.reading-shell-study-reveal-button');
-            for (let index = 0; index < await revealButtons.count(); index += 1) {
-              const button = revealButtons.nth(index);
-              if (await button.isVisible()) await button.click();
-            }
-
             await page.waitForFunction(() => document.querySelectorAll('.reading-shell-study-feedback-card').length === 40, null, { timeout: 15000 });
+
             const result = await page.evaluate(() => {
               const cards = [...document.querySelectorAll('.reading-shell-study-feedback-card')];
               const labels = cards.flatMap(card => [...card.querySelectorAll('dt')].map(dt => dt.textContent.trim()));
