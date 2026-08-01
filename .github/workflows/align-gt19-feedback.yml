@@ -24,33 +24,24 @@ jobs:
 
           core_path = Path('academic/shared/reading-feature-shell-core.js')
           core = core_path.read_text(encoding='utf-8')
-          old = """    card.innerHTML = '<h4>Question ' + questionNumber + '</h4><dl>' +
-              (official ? '<dt>Your answer</dt><dd class=\"reading-shell-study-status reading-shell-study-status-' + status + '\">' + html(statusText) + '</dd>' : \"\") +
-              '<dt>Correct answer</dt><dd>' + html(config.answers.getAnswerKeyDisplay(questionNumber) || \"\") + '</dd><dt>Why</dt><dd>' + html(detail[0]) + '</dd><dt>Skill</dt><dd>' + html(detail[1]) + '</dd><dt>Evidence</dt><dd>' + html(detail[2]) + '</dd></dl>';
-          """
-          new = """    card.innerHTML = '<h4>Question ' + questionNumber + '</h4><dl>' +
-              (official ? '<dt>Your answer</dt><dd class=\"reading-shell-study-status reading-shell-study-status-' + status + '\">' + html(statusText) + '</dd>' : \"\") +
-              '<dt>Correct answer</dt><dd>' + html(config.answers.getAnswerKeyDisplay(questionNumber) || \"\") + '</dd><dt>Why</dt><dd>' + html(detail[0]) + '</dd><dt>Skill</dt><dd>' + html(detail[1]) + '</dd>' +
-              ((config.study && config.study.showEvidenceText === false) ? '' : '<dt>Evidence</dt><dd>' + html(detail[2]) + '</dd>') + '</dl>';
-          """
-          if old not in core:
-              raise SystemExit('Could not find the shared feedback-card renderer')
+          old = "'<dt>Skill</dt><dd>' + html(detail[1]) + '</dd><dt>Evidence</dt><dd>' + html(detail[2]) + '</dd></dl>';"
+          new = "'<dt>Skill</dt><dd>' + html(detail[1]) + '</dd>' + ((config.study && config.study.showEvidenceText === false) ? '' : '<dt>Evidence</dt><dd>' + html(detail[2]) + '</dd>') + '</dl>';"
+          if core.count(old) != 1:
+              raise SystemExit(f'Expected one shared feedback-card renderer, found {core.count(old)}')
           core_path.write_text(core.replace(old, new, 1), encoding='utf-8')
 
           targets = [
               Path('general-training/cambridge-19/test-1/study-feedback.js'),
               Path('general-training/cambridge-19/test-2/IELTS19 Test 2 - Reading - GT.html'),
           ]
-          marker = """        completeQuestionCoverage: true,
-                  completeClueCoverage: true,
-          """
+          marker = "        completeQuestionCoverage: true,\n        completeClueCoverage: true,\n"
           replacement = marker + "        showEvidenceText: false,\n"
           for path in targets:
               text = path.read_text(encoding='utf-8')
               if 'showEvidenceText: false' in text:
                   continue
-              if marker not in text:
-                  raise SystemExit(f'Could not find Study Mode coverage settings in {path}')
+              if text.count(marker) != 1:
+                  raise SystemExit(f'Expected one Study Mode coverage block in {path}, found {text.count(marker)}')
               path.write_text(text.replace(marker, replacement, 1), encoding='utf-8')
           PY
 
@@ -126,8 +117,7 @@ jobs:
                 skill: labels.filter(label => label === 'Skill').length,
                 evidence: labels.filter(label => label === 'Evidence').length,
                 visibleClues: [...document.querySelectorAll('.reading-shell-study-clue-button')].filter(button => !button.hidden && !button.disabled).length,
-                sectionToggleReady: Boolean(document.querySelector('#passageClueToggle:not([hidden]):not(:disabled)')),
-                resultText: (document.querySelector('.reading-shell-score-feedback-summary') || {}).textContent || ''
+                sectionToggleReady: Boolean(document.querySelector('#passageClueToggle:not([hidden]):not(:disabled)'))
               };
             });
 
