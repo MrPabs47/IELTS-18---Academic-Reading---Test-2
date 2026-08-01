@@ -418,6 +418,7 @@
       study: {
         completeQuestionCoverage: true,
         completeClueCoverage: true,
+        showEvidenceText: false,
         taskGroups: groups,
         questionDetails: details,
         scoreGuide: feedback.scoreGuide
