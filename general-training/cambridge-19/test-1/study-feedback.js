@@ -416,6 +416,8 @@
         allowDomSubmittedResult: true
       },
       study: {
+        completeQuestionCoverage: true,
+        completeClueCoverage: true,
         taskGroups: groups,
         questionDetails: details,
         scoreGuide: feedback.scoreGuide
