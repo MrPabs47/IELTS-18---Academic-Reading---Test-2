@@ -21,14 +21,16 @@ jobs:
         run: |
           python - <<'PY'
           from pathlib import Path
+          import re
 
           core_path = Path('academic/shared/reading-feature-shell-core.js')
           core = core_path.read_text(encoding='utf-8')
-          old = "'<dt>Evidence</dt><dd>' + html(detail[2]) + '</dd></dl>'"
-          new = "((config.study && config.study.showEvidenceText === false) ? '' : '<dt>Evidence</dt><dd>' + html(detail[2]) + '</dd>') + '</dl>'"
-          if core.count(old) != 1:
-              raise SystemExit(f'Expected one shared Evidence renderer tail, found {core.count(old)}')
-          core_path.write_text(core.replace(old, new, 1), encoding='utf-8')
+          pattern = re.compile(r"<dt>Evidence</dt><dd>'\s*\+\s*html\(detail\[2\]\)\s*\+\s*'</dd>")
+          replacement = "' + ((config.study && config.study.showEvidenceText === false) ? '' : '<dt>Evidence</dt><dd>' + html(detail[2]) + '</dd>') + '"
+          core, count = pattern.subn(replacement, core)
+          if count != 1:
+              raise SystemExit(f'Expected one shared Evidence renderer, found {count}')
+          core_path.write_text(core, encoding='utf-8')
 
           targets = [
               Path('general-training/cambridge-19/test-1/study-feedback.js'),
