@@ -1,0 +1,150 @@
+name: Restore IELTS 19 GT Study Mode
+
+on:
+  push:
+    branches: [agent/restore-gt19-study-mode]
+    paths: [.github/workflows/restore-gt19-study-mode.yml]
+
+permissions:
+  contents: write
+
+jobs:
+  patch-test-commit:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: agent/restore-gt19-study-mode
+          fetch-depth: 0
+
+      - name: Restore current shared-shell contract for both GT tests
+        shell: bash
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+
+          paths = [
+              Path('general-training/cambridge-19/test-1/study-feedback.js'),
+              Path('general-training/cambridge-19/test-2/IELTS19 Test 2 - Reading - GT.html'),
+          ]
+
+          for path in paths:
+              text = path.read_text(encoding='utf-8')
+
+              part_needle = '        totalQuestions: 40,\n        partRanges: sectionRanges'
+              if text.count(part_needle) != 1:
+                  raise SystemExit(f'{path}: expected one legacy partRanges block, found {text.count(part_needle)}')
+              text = text.replace(
+                  part_needle,
+                  '        totalQuestions: 40,\n        partLabel: "Section",\n        partRanges: sectionRanges',
+                  1,
+              )
+
+              compatibility_needle = '\n      study: {\n        taskGroups:'
+              if text.count(compatibility_needle) != 1:
+                  raise SystemExit(f'{path}: expected one Study config block, found {text.count(compatibility_needle)}')
+              text = text.replace(
+                  compatibility_needle,
+                  '\n      compatibility: {\n        allowDomSubmittedResult: true\n      },\n      study: {\n        taskGroups:',
+                  1,
+              )
+
+              path.write_text(text, encoding='utf-8')
+          PY
+
+      - name: Run focused static regression checks
+        shell: bash
+        run: |
+          node --check general-training/cambridge-19/test-1/study-feedback.js
+          python - <<'PY'
+          from pathlib import Path
+
+          files = {
+              'Test 1': Path('general-training/cambridge-19/test-1/study-feedback.js'),
+              'Test 2': Path('general-training/cambridge-19/test-2/IELTS19 Test 2 - Reading - GT.html'),
+          }
+          for label, path in files.items():
+              text = path.read_text(encoding='utf-8')
+              assert text.count('partLabel: "Section"') == 1, f'{label}: missing Section partLabel'
+              assert text.count('allowDomSubmittedResult: true') == 1, f'{label}: missing legacy submitted-result compatibility'
+              assert 'totalQuestions: 40' in text, f'{label}: total question contract changed'
+              assert 'partRanges: sectionRanges' in text, f'{label}: section ranges changed'
+          print('Focused GT19 configuration checks passed for Test 1 and Test 2.')
+          PY
+
+      - name: Run live-page browser smoke checks locally
+        shell: bash
+        run: |
+          CHROME_BIN="$(command -v google-chrome-stable || command -v google-chrome || command -v chromium || true)"
+          test -n "$CHROME_BIN"
+          npm install --prefix /tmp/gt19-smoke --no-save puppeteer-core@24.16.0 >/dev/null
+          python -m http.server 8765 --bind 127.0.0.1 >/tmp/gt19-smoke-http.log 2>&1 &
+          SERVER_PID=$!
+          trap 'kill $SERVER_PID 2>/dev/null || true' EXIT
+          sleep 2
+          cat >/tmp/gt19-smoke.js <<'JS'
+          const puppeteer = require('/tmp/gt19-smoke/node_modules/puppeteer-core');
+
+          const pages = [
+            ['IELTS 19 GT Test 1', 'http://127.0.0.1:8765/general-training/cambridge-19/test-1/IELTS19%20Test%201%20-%20Reading%20-%20GT.html'],
+            ['IELTS 19 GT Test 2', 'http://127.0.0.1:8765/general-training/cambridge-19/test-2/IELTS19%20Test%202%20-%20Reading%20-%20GT.html'],
+          ];
+
+          (async () => {
+            const browser = await puppeteer.launch({
+              executablePath: process.env.CHROME_BIN,
+              headless: true,
+              args: ['--no-sandbox', '--disable-setuid-sandbox', '--disable-dev-shm-usage']
+            });
+            try {
+              for (const [label, url] of pages) {
+                const page = await browser.newPage();
+                const pageErrors = [];
+                page.on('pageerror', error => pageErrors.push(String(error)));
+                await page.goto(url, { waitUntil: 'networkidle0', timeout: 30000 });
+                await page.click('.mode-btn[data-mode="study"]');
+                await page.waitForFunction(() => {
+                  const status = window.ReadingFeatureShell && window.ReadingFeatureShell.getStatus && window.ReadingFeatureShell.getStatus();
+                  return Boolean(status && status.initialized && document.getElementById('app') && getComputedStyle(document.getElementById('app')).display !== 'none');
+                }, { timeout: 15000 });
+
+                const result = await page.evaluate(() => {
+                  const status = window.ReadingFeatureShell.getStatus();
+                  const mount = document.getElementById('readingFeatureShellMount');
+                  const mountText = String(mount && mount.textContent || '');
+                  return {
+                    initialized: status.initialized,
+                    error: status.error || '',
+                    mountText,
+                    strategyButtons: document.querySelectorAll('.reading-shell-study-strategy-button').length,
+                    detailCards: document.querySelectorAll('.reading-shell-study-question-detail').length,
+                  };
+                });
+
+                if (!result.initialized) throw new Error(`${label}: shared shell did not initialise: ${result.error}`);
+                if (!/Score guide/i.test(result.mountText)) throw new Error(`${label}: Score guide control is missing`);
+                if (!/Answer key/i.test(result.mountText)) throw new Error(`${label}: Answer key control is missing`);
+                if (pageErrors.length) throw new Error(`${label}: page errors: ${pageErrors.join(' | ')}`);
+                console.log(`${label}: Study Mode initialised with Score guide and Answer key.`);
+                await page.close();
+              }
+            } finally {
+              await browser.close();
+            }
+          })().catch(error => {
+            console.error(error);
+            process.exit(1);
+          });
+          JS
+          CHROME_BIN="$CHROME_BIN" node /tmp/gt19-smoke.js
+
+      - name: Commit tested fixes
+        shell: bash
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add \
+            general-training/cambridge-19/test-1/study-feedback.js \
+            "general-training/cambridge-19/test-2/IELTS19 Test 2 - Reading - GT.html"
+          git commit -m "Restore IELTS 19 GT Study modes"
+          git push origin HEAD:agent/restore-gt19-study-mode
