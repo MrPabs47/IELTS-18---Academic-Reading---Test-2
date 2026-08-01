@@ -24,10 +24,10 @@ jobs:
 
           core_path = Path('academic/shared/reading-feature-shell-core.js')
           core = core_path.read_text(encoding='utf-8')
-          old = "'<dt>Skill</dt><dd>' + html(detail[1]) + '</dd><dt>Evidence</dt><dd>' + html(detail[2]) + '</dd></dl>';"
-          new = "'<dt>Skill</dt><dd>' + html(detail[1]) + '</dd>' + ((config.study && config.study.showEvidenceText === false) ? '' : '<dt>Evidence</dt><dd>' + html(detail[2]) + '</dd>') + '</dl>';"
+          old = "'<dt>Evidence</dt><dd>' + html(detail[2]) + '</dd></dl>'"
+          new = "((config.study && config.study.showEvidenceText === false) ? '' : '<dt>Evidence</dt><dd>' + html(detail[2]) + '</dd>') + '</dl>'"
           if core.count(old) != 1:
-              raise SystemExit(f'Expected one shared feedback-card renderer, found {core.count(old)}')
+              raise SystemExit(f'Expected one shared Evidence renderer tail, found {core.count(old)}')
           core_path.write_text(core.replace(old, new, 1), encoding='utf-8')
 
           targets = [
