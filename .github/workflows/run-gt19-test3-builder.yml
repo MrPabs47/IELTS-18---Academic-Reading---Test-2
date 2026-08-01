@@ -21,19 +21,28 @@ jobs:
       - name: Execute the staged build and validation steps
         shell: bash
         run: |
-          python -m pip install --quiet pyyaml
           python - <<'PY'
           from pathlib import Path
+          import re
           import subprocess
-          import yaml
 
-          workflow = yaml.safe_load(Path('.github/workflows/build-gt19-test3-study.yml').read_text(encoding='utf-8'))
-          steps = workflow['jobs']['build-test-publish']['steps']
-          for step in steps:
-              name = step.get('name', '')
-              command = step.get('run')
-              if not command or name == 'Commit tested Test 3 files':
+          raw = Path('.github/workflows/build-gt19-test3-study.yml').read_text(encoding='utf-8')
+          pattern = re.compile(
+              r'^      - name: (?P<name>[^\n]+)\n(?:(?!^      - name:).)*?^        run: \|\n(?P<body>.*?)(?=^      - name:|\Z)',
+              re.MULTILINE | re.DOTALL,
+          )
+          steps = list(pattern.finditer(raw))
+          if len(steps) < 6:
+              raise SystemExit(f'Could only extract {len(steps)} staged run steps')
+
+          for match in steps:
+              name = match.group('name').strip()
+              if name == 'Commit tested Test 3 files':
                   continue
+              lines = []
+              for line in match.group('body').splitlines():
+                  lines.append(line[10:] if line.startswith('          ') else line)
+              command = '\n'.join(lines).rstrip() + '\n'
               print(f'\n===== {name} =====', flush=True)
               subprocess.run(command, shell=True, executable='/bin/bash', check=True)
           PY
