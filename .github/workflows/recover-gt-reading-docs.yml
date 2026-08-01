@@ -1,0 +1,139 @@
+name: Recover GT Reading documentation
+
+on:
+  pull_request:
+    branches: [main]
+
+permissions:
+  contents: write
+
+jobs:
+  recover-docs:
+    if: github.head_ref == 'docs/gt-reading-fast-track-workflow'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: docs/gt-reading-fast-track-workflow
+          fetch-depth: 0
+
+      - name: Restore canonical documentation
+        run: |
+          mkdir -p general-training/shared
+          python - <<'PY'
+          from pathlib import Path
+          import base64, gzip, re
+
+          old = Path('.github/workflows/publish-gt-reading-workflow.yml').read_text(encoding='utf-8')
+          match = re.search(
+              r'IELTS_GT_READING_FAST_TRACK_WORKFLOW\.md\n\s+([A-Za-z0-9+/=]+)\n\s+B64',
+              old,
+          )
+          if not match:
+              raise SystemExit('Could not recover the workflow document payload')
+          data = gzip.decompress(base64.b64decode(match.group(1), validate=True))
+          Path('general-training/shared/IELTS_GT_READING_FAST_TRACK_WORKFLOW.md').write_bytes(data)
+          PY
+          cat <<'B64_CHECKLIST' | base64 -d | gzip -d > general-training/shared/GT_READING_TEST_PARITY_CHECKLIST.md
+          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
+          /g0tt1jQEwh+gJv2gxf/H/GKC+ZDNQAA
+          B64_CHECKLIST
+
+      - name: Validate and publish documentation only
+        run: |
+          test -s general-training/shared/IELTS_GT_READING_FAST_TRACK_WORKFLOW.md
+          test -s general-training/shared/GT_READING_TEST_PARITY_CHECKLIST.md
+          grep -q 'showEvidenceText: false' general-training/shared/IELTS_GT_READING_FAST_TRACK_WORKFLOW.md
+          grep -q 'Fresh Study' general-training/shared/GT_READING_TEST_PARITY_CHECKLIST.md
+          rm -f .github/workflows/publish-gt-reading-workflow.yml .github/workflows/recover-gt-reading-docs.yml
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add general-training/shared/IELTS_GT_READING_FAST_TRACK_WORKFLOW.md general-training/shared/GT_READING_TEST_PARITY_CHECKLIST.md .github/workflows/publish-gt-reading-workflow.yml .github/workflows/recover-gt-reading-docs.yml
+          git commit -m "Add GT Reading fast-track workflow"
+          git push origin HEAD:docs/gt-reading-fast-track-workflow
