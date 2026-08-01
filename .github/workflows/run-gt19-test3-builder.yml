@@ -1,0 +1,56 @@
+name: Run IELTS 19 GT Test 3 builder
+
+on:
+  push:
+    branches:
+      - agent/add-gt19-test3-study-mode
+    paths:
+      - .github/workflows/run-gt19-test3-builder.yml
+
+permissions:
+  contents: write
+
+jobs:
+  run-builder:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: agent/add-gt19-test3-study-mode
+          fetch-depth: 0
+
+      - name: Execute the staged build and validation steps
+        shell: bash
+        run: |
+          python -m pip install --quiet pyyaml
+          python - <<'PY'
+          from pathlib import Path
+          import subprocess
+          import yaml
+
+          workflow = yaml.safe_load(Path('.github/workflows/build-gt19-test3-study.yml').read_text(encoding='utf-8'))
+          steps = workflow['jobs']['build-test-publish']['steps']
+          for step in steps:
+              name = step.get('name', '')
+              command = step.get('run')
+              if not command or name == 'Commit tested Test 3 files':
+                  continue
+              print(f'\n===== {name} =====', flush=True)
+              subprocess.run(command, shell=True, executable='/bin/bash', check=True)
+          PY
+
+      - name: Commit only the tested Test 3 files
+        shell: bash
+        run: |
+          rm -f .github/workflows/build-gt19-test3-study.yml
+          rm -f .github/workflows/run-gt19-test3-builder.yml
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add \
+            "general-training/cambridge-19/test-3/IELTS19 Test 3 - Reading - GT.html" \
+            general-training/cambridge-19/test-3/study-feedback.js \
+            general-training/cambridge-19/test-3/study-feedback-data.js \
+            .github/workflows/build-gt19-test3-study.yml \
+            .github/workflows/run-gt19-test3-builder.yml
+          git commit -m "Add IELTS 19 GT Test 3 Study mode"
+          git push origin HEAD:agent/add-gt19-test3-study-mode
