@@ -1,0 +1,85 @@
+window.IELTS_WRITING_TEST = {
+  id: "academic-16-2",
+  storageVersion: 1,
+  storageKey: "ielts-pabs-writing-academic-16-2-v1",
+  module: "Academic",
+  book: 16,
+  test: 2,
+  title: "IELTS 16 Academic Writing Test 2",
+  hubHref: "https://raw.githack.com/MrPabs47/IELTS-18---Academic-Reading---Test-2/writing-preview/index.html",
+  testMinutes: 60,
+  tasks: [
+    {
+      id: 1,
+      label: "Writing Task 1",
+      shortLabel: "Task 1",
+      kind: "academic-process",
+      minimumWords: 150,
+      recommendedMinutes: 20,
+      intro: "The diagram below shows the manufacturing process for making sugar from sugar cane.",
+      question: "Summarise the information by selecting and reporting the main features, and make comparisons where relevant.",
+      finalInstruction: "Write at least 150 words.",
+      image: "https://static.wixstatic.com/media/6d9e77_6f12e24e96e146978e49d51017278897~mv2.jpg/v1/fill/w_900,h_1050,al_c,q_90,enc_avif,quality_auto/6d9e77_6f12e24e96e146978e49d51017278897~mv2.webp",
+      imageAlt: "Process diagram showing seven stages in sugar production: sugar cane grows for 12 to 18 months, is harvested by hand or machine, crushed to extract juice, purified through a limestone filter, heated in an evaporator to form syrup, separated into sugar crystals in a centrifuge, then dried and cooled.",
+      imageCaption: "Manufacturing sugar from sugar cane",
+      study: {
+        taskType: "Process diagram",
+        understanding: [
+          "Describe the stages in a clear sequence rather than giving an opinion.",
+          "Include an overview that identifies the beginning, the end and the main phases.",
+          "Select the major features; do not try to describe every small visual detail."
+        ],
+        structure: [
+          "Introduction: paraphrase what the diagram shows.",
+          "Overview: summarise the number and general direction of the stages.",
+          "Body paragraph 1: growth, harvesting and crushing.",
+          "Body paragraph 2: purification, evaporation, separation, drying and cooling."
+        ],
+        checklist: [
+          "I included a clear overview.",
+          "I described the stages in a logical order.",
+          "I used accurate process language and passive forms where appropriate.",
+          "I avoided opinions and unsupported explanations.",
+          "I checked that I wrote at least 150 words."
+        ]
+      }
+    },
+    {
+      id: 2,
+      label: "Writing Task 2",
+      shortLabel: "Task 2",
+      kind: "two-part-question",
+      minimumWords: 250,
+      recommendedMinutes: 40,
+      leadIn: "Write about the following topic:",
+      intro: "In their advertising, businesses nowadays usually emphasise that their products are new in some way.",
+      questionLines: [
+        "Why is this?",
+        "Do you think it is a positive or negative development?"
+      ],
+      supportInstruction: "Give reasons for your answer and include any relevant examples from your own knowledge or experience.",
+      finalInstruction: "Write at least 250 words.",
+      study: {
+        taskType: "Two-part question",
+        understanding: [
+          "Answer both questions directly: explain why businesses stress novelty and evaluate whether this is positive or negative.",
+          "Make your position on the second question clear and maintain it throughout the essay.",
+          "Develop each main idea with explanation and a relevant example."
+        ],
+        structure: [
+          "Introduction: paraphrase the topic and state your overall position.",
+          "Body paragraph 1: explain why businesses emphasise that products are new.",
+          "Body paragraph 2: evaluate whether the development is positive or negative.",
+          "Conclusion: summarise both answers and restate your position."
+        ],
+        checklist: [
+          "I answered both questions fully.",
+          "My position is clear.",
+          "Each paragraph has one central idea with explanation.",
+          "My examples are relevant rather than memorised.",
+          "I checked cohesion, vocabulary, grammar and the 250-word minimum."
+        ]
+      }
+    }
+  ]
+};
