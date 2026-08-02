@@ -1,21 +1,28 @@
 # Safe Live Hub and Seasonal Update Runbook
 
-This runbook protects the live IELTS Pabs hub from accidentally replacing or downgrading Reading, General Training Reading or Listening tests.
+This runbook protects the live IELTS Pabs hub from accidentally replacing or downgrading Reading, General Training Reading, Listening, Writing or future Speaking tests.
 
-The Live Hub is a **router**. The canonical test pages remain the source of Test Mode, Study Mode, feedback, transcripts, audio, evidence and scoring behaviour.
+Before any Live Hub work, read:
+
+- `hub/IELTS_LIVE_HUB_FAST_TRACK_WORKFLOW.md`
+- `hub/LIVE_HUB_PARITY_CHECKLIST.md`
+- this seasonal runbook when the change is temporary or event-specific
+
+The Live Hub is a **router**. Canonical skill pages remain the source of Test Mode, Study Mode, feedback, transcripts, audio, evidence, scoring, Writing tools and future Speaking behaviour.
 
 ## What the protection does
 
 `python scripts/verify_live_hub.py` checks that:
 
-1. the hub still uses the approved canonical Academic Reading, General Training Reading and Listening route patterns;
-2. every test advertised by the hub exists at its canonical path;
-3. the restored/completed Reading, GT and Listening reference implementations still match their approved Git blob fingerprints;
-4. a seasonal hub PR does not also modify test pages, shared Reading code, Listening code or unrelated repository files;
-5. the logo/home route does not reintroduce the old `#mock-tests` scroll behaviour;
-6. seasonal styling remains local and does not load external CSS, fonts or images.
+1. the hub still uses the approved canonical route patterns for every live category;
+2. `index.html` availability matches the exact availability fragment recorded in `hub/live-hub-contract.json`;
+3. every test advertised by the hub exists at its canonical path;
+4. completed/restored reference boundaries still match approved Git blob fingerprints;
+5. a seasonal hub PR does not also modify test pages, shared engines or unrelated repository files;
+6. the logo/home route does not reintroduce the old `#mock-tests` scroll behaviour;
+7. seasonal styling remains local and does not load external CSS, fonts or images.
 
-The GitHub Actions workflow `.github/workflows/live-hub-guard.yml` runs this automatically for pull requests and updates to `main`.
+The GitHub Actions workflow `.github/workflows/live-hub-guard.yml` runs automatically for pull requests and updates to `main`.
 
 ## Normal special-day update
 
@@ -25,12 +32,13 @@ Use this for Christmas, Lunar New Year, Halloween, Australia Day, New Year or an
 
 In GitHub Desktop:
 
-1. Switch to `main`.
-2. Click **Fetch origin**.
-3. Click **Pull origin** if offered.
-4. Confirm there are no uncommitted changes.
+1. switch to `main`;
+2. click **Fetch origin**;
+3. click **Pull origin** when offered;
+4. confirm there are no uncommitted changes;
+5. run the current Live Hub guard.
 
-Never create a seasonal branch from an old hub branch.
+Never create a seasonal branch from an old redesign branch.
 
 ### 2. Create a dated backup branch
 
@@ -40,7 +48,7 @@ Use a name such as:
 backup-live-hub-before-christmas-2026-12-01
 ```
 
-This branch is a convenient visual rollback point. Git history remains the deeper backup.
+The backup is a convenient visual comparison and targeted hub rollback point. Git history remains the deeper backup. Never copy the whole backup repository over current `main`.
 
 ### 3. Create a seasonal branch
 
@@ -50,7 +58,21 @@ Use a name such as:
 seasonal/christmas-2026
 ```
 
-### 4. Edit only the seasonal layer
+### 4. Complete a read-only delta audit
+
+State:
+
+- the event and active dates;
+- exact intended appearance;
+- what must remain unchanged;
+- exact allowed and forbidden paths;
+- desktop/mobile acceptance;
+- representative skill links;
+- removal date and rollback method.
+
+Do not edit before this scope is clear.
+
+### 5. Edit only the seasonal layer
 
 Preferred files:
 
@@ -59,11 +81,11 @@ hub/seasonal-theme.css
 hub/assets/*
 ```
 
-The neutral hub stylesheet and all test files should remain untouched.
+The neutral hub stylesheet, route-generation JavaScript and all test files should remain untouched.
 
-`index.html` should only change when the event needs a temporary hub message or accessible text that CSS cannot provide. Do not edit its route-generation JavaScript during a seasonal update.
+`index.html` should change only when the event needs temporary accessible text that CSS cannot provide. Do not edit availability or route logic during a seasonal update.
 
-### 5. Run the guard locally
+### 6. Run the guard locally
 
 From the repository root:
 
@@ -71,28 +93,43 @@ From the repository root:
 python scripts/verify_live_hub.py --base-sha origin/main
 ```
 
-Expected result:
+Expected route inventory at the time this runbook was prepared:
 
 ```text
 Live Hub guard passed.
-Canonical routes checked: academicReading=16, generalReading=16, listening=15
-Protected reference fingerprints checked: 8
+Canonical routes checked: academicReading=16, generalReading=16, listening=15, academicWriting=1
+Protected reference fingerprints checked: 11
 ```
 
-### 6. Preview and manually check
+The counts will change only through a validated route/category activation that updates `index.html` and the contract together.
 
-Check desktop and phone width. Open representative links:
+### 7. Preview and manually check
+
+Check wide desktop, medium width and approximately 390 px. Confirm:
+
+- clean no-hash top load;
+- IELTS Pabs logo refreshes to the absolute top;
+- Mock Tests, Practice Lab and My Progress;
+- all four book families;
+- available and `Coming soon` states;
+- keyboard focus and reduced-motion behaviour;
+- no clipped or covered controls.
+
+Open representative links:
 
 - one completed Academic Reading reference;
-- IELTS 19 GT Tests 1 and 2;
-- one Listening test, including IELTS 16 Listening Test 1;
+- IELTS 19 GT Test 1 or 2;
+- the newest completed GT test;
+- IELTS 16 Listening Test 1;
+- one additional Listening test;
+- every currently live Academic Writing item;
 - the IELTS Pabs logo from the hub and from a test page.
 
-The event decoration must not reduce contrast, cover controls, change link targets or alter the meaning of Academic and General Training colours.
+The decoration must not reduce contrast, alter Academic/GT meaning, move test links or change target URLs.
 
-### 7. Open a hub-only pull request
+### 8. Open a hub-only pull request
 
-The PR should contain only the safe hub paths. The automated guard will reject a combined hub-and-test release.
+The PR should contain only safe seasonal paths. The automated guard rejects a combined hub-and-test release.
 
 Suggested title:
 
@@ -104,62 +141,69 @@ Include:
 
 - event and active dates;
 - files changed;
-- desktop/mobile preview confirmation;
+- desktop/medium/mobile confirmation;
+- keyboard/reduced-motion confirmation;
 - representative links checked;
 - guard result;
-- planned date to remove the theme.
+- planned removal date;
+- known limitations.
 
-### 8. Merge and verify live
+### 9. Merge and verify live
 
 After checks pass:
 
 1. squash-merge the PR;
-2. wait for GitHub Pages;
-3. hard refresh the live hub;
-4. open the representative Reading, GT and Listening links again.
+2. verify the commit on `origin/main`;
+3. wait for GitHub Pages;
+4. hard refresh the live hub;
+5. repeat the representative link and logo checks.
 
-### 9. Remove the theme after the event
+### 10. Remove the theme after the event
 
-Create a new branch from updated `main`, restore `hub/seasonal-theme.css` to its neutral commented state, run the guard and merge another small hub-only PR.
+Create a new branch from updated `main`, restore `hub/seasonal-theme.css` to its neutral state, remove event-only assets, run the guard and merge another small hub-only PR.
 
 ## Adding or improving a test
 
 Test production and hub decoration are separate releases.
 
-1. Complete the test in its Reading, GT or Listening branch.
+1. Complete the test through its Academic Reading, GT Reading, Listening, Writing or Speaking workflow.
 2. Run its full parity checklist and regression suite.
-3. Merge the test PR first.
-4. When an approved protected reference changes, update its fingerprint in that same validated test PR:
+3. Merge and verify the test PR first.
+4. Create a fresh hub activation branch from updated `main`.
+5. Update exact availability, canonical route inventory and expected availability contract together.
+6. Add or update a protected fingerprint only for a deliberately approved stable reference boundary.
+7. Run the guard and open a separate small activation PR.
+
+After a validated reference change, fingerprints can be refreshed with:
 
 ```bash
 python scripts/verify_live_hub.py --refresh-fingerprints
 ```
 
-5. Run the guard again.
-6. Activate or change hub availability in a separate tiny hub PR.
-
-Do not refresh fingerprints merely to make a seasonal PR pass. A mismatch means the test reference changed and needs its own investigation or validated release.
+Do not use this command merely to make a seasonal or unrelated PR pass. A mismatch requires investigation and skill-specific validation.
 
 ## Emergency rollback
 
 When a seasonal update causes a problem:
 
-1. revert the seasonal PR, or restore the neutral `hub/seasonal-theme.css`;
+1. revert the seasonal PR or restore the neutral seasonal files;
 2. do not copy the whole repository from an old backup branch;
-3. do not replace Reading, GT or Listening directories;
+3. do not replace Academic Reading, GT Reading, Listening, Writing or Speaking directories;
 4. run the Live Hub guard;
-5. merge the rollback and verify GitHub Pages.
+5. merge the smallest rollback;
+6. verify the live hub and representative targets.
 
-Restoring the entire repository from an old hub backup can also restore old test files. The backup branch is for comparison and targeted recovery, not for wholesale replacement.
+When a direct target is broken but its hub path is correct, move the repair to the relevant skill workflow. The hub may temporarily withdraw the one affected item, but it must not repair the test by copying an old file.
 
 ## Files protected as approved references
 
-The contract currently fingerprints:
+The contract currently protects:
 
-- the shared Reading feature-shell CSS and JavaScript;
+- shared Reading feature-shell CSS and JavaScript;
 - IELTS 16 Academic Reading Test 4;
 - IELTS 17 Academic Reading Test 1;
-- IELTS 19 GT Reading Tests 1, 2 and 3;
-- IELTS 16 Listening Test 1.
+- current IELTS 19 GT Reading Tests 1, 2 and 3;
+- IELTS 16 Listening Test 1;
+- the IELTS 16 Academic Writing canonical entry, clean-start redirect and visible application entry.
 
-These references represent the completed or restored behaviour used to judge future parity. Add another fingerprint only after that test becomes an approved reference implementation.
+These boundaries represent completed or restored behaviour used to detect silent replacement. Add another fingerprint only after the target becomes a stable approved reference implementation.
