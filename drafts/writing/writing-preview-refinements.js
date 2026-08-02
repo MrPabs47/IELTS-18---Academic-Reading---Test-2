@@ -1,36 +1,26 @@
 (() => {
   const teacherEmail = "pablo.jaramillo@ilsc.com.au";
-  const activeSessionKey = "ielts-pabs-writing-16-2-active-tab-v1";
   const byId = (id) => document.getElementById(id);
+
   let reportOverlay = null;
   let reportText = null;
   let reportName = null;
   let reportEmail = null;
   let copyStatus = null;
 
-  const resumeThisTab = sessionStorage.getItem(activeSessionKey) === "1";
-  if (!resumeThisTab) {
-    clearInterval(timerId);
-    timerId = null;
-    state = {
-      ...state,
-      mode: null,
-      task: 1,
-      answers: { 1: "", 2: "" },
-      candidate: "",
-      deadline: null,
-      submitted: false,
-      submissions: [],
-      editedAfterSubmission: false
-    };
-    const app = byId("app");
-    const modeScreen = byId("modeScreen");
-    const testStartScreen = byId("testStartScreen");
-    const fullscreenLockOverlay = byId("fullscreenLockOverlay");
-    if (app) app.style.display = "none";
-    if (modeScreen) modeScreen.style.display = "flex";
-    if (testStartScreen) testStartScreen.style.display = "none";
-    if (fullscreenLockOverlay) fullscreenLockOverlay.style.display = "none";
+  function animateReadingStyleLogo() {
+    const logo = byId("homeLogo");
+    if (!logo || logo.querySelector(".logo-char")) return;
+    const text = logo.textContent;
+    logo.textContent = "";
+    [...text].forEach((character, index) => {
+      const span = document.createElement("span");
+      span.className = "logo-char";
+      span.style.setProperty("--logo-char-index", index);
+      span.textContent = character === " " ? "\u00a0" : character;
+      logo.appendChild(span);
+    });
+    requestAnimationFrame(() => logo.classList.add("is-animating"));
   }
 
   const clampSplit = (value) => {
@@ -50,35 +40,24 @@
     }
   };
 
-  const currentTimerText = () => {
-    const timer = byId("timerDisplay");
-    return timer ? timer.textContent.trim() : "";
-  };
+  const currentTimerText = () => byId("timerDisplay")?.textContent.trim() || "";
+  const candidateName = () => reportName?.value.trim() || state.candidate || "Not provided";
+  const studentEmail = () => reportEmail?.value.trim() || "";
 
-  const candidateName = () => {
-    const typed = reportName ? reportName.value.trim() : "";
-    return typed || state.candidate || "Not provided";
-  };
-
-  const studentEmail = () => reportEmail ? reportEmail.value.trim() : "";
-
-  const buildReport = (snapshot = null) => {
+  const buildReport = () => {
     syncAnswer();
-    const source = snapshot || {
-      submittedAt: Date.now(),
-      answers: { 1: state.answers[1] || "", 2: state.answers[2] || "" },
-      timerStatus: currentTimerText()
-    };
-    const task1 = source.answers?.[1] || "";
-    const task2 = source.answers?.[2] || "";
+    const task1 = state.answers[1] || "";
+    const task2 = state.answers[2] || "";
     const lines = [
       "IELTS 16 Academic Writing Test 2",
       `Mode: ${state.mode === "test" ? "Test mode" : "Study mode"}`,
-      `Submitted: ${formatDate(source.submittedAt || Date.now())}`,
+      `Submitted: ${formatDate(state.lastSubmittedAt || Date.now())}`,
       `Student name: ${candidateName()}`
     ];
+
     if (studentEmail()) lines.push(`Student email: ${studentEmail()}`);
-    if (source.timerStatus) lines.push(`Timer status: ${source.timerStatus} remaining`);
+    if (currentTimerText()) lines.push(`Timer status: ${currentTimerText()} remaining`);
+
     lines.push(
       "",
       "=== Writing Task 1 ===",
@@ -89,17 +68,17 @@
       `Word count: ${countWords(task2)}`,
       task2 || "[No answer entered]"
     );
+
     return lines.join("\n");
   };
 
   const updateReportPreview = () => {
-    if (!reportText) return;
-    reportText.value = buildReport();
+    if (reportText) reportText.value = buildReport();
   };
 
   const subjectLine = () => {
     const name = candidateName();
-    return `IELTS Writing – Test 2 answers${name && name !== "Not provided" ? ` – ${name}` : ""}`;
+    return `IELTS Writing – Test 2 answers${name !== "Not provided" ? ` – ${name}` : ""}`;
   };
 
   const openEmailUrl = (provider) => {
@@ -108,11 +87,13 @@
     const body = encodeURIComponent(reportText.value);
     const to = encodeURIComponent(teacherEmail);
     let url = `mailto:${teacherEmail}?subject=${subject}&body=${body}`;
+
     if (provider === "gmail") {
       url = `https://mail.google.com/mail/?view=cm&fs=1&to=${to}&su=${subject}&body=${body}`;
     } else if (provider === "outlook") {
       url = `https://outlook.live.com/mail/0/deeplink/compose?to=${to}&subject=${subject}&body=${body}`;
     }
+
     window.open(url, "_blank", "noopener,noreferrer");
   };
 
@@ -129,8 +110,13 @@
     copyStatus.textContent = "All text copied. Paste it into an email or Teams message.";
   };
 
+  function closeReport() {
+    if (reportOverlay) reportOverlay.style.display = "none";
+  }
+
   const ensureReportOverlay = () => {
     if (reportOverlay) return;
+
     reportOverlay = document.createElement("div");
     reportOverlay.id = "submissionReportOverlay";
     reportOverlay.className = "submission-report-overlay";
@@ -139,7 +125,7 @@
         <header class="submission-report-head">
           <div>
             <h2 id="submissionReportTitle">Test submitted</h2>
-            <p>Your answers are saved on this device. You can copy the report or open an email addressed to ${teacherEmail}.</p>
+            <p>Copy or email the answers before closing or reloading this page. This preview does not save progress.</p>
           </div>
           <button class="submission-report-close" type="button" aria-label="Close submission report">✕</button>
         </header>
@@ -156,15 +142,17 @@
             <button type="button" data-report-action="outlook">Open Outlook / Hotmail</button>
             <button type="button" data-report-action="email">Use email app</button>
           </div>
-          <p class="submission-report-note">For very long answers, some email services may shorten a pre-filled message. Copying the report and pasting it into the email is the safest option.</p>
+          <p class="submission-report-note">For very long answers, copying and pasting the report is safer than relying on a pre-filled email.</p>
           <div class="submission-copy-status" aria-live="polite"></div>
         </div>
       </section>`;
+
     document.body.appendChild(reportOverlay);
     reportText = byId("submissionReportText");
     reportName = byId("submissionStudentName");
     reportEmail = byId("submissionStudentEmail");
     copyStatus = reportOverlay.querySelector(".submission-copy-status");
+
     reportName.value = state.candidate || "";
     reportName.addEventListener("input", updateReportPreview);
     reportEmail.addEventListener("input", updateReportPreview);
@@ -187,42 +175,27 @@
     reportName.focus();
   }
 
-  function closeReport() {
-    if (reportOverlay) reportOverlay.style.display = "none";
-  }
-
   const ensureSubmittedBanner = () => {
     const banner = byId("submittedBanner");
     if (!banner) return;
+
     if (!state.submitted) {
       banner.style.display = "none";
       return;
     }
+
     banner.style.display = "flex";
     banner.innerHTML = '<span>Test submitted · answers remain editable</span><button type="button">Open report</button>';
     banner.querySelector("button").addEventListener("click", openReport);
   };
 
-  const originalStartAttempt = startAttempt;
-  startAttempt = function refinedStartAttempt(mode) {
-    sessionStorage.setItem(activeSessionKey, "1");
-    state.answers = { 1: "", 2: "" };
-    state.task = 1;
-    state.submitted = false;
-    state.submissions = [];
-    state.editedAfterSubmission = false;
-    if (mode !== "test") state.candidate = "";
-    originalStartAttempt(mode);
-  };
-
   const originalRenderTask = renderTask;
   renderTask = function refinedRenderTask() {
     originalRenderTask();
-    const editor = byId("answerEditor");
-    if (editor) editor.disabled = false;
+    byId("answerEditor").disabled = false;
     const submit = byId("submitButton");
     if (submit && state.mode === "test") {
-      submit.title = state.submitted ? "Send updated report" : "Submit test";
+      submit.title = state.submitted ? "Prepare updated report" : "Submit test";
       submit.setAttribute("aria-label", submit.title);
     }
   };
@@ -239,10 +212,7 @@
     syncAnswer();
     const task1Words = countWords(state.answers[1] || "");
     const task2Words = countWords(state.answers[2] || "");
-    const summary = byId("submitSummary");
-    if (summary) {
-      summary.textContent = `Writing Task 1: ${task1Words} words. Writing Task 2: ${task2Words} words. Submitting stops the timer and prepares a report, but your answers will remain editable.`;
-    }
+    byId("submitSummary").textContent = `Writing Task 1: ${task1Words} words. Writing Task 2: ${task2Words} words. Submitting stops the timer and prepares a report, but the answers remain editable on this page.`;
     byId("submitTitle").textContent = state.submitted ? "Prepare an updated report?" : "Submit your Writing test?";
     byId("confirmSubmit").textContent = state.submitted ? "Prepare updated report" : "Submit test";
     byId("submitOverlay").style.display = "flex";
@@ -250,28 +220,17 @@
 
   submitTest = function refinedSubmitTest(reason = "student") {
     syncAnswer();
-    const submittedAt = Date.now();
-    const snapshot = {
-      submittedAt,
-      reason,
-      candidate: state.candidate || "",
-      timerStatus: currentTimerText(),
-      answers: {
-        1: state.answers[1] || "",
-        2: state.answers[2] || ""
-      },
-      wordCounts: {
-        1: countWords(state.answers[1] || ""),
-        2: countWords(state.answers[2] || "")
-      }
-    };
     state.submitted = true;
     state.submissionReason = reason;
-    state.lastSubmittedAt = submittedAt;
+    state.lastSubmittedAt = Date.now();
     state.submissions = Array.isArray(state.submissions) ? state.submissions : [];
-    state.submissions.push(snapshot);
-    state.submissions = state.submissions.slice(-10);
-    saveState(false);
+    state.submissions.push({
+      submittedAt: state.lastSubmittedAt,
+      reason,
+      candidate: state.candidate || "",
+      answers: { 1: state.answers[1] || "", 2: state.answers[2] || "" }
+    });
+
     clearInterval(timerId);
     timerId = null;
     byId("submitOverlay").style.display = "none";
@@ -315,50 +274,21 @@
       if (event.pointerId !== undefined && event.pointerId !== activePointer) return;
       activePointer = null;
       document.body.classList.remove("resizing-panes");
-      saveState(false);
     };
 
     window.addEventListener("pointerup", finish);
     window.addEventListener("pointercancel", finish);
-    window.addEventListener("blur", () => {
-      if (activePointer !== null) {
-        activePointer = null;
-        document.body.classList.remove("resizing-panes");
-        saveState(false);
-      }
-    });
+    window.addEventListener("blur", finish);
 
     divider.addEventListener("keydown", (event) => {
       if (event.key !== "ArrowLeft" && event.key !== "ArrowRight") return;
       event.preventDefault();
       state.split = clampSplit(state.split + (event.key === "ArrowRight" ? 2 : -2));
       document.documentElement.style.setProperty("--split", `${state.split}%`);
-      saveState(false);
-    });
-
-    state.split = clampSplit(state.split);
-    requestAnimationFrame(() => {
-      document.documentElement.style.setProperty("--split", `${state.split}%`);
-      requestAnimationFrame(() => document.documentElement.style.setProperty("--split", `${state.split}%`));
     });
   };
 
-  const editor = byId("answerEditor");
-  if (editor) {
-    editor.addEventListener("input", () => {
-      if (state.submitted) state.editedAfterSubmission = true;
-    });
-  }
-
+  animateReadingStyleLogo();
   ensureReportOverlay();
   installStableDivider();
-  if (state.mode) {
-    renderChrome();
-    renderTask();
-  } else {
-    const app = byId("app");
-    const modeScreen = byId("modeScreen");
-    if (app) app.style.display = "none";
-    if (modeScreen) modeScreen.style.display = "flex";
-  }
 })();
