@@ -280,6 +280,7 @@
       var record = recordForQuestion(zoneQuestion(zone));
       var selected = record && selectedByBank.get(record.id);
       if (selected) apply(zone, selected, record);
+      else if (selectedByBank.size > 0) return;
       else if (zone.classList.contains("filled")) clear(zone);
     }, true);
 
