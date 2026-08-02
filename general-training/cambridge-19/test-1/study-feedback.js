@@ -1,6 +1,8 @@
 (function () {
   "use strict";
 
+  document.write('<script src="../../shared/gt-reading-exam-guards.js"><\/script>');
+
   document.write('<link rel="stylesheet" href="../../../academic/shared/reading-feature-shell.css" />');
   document.write('<script src="study-feedback-data.js"><\/script>');
   document.write('<script src="../../../academic/shared/reading-feature-shell-core.js"><\/script>');

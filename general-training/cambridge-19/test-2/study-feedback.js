@@ -1,6 +1,8 @@
 (function () {
   "use strict";
 
+  document.write('<script src="../../shared/gt-reading-exam-guards.js"><\/script>');
+
   var current = document.currentScript;
   var dataSource = current && current.src
     ? current.src.replace(/study-feedback\.js(?:\?.*)?$/, "study-feedback-data.js")
