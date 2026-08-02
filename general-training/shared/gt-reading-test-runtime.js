@@ -25,8 +25,11 @@
       ".passage-heading-letter{flex:0 0 auto;font-weight:800}" +
       ".passage-heading-wording{min-width:0}" +
       ".passage-heading-body{margin-top:0!important}" +
-      ".passage-heading-drop-zone{justify-content:flex-start;line-height:1.35;max-width:100%;min-height:42px;text-align:left;white-space:normal;width:min(100%,430px)}" +
-      ".passage-heading-drop-zone.filled{font-weight:700}" +
+      ".test-candidate-name{color:var(--text-soft);font-weight:700;max-width:180px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}" +
+      "body[data-gt-mode=test] .reading-shell-study-controls{display:none!important}" +
+      ".passage-heading-drop-zone{justify-content:flex-start;line-height:1.3;max-width:100%;text-align:left;white-space:normal}" +
+      ".passage-heading-drop-zone:not(.filled){color:var(--text-soft);font-size:.84rem;font-weight:600;height:30px;min-height:30px;width:104px}" +
+      ".passage-heading-drop-zone.filled{font-weight:700;height:auto;min-height:38px;width:min(100%,430px)}" +
       ".drag-item.passage-match-source:focus-visible,.drop-zone:focus-visible{outline:3px solid var(--accent);outline-offset:2px}" +
       ".drag-item.passage-match-source.reading-shell-locked,.drop-zone.reading-shell-locked{cursor:not-allowed;opacity:.72}";
     document.head.appendChild(style);
@@ -103,6 +106,59 @@
 
   function isTest3Page() {
     return /Reading Test 3/i.test(document.title || "") && /General Training/i.test(document.title || "");
+  }
+
+  function ensureTest3CandidateName() {
+    if (!isTest3Page()) return null;
+    var existing = document.getElementById("testCandidateName");
+    if (existing) return existing;
+    var topRight = document.querySelector(".top-right");
+    if (!topRight) return null;
+    var candidate = document.createElement("span");
+    candidate.id = "testCandidateName";
+    candidate.className = "test-candidate-name";
+    candidate.hidden = true;
+    candidate.setAttribute("aria-live", "polite");
+    var mount = document.getElementById("readingFeatureShellMount");
+    var timer = document.getElementById("timerContainer");
+    topRight.insertBefore(candidate, mount || timer || topRight.firstChild);
+    return candidate;
+  }
+
+  function syncTest3ModeUi() {
+    if (!isTest3Page() || !document.body) return;
+    var currentMode = typeof mode === "string" ? mode : "";
+    document.body.setAttribute("data-gt-mode", currentMode);
+    var candidate = ensureTest3CandidateName();
+    if (candidate) {
+      var name = typeof studentName === "string" ? studentName.trim() : "";
+      candidate.textContent = name ? "Candidate: " + name : "";
+      candidate.title = name;
+      candidate.hidden = currentMode !== "test" || !name;
+    }
+    document.querySelectorAll(".reading-shell-study-controls").forEach(function (controls) {
+      var hideForTest = currentMode === "test";
+      controls.hidden = hideForTest;
+      controls.style.display = hideForTest ? "none" : "";
+      controls.setAttribute("aria-hidden", hideForTest ? "true" : "false");
+    });
+  }
+
+  function installTest3ModeUi() {
+    if (!isTest3Page() || document.documentElement.getAttribute("data-gt-mode-ui") === "true") return;
+    document.documentElement.setAttribute("data-gt-mode-ui", "true");
+    var originalStartTest = window.startTest;
+    if (typeof originalStartTest === "function") {
+      window.startTest = function () {
+        var result = originalStartTest.apply(this, arguments);
+        window.setTimeout(syncTest3ModeUi, 0);
+        return result;
+      };
+    }
+    new MutationObserver(function () {
+      window.setTimeout(syncTest3ModeUi, 0);
+    }).observe(document.body, { childList: true, subtree: true });
+    syncTest3ModeUi();
   }
 
   function parseBankRange(bank) {
@@ -424,6 +480,7 @@
     installStyles();
     installLogoHomeLink();
     installFindShortcutGuard();
+    installTest3ModeUi();
     installTest3DragMatching();
   }
 
