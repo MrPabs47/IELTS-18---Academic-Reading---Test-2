@@ -1,9 +1,9 @@
 name: Run staged Test 3 mode polish
 
 on:
-  push:
-    branches:
-      - agent/fix-gt19-test3-test-mode-polish
+  pull_request:
+    branches: [main]
+    types: [opened, synchronize, reopened]
     paths:
       - .github/workflows/run-test3-mode-polish.yml
 
