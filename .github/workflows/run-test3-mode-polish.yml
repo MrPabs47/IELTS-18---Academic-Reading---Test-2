@@ -19,6 +19,32 @@ jobs:
           ref: agent/fix-gt19-test3-test-mode-polish
           fetch-depth: 0
 
+      - name: Synchronise late Study controls
+        shell: bash
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          path = Path('.github/scripts/test3-mode-polish.sh')
+          text = path.read_text(encoding='utf-8')
+          old = '''    candidate.title = name;
+    candidate.hidden = currentMode !== "test" || !name;
+  }
+'''
+          new = '''    candidate.title = name;
+    candidate.hidden = currentMode !== "test" || !name;
+    document.querySelectorAll(".reading-shell-study-controls").forEach(function (controls) {
+      var hideForTest = currentMode === "test";
+      controls.hidden = hideForTest;
+      controls.style.display = hideForTest ? "none" : "";
+      controls.setAttribute("aria-hidden", hideForTest ? "true" : "false");
+    });
+  }
+'''
+          if text.count(old) != 1:
+              raise SystemExit('Expected Test 3 mode synchroniser exactly once')
+          path.write_text(text.replace(old, new), encoding='utf-8')
+          PY
+
       - name: Apply patch and run browser regression
         shell: bash
         run: bash .github/scripts/test3-mode-polish.sh
