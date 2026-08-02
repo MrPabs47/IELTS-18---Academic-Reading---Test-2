@@ -19,6 +19,14 @@
       "#shortcutToast{background:rgba(17,24,39,.96);border:1px solid rgba(255,255,255,.18);border-radius:999px;bottom:82px;color:#fff;font-size:.9rem;font-weight:700;left:50%;max-width:min(92vw,520px);opacity:0;padding:10px 16px;pointer-events:none;position:fixed;text-align:center;transform:translate(-50%,12px);transition:opacity .16s ease,transform .16s ease;visibility:hidden;z-index:2400}" +
       "#shortcutToast.visible{opacity:1;transform:translate(-50%,0);visibility:visible}" +
       ".drag-item.passage-match-source{cursor:grab}" +
+      ".passage-heading-source{align-items:flex-start;background:color-mix(in srgb,var(--bg) 94%,var(--bg-secondary));border:1px solid var(--border);border-radius:7px;color:var(--text);display:flex;font:inherit;font-weight:700;gap:8px;line-height:1.35;margin:14px 0 6px;padding:6px 9px;text-align:left;width:100%}" +
+      ".passage-heading-source:hover,.passage-heading-source.selected,.passage-heading-source:focus-visible{background:var(--accent-soft);border-color:var(--accent);box-shadow:0 0 0 2px color-mix(in srgb,var(--accent) 22%,transparent);outline:none}" +
+      ".passage-heading-source.is-dragging{opacity:.68}" +
+      ".passage-heading-letter{flex:0 0 auto;font-weight:800}" +
+      ".passage-heading-wording{min-width:0}" +
+      ".passage-heading-body{margin-top:0!important}" +
+      ".passage-heading-drop-zone{justify-content:flex-start;line-height:1.35;max-width:100%;min-height:42px;text-align:left;white-space:normal;width:min(100%,430px)}" +
+      ".passage-heading-drop-zone.filled{font-weight:700}" +
       ".drag-item.passage-match-source:focus-visible,.drop-zone:focus-visible{outline:3px solid var(--accent);outline-offset:2px}" +
       ".drag-item.passage-match-source.reading-shell-locked,.drop-zone.reading-shell-locked{cursor:not-allowed;opacity:.72}";
     document.head.appendChild(style);
@@ -104,31 +112,103 @@
     return { from: Number(match[1]), to: Number(match[2]) };
   }
 
+  function normalPassageHeadingText(value) {
+    return String(value || "").replace(/\s+/g, " ").trim();
+  }
+
+  function passageHeadingParagraphs(parent) {
+    if (!parent) return [];
+    return Array.from(parent.children).filter(function (node) {
+      return node.tagName === "P" && node.firstElementChild && node.firstElementChild.tagName === "STRONG";
+    });
+  }
+
   function installTest3DragMatching() {
     if (!isTest3Page() || document.documentElement.getAttribute("data-gt-drag-upgrade") === "true") return;
-    var banks = Array.from(document.querySelectorAll(".drag-bank"));
-    if (!banks.length) return;
+
+    var section = document.querySelector('.passage-section[data-section="1"]');
+    var banks = Array.from(document.querySelectorAll('.drag-bank')).filter(function (bank) {
+      var range = parseBankRange(bank);
+      return range && ((range.from === 1 && range.to === 8) || (range.from === 9 && range.to === 14));
+    });
+    var allHeadingParagraphs = section ? Array.from(section.querySelectorAll("p")).filter(function (node) {
+      return node.firstElementChild && node.firstElementChild.tagName === "STRONG";
+    }) : [];
+    var groups = [
+      { range: { from: 1, to: 8 }, paragraphs: allHeadingParagraphs.slice(0, 5) },
+      { range: { from: 9, to: 14 }, paragraphs: allHeadingParagraphs.slice(5, 9) }
+    ];
+
+    if (!section || banks.length < 2 || groups[0].paragraphs.length !== 5 || groups[1].paragraphs.length !== 4) return;
 
     document.documentElement.setAttribute("data-gt-drag-upgrade", "true");
     var bankRecords = [];
     var selectedByBank = new Map();
     var activeDrag = null;
 
-    banks.forEach(function (bank, index) {
-      var range = parseBankRange(bank);
-      if (!range) return;
-      var id = "gt-drag-bank-" + (index + 1);
-      bank.setAttribute("data-gt-drag-bank", id);
-      var record = { id: id, bank: bank, range: range };
-      bankRecords.push(record);
+    groups.forEach(function (group, index) {
+      var bank = banks.find(function (candidate) {
+        var range = parseBankRange(candidate);
+        return range && range.from === group.range.from && range.to === group.range.to;
+      }) || banks[index];
+      if (!bank) return;
 
-      Array.from(bank.querySelectorAll(".drag-item")).forEach(function (item) {
-        item.classList.add("passage-match-source");
-        item.setAttribute("role", "button");
-        item.setAttribute("tabindex", "0");
-        item.setAttribute("aria-label", "Choose " + item.getAttribute("data-value") + " for questions " + range.from + " to " + range.to);
-        item.setAttribute("data-gt-drag-bank", id);
+      var id = "gt-passage-source-group-" + (index + 1);
+      var sources = [];
+
+      group.paragraphs.forEach(function (paragraph) {
+        var strong = paragraph.firstElementChild;
+        var rawLabel = normalPassageHeadingText(strong && strong.textContent);
+        var match = rawLabel.match(/^([A-Z])\s+(.+)$/);
+        if (!match) return;
+
+        var value = match[1];
+        var title = match[2];
+        var source = document.createElement("button");
+        source.type = "button";
+        source.className = "drag-item passage-match-source passage-heading-source";
+        source.draggable = true;
+        source.setAttribute("data-value", value);
+        source.setAttribute("data-source-label", rawLabel);
+        source.setAttribute("data-gt-drag-bank", id);
+        source.setAttribute("aria-label", "Choose " + rawLabel + " for Questions " + group.range.from + " to " + group.range.to);
+        source.setAttribute("aria-pressed", "false");
+
+        var letter = document.createElement("span");
+        letter.className = "passage-heading-letter";
+        letter.textContent = value;
+        var wording = document.createElement("span");
+        wording.className = "passage-heading-wording";
+        wording.textContent = title;
+        source.append(letter, wording);
+
+        paragraph.parentNode.insertBefore(source, paragraph);
+        strong.remove();
+        if (paragraph.firstChild && paragraph.firstChild.nodeType === Node.TEXT_NODE) {
+          paragraph.firstChild.nodeValue = paragraph.firstChild.nodeValue.replace(/^\s+/, "");
+        }
+        paragraph.classList.add("passage-heading-body");
+        sources.push(source);
       });
+
+      if (!sources.length) return;
+      bankRecords.push({ id: id, bank: bank, range: group.range, sources: sources });
+
+      var sourceLabels = new Set(sources.map(function (source) {
+        return normalPassageHeadingText(source.getAttribute("data-source-label"));
+      }));
+      var sibling = bank.previousElementSibling;
+      while (sibling && sibling.tagName === "P") {
+        var previous = sibling.previousElementSibling;
+        if (!sourceLabels.has(normalPassageHeadingText(sibling.textContent))) break;
+        sibling.hidden = true;
+        sibling.classList.add("passage-option-list-hidden");
+        sibling = previous;
+      }
+
+      bank.hidden = true;
+      bank.style.display = "none";
+      bank.setAttribute("aria-hidden", "true");
     });
 
     function recordForQuestion(questionNumber) {
@@ -140,6 +220,12 @@
     function recordForNode(node) {
       var id = node && node.getAttribute && node.getAttribute("data-gt-drag-bank");
       return bankRecords.find(function (record) { return record.id === id; }) || null;
+    }
+
+    function sourceForValue(record, value) {
+      return record && record.sources.find(function (source) {
+        return source.getAttribute("data-value") === value;
+      });
     }
 
     function zoneQuestion(zone) {
@@ -160,19 +246,19 @@
 
     function clearSelections() {
       selectedByBank.clear();
-      document.querySelectorAll(".drag-item.selected").forEach(function (item) {
-        item.classList.remove("selected");
-        item.setAttribute("aria-pressed", "false");
+      document.querySelectorAll(".passage-heading-source.selected").forEach(function (source) {
+        source.classList.remove("selected");
+        source.setAttribute("aria-pressed", "false");
       });
     }
 
-    function choose(item) {
-      var record = recordForNode(item);
-      if (!record || locked(item, null)) return false;
+    function choose(source) {
+      var record = recordForNode(source);
+      if (!record || locked(source, null)) return false;
       clearSelections();
-      selectedByBank.set(record.id, item.getAttribute("data-value"));
-      item.classList.add("selected");
-      item.setAttribute("aria-pressed", "true");
+      selectedByBank.set(record.id, source.getAttribute("data-value"));
+      source.classList.add("selected");
+      source.setAttribute("aria-pressed", "true");
       return true;
     }
 
@@ -185,11 +271,14 @@
       var allowed = Array.from(select.options).some(function (option) { return option.value === value; });
       if (!allowed) return false;
 
+      var source = sourceForValue(targetRecord, value);
+      var label = source ? source.getAttribute("data-source-label") : value;
       select.value = value;
       select.dispatchEvent(new Event("change", { bubbles: true }));
-      zone.textContent = value;
-      zone.classList.add("filled");
-      zone.setAttribute("aria-label", "Answer " + value + " for question " + question + ". Press Delete to clear.");
+      zone.textContent = label;
+      zone.setAttribute("data-answer-value", value);
+      zone.classList.add("filled", "passage-heading-drop-zone");
+      zone.setAttribute("aria-label", label + " selected for Question " + question + ". Press Delete to clear.");
       clearSelections();
       return true;
     }
@@ -201,6 +290,7 @@
       select.value = "";
       select.dispatchEvent(new Event("change", { bubbles: true }));
       zone.textContent = "Drop here";
+      zone.removeAttribute("data-answer-value");
       zone.classList.remove("filled", "over");
       zone.setAttribute("aria-label", "Answer box for question " + question);
       clearSelections();
@@ -208,15 +298,16 @@
     }
 
     document.addEventListener("dragstart", function (event) {
-      var item = event.target.closest && event.target.closest(".drag-item[data-gt-drag-bank]");
-      if (!item) return;
+      var source = event.target.closest && event.target.closest(".passage-heading-source[data-gt-drag-bank]");
+      if (!source) return;
       event.stopImmediatePropagation();
-      if (!choose(item)) {
+      if (!choose(source)) {
         event.preventDefault();
         return;
       }
-      var record = recordForNode(item);
-      activeDrag = { record: record, value: item.getAttribute("data-value") };
+      var record = recordForNode(source);
+      activeDrag = { record: record, value: source.getAttribute("data-value") };
+      source.classList.add("is-dragging");
       if (event.dataTransfer) {
         event.dataTransfer.effectAllowed = "copy";
         event.dataTransfer.setData("text/plain", activeDrag.value);
@@ -225,15 +316,16 @@
     }, true);
 
     document.addEventListener("dragend", function (event) {
-      var item = event.target.closest && event.target.closest(".drag-item[data-gt-drag-bank]");
-      if (!item) return;
+      var source = event.target.closest && event.target.closest(".passage-heading-source[data-gt-drag-bank]");
+      if (!source) return;
       event.stopImmediatePropagation();
+      source.classList.remove("is-dragging");
       activeDrag = null;
       document.querySelectorAll(".drop-zone.over").forEach(function (zone) { zone.classList.remove("over"); });
     }, true);
 
     document.addEventListener("dragover", function (event) {
-      var zone = event.target.closest && event.target.closest(".drop-zone");
+      var zone = event.target.closest && event.target.closest(".drop-zone[data-gt-drag-bank]");
       if (!zone) return;
       var targetRecord = recordForQuestion(zoneQuestion(zone));
       var select = selectForZone(zone);
@@ -245,14 +337,14 @@
     }, true);
 
     document.addEventListener("dragleave", function (event) {
-      var zone = event.target.closest && event.target.closest(".drop-zone");
+      var zone = event.target.closest && event.target.closest(".drop-zone[data-gt-drag-bank]");
       if (!zone) return;
       event.stopImmediatePropagation();
       zone.classList.remove("over");
     }, true);
 
     document.addEventListener("drop", function (event) {
-      var zone = event.target.closest && event.target.closest(".drop-zone");
+      var zone = event.target.closest && event.target.closest(".drop-zone[data-gt-drag-bank]");
       if (!zone) return;
       event.preventDefault();
       event.stopImmediatePropagation();
@@ -265,15 +357,15 @@
     }, true);
 
     document.addEventListener("click", function (event) {
-      var item = event.target.closest && event.target.closest(".drag-item[data-gt-drag-bank]");
-      if (item) {
+      var source = event.target.closest && event.target.closest(".passage-heading-source[data-gt-drag-bank]");
+      if (source) {
         event.preventDefault();
         event.stopImmediatePropagation();
-        choose(item);
+        choose(source);
         return;
       }
 
-      var zone = event.target.closest && event.target.closest(".drop-zone");
+      var zone = event.target.closest && event.target.closest(".drop-zone[data-gt-drag-bank]");
       if (!zone) return;
       event.preventDefault();
       event.stopImmediatePropagation();
@@ -285,7 +377,7 @@
     }, true);
 
     document.addEventListener("dblclick", function (event) {
-      var zone = event.target.closest && event.target.closest(".drop-zone");
+      var zone = event.target.closest && event.target.closest(".drop-zone[data-gt-drag-bank]");
       if (!zone) return;
       event.preventDefault();
       event.stopImmediatePropagation();
@@ -293,15 +385,15 @@
     }, true);
 
     document.addEventListener("keydown", function (event) {
-      var item = event.target.closest && event.target.closest(".drag-item[data-gt-drag-bank]");
-      if (item && (event.key === "Enter" || event.key === " ")) {
+      var source = event.target.closest && event.target.closest(".passage-heading-source[data-gt-drag-bank]");
+      if (source && (event.key === "Enter" || event.key === " ")) {
         event.preventDefault();
         event.stopImmediatePropagation();
-        choose(item);
+        choose(source);
         return;
       }
 
-      var zone = event.target.closest && event.target.closest(".drop-zone");
+      var zone = event.target.closest && event.target.closest(".drop-zone[data-gt-drag-bank]");
       if (!zone) return;
       var key = String(event.key || "");
       if (key === "Backspace" || key === "Delete") {
@@ -322,6 +414,7 @@
       var record = recordForQuestion(question);
       if (!record) return;
       zone.setAttribute("data-gt-drag-bank", record.id);
+      zone.classList.add("passage-heading-drop-zone");
       var select = selectForZone(zone);
       if (select && select.value) apply(zone, select.value, record);
     });
