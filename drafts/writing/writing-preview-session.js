@@ -1,5 +1,14 @@
 (() => {
   const activeSessionKey = "ielts-pabs-writing-16-2-active-tab-v1";
+
+  window.addEventListener("beforeunload", (event) => {
+    if (state.mode && !state.submitted) {
+      event.preventDefault();
+      event.returnValue = "Are you sure you want to leave? All progress will be lost.";
+      return event.returnValue;
+    }
+  }, { capture: true });
+
   const navigationEntry = performance.getEntriesByType?.("navigation")?.[0];
   const navigationType = navigationEntry?.type || "navigate";
   const isReloadOfActiveAttempt =
