@@ -8,19 +8,46 @@
   let reportEmail = null;
   let copyStatus = null;
 
-  function animateReadingStyleLogo() {
-    const logo = byId("homeLogo");
-    if (!logo || logo.querySelector(".logo-char")) return;
-    const text = logo.textContent;
-    logo.textContent = "";
-    [...text].forEach((character, index) => {
-      const span = document.createElement("span");
-      span.className = "logo-char";
-      span.style.setProperty("--logo-char-index", index);
-      span.textContent = character === " " ? "\u00a0" : character;
-      logo.appendChild(span);
+  // IELTS Pabs animated logo — kept identical to the Academic Reading tests.
+  function initAnimatedLogo() {
+    const logoNodes = document.querySelectorAll('.logo.home-link, .logo-link .logo');
+    if (!logoNodes.length) return;
+    const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    logoNodes.forEach((logoNode) => {
+      const rawText = (logoNode.textContent || '').trim();
+      if (rawText !== 'IELTS Pabs') return;
+
+      logoNode.setAttribute('aria-label', 'IELTS Pabs');
+
+      const fragment = document.createDocumentFragment();
+      Array.from(rawText).forEach((char, index) => {
+        const span = document.createElement('span');
+        span.className = 'logo-char';
+        span.setAttribute('aria-hidden', 'true');
+        span.style.setProperty('--logo-char-index', String(index));
+        span.textContent = char === ' ' ? ' ' : char;
+        fragment.appendChild(span);
+      });
+
+      logoNode.textContent = '';
+      logoNode.appendChild(fragment);
+
+      if (reducedMotion) {
+        logoNode.classList.remove('is-animating');
+        return;
+      }
+
+      logoNode.addEventListener('mouseenter', () => {
+        logoNode.classList.remove('is-animating');
+        void logoNode.offsetWidth;
+        logoNode.classList.add('is-animating');
+      });
+
+      logoNode.addEventListener('mouseleave', () => {
+        logoNode.classList.remove('is-animating');
+      });
     });
-    requestAnimationFrame(() => logo.classList.add("is-animating"));
   }
 
   const clampSplit = (value) => {
@@ -288,7 +315,7 @@
     });
   };
 
-  animateReadingStyleLogo();
+  initAnimatedLogo();
   ensureReportOverlay();
   installStableDivider();
 })();
