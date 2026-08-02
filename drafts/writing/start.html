@@ -9,10 +9,9 @@
 <body>
   <p>Opening the Writing test…</p>
   <script>
-    sessionStorage.removeItem("ielts-pabs-writing-16-2-active-tab-v1");
     localStorage.removeItem("ielts-pabs-writing-academic-16-test-2-preview-v4");
-    const target = `index.html?fresh-start=${Date.now()}`;
-    window.location.replace(target);
+    sessionStorage.removeItem("ielts-pabs-writing-16-2-active-tab-v1");
+    window.location.replace(`index.html?v=20260802-2108-${Date.now()}`);
   </script>
 </body>
 </html>
