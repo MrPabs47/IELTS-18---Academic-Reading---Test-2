@@ -1,0 +1,49 @@
+name: Run staged Test 3 passage heading fix
+
+on:
+  pull_request:
+    branches: [main]
+    types: [opened, synchronize, reopened]
+    paths:
+      - .github/workflows/apply-test3-passage-heading-drag.yml
+      - .github/workflows/run-staged-test3-passage-heading-drag.yml
+
+permissions:
+  contents: write
+
+jobs:
+  run-staged-fix:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: agent/fix-gt19-test3-passage-heading-drag
+          fetch-depth: 0
+
+      - name: Execute staged patch and regression steps
+        shell: bash
+        run: |
+          python -m pip install --quiet pyyaml
+          python - <<'PY'
+          import os
+          import subprocess
+          import yaml
+
+          workflow = yaml.safe_load(open('.github/workflows/apply-test3-passage-heading-drag.yml', encoding='utf-8'))
+          for step in workflow['jobs']['apply-and-test']['steps']:
+              command = step.get('run')
+              if not command:
+                  continue
+              print('\n===', step.get('name', 'staged step'), '===')
+              subprocess.run(command, shell=True, check=True, executable='/bin/bash', env=os.environ.copy())
+          PY
+
+      - name: Remove temporary executor
+        shell: bash
+        run: |
+          rm .github/workflows/run-staged-test3-passage-heading-drag.yml
+          git config user.name github-actions[bot]
+          git config user.email 41898282+github-actions[bot]@users.noreply.github.com
+          git add .github/workflows/run-staged-test3-passage-heading-drag.yml
+          git commit -m 'Remove temporary Test 3 validation workflow'
+          git push origin HEAD:agent/fix-gt19-test3-passage-heading-drag
