@@ -31,13 +31,13 @@ jobs:
               Path('general-training/cambridge-19/test-3/study-feedback.js'),
           ]
           line = "  document.write('<script src=\"../../shared/gt-reading-exam-guards.js\"><\\/script>');\n"
-          anchor = "  document.write('<script src=\"../../../academic/shared/reading-feature-shell-core.js\"><\\/script>');\n"
+          anchor = '  "use strict";\n'
           for path in paths:
               text = path.read_text(encoding='utf-8')
               if line not in text:
                   if text.count(anchor) != 1:
-                      raise SystemExit(f'Unique shared-core anchor not found in {path}')
-                  text = text.replace(anchor, anchor + line, 1)
+                      raise SystemExit(f'Unique strict-mode anchor not found in {path}')
+                  text = text.replace(anchor, anchor + '\n' + line, 1)
                   path.write_text(text, encoding='utf-8')
           PY
 
