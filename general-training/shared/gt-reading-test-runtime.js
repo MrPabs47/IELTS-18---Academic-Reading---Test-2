@@ -25,7 +25,14 @@
       ".passage-heading-letter{flex:0 0 auto;font-weight:800}" +
       ".passage-heading-wording{min-width:0}" +
       ".passage-heading-body{margin-top:0!important}" +
-      ".test-candidate-name{color:var(--text-soft);font-weight:700;max-width:180px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}" +
+      ".passage-heading-source.passage-paragraph-source{align-items:center;display:inline-flex;justify-content:center;margin:14px 0 4px;min-height:30px;padding:4px 10px;width:42px}" +
+      ".passage-paragraph-body{margin-top:0!important}" +
+      ".gt-test3-header-left{min-width:0;flex:1 1 auto;white-space:nowrap;overflow:hidden}" +
+      ".gt-test3-header-left .test-title,.gt-test3-header-left #candidateNameDisplay{font-size:.95rem;color:var(--text-soft);min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}" +
+      ".gt-test3-header-left .test-title{flex:0 1 auto}" +
+      ".gt-test3-header-left #candidateNameDisplay{display:none;max-width:min(24vw,260px);flex:0 1 auto}" +
+      ".gt-test3-header-right{gap:12px;min-width:0;flex:0 0 auto;white-space:nowrap}" +
+      "@media (max-width:980px){.gt-test3-header-left{gap:10px}.gt-test3-header-right{gap:8px}.gt-test3-header-left #candidateNameDisplay{max-width:18vw}}" +
       "body[data-gt-mode=test] .reading-shell-study-controls{display:none!important}" +
       ".passage-heading-drop-zone{justify-content:flex-start;line-height:1.3;max-width:100%;text-align:left;white-space:normal}" +
       ".passage-heading-drop-zone:not(.filled){color:var(--text-soft);font-size:.84rem;font-weight:600;height:30px;min-height:30px;width:104px}" +
@@ -110,18 +117,30 @@
 
   function ensureTest3CandidateName() {
     if (!isTest3Page()) return null;
-    var existing = document.getElementById("testCandidateName");
-    if (existing) return existing;
+    var topLeft = document.querySelector(".top-left");
     var topRight = document.querySelector(".top-right");
-    if (!topRight) return null;
-    var candidate = document.createElement("span");
-    candidate.id = "testCandidateName";
-    candidate.className = "test-candidate-name";
+    if (!topLeft) return null;
+    topLeft.classList.add("gt-test3-header-left");
+    if (topRight) topRight.classList.add("gt-test3-header-right");
+
+    var title = topLeft.querySelector(".test-title");
+    if (title) title.textContent = "IELTS 19 General Training Reading Test 3";
+    document.title = "IELTS 19 General Training Reading Test 3 | IELTS Pabs";
+
+    var existing = document.getElementById("candidateNameDisplay") || document.getElementById("testCandidateName");
+    if (existing) {
+      existing.id = "candidateNameDisplay";
+      existing.classList.remove("test-candidate-name");
+      if (title && existing.previousElementSibling !== title) title.insertAdjacentElement("afterend", existing);
+      return existing;
+    }
+
+    var candidate = document.createElement("div");
+    candidate.id = "candidateNameDisplay";
     candidate.hidden = true;
     candidate.setAttribute("aria-live", "polite");
-    var mount = document.getElementById("readingFeatureShellMount");
-    var timer = document.getElementById("timerContainer");
-    topRight.insertBefore(candidate, mount || timer || topRight.firstChild);
+    if (title) title.insertAdjacentElement("afterend", candidate);
+    else topLeft.appendChild(candidate);
     return candidate;
   }
 
@@ -132,9 +151,11 @@
     var candidate = ensureTest3CandidateName();
     if (candidate) {
       var name = typeof studentName === "string" ? studentName.trim() : "";
+      var showCandidate = currentMode === "test" && Boolean(name);
       candidate.textContent = name ? "Candidate: " + name : "";
-      candidate.title = name;
-      candidate.hidden = currentMode !== "test" || !name;
+      candidate.title = name ? "Candidate: " + name : "";
+      candidate.hidden = !showCandidate;
+      candidate.style.display = showCandidate ? "block" : "none";
     }
     document.querySelectorAll(".reading-shell-study-controls").forEach(function (controls) {
       var hideForTest = currentMode === "test";
@@ -182,20 +203,35 @@
   function installTest3DragMatching() {
     if (!isTest3Page() || document.documentElement.getAttribute("data-gt-drag-upgrade") === "true") return;
 
-    var section = document.querySelector('.passage-section[data-section="1"]');
+    var sectionOne = document.querySelector('.passage-section[data-section="1"]');
+    var sectionThree = document.querySelector('.passage-section[data-section="3"]');
     var banks = Array.from(document.querySelectorAll('.drag-bank')).filter(function (bank) {
       var range = parseBankRange(bank);
-      return range && ((range.from === 1 && range.to === 8) || (range.from === 9 && range.to === 14));
+      return range && (
+        (range.from === 1 && range.to === 8) ||
+        (range.from === 9 && range.to === 14) ||
+        (range.from === 33 && range.to === 36)
+      );
     });
-    var allHeadingParagraphs = section ? Array.from(section.querySelectorAll("p")).filter(function (node) {
+    var allHeadingParagraphs = sectionOne ? Array.from(sectionOne.querySelectorAll("p")).filter(function (node) {
       return node.firstElementChild && node.firstElementChild.tagName === "STRONG";
+    }) : [];
+    var sectionThreeParagraphs = sectionThree ? Array.from(sectionThree.children).filter(function (node) {
+      var strong = node.tagName === "P" && node.firstElementChild && node.firstElementChild.tagName === "STRONG" ? node.firstElementChild : null;
+      return strong && /^[A-G]$/.test(normalPassageHeadingText(strong.textContent));
     }) : [];
     var groups = [
       { range: { from: 1, to: 8 }, paragraphs: allHeadingParagraphs.slice(0, 5) },
-      { range: { from: 9, to: 14 }, paragraphs: allHeadingParagraphs.slice(5, 9) }
+      { range: { from: 9, to: 14 }, paragraphs: allHeadingParagraphs.slice(5, 9) },
+      { range: { from: 33, to: 36 }, paragraphs: sectionThreeParagraphs.slice(0, 7) }
     ];
 
-    if (!section || banks.length < 2 || groups[0].paragraphs.length !== 5 || groups[1].paragraphs.length !== 4) return;
+    if (
+      !sectionOne || !sectionThree || banks.length < 3 ||
+      groups[0].paragraphs.length !== 5 ||
+      groups[1].paragraphs.length !== 4 ||
+      groups[2].paragraphs.length !== 7
+    ) return;
 
     document.documentElement.setAttribute("data-gt-drag-upgrade", "true");
     var bankRecords = [];
@@ -215,35 +251,40 @@
       group.paragraphs.forEach(function (paragraph) {
         var strong = paragraph.firstElementChild;
         var rawLabel = normalPassageHeadingText(strong && strong.textContent);
-        var match = rawLabel.match(/^([A-Z])\s+(.+)$/);
-        if (!match) return;
+        var headingMatch = rawLabel.match(/^([A-Z])\s+(.+)$/);
+        var paragraphMatch = rawLabel.match(/^([A-Z])$/);
+        if (!headingMatch && !paragraphMatch) return;
 
-        var value = match[1];
-        var title = match[2];
+        var value = headingMatch ? headingMatch[1] : paragraphMatch[1];
+        var title = headingMatch ? headingMatch[2] : "";
+        var sourceLabel = headingMatch ? rawLabel : value;
         var source = document.createElement("button");
         source.type = "button";
-        source.className = "drag-item passage-match-source passage-heading-source";
+        source.className = "drag-item passage-match-source passage-heading-source" + (paragraphMatch ? " passage-paragraph-source" : "");
         source.draggable = true;
         source.setAttribute("data-value", value);
-        source.setAttribute("data-source-label", rawLabel);
+        source.setAttribute("data-source-label", sourceLabel);
         source.setAttribute("data-gt-drag-bank", id);
-        source.setAttribute("aria-label", "Choose " + rawLabel + " for Questions " + group.range.from + " to " + group.range.to);
+        source.setAttribute("aria-label", "Choose " + sourceLabel + " for Questions " + group.range.from + " to " + group.range.to);
         source.setAttribute("aria-pressed", "false");
 
         var letter = document.createElement("span");
         letter.className = "passage-heading-letter";
         letter.textContent = value;
-        var wording = document.createElement("span");
-        wording.className = "passage-heading-wording";
-        wording.textContent = title;
-        source.append(letter, wording);
+        source.appendChild(letter);
+        if (title) {
+          var wording = document.createElement("span");
+          wording.className = "passage-heading-wording";
+          wording.textContent = title;
+          source.appendChild(wording);
+        }
 
         paragraph.parentNode.insertBefore(source, paragraph);
         strong.remove();
         if (paragraph.firstChild && paragraph.firstChild.nodeType === Node.TEXT_NODE) {
           paragraph.firstChild.nodeValue = paragraph.firstChild.nodeValue.replace(/^\s+/, "");
         }
-        paragraph.classList.add("passage-heading-body");
+        paragraph.classList.add(paragraphMatch ? "passage-paragraph-body" : "passage-heading-body");
         sources.push(source);
       });
 
