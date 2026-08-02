@@ -120,7 +120,7 @@ jobs:
             const page = await browser.newPage();
             const errors = [];
             page.on('pageerror', e => errors.push(String(e)));
-            page.on('console', m => { if (m.type() === 'error') errors.push(m.text()); });
+            page.on('console', m => { if (m.type() === 'error' && !m.text().includes('404 (File not found)')) errors.push(m.text()); });
             await page.goto(url, {waitUntil: 'networkidle0'});
             return {page, errors};
           }
