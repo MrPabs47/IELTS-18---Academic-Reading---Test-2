@@ -155,7 +155,7 @@ jobs:
               for (let q = 1; q <= 40; q++) {
                 window.switchSection(q <= 14 ? 1 : q <= 27 ? 2 : 3);
                 document.querySelectorAll('.reading-shell-study-clue-button')[q - 1].click();
-                await new Promise(r => setTimeout(r, 15));
+                await new Promise(r => setTimeout(r, 180));
                 if (!document.querySelector('.reading-shell-evidence-highlight[data-reading-shell-clue-questions~="' + q + '"]')) failed.push(q);
               }
               return failed;
