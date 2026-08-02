@@ -111,6 +111,8 @@ jobs:
           cat > /tmp/gt19-test3-browser.js <<'NODE'
           const puppeteer = require('/tmp/gt19-test3-browser/node_modules/puppeteer-core');
           const assert = require('assert');
+
+          (async () => {
           const url = 'http://127.0.0.1:8765/general-training/cambridge-19/test-3/IELTS19%20Test%203%20-%20Reading%20-%20GT.html';
           const browser = await puppeteer.launch({executablePath: process.env.CHROME_BIN, headless: true, args: ['--no-sandbox']});
 
@@ -179,6 +181,10 @@ jobs:
           } finally {
             await browser.close();
           }
+          })().catch(error => {
+            console.error(error);
+            process.exit(1);
+          });
           NODE
 
           CHROME_BIN="$CHROME_BIN" node /tmp/gt19-test3-browser.js
