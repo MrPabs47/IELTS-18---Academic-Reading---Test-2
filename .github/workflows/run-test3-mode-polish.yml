@@ -1,0 +1,54 @@
+name: Run staged Test 3 mode polish
+
+on:
+  push:
+    branches:
+      - agent/fix-gt19-test3-test-mode-polish
+    paths:
+      - .github/workflows/run-test3-mode-polish.yml
+
+permissions:
+  contents: write
+
+jobs:
+  run-staged-fix:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: agent/fix-gt19-test3-test-mode-polish
+          fetch-depth: 0
+
+      - name: Execute staged patch and regression steps
+        shell: bash
+        run: |
+          python -m pip install --quiet pyyaml
+          python - <<'PY'
+          import os
+          import subprocess
+          from pathlib import Path
+          import yaml
+
+          staged_path = Path('.github/workflows/apply-test3-mode-polish.yml')
+          workflow = yaml.safe_load(staged_path.read_text(encoding='utf-8'))
+          steps = workflow['jobs']['apply-and-test']['steps']
+          for step in steps:
+              if step.get('name') == 'Commit fix and remove temporary workflow':
+                  continue
+              command = step.get('run')
+              if not command:
+                  continue
+              print('\n===', step.get('name', 'staged step'), '===', flush=True)
+              subprocess.run(command, shell=True, check=True, executable='/bin/bash', env=os.environ.copy())
+          PY
+
+      - name: Commit validated fix and remove temporary workflows
+        shell: bash
+        run: |
+          rm .github/workflows/apply-test3-mode-polish.yml
+          rm .github/workflows/run-test3-mode-polish.yml
+          git config user.name github-actions[bot]
+          git config user.email 41898282+github-actions[bot]@users.noreply.github.com
+          git add general-training/shared/gt-reading-test-runtime.js .github/workflows/apply-test3-mode-polish.yml .github/workflows/run-test3-mode-polish.yml
+          git commit -m 'Polish IELTS 19 GT Test 3 test mode'
+          git push origin HEAD:agent/fix-gt19-test3-test-mode-polish
