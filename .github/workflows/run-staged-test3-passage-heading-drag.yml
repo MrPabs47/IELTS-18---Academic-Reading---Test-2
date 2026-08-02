@@ -31,32 +31,32 @@ jobs:
 
           staged_path = Path('.github/workflows/apply-test3-passage-heading-drag.yml')
           staged = staged_path.read_text(encoding='utf-8')
-          old = '''              var section = document.querySelector('.passage-section[data-section="1"]');
-              var divider = section && section.querySelector(":scope > .passage-divider");
-              var banks = Array.from(document.querySelectorAll('#questionContent > [data-section="1"] .drag-bank'));
-              var groups = [
-                { range: { from: 1, to: 8 }, paragraphs: passageHeadingParagraphs(section).slice(0, 5) },
-                { range: { from: 9, to: 14 }, paragraphs: passageHeadingParagraphs(divider).slice(0, 4) }
-              ];
-
-              if (!section || !divider || banks.length < 2 || groups[0].paragraphs.length !== 5 || groups[1].paragraphs.length !== 4) return;'''
-          new = '''              var section = document.querySelector('.passage-section[data-section="1"]');
-              var banks = Array.from(document.querySelectorAll('.drag-bank')).filter(function (bank) {
-                var range = parseBankRange(bank);
-                return range && ((range.from === 1 && range.to === 8) || (range.from === 9 && range.to === 14));
-              });
-              var allHeadingParagraphs = section ? Array.from(section.querySelectorAll("p")).filter(function (node) {
-                return node.firstElementChild && node.firstElementChild.tagName === "STRONG";
-              }) : [];
-              var groups = [
-                { range: { from: 1, to: 8 }, paragraphs: allHeadingParagraphs.slice(0, 5) },
-                { range: { from: 9, to: 14 }, paragraphs: allHeadingParagraphs.slice(5, 9) }
-              ];
-
-              if (!section || banks.length < 2 || groups[0].paragraphs.length !== 5 || groups[1].paragraphs.length !== 4) return;'''
-          if staged.count(old) != 1:
-              raise SystemExit('Expected Test 3 setup block was not found exactly once')
-          staged_path.write_text(staged.replace(old, new, 1), encoding='utf-8')
+          start_marker = "var section = document.querySelector('.passage-section[data-section=\"1\"]');"
+          end_marker = "if (!section || !divider || banks.length < 2 || groups[0].paragraphs.length !== 5 || groups[1].paragraphs.length !== 4) return;"
+          if staged.count(start_marker) != 1 or staged.count(end_marker) != 1:
+              raise SystemExit('Expected Test 3 setup markers were not found exactly once')
+          marker_start = staged.index(start_marker)
+          start = staged.rfind('\n', 0, marker_start) + 1
+          end = staged.index(end_marker, marker_start) + len(end_marker)
+          indent = staged[start:marker_start]
+          replacement_lines = [
+              "var section = document.querySelector('.passage-section[data-section=\"1\"]');",
+              "var banks = Array.from(document.querySelectorAll('.drag-bank')).filter(function (bank) {",
+              "  var range = parseBankRange(bank);",
+              "  return range && ((range.from === 1 && range.to === 8) || (range.from === 9 && range.to === 14));",
+              "});",
+              "var allHeadingParagraphs = section ? Array.from(section.querySelectorAll(\"p\")).filter(function (node) {",
+              "  return node.firstElementChild && node.firstElementChild.tagName === \"STRONG\";",
+              "}) : [];",
+              "var groups = [",
+              "  { range: { from: 1, to: 8 }, paragraphs: allHeadingParagraphs.slice(0, 5) },",
+              "  { range: { from: 9, to: 14 }, paragraphs: allHeadingParagraphs.slice(5, 9) }",
+              "];",
+              "",
+              "if (!section || banks.length < 2 || groups[0].paragraphs.length !== 5 || groups[1].paragraphs.length !== 4) return;"
+          ]
+          replacement = '\n'.join(indent + line if line else '' for line in replacement_lines)
+          staged_path.write_text(staged[:start] + replacement + staged[end:], encoding='utf-8')
 
           workflow = yaml.safe_load(staged_path.read_text(encoding='utf-8'))
           for step in workflow['jobs']['apply-and-test']['steps']:
