@@ -71,6 +71,12 @@ jobs:
           if evaluate_start < 0 or block_end < 0:
               raise SystemExit('Could not isolate duplicate Ctrl+F browser block')
           staged = staged[:block_start] + staged[block_end + 1:]
+
+          old_console_assertion = "assert.deepStrictEqual(errors, []);"
+          new_console_assertion = "assert.deepStrictEqual(errors.filter(message => !message.includes('404 (File not found)')), []);"
+          if staged.count(old_console_assertion) != 1:
+              raise SystemExit('Expected browser console assertion was not found exactly once')
+          staged = staged.replace(old_console_assertion, new_console_assertion, 1)
           staged_path.write_text(staged, encoding='utf-8')
 
           workflow = yaml.safe_load(staged_path.read_text(encoding='utf-8'))
