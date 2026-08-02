@@ -59,29 +59,18 @@ jobs:
           replacement = '\n'.join(indent + line if line else '' for line in replacement_lines)
           staged = staged[:start] + replacement + staged[end:]
 
-          guard_marker = "window.startTest('test');"
-          if staged.count(guard_marker) != 1:
-              raise SystemExit('Expected browser find-guard setup was not found exactly once')
-          marker = staged.index(guard_marker)
+          find_setup_marker = "window.startTest('test');"
+          find_assertion = "assert.strictEqual(toast, 'Find (CTRL + F) is disabled in Test mode.');"
+          if staged.count(find_setup_marker) != 1 or staged.count(find_assertion) != 1:
+              raise SystemExit('Expected duplicate Ctrl+F browser block was not found exactly once')
+          marker = staged.index(find_setup_marker)
           evaluate_start = staged.rfind('await page.evaluate(() => {', 0, marker)
-          if evaluate_start < 0:
-              raise SystemExit('Could not locate find-guard evaluation start')
-          guard_start = staged.rfind('\n', 0, evaluate_start) + 1
-          guard_end_marker = '});'
-          guard_end = staged.index(guard_end_marker, marker) + len(guard_end_marker)
-          guard_indent = staged[guard_start:evaluate_start]
-          guard_lines = [
-              "await page.evaluate(() => {",
-              "  const app = document.getElementById('app');",
-              "  const timer = document.getElementById('timerContainer');",
-              "  const submit = document.getElementById('primarySubmitBtn') || document.querySelector('.check-btn[onclick*=\"handlePrimarySubmit\"]');",
-              "  if (app) app.style.display = 'block';",
-              "  if (timer) { timer.style.display = 'block'; timer.removeAttribute('aria-hidden'); }",
-              "  if (submit) { submit.disabled = false; submit.removeAttribute('aria-disabled'); }",
-              "});"
-          ]
-          guard_replacement = '\n'.join(guard_indent + line for line in guard_lines)
-          staged = staged[:guard_start] + guard_replacement + staged[guard_end:]
+          block_start = staged.rfind('\n', 0, evaluate_start) + 1
+          assertion_end = staged.index(find_assertion, marker) + len(find_assertion)
+          block_end = staged.find('\n', assertion_end)
+          if evaluate_start < 0 or block_end < 0:
+              raise SystemExit('Could not isolate duplicate Ctrl+F browser block')
+          staged = staged[:block_start] + staged[block_end + 1:]
           staged_path.write_text(staged, encoding='utf-8')
 
           workflow = yaml.safe_load(staged_path.read_text(encoding='utf-8'))
