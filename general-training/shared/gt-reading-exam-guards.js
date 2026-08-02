@@ -31,13 +31,15 @@
     window.clearTimeout(toastTimer);
     toast.textContent = message;
     toast.classList.add("visible");
-    toastTimer = window.setTimeout(function () {
-      toast.classList.remove("visible");
-    }, 2200);
+    toastTimer = window.setTimeout(function () { toast.classList.remove("visible"); }, 2200);
   }
 
   function activeTimedTest() {
-    return window.mode === "test" && window.isTestRunning && !window.testSubmitted;
+    try {
+      return mode === "test" && isTestRunning && !testSubmitted;
+    } catch (error) {
+      return false;
+    }
   }
 
   function installFindGuard() {
