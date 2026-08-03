@@ -1,0 +1,54 @@
+/* Test-specific presentation for IELTS 16 Academic Writing Test 3. */
+.task-question,
+.task-question p {
+  font-style: italic;
+}
+
+/* The shared Writing stylesheet contains the Test 2 sugar-cane image as a
+   content override. Reset it here so this test uses its own airport image. */
+#taskImage {
+  content: normal !important;
+}
+
+.task-visual {
+  margin-top: 12px;
+}
+
+.airport-visual-frame {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 4px 0 8px;
+}
+
+.airport-diagram-title {
+  width: 100%;
+  margin: 2px 0 12px;
+  color: #222;
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: clamp(22px, 2.1vw, 30px);
+  font-weight: 700;
+  line-height: 1.1;
+  text-align: center;
+}
+
+.visual-frame img {
+  width: 100%;
+  max-width: 581px;
+  height: auto;
+}
+
+#passagePane.image-focus .airport-visual-frame {
+  justify-content: center;
+}
+
+#passagePane.image-focus .airport-diagram-title {
+  flex: 0 0 auto;
+  margin-bottom: 10px;
+}
+
+#passagePane.image-focus .visual-frame img {
+  width: auto;
+  max-width: 100%;
+  max-height: calc(100% - 48px);
+}
