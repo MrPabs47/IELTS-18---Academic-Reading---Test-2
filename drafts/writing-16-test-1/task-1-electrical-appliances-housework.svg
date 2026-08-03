@@ -1,0 +1,94 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 760 1000" role="img" aria-labelledby="title desc">
+  <title id="title">Electrical appliance ownership and weekly housework hours, 1920 to 2019</title>
+  <desc id="desc">Two line charts. The first compares household ownership of washing machines, refrigerators and vacuum cleaners. The second shows weekly hours of housework per household.</desc>
+  <rect width="760" height="1000" fill="#fff"/>
+  <g font-family="Arial, Helvetica, sans-serif" fill="#222">
+    <text x="380" y="32" text-anchor="middle" font-size="22" font-weight="700">Percentage of households with electrical appliances</text>
+    <text x="380" y="57" text-anchor="middle" font-size="22" font-weight="700">(1920–2019)</text>
+
+    <g stroke="#c8c8c8" stroke-width="1">
+      <line x1="110" y1="90" x2="700" y2="90"/><line x1="110" y1="120" x2="700" y2="120"/>
+      <line x1="110" y1="150" x2="700" y2="150"/><line x1="110" y1="180" x2="700" y2="180"/>
+      <line x1="110" y1="210" x2="700" y2="210"/><line x1="110" y1="240" x2="700" y2="240"/>
+      <line x1="110" y1="270" x2="700" y2="270"/><line x1="110" y1="300" x2="700" y2="300"/>
+      <line x1="110" y1="330" x2="700" y2="330"/><line x1="110" y1="360" x2="700" y2="360"/>
+      <line x1="110" y1="390" x2="700" y2="390"/>
+    </g>
+    <rect x="110" y="90" width="590" height="300" fill="none" stroke="#777" stroke-width="1.4"/>
+
+    <g font-size="16" text-anchor="end">
+      <text x="99" y="96">100</text><text x="99" y="126">90</text><text x="99" y="156">80</text>
+      <text x="99" y="186">70</text><text x="99" y="216">60</text><text x="99" y="246">50</text>
+      <text x="99" y="276">40</text><text x="99" y="306">30</text><text x="99" y="336">20</text>
+      <text x="99" y="366">10</text><text x="99" y="396">0</text>
+    </g>
+    <g font-size="16" text-anchor="middle">
+      <text x="140" y="418">1920</text><text x="248" y="418">1940</text><text x="356" y="418">1960</text>
+      <text x="464" y="418">1980</text><text x="572" y="418">2000</text><text x="680" y="418">2019</text>
+      <text x="405" y="454" font-size="18" font-weight="700">Year</text>
+    </g>
+    <text x="36" y="242" text-anchor="middle" transform="rotate(-90 36 242)" font-size="18" font-weight="700">Percentage of households</text>
+
+    <polyline points="140,270 248,210 356,180 464,195 572,180 680,165" fill="none" stroke="#333" stroke-width="3"/>
+    <g fill="#333" stroke="#333">
+      <circle cx="140" cy="270" r="4.5"/><circle cx="248" cy="210" r="4.5"/><circle cx="356" cy="180" r="4.5"/>
+      <circle cx="464" cy="195" r="4.5"/><circle cx="572" cy="180" r="4.5"/><circle cx="680" cy="165" r="4.5"/>
+    </g>
+
+    <polyline points="140,390 248,225 356,120 464,90 572,90 680,90" fill="none" stroke="#9c9c9c" stroke-width="3"/>
+    <g fill="#fff" stroke="#777" stroke-width="2">
+      <circle cx="140" cy="390" r="4.5"/><circle cx="248" cy="225" r="4.5"/><circle cx="356" cy="120" r="4.5"/>
+      <circle cx="464" cy="90" r="4.5"/><circle cx="572" cy="90" r="4.5"/><circle cx="680" cy="90" r="4.5"/>
+    </g>
+
+    <polyline points="140,300 248,240 356,180 464,120 572,90 680,90" fill="none" stroke="#555" stroke-width="2.6" stroke-dasharray="8 6"/>
+    <g fill="#fff" stroke="#555" stroke-width="2">
+      <circle cx="140" cy="300" r="4.5"/><circle cx="248" cy="240" r="4.5"/><circle cx="356" cy="180" r="4.5"/>
+      <circle cx="464" cy="120" r="4.5"/><circle cx="572" cy="90" r="4.5"/><circle cx="680" cy="90" r="4.5"/>
+    </g>
+
+    <rect x="118" y="468" width="574" height="42" fill="#fff" stroke="#555" stroke-width="1.4"/>
+    <g font-size="15">
+      <line x1="135" y1="489" x2="173" y2="489" stroke="#333" stroke-width="3"/><circle cx="154" cy="489" r="4" fill="#333"/>
+      <text x="182" y="495">Washing machine</text>
+      <line x1="339" y1="489" x2="377" y2="489" stroke="#9c9c9c" stroke-width="3"/><circle cx="358" cy="489" r="4" fill="#fff" stroke="#777" stroke-width="2"/>
+      <text x="386" y="495">Refrigerator</text>
+      <line x1="506" y1="489" x2="544" y2="489" stroke="#555" stroke-width="2.6" stroke-dasharray="8 6"/><circle cx="525" cy="489" r="4" fill="#fff" stroke="#555" stroke-width="2"/>
+      <text x="553" y="495">Vacuum cleaner</text>
+    </g>
+
+    <text x="405" y="558" text-anchor="middle" font-size="22" font-weight="700">Number of hours of housework* per week,</text>
+    <text x="405" y="583" text-anchor="middle" font-size="22" font-weight="700">per household (1920–2019)</text>
+
+    <g stroke="#c8c8c8" stroke-width="1">
+      <line x1="110" y1="620" x2="700" y2="620"/><line x1="110" y1="650" x2="700" y2="650"/>
+      <line x1="110" y1="680" x2="700" y2="680"/><line x1="110" y1="710" x2="700" y2="710"/>
+      <line x1="110" y1="740" x2="700" y2="740"/><line x1="110" y1="770" x2="700" y2="770"/>
+      <line x1="110" y1="800" x2="700" y2="800"/>
+    </g>
+    <rect x="110" y="620" width="590" height="180" fill="none" stroke="#777" stroke-width="1.4"/>
+    <g font-size="16" text-anchor="end">
+      <text x="99" y="626">60</text><text x="99" y="656">50</text><text x="99" y="686">40</text>
+      <text x="99" y="716">30</text><text x="99" y="746">20</text><text x="99" y="776">10</text><text x="99" y="806">0</text>
+    </g>
+    <g font-size="16" text-anchor="middle">
+      <text x="140" y="828">1920</text><text x="248" y="828">1940</text><text x="356" y="828">1960</text>
+      <text x="464" y="828">1980</text><text x="572" y="828">2000</text><text x="680" y="828">2019</text>
+      <text x="405" y="864" font-size="18" font-weight="700">Year</text>
+    </g>
+    <text x="37" y="710" text-anchor="middle" transform="rotate(-90 37 710)" font-size="17" font-weight="700">Number of hours</text>
+    <text x="59" y="710" text-anchor="middle" transform="rotate(-90 59 710)" font-size="17" font-weight="700">per week</text>
+
+    <polyline points="140,650 248,695 356,740 464,755 572,755 680,770" fill="none" stroke="#777" stroke-width="3"/>
+    <g fill="#aaa" stroke="#666" stroke-width="1.8">
+      <circle cx="140" cy="650" r="4.5"/><circle cx="248" cy="695" r="4.5"/><circle cx="356" cy="740" r="4.5"/>
+      <circle cx="464" cy="755" r="4.5"/><circle cx="572" cy="755" r="4.5"/><circle cx="680" cy="770" r="4.5"/>
+    </g>
+
+    <rect x="310" y="882" width="190" height="42" fill="#fff" stroke="#555" stroke-width="1.4"/>
+    <line x1="330" y1="903" x2="368" y2="903" stroke="#777" stroke-width="3"/><circle cx="349" cy="903" r="4" fill="#aaa" stroke="#666" stroke-width="1.8"/>
+    <text x="380" y="909" font-size="16">Hours per week</text>
+
+    <text x="28" y="972" font-size="15">*housework = washing clothes, preparing meals, cleaning</text>
+  </g>
+</svg>
