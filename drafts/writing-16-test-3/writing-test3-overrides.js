@@ -1,6 +1,7 @@
 (() => {
   const TEST_TITLE = "IELTS 16 Academic Writing Test 3";
   const TEACHER_EMAIL = "pablo.jaramillo@ilsc.com.au";
+  const AIRPORT_IMAGE = "https://i0.wp.com/www.ieltsworldly.com/wp-content/uploads/2023/09/Screenshot-_146_-1.webp?resize=528%2C599&ssl=1";
 
   document.title = TEST_TITLE;
   document.querySelector("#modeScreenInner h1")?.replaceChildren(TEST_TITLE);
@@ -16,7 +17,7 @@
       <p>Write at least 150 words.</p>
       <figure class="task-visual">
         <div class="visual-frame">
-          <img id="taskImage" src="./task-1-southwest-airport.svg?v=20260803-1445" alt="Two plans showing Southwest Airport now and after redevelopment, including gates, passenger facilities, shops, a sky train and car hire." tabindex="0" title="Click to enlarge the airport plans within this pane">
+          <img id="taskImage" src="${AIRPORT_IMAGE}" alt="The original Southwest Airport plans showing the airport now and after redevelopment next year." tabindex="0" title="Click to enlarge the airport plans within this pane">
         </div>
       </figure>`,
     study: {
