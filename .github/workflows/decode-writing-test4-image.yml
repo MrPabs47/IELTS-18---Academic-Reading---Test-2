@@ -1,0 +1,42 @@
+name: Decode Writing Test 4 image
+
+on:
+  push:
+    branches:
+      - writing-16-test-4-preview
+    paths:
+      - 'drafts/writing-16-test-4/.image-chunks/**'
+      - '.github/workflows/decode-writing-test4-image.yml'
+
+permissions:
+  contents: write
+
+concurrency:
+  group: decode-writing-test4-image
+  cancel-in-progress: true
+
+jobs:
+  decode:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: writing-16-test-4-preview
+      - name: Decode image after all chunks arrive
+        shell: bash
+        run: |
+          set -euo pipefail
+          chunk_dir='drafts/writing-16-test-4/.image-chunks'
+          for n in 01 02 03 04 05 06 07; do
+            test -f "$chunk_dir/part${n}.txt" || exit 0
+          done
+          cat "$chunk_dir"/part*.txt | base64 --decode > drafts/writing-16-test-4/task-1-plastic-bottle-recycling-enhanced.webp
+          echo '97e338dc0db6607dfcdaf90d47817e009deefca915a2d1add9c580134e6ca83a  drafts/writing-16-test-4/task-1-plastic-bottle-recycling-enhanced.webp' | sha256sum --check
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add drafts/writing-16-test-4/task-1-plastic-bottle-recycling-enhanced.webp
+          if ! git diff --cached --quiet; then
+            git commit -m 'Add enhanced Test 4 Task 1 image [skip ci]'
+            git push origin HEAD:writing-16-test-4-preview
+          fi
