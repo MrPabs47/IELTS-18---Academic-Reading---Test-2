@@ -4,6 +4,7 @@
   <meta charset="UTF-8" />
   <title>IELTS 17 Academic Reading Test 2</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link rel="stylesheet" href="../../shared/reading-feature-shell.css" />
   <style>
     :root {
       --bg: #ffffff;
@@ -186,13 +187,17 @@
     .top-left {
       display: flex;
       align-items: baseline;
+      flex: 1 1 auto;
       gap: 16px;
+      min-width: 0;
     }
 
     .logo {
+      flex: 0 0 auto;
       font-weight: 800;
       font-size: 1.4rem;
       letter-spacing: 0.08em;
+      white-space: nowrap;
     }
 
     /* IELTS Pabs animated logo */
@@ -250,13 +255,31 @@
 
 
     .test-title {
+      flex: 0 1 auto;
       font-size: 0.95rem;
       color: var(--text-soft);
+      min-width: 0;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .candidate-name-display {
+      color: var(--text-soft);
+      flex: 0 1 260px;
+      font-size: 0.82rem;
+      font-weight: 600;
+      max-width: 260px;
+      min-width: 0;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
     }
 
     .top-right {
       display: flex;
       align-items: center;
+      flex: 0 0 auto;
       gap: 16px;
       font-size: 0.9rem;
     }
@@ -1211,6 +1234,68 @@
       }
     }
 
+    @media (max-width: 640px) {
+      .top-bar {
+        align-content: center;
+        gap: 6px;
+        flex-wrap: wrap;
+        height: 104px;
+        padding: 0 8px;
+      }
+      .top-left {
+        flex-basis: 100%;
+        gap: 6px;
+      }
+      .logo {
+        font-size: 0.9rem;
+        letter-spacing: 0.02em;
+      }
+      .test-title {
+        display: none;
+      }
+      .candidate-name-display {
+        flex: 1 1 auto;
+        font-size: 0.72rem;
+        max-width: none;
+      }
+      .top-right {
+        flex: 1 1 100%;
+        gap: 6px;
+        font-size: 0.75rem;
+        min-width: 0;
+        overflow-x: auto;
+        scrollbar-width: thin;
+        white-space: nowrap;
+      }
+      .top-right .reading-shell-root {
+        flex: 0 0 auto;
+        flex-wrap: nowrap;
+      }
+      .icon-group {
+        gap: 2px;
+      }
+      .icon-button {
+        padding: 4px;
+      }
+      .icon-button.with-label {
+        padding: 5px;
+      }
+      #fullscreenBtnLabel {
+        border: 0;
+        clip: rect(0, 0, 0, 0);
+        height: 1px;
+        margin: -1px;
+        overflow: hidden;
+        padding: 0;
+        position: absolute;
+        white-space: nowrap;
+        width: 1px;
+      }
+      .main-area {
+        top: 104px;
+      }
+    }
+
     .divider {
       width: 18px;
       min-width: 18px;
@@ -1324,8 +1409,10 @@
         <div class="test-title">
           IELTS 17 Academic Reading Test 2
         </div>
+        <div id="candidateNameDisplay" class="candidate-name-display" hidden></div>
       </div>
       <div class="top-right">
+        <div id="readingFeatureShellMount" aria-hidden="true"></div>
         <div id="timerContainer" role="status" aria-live="polite" aria-atomic="true" aria-hidden="true"><span id="timerPrefix">Time left:</span> <span id="timerDisplay">60:00</span></div>
         <div class="icon-group">
           <span class="icon" title="Connection status">
@@ -1415,7 +1502,10 @@
         <!-- Passage pane -->
         <div class="pane" id="passagePane">
           <div class="pane-header" id="passageHeader">
-            Part 1 <span>Read the text and answer questions 1–13.</span>
+            <div class="passage-header-line" id="passageHeaderLine">Part 1 <span>Read the text and answer questions 1–13.</span></div>
+            <div class="passage-clue-toolbar" id="passageClueToolbar" aria-label="Passage clue controls" hidden>
+              <button type="button" id="passageClueToggle" class="reading-shell-passage-clue-toggle" aria-pressed="false" hidden disabled>Show all passage clues</button>
+            </div>
           </div>
           <div class="pane-content" id="passageContent">
             <!-- Section 1 passage -->
@@ -1488,7 +1578,7 @@
 
             <!-- Section 1 questions -->
             <div data-section="1">
-              <div class="instruction-block">
+              <div class="instruction-block" id="study-instruction-p1-note-completion">
                 <p><strong>READING PASSAGE 1: Questions 1-13</strong></p>
                 <p>Complete the notes below.</p>
                 <p>Choose <strong>ONE WORD ONLY</strong> from the passage for each answer.</p>
@@ -1514,7 +1604,7 @@
                 <div class="question-block feedback-only" data-q="5"><div class="correct-answer-text" id="ca-5"></div></div>
               </div>
 
-              <div class="instruction-block">
+              <div class="instruction-block" id="study-instruction-p1-true-false-not-given">
                 <p><strong>Questions 6-13</strong></p>
                 <p>Do the following statements agree with the information given in Reading Passage 1?</p>
                 <p>In boxes 6-13 on your answer sheet, write</p>
@@ -1566,7 +1656,7 @@
 
             <!-- Section 2 questions -->
             <div data-section="2" style="display:none;">
-              <div class="instruction-block">
+              <div class="instruction-block" id="study-instruction-p2-matching-information">
                 <p><strong>READING PASSAGE 2: Questions 14-26</strong></p>
                 <p>Reading Passage 2 has five paragraphs, A-E.</p>
                 <p>Which section contains the following information?</p>
@@ -1604,7 +1694,7 @@
                 <div class="correct-answer-text" id="ca-18"></div>
               </div>
 
-              <div class="instruction-block">
+              <div class="instruction-block" id="study-instruction-p2-matching-researchers">
                 <p><strong>Questions 19-23</strong></p>
                 <p>Look at the following statements (Questions 19-23) and the list of researchers below.</p>
                 <p>Match each statement with the correct researcher, A-D.</p>
@@ -1650,7 +1740,7 @@
                 <div class="people-list-line">D Jonathan Jones</div>
               </div>
 
-              <div class="instruction-block">
+              <div class="instruction-block" id="study-instruction-p2-sentence-completion">
                 <p><strong>Questions 24-26</strong></p>
                 <p>Complete the sentences below.</p>
                 <p>Choose <strong>ONE WORD ONLY</strong> from the passage for each answer.</p>
@@ -1675,7 +1765,7 @@
 
             <!-- Section 3 questions -->
             <div data-section="3" style="display:none;">
-              <div class="instruction-block">
+              <div class="instruction-block" id="study-instruction-p3-multiple-choice">
                 <p><strong>READING PASSAGE 3: Questions 27-40</strong></p>
                 <p>Choose the correct letter, A, B, C or D.</p>
                 <p>Write the correct letter in boxes 27-31 on your answer sheet.</p>
@@ -1711,7 +1801,7 @@
                 <div class="correct-answer-text" id="ca-31"></div>
               </div>
 
-              <div class="instruction-block">
+              <div class="instruction-block" id="study-instruction-p3-yes-no-not-given">
                 <p><strong>Questions 32-36</strong></p>
                 <p>Do the following statements agree with the claims of the writer in Reading Passage 3?</p>
                 <p>In boxes 32-36 on your answer sheet, write</p>
@@ -1750,7 +1840,7 @@
                 <div class="correct-answer-text" id="ca-36"></div>
               </div>
 
-              <div class="instruction-block">
+              <div class="instruction-block" id="study-instruction-p3-summary-word-list">
                 <p><strong>Questions 37-40</strong></p>
                 <p>Complete the summary using the list of words, A-G, below.</p>
                 <p>Write the correct letter, A-G, in boxes 37-40 on your answer sheet.</p>
@@ -1847,6 +1937,8 @@
 
   <div id="shortcutToast" role="status" aria-live="polite" aria-atomic="true"></div>
 
+  <script src="study-feedback.js"></script>
+  <script src="../../shared/reading-feature-shell.js"></script>
   <script>
     /***************
      * GLOBAL STATE
@@ -1856,6 +1948,12 @@
     let timerSeconds = 60 * 60;
     let timerId = null;
     let testSubmitted = false;
+    let leaveProtectionActive = false;
+    let beforeUnloadProtectionInstalled = false;
+    let timedFinalizationStarted = false;
+    let submissionSequence = 0;
+    let latestEvaluationSnapshot = null;
+    let latestSubmittedResult = null;
     let pendingMode = null;
     let studentName = "";
     let isTestRunning = false;
@@ -1864,6 +1962,7 @@
     let fullScreenEnforcementEnabled = false;
     let fullScreenExits = 0;
     let focusViolations = 0;
+    let focusLossEpisodeActive = false;
     const visitedSections = new Set();
 
     const AVAILABLE_THEMES = [
@@ -2024,6 +2123,24 @@
 
     restoreThemePreference();
 
+    function syncCandidateNameDisplay() {
+      const display = document.getElementById("candidateNameDisplay");
+      if (!display) return;
+      const shouldShow = mode === "test" && Boolean(studentName);
+      if (!shouldShow) {
+        display.textContent = "";
+        display.title = "";
+        display.removeAttribute("aria-label");
+        display.hidden = true;
+        return;
+      }
+      const label = "Candidate: " + studentName;
+      display.textContent = label;
+      display.title = label;
+      display.setAttribute("aria-label", label);
+      display.hidden = !shouldShow;
+    }
+
     async function beginTimedTest() {
       const input = document.getElementById("studentNameInput");
       studentName = input ? input.value.trim() : "";
@@ -2035,6 +2152,8 @@
 
       fullScreenExits = 0;
       focusViolations = 0;
+      focusLossEpisodeActive = false;
+      timedFinalizationStarted = false;
       fullScreenEnforcementEnabled = false;
       fullscreenSupported = isFullscreenApiSupported();
       updateFullscreenSupportNote(false);
@@ -2065,7 +2184,15 @@
     function startTest(selectedMode) {
       document.body.classList.remove("mode-screen-active");
       mode = selectedMode;
+      syncCandidateNameDisplay();
       const timerContainer = document.getElementById("timerContainer");
+
+      testSubmitted = false;
+      timedFinalizationStarted = false;
+      if (mode === "study") {
+        latestEvaluationSnapshot = null;
+        latestSubmittedResult = null;
+      }
 
       visitedSections.clear();
       visitedSections.add(1);
@@ -2101,13 +2228,28 @@
       setupDividerDrag();
       updateThemeButtons();
       updateFontButtons();
-      window.addEventListener("beforeunload", (e) => {
-        if (!testSubmitted) {
-          e.preventDefault();
-          e.returnValue = "Are you sure you want to leave? All progress will be lost.";
-          return e.returnValue;
+      if (window.ReadingFeatureShell) {
+        if (mode === "study") {
+          window.ReadingFeatureShell.startStudySession();
+        } else {
+          window.ReadingFeatureShell.sync();
         }
-      }, { capture: true });
+      }
+      leaveProtectionActive = mode === "test";
+      ensureBeforeUnloadProtection();
+    }
+
+    function handleProtectedBeforeUnload(event) {
+      if (!leaveProtectionActive) return;
+      event.preventDefault();
+      event.returnValue = true;
+      return event.returnValue;
+    }
+
+    function ensureBeforeUnloadProtection() {
+      if (beforeUnloadProtectionInstalled) return;
+      window.addEventListener("beforeunload", handleProtectedBeforeUnload, { capture: true });
+      beforeUnloadProtectionInstalled = true;
     }
 
     // Expose for inline handlers and any future fallback uses.
@@ -2173,7 +2315,12 @@
     }
 
     function startTimer() {
-      if (mode !== "test") return;
+      if (
+        mode !== "test" ||
+        !isTestRunning ||
+        testSubmitted ||
+        timerSeconds <= 0
+      ) return;
       if (timerId) {
         clearInterval(timerId);
         timerId = null;
@@ -2187,14 +2334,24 @@
       display.textContent = formatDuration(timerSeconds);
 
       timerId = setInterval(() => {
-        timerSeconds--;
-        const overdue = timerSeconds < 0;
+        if (mode !== "test" || !isTestRunning || testSubmitted) {
+          clearInterval(timerId);
+          timerId = null;
+          return;
+        }
+
+        timerSeconds = Math.max(0, timerSeconds - 1);
         display.textContent = formatDuration(timerSeconds);
 
-        if (overdue) {
+        if (timerSeconds <= 0) {
+          timerSeconds = 0;
           display.classList.add("timer-warning");
           if (timerContainer) timerContainer.classList.add("timer-expired");
           if (timerPrefix) timerPrefix.textContent = "Time is up!";
+          clearInterval(timerId);
+          timerId = null;
+          finalizeTimedTestOnce();
+          return;
         } else if (timerSeconds <= 180) {
           display.classList.add("timer-warning");
           if (timerPrefix) timerPrefix.textContent = "Time left:";
@@ -2206,6 +2363,12 @@
       }, 1000);
     }
 
+    function finalizeTimedTestOnce() {
+      if (testSubmitted || timedFinalizationStarted) return;
+      timedFinalizationStarted = true;
+      submitTest();
+    }
+
     function pauseTimer() {
       if (timerId) {
         clearInterval(timerId);
@@ -2215,7 +2378,8 @@
     }
 
     function resumeTimer() {
-      if (!isTestRunning || mode !== "test") return;
+      if (timerId) return;
+      if (!isTestRunning || mode !== "test" || testSubmitted || timerSeconds <= 0) return;
       if (!isTimerPaused) return;
       isTimerPaused = false;
       startTimer();
@@ -2348,16 +2512,28 @@
 
     document.addEventListener("fullscreenchange", handleFullscreenChange);
 
+    function recordFocusLossEpisode() {
+      if (mode !== "test" || !isTestRunning || testSubmitted) return;
+      if (focusLossEpisodeActive) return;
+      focusLossEpisodeActive = true;
+      focusViolations += 1;
+    }
+
+    function clearFocusLossEpisode() {
+      focusLossEpisodeActive = false;
+    }
+
     document.addEventListener("visibilitychange", () => {
-      if (mode === "test" && isTestRunning && !testSubmitted && document.hidden) {
-        focusViolations += 1;
-      }
+      if (document.hidden) recordFocusLossEpisode();
+      else clearFocusLossEpisode();
     });
 
     window.addEventListener("blur", () => {
-      if (mode === "test" && isTestRunning && !testSubmitted) {
-        focusViolations += 1;
-      }
+      recordFocusLossEpisode();
+    });
+
+    window.addEventListener("focus", () => {
+      if (!document.hidden) clearFocusLossEpisode();
     });
 
     /*************************
@@ -2652,16 +2828,16 @@
           " answered)";
       }
 
-      const pHeader = document.getElementById("passageHeader");
-      if (pHeader) {
+      const pHeaderLine = document.getElementById("passageHeaderLine");
+      if (pHeaderLine) {
         if (activeSection === 1) {
-          pHeader.textContent =
+          pHeaderLine.textContent =
             "Part 1 – Read the text and answer questions 1–13.";
         } else if (activeSection === 2) {
-          pHeader.textContent =
+          pHeaderLine.textContent =
             "Part 2 – Read the text and answer questions 14–26.";
         } else {
-          pHeader.textContent =
+          pHeaderLine.textContent =
             "Part 3 – Read the text and answer questions 27–40.";
         }
       }
@@ -2925,6 +3101,7 @@
 
     function evaluateQuestions() {
       let correctCount = 0;
+      const questionOutcomes = {};
 
       for (let q = 1; q <= 40; q++) {
         const user = getUserAnswer(q);
@@ -2961,11 +3138,12 @@
         if (block) {
           if (isCorrect) {
             block.classList.add("correct");
-            correctCount++;
           } else if (user) {
             block.classList.add("incorrect");
           }
         }
+        if (isCorrect) correctCount++;
+        questionOutcomes[q] = isCorrect;
 
         const ca = document.getElementById("ca-" + q);
         if (ca) {
@@ -2976,7 +3154,91 @@
         }
       }
 
+      latestEvaluationSnapshot = {
+        rawScore: correctCount,
+        questionOutcomes: { ...questionOutcomes }
+      };
       return correctCount;
+    }
+
+    function isUserAnswerCorrect(qNum) {
+      const user = getUserAnswer(qNum);
+      const key = answerKey[qNum];
+      if (!user) return false;
+      if (Array.isArray(key)) {
+        return key.some((accepted) =>
+          user.toLowerCase() === String(accepted).toLowerCase()
+        );
+      }
+      if (typeof key !== "string") return false;
+      if (/^(TRUE|FALSE|NOT GIVEN|YES|NO)$/.test(key)) {
+        return user.toUpperCase() === key;
+      }
+      if (key.length === 1) return user.toUpperCase() === key.toUpperCase();
+      return user.toLowerCase() === key.toLowerCase();
+    }
+
+    function countCorrectOutcomes(questionOutcomes, range) {
+      let score = 0;
+      for (let q = range.from; q <= range.to; q++) {
+        if (questionOutcomes[q] === true) score++;
+      }
+      return score;
+    }
+
+    function captureSubmittedAnswers() {
+      const submittedAnswers = {};
+      for (let q = 1; q <= 40; q++) {
+        submittedAnswers[q] = getUserAnswer(q);
+      }
+      return submittedAnswers;
+    }
+
+    function buildSubmittedResult(correctCount, band, questionOutcomes) {
+      const copiedOutcomes = {};
+      for (let q = 1; q <= 40; q++) {
+        copiedOutcomes[q] = questionOutcomes[q] === true;
+      }
+      const elapsedSeconds = Math.max(0, 60 * 60 - timerSeconds);
+      return {
+        submissionId: ++submissionSequence,
+        mode: mode,
+        rawScore: correctCount,
+        band: band,
+        partScores: {
+          1: { score: countCorrectOutcomes(copiedOutcomes, sectionRanges[1]), max: 13 },
+          2: { score: countCorrectOutcomes(copiedOutcomes, sectionRanges[2]), max: 13 },
+          3: { score: countCorrectOutcomes(copiedOutcomes, sectionRanges[3]), max: 14 }
+        },
+        questionOutcomes: copiedOutcomes,
+        submittedAnswers: captureSubmittedAnswers(),
+        candidateName: mode === "test" ? studentName : "",
+        elapsedSeconds: elapsedSeconds,
+        integrity: {
+          fullScreenExits: fullScreenExits,
+          focusViolations: focusViolations
+        }
+      };
+    }
+
+    function copySubmittedResult(result) {
+      if (!result) return null;
+      return {
+        submissionId: result.submissionId,
+        mode: result.mode,
+        rawScore: result.rawScore,
+        band: result.band,
+        partScores: {
+          1: { ...result.partScores[1] },
+          2: { ...result.partScores[2] },
+          3: { ...result.partScores[3] }
+        },
+        questionOutcomes: { ...result.questionOutcomes },
+        submittedAnswers: { ...result.submittedAnswers },
+        candidateName: result.candidateName,
+        elapsedSeconds: result.elapsedSeconds,
+        integrity: { ...result.integrity }
+      };
     }
 
     function computeBandScore(correct) {
@@ -3043,8 +3305,12 @@
     }
 
     function handlePrimarySubmit() {
-      if (mode === "test" && isTestRunning && !testSubmitted) {
-        confirmSubmit();
+      if (mode === "test") {
+        if (testSubmitted) {
+          openExistingResults();
+        } else if (isTestRunning) {
+          confirmSubmit();
+        }
         return;
       }
       submitTest();
@@ -3119,7 +3385,61 @@
       submitTest();
     }
 
+    function renderStoredResult(result) {
+      if (!result) return;
+      const desc = getBandDescriptor(result.band);
+      const studentLine = document.getElementById("studentLine");
+      const fullScreenExitLine = document.getElementById("fullScreenExitLine");
+      const focusViolationLine = document.getElementById("focusViolationLine");
+      const totalTimeLine = document.getElementById("totalTimeLine");
+      const scoreLine = document.getElementById("scoreLine");
+      const bandLine = document.getElementById("bandLine");
+      const descriptorLine = document.getElementById("descriptorLine");
+      const resultsOverlay = document.getElementById("resultsOverlay");
+
+      if (studentLine) {
+        studentLine.textContent = result.candidateName
+          ? "Student: " + result.candidateName
+          : "Student: Not provided";
+      }
+      if (fullScreenExitLine) {
+        fullScreenExitLine.textContent =
+          "Full screen exits: " + result.integrity.fullScreenExits;
+      }
+      if (focusViolationLine) {
+        focusViolationLine.textContent =
+          "Tab switches / focus losses: " + result.integrity.focusViolations;
+      }
+      if (totalTimeLine) {
+        totalTimeLine.textContent =
+          "Total time when submitted: " + formatDuration(result.elapsedSeconds);
+      }
+      if (scoreLine) {
+        scoreLine.textContent =
+          "You answered " + result.rawScore + " out of 40 questions correctly.";
+      }
+      if (bandLine) {
+        bandLine.textContent =
+          "Estimated IELTS Academic Reading band: " +
+          result.band +
+          ". Skill level: " +
+          desc.level;
+      }
+      if (descriptorLine) descriptorLine.textContent = desc.description;
+      if (resultsOverlay) resultsOverlay.style.display = "flex";
+    }
+
+    function openExistingResults() {
+      renderStoredResult(copySubmittedResult(latestSubmittedResult));
+    }
+
     function submitTest() {
+      if (mode === "test" && testSubmitted) {
+        openExistingResults();
+        return;
+      }
+      if (mode === "test") testSubmitted = true;
+
       const correctCount = evaluateQuestions();
 
       // In both modes, show correct answer text
@@ -3132,50 +3452,18 @@
       buildQuestionNav();
 
       const band = computeBandScore(correctCount);
-      const desc = getBandDescriptor(band);
-
-      const studentLine = document.getElementById("studentLine");
-      const fullScreenExitLine = document.getElementById("fullScreenExitLine");
-      const focusViolationLine = document.getElementById("focusViolationLine");
-      const totalTimeLine = document.getElementById("totalTimeLine");
-      const scoreLine = document.getElementById("scoreLine");
-      const bandLine = document.getElementById("bandLine");
-      const descriptorLine = document.getElementById("descriptorLine");
-      const resultsOverlay = document.getElementById("resultsOverlay");
-
-      if (studentLine) {
-        studentLine.textContent = studentName
-          ? "Student: " + studentName
-          : "Student: Not provided";
-      }
-      if (fullScreenExitLine) {
-        fullScreenExitLine.textContent = "Full screen exits: " + fullScreenExits;
-      }
-      if (focusViolationLine) {
-        focusViolationLine.textContent = "Tab switches / focus losses: " + focusViolations;
-      }
-      if (totalTimeLine) {
-        const elapsedSeconds = 60 * 60 - timerSeconds;
-        totalTimeLine.textContent = "Total time when submitted: " + formatDuration(elapsedSeconds);
-      }
-
-      if (scoreLine)
-        scoreLine.textContent =
-          "You answered " + correctCount + " out of 40 questions correctly.";
-      if (bandLine)
-        bandLine.textContent =
-          "Estimated IELTS Academic Reading band: " +
-          band +
-          ". Skill level: " +
-          desc.level;
-      if (descriptorLine) descriptorLine.textContent = desc.description;
-
-      if (resultsOverlay) resultsOverlay.style.display = "flex";
+      latestSubmittedResult = buildSubmittedResult(
+        correctCount,
+        band,
+        latestEvaluationSnapshot.questionOutcomes
+      );
+      renderStoredResult(latestSubmittedResult);
 
       if (mode === "test") {
-        testSubmitted = true;
         isTestRunning = false;
         isTimerPaused = false;
+        timedFinalizationStarted = true;
+        focusLossEpisodeActive = false;
         hideFullscreenLockOverlay();
         if (timerId) {
           clearInterval(timerId);
@@ -3186,7 +3474,12 @@
         document
           .querySelectorAll("#questionContent select, #questionContent input")
           .forEach((el) => (el.disabled = true));
+        document
+          .querySelectorAll('[onclick="handlePrimarySubmit()"]')
+          .forEach((button) => (button.disabled = true));
       }
+
+      if (window.ReadingFeatureShell) window.ReadingFeatureShell.sync();
 
       // Close options overlay if open
       toggleOptions(false);
@@ -3771,6 +4064,59 @@
       document.addEventListener("mouseup", endDrag);
       document.addEventListener("touchend", endDrag);
       document.addEventListener("touchcancel", endDrag);
+    }
+
+    const test17StudyFeedback = window.IELTS17AcademicTest2StudyFeedback;
+    const test17QuestionDetails = window.IELTS17AcademicTest2QuestionDetails;
+    const test17ClueTargets = window.IELTS17AcademicTest2ClueTargets;
+
+    window.readingFeatureShellConfig = {
+      version: 1,
+      test: {
+        id: "cambridge-17-academic-reading-test-2",
+        title: "IELTS 17 Academic Reading Test 2",
+        totalQuestions: 40,
+        partLabel: "Passage",
+        partRanges: sectionRanges
+      },
+      state: {
+        getMode: () => mode,
+        isTestSubmitted: () => testSubmitted,
+        getActivePart: () => activeSection,
+        getSubmittedResult: () => copySubmittedResult(latestSubmittedResult)
+      },
+      answers: {
+        getAnswerKeyDisplay: (questionNumber) =>
+          correctAnswerText[questionNumber] || "",
+        getUserAnswer: (questionNumber) => getUserAnswer(questionNumber),
+        isCorrect: (questionNumber) => isUserAnswerCorrect(questionNumber)
+      },
+      navigation: {
+        getQuestionTarget: (questionNumber) =>
+          getQuestionTarget(questionNumber),
+        getTextTarget: (textId) =>
+          document.querySelector(`.passage-section[data-section="${textId}"]`)
+      },
+      study: {
+        completeQuestionCoverage: true,
+        completeClueCoverage: true,
+        taskGroups: test17StudyFeedback && test17StudyFeedback.taskGroups,
+        questionDetails: test17QuestionDetails && test17QuestionDetails.questions,
+        clueTargets: test17ClueTargets,
+        scoreGuide: test17StudyFeedback && test17StudyFeedback.scoreGuide
+      },
+      compatibility: {}
+    };
+
+    function initReadingFeatureShell() {
+      if (!window.ReadingFeatureShell) return;
+      window.ReadingFeatureShell.init(window.readingFeatureShellConfig);
+    }
+
+    if (document.readyState === "loading") {
+      document.addEventListener("DOMContentLoaded", initReadingFeatureShell, { once: true });
+    } else {
+      initReadingFeatureShell();
     }
 
     // Ensure option buttons reflect the current theme and font selections on load.
