@@ -1,0 +1,17 @@
+/* Test-specific presentation for IELTS 16 Academic Writing Test 3. */
+.task-question,
+.task-question p {
+  font-style: italic;
+}
+
+#taskImage {
+  content: url("./task-1-southwest-airport.svg?v=20260803-1445");
+}
+
+.task-visual {
+  margin-top: 12px;
+}
+
+.visual-frame {
+  padding: 4px 0 8px;
+}
