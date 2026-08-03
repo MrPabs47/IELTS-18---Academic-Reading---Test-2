@@ -1,0 +1,2 @@
+Source: user-provided Cambridge IELTS 16 Academic Writing Test 4 Task 1 diagram screenshot (image(121).png).
+Enhancement: non-generative grayscale cleanup, restrained contrast correction, sharpening and WebP compression. No labels, stages, arrows or assessed information were redrawn.
