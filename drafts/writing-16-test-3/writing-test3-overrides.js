@@ -16,7 +16,8 @@
       </div>
       <p>Write at least 150 words.</p>
       <figure class="task-visual">
-        <div class="visual-frame">
+        <div class="visual-frame airport-visual-frame">
+          <div class="airport-diagram-title">SOUTHWEST AIRPORT</div>
           <img id="taskImage" src="${AIRPORT_IMAGE}" alt="The original Southwest Airport plans showing the airport now and after redevelopment next year." tabindex="0" title="Click to enlarge the airport plans within this pane">
         </div>
       </figure>`,
