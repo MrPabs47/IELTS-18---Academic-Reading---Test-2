@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="robots" content="noindex,nofollow" />
+  <title>IELTS 16 Academic Writing Test 4 · Preview</title>
+  <link rel="stylesheet" href="../writing/writing-preview.css?v=20260803-2355" />
+  <link rel="stylesheet" href="../writing/writing-preview-refinements.css?v=20260803-2355" />
+  <link rel="stylesheet" href="writing-test4-overrides.css?v=20260803-2355" />
+</head>
+<body data-theme="black-on-white">
+  <div id="modeScreen">
+    <div id="modeScreenInner">
+      <h1>IELTS 16 Academic Writing Test 4</h1>
+      <p>Select how you want to use this test.</p>
+      <div class="mode-buttons">
+        <button class="mode-btn" data-mode="test" type="button">Test mode (exam conditions)</button>
+        <button class="mode-btn secondary" data-mode="study" type="button">Study mode (show feedback)</button>
+      </div>
+      <p style="font-size:.8rem;margin-top:10px;color:var(--text-soft);">In Test mode you submit once at the end. In Study mode you can review and change your writing as many times as you like.</p>
+      <div id="testStartScreen">
+        <label for="studentNameInput">Your name (for test mode results)</label>
+        <input type="text" id="studentNameInput" placeholder="Enter your full name" maxlength="80" />
+        <button class="mode-btn" type="button" id="beginTestBtn">Start the test now</button>
+        <p id="fullscreenSupportNote">Full screen enforcement is limited on this device.</p>
+      </div>
+    </div>
+  </div>
+
+  <div id="app">
+    <header class="top-bar">
+      <div class="top-left">
+        <div class="logo home-link" id="homeLogo" title="Return to home">IELTS Pabs</div>
+        <div class="test-title">IELTS 16 Academic Writing Test 4</div>
+        <div id="candidateNameDisplay"></div>
+      </div>
+      <div class="top-right">
+        <div id="studyHeaderChrome">
+          <button id="studyToolsBtn" class="study-tools-button" type="button">Study tools</button>
+          <div id="studyModePill" role="status">Study mode</div>
+        </div>
+        <div id="timerContainer" role="timer" aria-live="polite" aria-atomic="true"><span>Time left:</span> <span id="timerDisplay">60:00</span></div>
+        <div class="icon-group">
+          <span class="icon" title="Connection status"><span class="sr-only">Connection status</span><svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4.93 9.93a10.5 10.5 0 0 1 14.14 0"/><path d="M7.76 12.76a6.5 6.5 0 0 1 8.48 0"/><path d="M10.59 15.59a2.5 2.5 0 0 1 2.82 0"/><path d="M12 18h.01"/></svg></span>
+          <span class="icon" title="Notifications"><span class="sr-only">Notifications</span><svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M15 17h5l-1.4-1.4A2 2 0 0 1 18 14.17V11a6 6 0 1 0-12 0v3.17a2 2 0 0 1-.59 1.43L4 17h5"/><path d="M9 17a3 3 0 0 0 6 0"/></svg></span>
+          <button id="fullscreenBtn" class="icon-button with-label" title="Enter full screen" aria-label="Enter full screen"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="8 3 3 3 3 8"/><line x1="3" y1="3" x2="9" y2="9"/><polyline points="16 21 21 21 21 16"/><line x1="15" y1="15" x2="21" y2="21"/><polyline points="21 8 21 3 16 3"/><line x1="15" y1="9" x2="21" y2="3"/><polyline points="3 16 3 21 8 21"/><line x1="3" y1="21" x2="9" y2="15"/></svg><span id="fullscreenBtnLabel">Full screen</span></button>
+          <button id="optionsBtn" class="icon-button" title="Options menu" aria-label="Options menu"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="7" x2="20" y2="7"/><line x1="4" y1="12" x2="20" y2="12"/><line x1="4" y1="17" x2="16" y2="17"/></svg></button>
+        </div>
+      </div>
+    </header>
+
+    <div id="optionsOverlay">
+      <div id="optionsPanel" role="dialog" aria-modal="true" aria-labelledby="optionsTitle">
+        <button class="options-close" id="optionsClose" aria-label="Close options">✕</button>
+        <h2 id="optionsTitle">Options</h2>
+        <button class="submit-button" id="optionsSubmit">✔ Submit test</button>
+        <div class="options-section"><h3>Contrast</h3><div class="options-list">
+          <button data-theme-choice="black-on-white"><span>Black on white</span><span>✓</span></button>
+          <button data-theme-choice="white-on-black"><span>White on black</span><span>✓</span></button>
+          <button data-theme-choice="yellow-on-black"><span>Yellow on black</span><span>✓</span></button>
+        </div></div>
+        <div class="options-section"><h3>Text size</h3><div class="options-list">
+          <button data-font-choice="normal"><span>Normal</span><span>✓</span></button>
+          <button data-font-choice="large"><span>Large</span><span>✓</span></button>
+          <button data-font-choice="xlarge"><span>Extra large</span><span>✓</span></button>
+        </div></div>
+      </div>
+    </div>
+
+    <main class="main-area">
+      <div class="main-inner" id="mainInner">
+        <section class="pane" id="passagePane">
+          <div class="pane-header"><div id="taskHeader">Writing Task 1</div></div>
+          <div class="pane-content"><div class="task-copy" id="taskCopy"></div></div>
+        </section>
+        <div class="divider" id="divider" role="separator" aria-label="Resize the task and writing panes" aria-orientation="vertical" tabindex="0"></div>
+        <section class="pane" id="writingPane">
+          <div class="pane-header"><div>Your answer</div></div>
+          <div class="pane-content writing-content">
+            <label class="sr-only" for="answerEditor">Your answer</label>
+            <textarea id="answerEditor" spellcheck="true" autocomplete="off"></textarea>
+            <div id="wordCount" aria-live="polite">Words: 0</div>
+          </div>
+        </section>
+      </div>
+    </main>
+
+    <footer class="bottom-nav">
+      <div class="bottom-row">
+        <div class="part-summary-row">
+          <button class="part-chip active" data-task="1">Writing Task 1</button>
+          <button class="part-chip" data-task="2">Writing Task 2</button>
+        </div>
+        <div class="section-arrows">
+          <button class="arrow-btn" id="prevTask" title="Previous task" aria-label="Previous task">←</button>
+          <button class="arrow-btn" id="nextTask" title="Next task" aria-label="Next task">→</button>
+          <button class="check-btn" id="submitButton" title="Submit test" aria-label="Submit test">✔</button>
+        </div>
+      </div>
+    </footer>
+    <div class="submitted-banner" id="submittedBanner">Test submitted</div>
+  </div>
+
+  <div id="fullscreenLockOverlay" role="dialog" aria-modal="true" aria-live="assertive">
+    <div id="fullscreenLockPanel"><h2>Test paused</h2><p>You have left full screen. Return to full screen to continue your test.</p><button class="mode-btn" id="returnFullscreenBtn">Return to full screen</button></div>
+  </div>
+
+  <div id="submitOverlay"><div class="dialog-panel" role="dialog" aria-modal="true" aria-labelledby="submitTitle"><h2 id="submitTitle">Submit your Writing test?</h2><p id="submitSummary">Your answers will be prepared in a submission report.</p><div class="dialog-actions"><button class="secondary" id="cancelSubmit">Keep writing</button><button class="primary" id="confirmSubmit">Submit test</button></div></div></div>
+  <div id="reviewOverlay"><div class="dialog-panel" role="dialog" aria-modal="true" aria-labelledby="reviewTitle"><h2 id="reviewTitle">Self-review</h2><div id="reviewContent"></div><div class="dialog-actions"><button class="primary" id="closeReview">Return to writing</button></div></div></div>
+  <aside id="studyDrawer" hidden><div class="drawer-head"><h2>Study tools</h2><button id="closeStudyDrawer" aria-label="Close Study tools">✕</button></div><div class="drawer-body" id="studyDrawerBody"></div></aside>
+
+  <script src="../writing/writing-preview.js?v=20260803-2355"></script>
+  <script src="../writing/writing-preview-refinements.js?v=20260803-2355"></script>
+  <script src="writing-test4-overrides.js?v=20260803-2355"></script>
+</body>
+</html>
