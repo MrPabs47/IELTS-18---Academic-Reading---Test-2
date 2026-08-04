@@ -1,8 +1,8 @@
 {
-  "version": 6,
+  "version": 7,
   "books": [19, 18, 17, 16],
   "tests": [1, 2, 3, 4],
-  "index_availability_fragment": "const availability={academicReading:new Set(allKeys),generalReading:new Set(allKeys),listening:new Set(allKeys.filter(key=>key!=='19-1')),academicWriting:new Set(['16-1','16-2','16-3','16-4']),generalWriting:new Set(['16-1']),speaking:new Set()};",
+  "index_availability_fragment": "const availability={academicReading:new Set(allKeys),generalReading:new Set(allKeys),listening:new Set(allKeys.filter(key=>key!=='19-1')),academicWriting:new Set(['16-1','16-2','16-3','16-4']),generalWriting:new Set(['16-1','16-2','16-3','16-4']),speaking:new Set()};",
   "categories": {
     "academicReading": {
       "filesystem_template": "academic/cambridge-{book}/test-{test}/IELTS{book} Test {test} - Academic Reading.html",
@@ -34,8 +34,7 @@
       "excluded": [
         "19-1", "19-2", "19-3", "19-4",
         "18-1", "18-2", "18-3", "18-4",
-        "17-1", "17-2", "17-3", "17-4",
-        "16-2", "16-3", "16-4"
+        "17-1", "17-2", "17-3", "17-4"
       ]
     }
   },
@@ -154,6 +153,51 @@
       "path": "drafts/general-writing-16-test-1/index.html",
       "git_blob_sha": "ed30e8358ef91ddb3614dee9e9bdd46e60a54e47",
       "reason": "IELTS 16 General Training Writing Test 1 visible application entry"
+    },
+    {
+      "path": "general-training/cambridge-16/test-2/IELTS16 Test 2 - General Training Writing.html",
+      "git_blob_sha": "c6cca3c1210e6cc935062a405e7136d3e086eca3",
+      "reason": "Canonical IELTS 16 General Training Writing Test 2 Live Hub entry point"
+    },
+    {
+      "path": "drafts/general-writing-16-test-2/start.html",
+      "git_blob_sha": "8764225c517c61312f79c76b3899dbf714e04725",
+      "reason": "IELTS 16 General Training Writing Test 2 clean-start redirect boundary"
+    },
+    {
+      "path": "drafts/general-writing-16-test-2/index.html",
+      "git_blob_sha": "09c600c853550dec500ac66336d1ac4af5d62d9d",
+      "reason": "IELTS 16 General Training Writing Test 2 visible application entry"
+    },
+    {
+      "path": "general-training/cambridge-16/test-3/IELTS16 Test 3 - General Training Writing.html",
+      "git_blob_sha": "da731d453e80289e74ceaa7ed9a2ed4867f4b887",
+      "reason": "Canonical IELTS 16 General Training Writing Test 3 Live Hub entry point"
+    },
+    {
+      "path": "drafts/general-writing-16-test-3/start.html",
+      "git_blob_sha": "42b92e96dcc054008a217df1b7ae0f458be5195e",
+      "reason": "IELTS 16 General Training Writing Test 3 clean-start redirect boundary"
+    },
+    {
+      "path": "drafts/general-writing-16-test-3/index.html",
+      "git_blob_sha": "09c600c853550dec500ac66336d1ac4af5d62d9d",
+      "reason": "IELTS 16 General Training Writing Test 3 visible application entry"
+    },
+    {
+      "path": "general-training/cambridge-16/test-4/IELTS16 Test 4 - General Training Writing.html",
+      "git_blob_sha": "d0e6b15da31ca10bf548649b3c32765ff022c148",
+      "reason": "Canonical IELTS 16 General Training Writing Test 4 Live Hub entry point"
+    },
+    {
+      "path": "drafts/general-writing-16-test-4/start.html",
+      "git_blob_sha": "2c53d8da84015ae7ae4208fd6fa89478f814decd",
+      "reason": "IELTS 16 General Training Writing Test 4 clean-start redirect boundary"
+    },
+    {
+      "path": "drafts/general-writing-16-test-4/index.html",
+      "git_blob_sha": "09c600c853550dec500ac66336d1ac4af5d62d9d",
+      "reason": "IELTS 16 General Training Writing Test 4 visible application entry"
     }
   ]
 }
