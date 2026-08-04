@@ -25,7 +25,7 @@
       ".passage-heading-letter{flex:0 0 auto;font-weight:800}" +
       ".passage-heading-wording{min-width:0}" +
       ".passage-heading-body{margin-top:0!important}" +
-      ".passage-heading-source.passage-paragraph-source{align-items:center;display:inline-flex;justify-content:center;margin:14px 0 4px;min-height:30px;padding:4px 10px;width:42px}" +
+      ".passage-heading-source.passage-paragraph-source{align-items:center;display:flex;justify-content:center;margin:14px auto 4px;min-height:30px;padding:4px 10px;width:42px}" +
       ".passage-paragraph-body{margin-top:0!important}" +
       ".gt-test3-header-left{min-width:0;flex:1 1 auto;white-space:nowrap;overflow:hidden}" +
       ".gt-test3-header-left .test-title,.gt-test3-header-left #candidateNameDisplay{font-size:.95rem;color:var(--text-soft);min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}" +
@@ -37,6 +37,7 @@
       ".passage-heading-drop-zone{justify-content:flex-start;line-height:1.3;max-width:100%;text-align:left;white-space:normal}" +
       ".passage-heading-drop-zone:not(.filled){color:var(--text-soft);font-size:.84rem;font-weight:600;height:30px;min-height:30px;width:104px}" +
       ".passage-heading-drop-zone.filled{font-weight:700;height:auto;min-height:38px;width:min(100%,430px)}" +
+      ".passage-heading-drop-zone[data-for=\"q33\"].filled,.passage-heading-drop-zone[data-for=\"q34\"].filled,.passage-heading-drop-zone[data-for=\"q35\"].filled,.passage-heading-drop-zone[data-for=\"q36\"].filled{flex:0 0 104px;height:30px;justify-content:center;max-width:104px;min-height:30px;text-align:center;white-space:nowrap;width:104px}" +
       ".drag-item.passage-match-source:focus-visible,.drop-zone:focus-visible{outline:3px solid var(--accent);outline-offset:2px}" +
       ".drag-item.passage-match-source.reading-shell-locked,.drop-zone.reading-shell-locked{cursor:not-allowed;opacity:.72}";
     document.head.appendChild(style);
