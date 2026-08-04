@@ -1247,7 +1247,76 @@
 
   <script>
     const audioSources = { 1: '../../../Test 2 Part 1.mp3', 2: '../../../Test 2 Part 2.mp3', 3: '../../../Test 2 Part 3.mp3', 4: '../../../Test 2 Part 4.mp3' };
+    const questionLinksKey = 'related' + 'Questions';
+    const listeningStudyData = {
+      parts: {
+        1: {
+          audioSrc: audioSources[1],
+          speakers: {
+            narrator: { label: "Narrator" },
+            employee: { label: "Employee" },
+            woman: { label: "Woman" }
+          },
+          segments: [
+        { id: "t2-p1-i001", speaker: "narrator", text: "Test 2. This is the IELTS Listening test.", [questionLinksKey]: [], start: 0.33, end: 4.44 },
+        { id: "t2-p1-i002", speaker: "narrator", text: "You will hear a number of different recordings and you will have to answer questions on what you hear.", [questionLinksKey]: [], start: 5.64, end: 11.24 },
+        { id: "t2-p1-i003", speaker: "narrator", text: "There will be time for you to read the instructions and questions, and you will have a chance to check your work.", [questionLinksKey]: [], start: 12.16, end: 18.42 },
+        { id: "t2-p1-i004", speaker: "narrator", text: "All the recordings will be played once only.", [questionLinksKey]: [], start: 19.46, end: 22.4 },
+        { id: "t2-p1-i005", speaker: "narrator", text: "The test is in four parts.", [questionLinksKey]: [], start: 23.62, end: 25.82 },
+        { id: "t2-p1-i006", speaker: "narrator", text: "At the end of the test, you will be given ten minutes to transfer your answers to the answer sheet.", [questionLinksKey]: [], start: 26.54, end: 32.66 },
+        { id: "t2-p1-i007", speaker: "narrator", text: "Now turn to Part 1.", [questionLinksKey]: [], start: 34.5, end: 36.04 },
+        { id: "t2-p1-i008", speaker: "narrator", text: "Part 1.", [questionLinksKey]: [], start: 40.64, end: 41.82 },
+        { id: "t2-p1-i009", speaker: "narrator", text: "You will hear a woman phoning a company that converts old photographs to digital format.", [questionLinksKey]: [], start: 42.74, end: 48.9 },
+        { id: "t2-p1-i010", speaker: "narrator", text: "First, you have some time to look at Questions 1 to 3.", [questionLinksKey]: [], start: 50.04, end: 53.94 },
+        { id: "t2-p1-i011", speaker: "narrator", text: "Now listen carefully and answer Questions 1 to 3.", [questionLinksKey]: [], start: 69.08, end: 73.14 },
+        { id: "t2-p1-s001", speaker: "employee", text: "Hello, Picturerep. Can I help you?", [questionLinksKey]: [], start: 76.73, end: 78.4 },
+        { id: "t2-p1-s002", speaker: "woman", text: "Oh, hi. I saw your advertisement about copying pictures to disk and I?d like a bit more information about what you do.", [questionLinksKey]: [], start: 78.9, end: 87.46 },
+        { id: "t2-p1-s003", speaker: "employee", text: "Sure. What would you like to know?", [questionLinksKey]: [], start: 88.28, end: 89.72 },
+        { id: "t2-p1-s004", speaker: "woman", text: "Well, I?ve got a box full of old family photos that?s been up in the attic for years, some of them must be 50 or 60 years old, and I?d like to get them converted to digital format.", [questionLinksKey]: [], start: 90.56, end: 103.62 },
+        { id: "t2-p1-s005", speaker: "employee", text: "Sure, we can do that for you.", [questionLinksKey]: [], start: 104.18, end: 105.88 },
+        { id: "t2-p1-s006", speaker: "woman", text: "Right. And what about size? The photos are all sorts of sizes ? are there any restrictions?", [questionLinksKey]: [], start: 106.36, end: 113.88 },
+        { id: "t2-p1-s007", speaker: "employee", text: "Well the maximum size of photo we can do with our normal service is 30 centimetres. And each picture must be at least 4 centimetres, that?s the minimum we can cope with.", [questionLinksKey]: [], start: 115.18, end: 126.54 },
+        { id: "t2-p1-s008", speaker: "woman", text: "That should be fine. And some of them are in a frame ? should I take them out before I send them?", [questionLinksKey]: [1], start: 126.76, end: 133.38 },
+        { id: "t2-p1-s009", speaker: "employee", text: "Yes please, we can?t copy them otherwise. And also the photos must all be separate, they mustn?t be stuck into an album.", [questionLinksKey]: [1], start: 133.84, end: 141.34 },
+        { id: "t2-p1-s010", speaker: "woman", text: "OK, that?s not a problem. So can you give me an idea of how much this will cost? I?ve got about 360 photos I think.", [questionLinksKey]: [], start: 141.34, end: 152.58 },
+        { id: "t2-p1-s011", speaker: "employee", text: "We charge ?195 for 300 to 400 photos for the basic service.", [questionLinksKey]: [2], start: 153.1, end: 159.42 },
+        { id: "t2-p1-s012", speaker: "woman", text: "OK. And does that include the disk?", [questionLinksKey]: [], start: 160.1, end: 162.68 },
+        { id: "t2-p1-s013", speaker: "employee", text: "Yes, one disk ? but you can get extra ones for ?5 each.", [questionLinksKey]: [], start: 163.36, end: 168.04 },
+        { id: "t2-p1-s014", speaker: "woman", text: "That?s good. So do I need to pay when I send you the photos?", [questionLinksKey]: [], start: 168.04, end: 172.68 },
+        { id: "t2-p1-s015", speaker: "employee", text: "No, we won’t need anything until we’ve actually copied the pictures. Then we’ll let you know how much it is, and once we’ve received the payment, we’ll send the parcel off to you.", [questionLinksKey]: [3], start: 173.56, end: 184.34 },
+        { id: "t2-p1-s016", speaker: "woman", text: "Right.", [questionLinksKey]: [], start: 184.78, end: 185.1 },
+        { id: "t2-p1-i012", speaker: "narrator", text: "Before you hear the rest of the conversation,", [questionLinksKey]: [], start: 188.74, end: 191.26 },
+        { id: "t2-p1-i013", speaker: "narrator", text: "you have some time to look at Questions 4 to 10.", [questionLinksKey]: [], start: 191.71, end: 195.08 },
+        { id: "t2-p1-s017", speaker: "employee", text: "Is there anything else you?d like to ask about our services?", [questionLinksKey]: [], start: 231.62, end: 235.18 },
+        { id: "t2-p1-s018", speaker: "woman", text: "Yes. I?ve roughly sorted out the photos into groups, according to what they?re about ? so can you keep them in those groups when you copy them?", [questionLinksKey]: [], start: 236.48, end: 246.06 },
+        { id: "t2-p1-s019", speaker: "employee", text: "Sure. We?ll save each group in a different folder on the disk and if you like, you can suggest a name for each folder.", [questionLinksKey]: [], start: 247.0, end: 254.04 },
+        { id: "t2-p1-s020", speaker: "woman", text: "So I could have one called ?Grandparents? for instance?", [questionLinksKey]: [4], start: 254.04, end: 258.38 },
+        { id: "t2-p1-s021", speaker: "employee", text: "Exactly.", [questionLinksKey]: [], start: 259.08, end: 259.5 },
+        { id: "t2-p1-s022", speaker: "woman", text: "And do you do anything besides scan the photos? Like, can you make any improvements?", [questionLinksKey]: [], start: 261.08, end: 266.76 },
+        { id: "t2-p1-s023", speaker: "employee", text: "Yes, in the standard service each photo is checked, and we can sometimes touch up the colour a bit, or improve the contrast ? that can make a big difference.", [questionLinksKey]: [5], start: 267.8, end: 278.34 },
+        { id: "t2-p1-s024", speaker: "woman", text: "OK. And some of the photos are actually quite fragile ? they won?t get damaged in the process, will they?", [questionLinksKey]: [], start: 279.14, end: 286.0 },
+        { id: "t2-p1-s025", speaker: "employee", text: "No, if any look particularly fragile, we?d do them by hand. We do realise how precious these old photos can be.", [questionLinksKey]: [6], start: 286.58, end: 294.32 },
+        { id: "t2-p1-s026", speaker: "woman", text: "Sure.", [questionLinksKey]: [], start: 294.84, end: 295.18 },
+        { id: "t2-p1-s027", speaker: "employee", text: "And another thing is we can make changes to a photo if you want ? so if you want to remove an object from a photo, or maybe alter the background, we can do that.", [questionLinksKey]: [7], start: 295.98, end: 307.1 },
+        { id: "t2-p1-s028", speaker: "woman", text: "Really? I might be interested in that. I?ll have a look through the photos and see. Oh, and talking of fixing photos ? I?ve got a few that aren?t properly in focus. Can you do anything to make that better?", [questionLinksKey]: [8], start: 307.1, end: 322.84 },
+        { id: "t2-p1-s029", speaker: "employee", text: "No, I?m afraid that?s one thing we can?t do.", [questionLinksKey]: [8], start: 323.46, end: 326.3 },
+        { id: "t2-p1-s030", speaker: "woman", text: "OK.", [questionLinksKey]: [], start: 326.82, end: 327.4 },
+        { id: "t2-p1-s031", speaker: "employee", text: "Any other information I can give you?", [questionLinksKey]: [], start: 327.82, end: 329.84 },
+        { id: "t2-p1-s032", speaker: "woman", text: "Er ? oh, how long will it all take?", [questionLinksKey]: [], start: 331.62, end: 334.04 },
+        { id: "t2-p1-s033", speaker: "employee", text: "We aim to get the copying done in ten days.", [questionLinksKey]: [9], start: 334.04, end: 337.16 },
+        { id: "t2-p1-s034", speaker: "woman", text: "Fine. Right, well I?ll get the photos packed up in a box and post them off to you.", [questionLinksKey]: [], start: 338.12, end: 343.96 },
+        { id: "t2-p1-s035", speaker: "employee", text: "Right. If you?ve got a strong cardboard box, that?s best. We?ve found that plastic ones sometimes break in the post.", [questionLinksKey]: [10], start: 344.38, end: 351.92 },
+        { id: "t2-p1-s036", speaker: "woman", text: "OK. Right, thanks for your help. Bye.", [questionLinksKey]: [], start: 352.54, end: 356.78 },
+        { id: "t2-p1-s037", speaker: "employee", text: "Bye.", [questionLinksKey]: [], start: 357.54, end: 357.84 },
+        { id: "t2-p1-i014", speaker: "narrator", text: "That is the end of Part 1.", [questionLinksKey]: [], start: 361.49, end: 363.02 },
+        { id: "t2-p1-i015", speaker: "narrator", text: "You now have half a minute to check your answers to Part 1.", [questionLinksKey]: [], start: 363.74, end: 367.42 },
+          ]
+        }
+      }
+    };
+    const VERIFIED_PART_1_START_SECONDS = 0.30;
     const studyAudioStartFloors = {1:0,2:0,3:0,4:0};
+    studyAudioStartFloors[1]=VERIFIED_PART_1_START_SECONDS;
     const sectionRanges = { 1:{from:1,to:10,label:'Part 1'}, 2:{from:11,to:20,label:'Part 2'}, 3:{from:21,to:30,label:'Part 3'}, 4:{from:31,to:40,label:'Part 4'} };
     const auditedTaskGroups = ['1-10','11-15','16-18','19-20','21-24','25-30','31-40'];
     const answerKey = {1:['frame'],2:['195'],3:['payment'],4:['grandparents'],5:['colour','color'],6:['hand'],7:['background'],8:['focus'],9:['ten days','10 days'],10:['plastic'],11:['C'],12:['B'],13:['A'],14:['A'],15:['C'],16:['D'],17:['A'],18:['B'],19:['B'],20:['C'],21:['B'],22:['A'],23:['C'],24:['C'],25:['history'],26:['paper'],27:['humans','people'],28:['stress'],29:['graph'],30:['evaluate'],31:['creativity'],32:['therapy'],33:['fitness'],34:['balance'],35:['brain'],36:['motivation'],37:['isolation'],38:['calories'],39:['obesity'],40:['habit']};
@@ -1262,6 +1331,7 @@
     let studyAudioLoadToken = 0, loadedAudioSection = null, studyAudioTransition = null, studyAudioObjectUrls = {};
     let studyAudioUserSeekToken = 0, pendingStudyAudioUserSeek = null, studyAudioControlWasPlaying = null;
     let studyAudioSeekabilityPending = {1:false,2:false,3:false,4:false};
+    let audioFloorCorrectionInProgress=false;
     let activeQuestionNumber = null;
     const hasCompleteTranscriptData=false;
     let studyPanesSwapped=false, studySplitRatio=58;
@@ -1504,6 +1574,26 @@
       const duration=Number.isFinite(sectionAudio.duration) ? sectionAudio.duration : numeric;
       return Math.min(Math.max(floor,numeric),Math.max(floor,duration));
     }
+    function clampListeningStudySeek(section,position){ return normaliseStudyAudioPosition(section,position); }
+    function getAudioFloorSection(){ return mode==='test' && !submittedReview ? playbackSection : activeSection; }
+    function enforceAudioPlaybackFloor(section=getAudioFloorSection()){
+      const floor=getStudyAudioFloor(section);
+      if(!floor || audioFloorCorrectionInProgress || sectionAudioSource.getAttribute('src')!==audioSources[section]) return false;
+      if(!Number.isFinite(sectionAudio.currentTime) || sectionAudio.currentTime>=floor) return false;
+      audioFloorCorrectionInProgress=true;
+      try {
+        sectionAudio.currentTime=normaliseStudyAudioPosition(section,floor);
+        if(mode==='study' || submittedReview){
+          studyAudioPositions[section]=floor;
+          studyAudioPositionInitialized[section]=true;
+        }
+        return true;
+      } catch {
+        return false;
+      } finally {
+        audioFloorCorrectionInProgress=false;
+      }
+    }
     function saveStudyAudioPosition(sectionOverride=null){
       const overrideSection=Number.isInteger(sectionOverride) ? sectionOverride : null;
       const section=overrideSection || loadedAudioSection;
@@ -1617,17 +1707,19 @@
     }
     function playCurrentSectionAudio(){
       if(testAudioStopped || submitted) return false;
+      enforceAudioPlaybackFloor(playbackSection);
       const playPromise=sectionAudio.play();
       if(playPromise && typeof playPromise.catch==='function') playPromise.catch(()=>{ updateAudioStatusLabel(); return false; });
       return playPromise;
     }
     function loadTestAudioSource(section){
       const src=audioSources[section] || '';
-      if(sectionAudioSource.getAttribute('src')===src) return;
+      if(sectionAudioSource.getAttribute('src')===src){ enforceAudioPlaybackFloor(section); return; }
       sectionAudio.pause();
       sectionAudioSource.setAttribute('src',src);
       sectionAudio.removeAttribute('src');
       sectionAudio.load();
+      enforceAudioPlaybackFloor(section);
       updateAudioStatusLabel({state:'loading'});
     }
     function advanceTestAudioSequence(){
@@ -2150,16 +2242,18 @@
     prevSectionBtn.addEventListener('click',()=>{ if(activeSection>1) switchSection(activeSection-1); });
     nextSectionBtn.addEventListener('click',()=>{ if(activeSection<4) switchSection(activeSection+1); });
     sectionAudio.addEventListener('loadstart',()=>{ updateAudioStatusLabel({state:'loading'}); });
-    sectionAudio.addEventListener('loadedmetadata',()=>{ updateAudioStatusLabel(); });
-    sectionAudio.addEventListener('canplay',()=>{ updateAudioStatusLabel(); });
-    sectionAudio.addEventListener('play',()=>{ updateAudioStatusLabel({state:'playing'}); });
+    sectionAudio.addEventListener('loadedmetadata',()=>{ enforceAudioPlaybackFloor(); updateAudioStatusLabel(); });
+    sectionAudio.addEventListener('loadeddata',()=>{ enforceAudioPlaybackFloor(); updateAudioStatusLabel(); });
+    sectionAudio.addEventListener('canplay',()=>{ enforceAudioPlaybackFloor(); updateAudioStatusLabel(); });
+    sectionAudio.addEventListener('play',()=>{ enforceAudioPlaybackFloor(); updateAudioStatusLabel({state:'playing'}); });
     sectionAudio.addEventListener('playing',()=>{ updateAudioStatusLabel({state:'playing'}); });
-    sectionAudio.addEventListener('pause',()=>{ updateAudioStatusLabel(); });
+    sectionAudio.addEventListener('pause',()=>{ enforceAudioPlaybackFloor(); updateAudioStatusLabel(); });
     sectionAudio.addEventListener('waiting',()=>{ updateAudioStatusLabel({state:'loading'}); });
-    sectionAudio.addEventListener('seeking',()=>{ updateAudioStatusLabel(); });
+    sectionAudio.addEventListener('seeking',()=>{ enforceAudioPlaybackFloor(); updateAudioStatusLabel(); });
+    sectionAudio.addEventListener('timeupdate',()=>{ enforceAudioPlaybackFloor(); });
     sectionAudio.addEventListener('timeupdate',saveStudyAudioPosition);
     sectionAudio.addEventListener('seeked',saveStudyAudioPosition);
-    sectionAudio.addEventListener('seeked',()=>{ updateAudioStatusLabel(); });
+    sectionAudio.addEventListener('seeked',()=>{ enforceAudioPlaybackFloor(); updateAudioStatusLabel(); });
     sectionAudio.addEventListener('pause',saveStudyAudioPosition);
     sectionAudio.addEventListener('pointerdown',beginStudyAudioControlInteraction);
     sectionAudio.addEventListener('keydown',beginStudyAudioControlInteraction);
