@@ -1,8 +1,8 @@
 {
-  "version": 4,
+  "version": 5,
   "books": [19, 18, 17, 16],
   "tests": [1, 2, 3, 4],
-  "index_availability_fragment": "const availability={academicReading:new Set(allKeys),generalReading:new Set(allKeys),listening:new Set(allKeys.filter(key=>key!=='19-1')),academicWriting:new Set(['16-1','16-2','16-3']),generalWriting:new Set(),speaking:new Set()};",
+  "index_availability_fragment": "const availability={academicReading:new Set(allKeys),generalReading:new Set(allKeys),listening:new Set(allKeys.filter(key=>key!=='19-1')),academicWriting:new Set(['16-1','16-2','16-3','16-4']),generalWriting:new Set(),speaking:new Set()};",
   "categories": {
     "academicReading": {
       "filesystem_template": "academic/cambridge-{book}/test-{test}/IELTS{book} Test {test} - Academic Reading.html",
@@ -25,8 +25,7 @@
       "excluded": [
         "19-1", "19-2", "19-3", "19-4",
         "18-1", "18-2", "18-3", "18-4",
-        "17-1", "17-2", "17-3", "17-4",
-        "16-4"
+        "17-1", "17-2", "17-3", "17-4"
       ]
     }
   },
@@ -115,6 +114,21 @@
       "path": "drafts/writing-16-test-3/index.html",
       "git_blob_sha": "f914af3965fb151ec3762b4780e08c62d4cf6b0c",
       "reason": "IELTS 16 Academic Writing Test 3 visible application entry"
+    },
+    {
+      "path": "academic/cambridge-16/test-4/IELTS16 Test 4 - Academic Writing.html",
+      "git_blob_sha": "61c70d8e642fe2e487f7b653de169c70e784f11b",
+      "reason": "Canonical IELTS 16 Academic Writing Test 4 Live Hub entry point"
+    },
+    {
+      "path": "drafts/writing-16-test-4/start.html",
+      "git_blob_sha": "dd77cf9424cffe966b2511d9296c8b05682d030e",
+      "reason": "IELTS 16 Academic Writing Test 4 clean-start redirect boundary"
+    },
+    {
+      "path": "drafts/writing-16-test-4/index.html",
+      "git_blob_sha": "78ad49ecb6486688890fcbe9d50553d850718c0e",
+      "reason": "IELTS 16 Academic Writing Test 4 visible application entry"
     }
   ]
 }
