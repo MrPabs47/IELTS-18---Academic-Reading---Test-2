@@ -4,8 +4,10 @@
 **Reference implementations:** Cambridge IELTS 19 General Training Reading Tests 1 and 2  
 **Core releases:** PR #379 and PR #381  
 **Stabilisation releases:** PR #387, PR #389 and PR #392  
+**Focused regression release:** PR #436 — Test 3 header CSS inheritance and Study-dialog containment  
 **Current reference commit:** `94455b5135879d06e514388a2ba9341bb3273144`  
-**Prepared:** 2 August 2026
+**Prepared:** 2 August 2026  
+**Updated:** 6 August 2026
 
 > **Operating rule**
 >
@@ -15,6 +17,8 @@
 > - `general-training/shared/GT_READING_TEST_PARITY_CHECKLIST.md`
 >
 > Treat them as the required workflow and pass/fail specification. The target test HTML, local passage/question/answer files, answer key, accepted variants and evaluator remain authoritative for test-specific content.
+>
+> A shared Reading dialog is not verified merely because its button exists. Open and inspect every available Score guide, Answer Key and score-feedback dialog after any header, toolbar, mount or responsive CSS change.
 
 ---
 
@@ -46,10 +50,11 @@ The final quality is strong, but the route exposed several avoidable delays:
 - Some clue spans and Why/Skill explanations were technically correct but too compressed to resolve the learner's misunderstanding.
 - General Training sections contain multiple independent text roots, so Academic assumptions about one passage per section are unsafe.
 - Custom drag/drop and matching controls require explicit final Test locking.
+- A Test 3 header `white-space: nowrap` rule leaked into nested shared Reading dialogs, squeezing the Score guide until modal content was explicitly protected.
 
 The central lesson is:
 
-**Use the shared Reading shell, but audit the General Training page as its own product. Do not treat it as Academic Reading with different text, and do not treat technically correct feedback as sufficient unless it produces a clear learner 'aha'.**
+**Use the shared Reading shell, but audit the General Training page as its own product. Do not treat it as Academic Reading with different text, do not treat technically correct feedback as sufficient unless it produces a clear learner 'aha', and do not assume a fixed overlay is isolated from the CSS ancestry of the element that mounts it.**
 
 For the next General Training Reading target, the expected normal path is:
 
@@ -176,6 +181,7 @@ Use this pattern only when direct integration would create unnecessary risk. Kee
 | Instructional clarity | Some clues and explanations were too short or generic to resolve the learner's exact misunderstanding | Apply the Aha test to every Q1–40 clue/Why/Skill trio; use the shortest wording that still makes the logic explicit |
 | Multiple text roots | Whole-section searching could target the wrong notice/review | Give each source text a stable root and resolve clues within that root |
 | Custom locking | Native inputs locked but drag/drop could remain interactive | Include every custom control in final Test locking tests |
+| Header CSS inheritance | A broad Test 3 `white-space: nowrap` rule was inherited by fixed dialogs mounted inside the header | Record shell mount ancestry, scope header selectors to direct controls, explicitly reset dialog inheritance and open every shared dialog in browser QA |
 | Home route | Test 2’s clickable home logo needed a separate repair | Treat the home route and leave warning as a standard parity item |
 | Browser automation | Fullscreen and native browser prompts can be environment-limited | Use the evidence hierarchy and report environment limitations separately |
 | Documentation timing | The GT contract was learned during implementation | Read the workflow and checklist before the next target audit |
@@ -219,6 +225,10 @@ The target GT evaluator is authoritative. The score guide must agree with it.
 
 Sections 1 and 2 may contain several notices, advertisements, reviews, instructions or workplace texts. Give each text a stable root.
 
+#### Never assume a fixed dialog is isolated from its mount ancestry
+
+The shared shell may append fixed backdrops inside a header or toolbar mount. Inherited properties and containing-block rules can still affect the dialog. Record the mount ancestry, scope page-level selectors narrowly, and inspect the opened dialog rather than checking only its trigger.
+
 #### Never expose internal evidence merely because it exists
 
 Internal evidence is required for validation and highlighting. The visible card follows the product contract: Correct answer, Why, Skill and clue control.
@@ -251,6 +261,8 @@ Must be visible or available:
 - editable answers;
 - correct General Training terminology.
 
+The Score guide and Answer Key must each be opened and visually inspected. Their title, introduction, table/grid content and close control must use the intended dialog width without clipping, inherited one-line layout or squeezed columns.
+
 Must remain hidden or neutral:
 
 - no official correctness or points;
@@ -269,6 +281,7 @@ After explicit checking:
 - raw score and GT band agree with the page;
 - section totals use the audited target ranges;
 - task-performance feedback appears when the required outcomes are available;
+- the score-feedback dialog opens at its intended width and every section card remains readable;
 - all learning resources remain visible;
 - answers remain editable;
 - a new explicit check refreshes the result cleanly;
@@ -314,6 +327,7 @@ Must be active:
 - disabled submit controls;
 - learning resources derived from the submitted result;
 - Answer Key, score guide, feedback and clues;
+- newly available completed-Test dialogs that open without clipping or inherited header layout;
 - section and question navigation;
 - editable highlights and notes where the page permits them;
 - leave/reload protection according to the target Test contract.
@@ -483,6 +497,21 @@ Prefer a pure target data file containing:
 - optional dedicated clue text/target.
 
 Keep page wiring and data separate where practical.
+
+### 6.6 Shared-dialog containment and inheritance contract
+
+The shared Reading shell may mount fixed backdrops inside the header host. Therefore:
+
+- record the mount’s DOM ancestry during the read-only audit;
+- scope header and toolbar selectors to direct controls rather than broad descendant trees;
+- audit inherited `white-space`, `font-size`, `line-height`, `text-align`, `overflow`, `min-width` and `max-width`;
+- audit containing-block risks from `position`, `transform`, `filter`, `perspective`, containment and flex/grid sizing;
+- explicitly reset dialog/backdrop inheritance when the mount cannot be moved safely;
+- keep titles, introductions, tables, cards and close controls inside the visible dialog;
+- open Score guide, Answer Key and score feedback after every header, toolbar, mount or responsive CSS change;
+- repeat representative dialog checks at desktop, narrow width, extra-large text and all three themes.
+
+A visual header fix is not complete until the shared-dialog smoke matrix passes. Button presence, hidden DOM or unit-level selector checks alone do not prove modal usability.
 
 ---
 
@@ -701,6 +730,8 @@ Audit:
 - existing Study integration;
 - stable instruction hosts;
 - stable text roots;
+- shell mount ancestry and the containers that own shared dialog backdrops;
+- header, toolbar and responsive selectors that could leak inherited or containing-block styles into shared dialogs;
 - special controls such as drag/drop or Choose TWO;
 - current tests;
 - exact allowed paths;
@@ -720,6 +751,7 @@ Implement only:
 - instruction hosts;
 - text roots;
 - Test locking adapters;
+- narrowly scoped header/toolbar styles and any required shared-dialog inheritance reset;
 - home route;
 - target foundation tests.
 
@@ -730,6 +762,7 @@ Stop when:
 - Fresh Study shell initialises;
 - Fresh Test remains private;
 - completed Test remains locked;
+- Score guide and Answer Key open with complete visible layouts;
 - shared tests remain green.
 
 ### Phase 3 — student-data and clue pass
@@ -753,17 +786,20 @@ Activate complete coverage only after all targets resolve and every trio is inst
 Run one complete browser session:
 
 1. Fresh Study;
-2. checked/submitted Study;
-3. new Study attempt;
-4. Fresh Test;
-5. completed Test/locked review;
-6. all sections and every source text;
-7. representative early, middle and late clues;
-8. section-level clue control;
-9. custom control locking;
-10. desktop, approximately 390 px, extra-large text and all themes;
-11. home route and leave warning;
-12. clean console.
+2. open and fully inspect Score guide and Answer Key;
+3. checked/submitted Study;
+4. open and fully inspect score feedback;
+5. new Study attempt;
+6. Fresh Test;
+7. completed Test/locked review and newly available dialogs;
+8. all sections and every source text;
+9. representative early, middle and late clues;
+10. section-level clue control;
+11. custom control locking;
+12. desktop, approximately 390 px, extra-large text and all themes;
+13. repeat the shared-dialog smoke matrix after any header, toolbar, mount or responsive CSS change;
+14. home route and leave warning;
+15. clean console.
 
 ### Phase 5 — release
 
@@ -798,9 +834,9 @@ Prefer a small target-specific suite:
 | `test_gt_reading_testX_scoring.py` | Answer key, accepted variants, GT band, section totals, special scoring and final locking |
 | `test_gt_reading_testX_study_data.py` | Task groups, Q1–40 Correct answer/Why/Skill, visible Evidence suppression, score guide and structural completeness |
 | `test_gt_reading_testX_clues.py` | Text roots, all 40 targets, clue buttons, section control and highlight rendering |
-| `test_gt_reading_testX_browser_lifecycle.py` | Fresh/checked Study, Fresh/completed Test, resubmission, duplication and custom-control locking |
+| `test_gt_reading_testX_browser_lifecycle.py` | Fresh/checked Study, Fresh/completed Test, resubmission, shared-dialog smoke matrix, duplication and custom-control locking |
 
-Add a new deep module only for a genuinely new question-control mechanism. Automated checks can prove completeness and target resolution, but they cannot prove that a learner will understand the explanation; the all-40 Aha-test editorial review remains mandatory.
+Add a new deep module only for a genuinely new question-control mechanism. Automated checks can prove completeness and target resolution, but they cannot prove that a learner will understand the explanation or that a visually opened dialog is usable; the all-40 Aha-test editorial review and browser dialog inspection remain mandatory.
 
 ### 10.3 Phase-gate testing
 
@@ -828,6 +864,8 @@ Use:
 2. production-linked executable test;
 3. structural validator;
 4. source-string assertion.
+
+For dialogs, live browser evidence means opening the dialog and inspecting its visible title, explanatory text, content body, controls and responsive behaviour. Trigger presence is not equivalent evidence.
 
 Report unchanged fullscreen or native browser-control limitations separately from product failures.
 
@@ -896,6 +934,11 @@ Every target must verify:
 - drag/drop, matching, tables and flow charts do not overflow;
 - the home logo works by mouse, Enter and Space;
 - dialogs close by their intended controls and restore focus;
+- Score guide, Answer Key and score feedback are each opened and inspected, not only detected in the DOM;
+- dialog titles, introductions, tables, cards and close controls stay inside the visible dialog;
+- dialog content is not squeezed by inherited `white-space: nowrap`, flex sizing, text alignment or overflow;
+- header and toolbar changes are audited for `white-space`, `font-size`, `line-height`, `text-align`, `overflow`, `min-width`, `max-width`, `position`, `transform`, `z-index`, flex and grid effects;
+- the shared-dialog smoke matrix passes at desktop, approximately 390 px, extra-large text and representative theme states;
 - no unexpected console errors.
 
 ---
@@ -908,6 +951,7 @@ Every target must verify:
 | Can the target express the behaviour through config or data? | Do not touch shared core | Prove a missing generic capability |
 | Would the shared fix inspect title, book, test, question range or filename? | Reject it as a test-specific shared hack | Continue if capability-based |
 | Is the problem caused by one page’s DOM shape? | Use a target adapter | Consider shared work only after repetition |
+| Is a dialog broken only because the target mount sits inside a styled header? | Scope or reset the target inheritance locally and add the dialog smoke test | Consider shared core only if the same generic failure reproduces across targets |
 | Does malformed optional data disable unrelated features? | Fix capability isolation generically with a failing test | Keep current contract |
 | Is the issue only terminology? | Configure Section/Text labels directly | Avoid global text replacement |
 | Is the issue only the redundant visible Evidence row? | Use `showEvidenceText: false` | Do not remove internal clue data |
@@ -959,6 +1003,7 @@ Report:
 - Q1–40 data and clue coverage;
 - Fresh/checked Study result;
 - Fresh/completed Test result;
+- opened Score guide, Answer Key and score-feedback dialog result;
 - desktop/mobile/theme review;
 - exact changed-file list;
 - confirmation that unrelated tests and the Live Hub were not modified unless explicitly authorised.
@@ -982,6 +1027,9 @@ Report:
 | Missing `partLabel: "Section"` | Explicit terminology config |
 | Silent DOM score parsing | Authoritative snapshot or explicit approved compatibility |
 | Locking only native inputs | Lock drag/drop and custom controls too |
+| Broad header `white-space: nowrap` or flex rules applied to all descendants | Scope rules to direct top-bar controls and reset shared-dialog inheritance |
+| Declaring a modal passed because its trigger is visible | Open it and inspect the complete visible layout in the browser |
+| Assuming `position: fixed` escapes ancestor CSS | Audit mount ancestry, inheritance and containing-block properties |
 | Global text replacement for core terminology | Config-driven user-facing labels |
 | Copying the Test 1 adapter into every page | Prefer the direct Test 2 pattern for new targets |
 | Large test-of-tests mutation frameworks | Five lean production-linked modules plus shared regressions |
@@ -1004,6 +1052,9 @@ Treat it as a target, not as the source of truth. Compare it against the complet
 - all 40 clue buttons and section clue control;
 - exact GT score conversion;
 - custom drag/drop locking;
+- header order and candidate-name placement;
+- shell mount ancestry and header/toolbar inheritance;
+- opened Score guide, Answer Key and score-feedback layouts;
 - home route;
 - Fresh/checked Study and Fresh/completed Test states;
 - no duplicated UI;
@@ -1035,6 +1086,7 @@ Expected normal outcome for subsequent GT tests:
 - identify every source text and stable root;
 - classify direct vs legacy-adapter integration;
 - record special answer controls;
+- record shell mount ancestry and potentially inherited header/toolbar styles;
 - produce one read-only delta.
 
 ### During foundation
@@ -1044,6 +1096,8 @@ Expected normal outcome for subsequent GT tests:
 - configure result snapshot or approved compatibility;
 - prepare mount, instruction hosts and text roots;
 - protect Test lifecycle and custom locking;
+- scope header/toolbar styles narrowly and protect nested dialogs;
+- open Score guide and Answer Key before leaving the phase;
 - keep Q1–40 content out of this phase.
 
 ### During student-data work
@@ -1061,6 +1115,8 @@ Expected normal outcome for subsequent GT tests:
 - run target modules and shared Reading suite;
 - run browser states and representative clues in all sections;
 - confirm 40 cards, 40 Why, 40 Skill, zero visible Evidence, 40 clues;
+- open and inspect Score guide, Answer Key and score feedback;
+- repeat the dialog smoke matrix after any header, toolbar, mount or responsive CSS change;
 - confirm Test locking including custom controls;
 - check desktop/mobile/themes/text size/home route/console;
 - run syntax checks and `git diff --check`;
@@ -1093,6 +1149,8 @@ Treat them as the required workflow and parity specification.
 Use Cambridge IELTS 19 General Training Reading Test 2 on current main as the preferred direct-integration reference and Test 1 as the legacy-adapter reference. The target test HTML, source files, answer key, accepted variants and evaluator remain authoritative for target-specific content.
 
 For every question, make the clue, Why and Skill pass the Aha test: use the shortest complete evidence span, explicitly bridge question wording to source wording and conclusion, and give a reusable next-step reading action. Technically correct but vague or under-explained feedback does not pass.
+
+Record the Reading-shell mount ancestry. After any header, toolbar, mount or responsive CSS change, open and inspect the Score guide, Answer Key and score-feedback dialogs at desktop and narrow widths; button presence alone is not a pass.
 
 Model: 5.6 Sol
 Effort: Medium

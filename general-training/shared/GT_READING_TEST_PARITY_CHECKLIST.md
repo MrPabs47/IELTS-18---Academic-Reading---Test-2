@@ -1,8 +1,11 @@
 # General Training Reading Test Parity Checklist
 
-**Use with:** `general-training/shared/IELTS_GT_READING_FAST_TRACK_WORKFLOW.md`
+**Use with:** `general-training/shared/IELTS_GT_READING_FAST_TRACK_WORKFLOW.md`  
+**Focused regression update:** PR #436 — header CSS inheritance and Study-dialog containment (6 August 2026)
 
 This is the short pass/fail specification for every General Training Reading production branch. The target HTML, local source files, answer key, accepted variants and evaluator remain authoritative for test-specific content.
+
+> **Dialog rule:** A Score guide, Answer Key or feedback button merely existing is not a pass. Open every available shared Reading dialog and verify its complete visible layout after any header, toolbar, mount or responsive CSS change.
 
 ---
 
@@ -20,6 +23,8 @@ This is the short pass/fail specification for every General Training Reading pro
 - [ ] Answer key, accepted variants, evaluator and GT band conversion are confirmed.
 - [ ] Native and custom answer-control shapes are inventoried.
 - [ ] Target is compared against GT19 Test 2 direct integration and GT19 Test 1 legacy integration.
+- [ ] Shared-shell mount ancestry is recorded, including whether dialogs are mounted inside a header or toolbar container.
+- [ ] Header, toolbar and responsive selectors that may affect nested shared-shell UI are inventoried.
 - [ ] Read-only audit reports exact gaps, allowed paths and genuine blockers.
 - [ ] No implementation begins before the audit gate is complete.
 
@@ -63,12 +68,18 @@ This is the short pass/fail specification for every General Training Reading pro
 - [ ] Any `allowDomSubmittedResult: true` use is explicit, justified and browser-tested.
 - [ ] A malformed optional capability disables only itself.
 - [ ] Shared code contains no test-title, book, filename or question-specific branch.
+- [ ] Test-specific header and toolbar rules are scoped to their direct controls rather than broad descendants.
+- [ ] Shared-dialog backdrops and dialogs explicitly escape inherited `white-space`, text alignment, overflow and sizing rules where necessary.
+- [ ] Fixed overlays remain viewport-centred even when their DOM mount is nested inside a header or transformed ancestor.
+- [ ] A header or toolbar visual change triggers a smoke test of Score guide, Answer Key and score-feedback dialogs.
 
 ## E. Fresh Study
 
 - [ ] Study Mode header shell is visible.
 - [ ] General Training score guide is available and neutral.
+- [ ] Score guide opens with its full title, introduction, table columns and all rows readable across the dialog width.
 - [ ] Answer Key has Q1–40 entries.
+- [ ] Answer Key opens at normal width without clipping, squeezed columns or inherited one-line layout.
 - [ ] Every exact task group has strategy information.
 - [ ] Q1–40 neutral feedback cards are available.
 - [ ] Every card shows Correct answer, Why and Skill.
@@ -89,6 +100,7 @@ This is the short pass/fail specification for every General Training Reading pro
 - [ ] GT band agrees with the page.
 - [ ] Section totals use the audited ranges and denominators.
 - [ ] Task-performance feedback appears only when required outcomes are available.
+- [ ] Score-feedback dialog opens at its intended width and all section cards remain readable.
 - [ ] Learning resources remain visible.
 - [ ] Answers remain editable.
 - [ ] Rechecking refreshes the intended scope cleanly.
@@ -132,6 +144,7 @@ This is the short pass/fail specification for every General Training Reading pro
 - [ ] Results reopen without rescoring.
 - [ ] Closing results reveals the intended locked review.
 - [ ] Answer Key, score guide, feedback and clues become available.
+- [ ] Newly available completed-Test dialogs open without clipping or inherited header layout.
 - [ ] Feedback derives from the submitted result, not mutable live answers.
 - [ ] Section and question navigation remain available.
 - [ ] Highlights and notes remain usable where approved.
@@ -233,6 +246,12 @@ This is the short pass/fail specification for every General Training Reading pro
 - [ ] Normal, large and extra-large text pass.
 - [ ] Visible focus treatment exists.
 - [ ] Dialogs, Answer Key, clues and icon controls have accessible names/roles.
+- [ ] Score guide, Answer Key and score-feedback dialogs are each opened at desktop width.
+- [ ] Score guide, Answer Key and score-feedback dialogs are each opened at approximately 390 px or the narrowest supported width.
+- [ ] Representative dialog checks pass with extra-large text and all three themes.
+- [ ] Dialog titles, introductions, tables, cards and close controls remain inside the visible dialog.
+- [ ] Dialog content is not squeezed into a narrow column by inherited `white-space: nowrap`, flex sizing or text alignment.
+- [ ] Header and toolbar changes are audited for inherited `white-space`, `font-size`, `line-height`, `text-align`, `overflow`, `min-width`, `max-width`, `position`, `transform`, `z-index`, flex and grid properties.
 - [ ] Meaning does not rely on colour alone.
 - [ ] No unexpected console errors occur.
 
@@ -250,6 +269,8 @@ This is the short pass/fail specification for every General Training Reading pro
 - [ ] Text-root and clue-target validator passes.
 - [ ] Browser lifecycle test covers Fresh/checked Study and Fresh/completed Test.
 - [ ] Browser test verifies 40 cards, 40 Why, 40 Skill, zero visible Evidence and 40 enabled clues.
+- [ ] Any test-specific header, toolbar or responsive CSS change triggers the shared-dialog smoke matrix.
+- [ ] Shared-dialog smoke matrix opens Score guide, Answer Key and score feedback and verifies complete visible content rather than button presence only.
 - [ ] Custom-control locking is executable where present.
 - [ ] Native fullscreen/browser limitations are reported separately from product defects.
 - [ ] `git diff --check` passes.
@@ -267,6 +288,10 @@ This is the short pass/fail specification for every General Training Reading pro
 - [ ] Highlighted clue spans are neither misleadingly short nor unnecessarily broad.
 - [ ] Section-level clue control checked in each section/context.
 - [ ] Custom matching/drag/drop locking checked.
+- [ ] Score guide opened and fully inspected in Fresh Study.
+- [ ] Answer Key opened and fully inspected in Fresh Study.
+- [ ] Score-feedback dialog opened and fully inspected after a Study check or final Test submission.
+- [ ] Dialog inspection is repeated after any header, toolbar, mount or responsive CSS change.
 - [ ] Desktop checked.
 - [ ] Approximately 390 px checked.
 - [ ] Extra-large text checked.
