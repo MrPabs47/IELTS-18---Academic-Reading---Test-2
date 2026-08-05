@@ -19,7 +19,8 @@
         "#shortcutToast.visible{opacity:1;transform:translate(-50%,0);}",
         ".gt-section1-drop-row{display:flex;align-items:center;gap:8px;margin-top:6px;}",
         ".gt-section1-clear{border:1px solid var(--border);background:var(--bg-secondary);color:var(--text);border-radius:6px;padding:4px 8px;cursor:pointer;font-size:.82rem;}",
-        ".gt-section1-clear:disabled{cursor:not-allowed;opacity:.55;}"
+        ".gt-section1-clear:disabled{cursor:not-allowed;opacity:.55;}",
+        ".gt-test3-header-right .reading-shell-score-guide-backdrop,.gt-test3-header-right .reading-shell-answer-key-backdrop,.gt-test3-header-right .reading-shell-score-feedback-backdrop{white-space:normal;}"
       ].join("");
       document.head.appendChild(style);
     }
