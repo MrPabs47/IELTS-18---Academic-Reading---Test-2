@@ -1,7 +1,7 @@
 (() => {
   const TEST_TITLE = "IELTS 17 Academic Writing Test 3";
   const TEACHER_EMAIL = "pablo.jaramillo@ilsc.com.au";
-  const TASK_IMAGE = "./assets/family-weekly-spending-1968-2018.webp?v=20260805-1505";
+  const TASK_IMAGE = "https://i0.wp.com/www.ieltsworldly.com/wp-content/uploads/2023/08/Screenshot-2023-08-23-at-10-51-24-CAMBRIDGE-17-TEST.pdf.webp?resize=636%2C569&ssl=1";
 
   document.title = TEST_TITLE;
   document.querySelector("#modeScreenInner h1")?.replaceChildren(TEST_TITLE);
@@ -16,7 +16,8 @@
       </div>
       <p>Write at least 150 words.</p>
       <figure class="task-visual">
-        <div class="visual-frame">
+        <div class="visual-frame family-spending-visual-frame">
+          <div class="family-spending-title">1968 and 2018: average weekly spending by families</div>
           <img id="taskImage" src="${TASK_IMAGE}" alt="A horizontal bar chart comparing the percentages of weekly income that families spent on eight categories in 1968 and 2018." tabindex="0" title="Click to enlarge the family-spending chart within this pane">
         </div>
       </figure>`,
