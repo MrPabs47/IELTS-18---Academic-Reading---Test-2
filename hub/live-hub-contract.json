@@ -1,8 +1,8 @@
 {
-  "version": 8,
+  "version": 9,
   "books": [19, 18, 17, 16],
   "tests": [1, 2, 3, 4],
-  "index_availability_fragment": "const availability={academicReading:new Set(allKeys),generalReading:new Set(allKeys),listening:new Set(allKeys.filter(key=>key!=='19-1')),academicWriting:new Set(['16-1','16-2','16-3','16-4','17-1']),generalWriting:new Set(['16-1','16-2','16-3','16-4']),speaking:new Set()};",
+  "index_availability_fragment": "const availability={academicReading:new Set(allKeys),generalReading:new Set(allKeys),listening:new Set(allKeys.filter(key=>key!=='19-1')),academicWriting:new Set(['16-1','16-2','16-3','16-4','17-1']),generalWriting:new Set(['17-1','17-2','17-3','17-4','16-1','16-2','16-3','16-4']),speaking:new Set()};",
   "categories": {
     "academicReading": {
       "filesystem_template": "academic/cambridge-{book}/test-{test}/IELTS{book} Test {test} - Academic Reading.html",
@@ -33,8 +33,7 @@
       "index_route_fragment": "if(type==='generalWriting')return`./general-training/cambridge-${book}/test-${test}/IELTS${book}%20Test%20${test}%20-%20General%20Training%20Writing.html`",
       "excluded": [
         "19-1", "19-2", "19-3", "19-4",
-        "18-1", "18-2", "18-3", "18-4",
-        "17-1", "17-2", "17-3", "17-4"
+        "18-1", "18-2", "18-3", "18-4"
       ]
     }
   },
@@ -213,6 +212,61 @@
       "path": "drafts/general-writing-16-test-4/index.html",
       "git_blob_sha": "09c600c853550dec500ac66336d1ac4af5d62d9d",
       "reason": "IELTS 16 General Training Writing Test 4 visible application entry"
+    },
+    {
+      "path": "general-training/cambridge-17/test-1/IELTS17 Test 1 - General Training Writing.html",
+      "git_blob_sha": "1222b5364407887b15de9a71a583fd14614ce48d",
+      "reason": "Canonical IELTS 17 General Training Writing Test 1 Live Hub entry point"
+    },
+    {
+      "path": "general-training/cambridge-17/test-2/IELTS17 Test 2 - General Training Writing.html",
+      "git_blob_sha": "6340102e4a5430758b9593a54b86a7f492e0b269",
+      "reason": "Canonical IELTS 17 General Training Writing Test 2 Live Hub entry point"
+    },
+    {
+      "path": "general-training/cambridge-17/test-3/IELTS17 Test 3 - General Training Writing.html",
+      "git_blob_sha": "de53edd3af672b14188fc7d5714680c4ef01c8f7",
+      "reason": "Canonical IELTS 17 General Training Writing Test 3 Live Hub entry point"
+    },
+    {
+      "path": "general-training/cambridge-17/test-4/IELTS17 Test 4 - General Training Writing.html",
+      "git_blob_sha": "4e1bfb933c35155d5bdb77d37e1a43d19c3568e1",
+      "reason": "Canonical IELTS 17 General Training Writing Test 4 Live Hub entry point"
+    },
+    {
+      "path": "drafts/general-writing-17-test-1/start.html",
+      "git_blob_sha": "8080e15d33b686d972a9dd4f015b2612a028fc9e",
+      "reason": "IELTS 17 General Training Writing Test 1 clean-start redirect boundary"
+    },
+    {
+      "path": "drafts/general-writing-17-test-2/start.html",
+      "git_blob_sha": "2666f119ad0f757b8f3d7d9653c8b5a7a997a982",
+      "reason": "IELTS 17 General Training Writing Test 2 clean-start redirect boundary"
+    },
+    {
+      "path": "drafts/general-writing-17-test-3/start.html",
+      "git_blob_sha": "848c2dd604e2273b421c7dd5a62a0765f965cf09",
+      "reason": "IELTS 17 General Training Writing Test 3 clean-start redirect boundary"
+    },
+    {
+      "path": "drafts/general-writing-17-test-4/start.html",
+      "git_blob_sha": "32ce5b67a6c3686bbdf95133989d04915364d94d",
+      "reason": "IELTS 17 General Training Writing Test 4 clean-start redirect boundary"
+    },
+    {
+      "path": "drafts/general-writing-17/index.html",
+      "git_blob_sha": "efc97a6939fbecab38c8f307f6cd4c387e6c5117",
+      "reason": "Shared IELTS 17 General Training Writing visible application entry"
+    },
+    {
+      "path": "drafts/general-writing-17/writing-gt-tests-1-4.js",
+      "git_blob_sha": "7f07a245064c617b35656624f1c76ffb05cbcb03",
+      "reason": "Shared IELTS 17 General Training Writing task and Study tools data"
+    },
+    {
+      "path": "drafts/general-writing-17/writing-gt-tests-1-4.css",
+      "git_blob_sha": "ce65b44e55a565dc8a65c8d4f8ccf11399e79001",
+      "reason": "Shared IELTS 17 General Training Writing source presentation styles"
     }
   ]
 }
