@@ -1,0 +1,43 @@
+/* Shared source presentation for IELTS 17 General Training Writing Tests 1–4. */
+.task-question,
+.task-question p,
+.task-question li {
+  font-style: italic;
+}
+
+.letter-task-question {
+  padding-bottom: 15px;
+}
+
+.letter-task-question ul {
+  margin: 2px 0 0;
+  padding-left: 27px;
+}
+
+.letter-task-question li {
+  margin: 0 0 9px;
+  padding-left: 4px;
+}
+
+.letter-task-question li:last-child {
+  margin-bottom: 0;
+}
+
+.source-emphasis {
+  color: var(--accent);
+  font-weight: 800;
+}
+
+.letter-opening {
+  margin-top: -2px !important;
+  color: var(--accent);
+  font-size: 1.08em;
+  font-style: italic;
+  font-weight: 700;
+}
+
+@media (max-width: 700px) {
+  .letter-task-question ul {
+    padding-left: 23px;
+  }
+}

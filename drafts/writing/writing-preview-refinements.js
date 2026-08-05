@@ -1,6 +1,7 @@
 (() => {
   const teacherEmail = "pablo.jaramillo@ilsc.com.au";
   const byId = (id) => document.getElementById(id);
+  const isWritingPage = /(?:Academic|General Training) Writing/i.test(document.title);
 
   let reportOverlay = null;
   let reportText = null;
@@ -83,7 +84,7 @@
     ];
 
     if (studentEmail()) lines.push(`Student email: ${studentEmail()}`);
-    if (currentTimerText()) lines.push(`Timer status: ${currentTimerText()} remaining`);
+    if (state.mode === "test" && currentTimerText()) lines.push(`Timer status: ${currentTimerText()} remaining`);
 
     lines.push(
       "",
@@ -221,7 +222,7 @@
     originalRenderTask();
     byId("answerEditor").disabled = false;
     const submit = byId("submitButton");
-    if (submit && state.mode === "test") {
+    if (submit && (state.mode === "test" || isWritingPage)) {
       submit.title = state.submitted ? "Prepare updated report" : "Submit test";
       submit.setAttribute("aria-label", submit.title);
     }
@@ -231,7 +232,9 @@
   renderChrome = function refinedRenderChrome() {
     originalRenderChrome();
     const optionsSubmit = byId("optionsSubmit");
-    if (optionsSubmit) optionsSubmit.style.display = state.mode === "test" ? "flex" : "none";
+    if (optionsSubmit) {
+      optionsSubmit.style.display = state.mode === "test" || (isWritingPage && state.mode === "study") ? "flex" : "none";
+    }
     ensureSubmittedBanner();
   };
 
@@ -264,6 +267,20 @@
     renderChrome();
     renderTask();
     openReport();
+  };
+
+  const installStudySubmission = () => {
+    if (!isWritingPage) return;
+    const previousButton = byId("submitButton");
+    if (!previousButton) return;
+
+    // Clone the button to remove the original Study Mode self-review handler,
+    // then route both modes through the existing submission/report flow.
+    const submitButton = previousButton.cloneNode(true);
+    previousButton.replaceWith(submitButton);
+    submitButton.addEventListener("click", () => openSubmit());
+    submitButton.title = state.submitted ? "Prepare updated report" : "Submit test";
+    submitButton.setAttribute("aria-label", submitButton.title);
   };
 
   const installStableDivider = () => {
@@ -317,5 +334,6 @@
 
   initAnimatedLogo();
   ensureReportOverlay();
+  installStudySubmission();
   installStableDivider();
 })();

@@ -1,0 +1,29 @@
+/* Test-specific presentation for IELTS 16 Academic Writing Test 4. */
+.task-question,
+.task-question p {
+  font-style: italic;
+}
+
+/* The shared Writing stylesheet contains the Test 2 sugar-cane image as a
+   content override. Reset it here so this test uses its own local asset. */
+#taskImage {
+  content: normal !important;
+}
+
+.task-visual {
+  margin-top: 12px;
+}
+
+.visual-frame {
+  padding: 4px 0 8px;
+}
+
+.visual-frame img {
+  width: 100%;
+  max-width: 587px;
+  height: auto;
+}
+
+#passagePane.image-focus .visual-frame img {
+  max-width: 100%;
+}
