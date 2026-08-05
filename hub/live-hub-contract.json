@@ -1,8 +1,8 @@
 {
-  "version": 11,
+  "version": 12,
   "books": [19, 18, 17, 16],
   "tests": [1, 2, 3, 4],
-  "index_availability_fragment": "const availability={academicReading:new Set(allKeys),generalReading:new Set(allKeys),listening:new Set(allKeys.filter(key=>key!=='19-1')),academicWriting:new Set(['16-1','16-2','16-3','16-4','17-1','17-2']),generalWriting:new Set(['18-1','18-2','18-3','18-4','17-1','17-2','17-3','17-4','16-1','16-2','16-3','16-4']),speaking:new Set()};",
+  "index_availability_fragment": "const availability={academicReading:new Set(allKeys),generalReading:new Set(allKeys),listening:new Set(allKeys.filter(key=>key!=='19-1')),academicWriting:new Set(['16-1','16-2','16-3','16-4','17-1','17-2','17-3']),generalWriting:new Set(['18-1','18-2','18-3','18-4','17-1','17-2','17-3','17-4','16-1','16-2','16-3','16-4']),speaking:new Set()};",
   "categories": {
     "academicReading": {
       "filesystem_template": "academic/cambridge-{book}/test-{test}/IELTS{book} Test {test} - Academic Reading.html",
@@ -25,7 +25,7 @@
       "excluded": [
         "19-1", "19-2", "19-3", "19-4",
         "18-1", "18-2", "18-3", "18-4",
-        "17-3", "17-4"
+        "17-4"
       ]
     },
     "generalWriting": {
@@ -166,6 +166,21 @@
       "path": "drafts/writing-17-test-2/index.html",
       "git_blob_sha": "2b5b4ce8e9b8bb9b62188c57dea720a1fc149c58",
       "reason": "IELTS 17 Academic Writing Test 2 visible application entry"
+    },
+    {
+      "path": "academic/cambridge-17/test-3/IELTS17 Test 3 - Academic Writing.html",
+      "git_blob_sha": "a517cbb6a430a5ca2dd72c1c0c71f4dc26324fc8",
+      "reason": "Canonical IELTS 17 Academic Writing Test 3 Live Hub entry point"
+    },
+    {
+      "path": "drafts/writing-17-test-3/start.html",
+      "git_blob_sha": "55c96b3c6c30a6f8759e5f878a72a4e47c289a6a",
+      "reason": "IELTS 17 Academic Writing Test 3 clean-start redirect boundary"
+    },
+    {
+      "path": "drafts/writing-17-test-3/index.html",
+      "git_blob_sha": "cf16cc57ff115a01b825ed35d23298167f136c64",
+      "reason": "IELTS 17 Academic Writing Test 3 visible application entry"
     },
     {
       "path": "general-training/cambridge-16/test-1/IELTS16 Test 1 - General Training Writing.html",
