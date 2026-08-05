@@ -1,7 +1,7 @@
 (() => {
   const teacherEmail = "pablo.jaramillo@ilsc.com.au";
   const byId = (id) => document.getElementById(id);
-  const isAcademicWritingPage = /Academic Writing/i.test(document.title);
+  const isWritingPage = /(?:Academic|General Training) Writing/i.test(document.title);
 
   let reportOverlay = null;
   let reportText = null;
@@ -222,7 +222,7 @@
     originalRenderTask();
     byId("answerEditor").disabled = false;
     const submit = byId("submitButton");
-    if (submit && (state.mode === "test" || isAcademicWritingPage)) {
+    if (submit && (state.mode === "test" || isWritingPage)) {
       submit.title = state.submitted ? "Prepare updated report" : "Submit test";
       submit.setAttribute("aria-label", submit.title);
     }
@@ -233,7 +233,7 @@
     originalRenderChrome();
     const optionsSubmit = byId("optionsSubmit");
     if (optionsSubmit) {
-      optionsSubmit.style.display = state.mode === "test" || (isAcademicWritingPage && state.mode === "study") ? "flex" : "none";
+      optionsSubmit.style.display = state.mode === "test" || (isWritingPage && state.mode === "study") ? "flex" : "none";
     }
     ensureSubmittedBanner();
   };
@@ -269,8 +269,8 @@
     openReport();
   };
 
-  const installAcademicStudySubmission = () => {
-    if (!isAcademicWritingPage) return;
+  const installStudySubmission = () => {
+    if (!isWritingPage) return;
     const previousButton = byId("submitButton");
     if (!previousButton) return;
 
@@ -334,6 +334,6 @@
 
   initAnimatedLogo();
   ensureReportOverlay();
-  installAcademicStudySubmission();
+  installStudySubmission();
   installStableDivider();
 })();
