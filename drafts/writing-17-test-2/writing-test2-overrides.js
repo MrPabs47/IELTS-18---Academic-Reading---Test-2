@@ -1,7 +1,7 @@
 (() => {
   const TEST_TITLE = "IELTS 17 Academic Writing Test 2";
   const TEACHER_EMAIL = "pablo.jaramillo@ilsc.com.au";
-  const TASK_IMAGE = "https://i0.wp.com/www.ieltsworldly.com/wp-content/uploads/2024/08/Map-Task-1-Cambridge-IELTS-17-Academic-Writing-Practice-Test-2.webp?resize=800%2C582&ssl=1";
+  const TASK_IMAGE = "./assets/police-budget-2017-2018.webp?v=20260805-1240";
 
   document.title = TEST_TITLE;
   document.querySelector("#modeScreenInner h1")?.replaceChildren(TEST_TITLE);
