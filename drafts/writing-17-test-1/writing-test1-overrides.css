@@ -1,0 +1,28 @@
+/* Test-specific presentation for IELTS 17 Academic Writing Test 1. */
+.task-question,
+.task-question p {
+  font-style: italic;
+}
+
+/* Reset the shared Test 2 sugar-cane image override. */
+#taskImage {
+  content: normal !important;
+}
+
+.task-visual {
+  margin-top: 12px;
+}
+
+.visual-frame {
+  padding: 4px 0 8px;
+}
+
+.visual-frame img {
+  width: 100%;
+  max-width: 640px;
+  height: auto;
+}
+
+#passagePane.image-focus .visual-frame img {
+  max-width: 100%;
+}
