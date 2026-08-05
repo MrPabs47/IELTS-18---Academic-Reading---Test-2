@@ -84,7 +84,7 @@
     ];
 
     if (studentEmail()) lines.push(`Student email: ${studentEmail()}`);
-    if (currentTimerText()) lines.push(`Timer status: ${currentTimerText()} remaining`);
+    if (state.mode === "test" && currentTimerText()) lines.push(`Timer status: ${currentTimerText()} remaining`);
 
     lines.push(
       "",
