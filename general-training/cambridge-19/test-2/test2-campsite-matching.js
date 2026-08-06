@@ -96,6 +96,11 @@
       return document.querySelector('select[name="' + zone.dataset.for + '"]');
     }
 
+    function clearButtonFor(zone) {
+      var button = zone && zone.nextElementSibling;
+      return button && button.classList.contains("gt-section1-clear") ? button : null;
+    }
+
     function questionFor(zone) {
       return Number(String(zone.dataset.for || "").replace(/^q/, ""));
     }
@@ -107,6 +112,15 @@
         node.getAttribute("aria-disabled") === "true" ||
         (typeof mode === "string" && mode === "test" && typeof testSubmitted !== "undefined" && testSubmitted)
       );
+    }
+
+    function syncClearLock(zone) {
+      var select = selectFor(zone);
+      var button = clearButtonFor(zone);
+      if (!button) return;
+      var isLocked = locked(zone, select);
+      button.disabled = isLocked;
+      button.setAttribute("aria-disabled", isLocked ? "true" : "false");
     }
 
     function renderSelection(value) {
@@ -249,6 +263,19 @@
     zones.forEach(function (zone) {
       var select = selectFor(zone);
       if (select && select.value) apply(zone, select.value);
+
+      var sync = function () { syncClearLock(zone); };
+      new MutationObserver(sync).observe(zone, {
+        attributes: true,
+        attributeFilter: ["class", "aria-disabled", "tabindex"]
+      });
+      if (select) {
+        new MutationObserver(sync).observe(select, {
+          attributes: true,
+          attributeFilter: ["disabled"]
+        });
+      }
+      sync();
     });
   }
 
