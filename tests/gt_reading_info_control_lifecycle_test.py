@@ -22,8 +22,10 @@ def test_shared_shell_uses_the_expected_mode_lifecycle() -> None:
 
 def test_gt19_reading_tests_share_the_same_strategy_control_contract() -> None:
     for test_number in range(1, 5):
-        adapter = (GT19_ROOT / f"test-{test_number}" / "study-feedback.js").read_text(encoding="utf-8")
-        assert "reading-feature-shell-core.js" in adapter
+        test_dir = GT19_ROOT / f"test-{test_number}"
+        adapter = (test_dir / "study-feedback.js").read_text(encoding="utf-8")
+        page = (test_dir / f"IELTS19 Test {test_number} - Reading - GT.html").read_text(encoding="utf-8")
+        assert "reading-feature-shell-core.js" in adapter + page
 
     test2_adapter = (GT19_ROOT / "test-2" / "study-feedback.js").read_text(encoding="utf-8")
     assert "gt-test2-mode-info-visibility" not in test2_adapter
