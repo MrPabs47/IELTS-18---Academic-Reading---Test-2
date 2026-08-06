@@ -1,0 +1,47 @@
+name: IELTS 19 GT Test 2 Matching QA
+
+on:
+  push:
+    branches:
+      - fix/ielts19-gt-test2-section1-matching
+    paths:
+      - .test2-matching-qa/READY
+
+permissions:
+  contents: read
+
+jobs:
+  browser-qa:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Check out fix branch
+        uses: actions/checkout@v4
+        with:
+          ref: fix/ielts19-gt-test2-section1-matching
+          fetch-depth: 1
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Install Playwright outside repository
+        run: |
+          npm install --prefix /tmp/test2-playwright playwright@1.55.0
+          npx --prefix /tmp/test2-playwright playwright install --with-deps chromium
+
+      - name: Run Test 2 browser QA
+        shell: bash
+        env:
+          NODE_PATH: /tmp/test2-playwright/node_modules
+        run: |
+          set -euo pipefail
+          python -m http.server 4173 >/tmp/test2-http.log 2>&1 &
+          server_pid=$!
+          trap 'kill $server_pid 2>/dev/null || true' EXIT
+          for attempt in {1..30}; do
+            if curl --fail --silent http://127.0.0.1:4173/ >/dev/null; then break; fi
+            sleep 1
+          done
+          node .test2-matching-qa/qa.cjs
