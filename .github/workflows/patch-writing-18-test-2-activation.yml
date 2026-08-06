@@ -1,0 +1,61 @@
+name: Patch IELTS 18 Test 2 activation
+
+on:
+  push:
+    branches:
+      - activate-writing-18-test-2
+
+permissions:
+  contents: write
+
+jobs:
+  patch-contract:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: activate-writing-18-test-2
+      - name: Update Live Hub contract
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+
+          path = Path('hub/live-hub-contract.json')
+          data = json.loads(path.read_text(encoding='utf-8'))
+          old = "academicWriting:new Set(['16-1','16-2','16-3','16-4','17-1','17-2','17-3','17-4','18-1'])"
+          new = "academicWriting:new Set(['16-1','16-2','16-3','16-4','17-1','17-2','17-3','17-4','18-1','18-2'])"
+          if old in data['index_availability_fragment']:
+              data['version'] += 1
+              data['index_availability_fragment'] = data['index_availability_fragment'].replace(old, new)
+              data['categories']['academicWriting']['excluded'].remove('18-2')
+              refs = data['protected_references']
+              refs.extend([
+                  {
+                      'path': 'academic/cambridge-18/test-2/IELTS18 Test 2 - Academic Writing.html',
+                      'git_blob_sha': 'c18600ca77d9f0fcbd106d10d80379d072f037ef',
+                      'reason': 'Canonical IELTS 18 Academic Writing Test 2 Live Hub entry point'
+                  },
+                  {
+                      'path': 'drafts/writing-18-test-2/start.html',
+                      'git_blob_sha': 'd1549ba3e6ff08d8227b5657ca43777cc991696d',
+                      'reason': 'IELTS 18 Academic Writing Test 2 clean-start redirect boundary'
+                  },
+                  {
+                      'path': 'drafts/writing-18-test-2/index.html',
+                      'git_blob_sha': 'ad285b8ba55e85fbab2c6f18a28b25e33ddb2376',
+                      'reason': 'IELTS 18 Academic Writing Test 2 visible application entry'
+                  }
+              ])
+              path.write_text(json.dumps(data, separators=(',', ':')), encoding='utf-8')
+          PY
+      - name: Commit contract update
+        run: |
+          if git diff --quiet; then
+            exit 0
+          fi
+          git config user.name github-actions[bot]
+          git config user.email 41898282+github-actions[bot]@users.noreply.github.com
+          git add hub/live-hub-contract.json
+          git commit -m "Protect IELTS 18 Academic Writing Test 2 Live Hub route"
+          git push
