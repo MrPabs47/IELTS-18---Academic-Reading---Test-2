@@ -1,0 +1,58 @@
+name: IELTS 19 GT Test 4 Browser QA
+
+on:
+  push:
+    branches:
+      - feature/ielts19-gt-reading-test4-study-parity
+    paths:
+      - .test4-browser-qa/READY
+
+permissions:
+  contents: write
+
+jobs:
+  browser-qa:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Check out review branch
+        uses: actions/checkout@v4
+        with:
+          ref: feature/ielts19-gt-reading-test4-study-parity
+          fetch-depth: 1
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Install Playwright Chromium
+        run: |
+          npm install --no-save playwright@1.55.0
+          npx playwright install --with-deps chromium
+
+      - name: Run focused browser QA
+        shell: bash
+        run: |
+          set -euo pipefail
+          python -m http.server 4173 >/tmp/test4-http.log 2>&1 &
+          server_pid=$!
+          trap 'kill $server_pid 2>/dev/null || true' EXIT
+          for attempt in {1..30}; do
+            if curl --fail --silent http://127.0.0.1:4173/ >/dev/null; then break; fi
+            sleep 1
+          done
+          node .test4-browser-qa/qa.mjs
+
+      - name: Remove temporary QA assets
+        if: success()
+        shell: bash
+        run: |
+          set -euo pipefail
+          rm -rf .test4-browser-qa
+          rm -f .github/workflows/ielts19-gt-test4-browser-qa.yml
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add -A
+          git commit -m 'Complete IELTS 19 GT Test 4 browser QA'
+          git push origin HEAD:feature/ielts19-gt-reading-test4-study-parity
