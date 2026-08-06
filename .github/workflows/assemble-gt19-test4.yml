@@ -1,0 +1,66 @@
+name: Assemble IELTS 19 GT Test 4
+
+on:
+  push:
+    branches:
+      - feature/ielts19-gt-reading-test4-study-parity
+    paths:
+      - .test4-assembly/READY
+
+permissions:
+  contents: write
+
+jobs:
+  assemble:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out branch
+        uses: actions/checkout@v4
+        with:
+          ref: feature/ielts19-gt-reading-test4-study-parity
+          fetch-depth: 0
+
+      - name: Assemble implementation files
+        shell: bash
+        run: |
+          set -euo pipefail
+          target='general-training/cambridge-19/test-4'
+          cat .test4-assembly/html.* | base64 --decode > "$target/IELTS19 Test 4 - Reading - GT.html"
+          cat .test4-assembly/adapter.* | base64 --decode > "$target/study-feedback.js"
+          cat .test4-assembly/data.* | base64 --decode > "$target/study-feedback-data.js"
+
+      - name: Validate implementation
+        shell: bash
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          from pathlib import Path
+          from bs4 import BeautifulSoup
+          from collections import Counter
+          import re
+
+          page = Path('general-training/cambridge-19/test-4/IELTS19 Test 4 - Reading - GT.html')
+          html = page.read_text(encoding='utf-8')
+          soup = BeautifulSoup(html, 'html.parser')
+          ids = [node['id'] for node in soup.select('[id]')]
+          duplicates = [key for key, value in Counter(ids).items() if value > 1]
+          assert not duplicates, duplicates
+          assert {int(value) for value in re.findall(r'data-q="(\d+)"', html)} == set(range(1, 41))
+          assert '38: "C"' in html
+          assert 'return "Below 3";' in html
+          PY
+          node --check general-training/cambridge-19/test-4/study-feedback.js
+          node --check general-training/cambridge-19/test-4/study-feedback-data.js
+          python -m pytest -q tests/ielts19_gt_test4_study_parity_test.py
+
+      - name: Commit assembled files and remove temporary assets
+        shell: bash
+        run: |
+          set -euo pipefail
+          rm -rf .test4-assembly
+          rm -f .github/workflows/assemble-gt19-test4.yml
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add general-training/cambridge-19/test-4 tests/ielts19_gt_test4_study_parity_test.py .github/workflows/assemble-gt19-test4.yml .test4-assembly
+          git commit -m 'Assemble IELTS 19 GT Reading Test 4 implementation'
+          git push origin HEAD:feature/ielts19-gt-reading-test4-study-parity
