@@ -38,3 +38,29 @@
     font-weight: 600;
   }
 */
+
+/*
+  Preview-only interaction refinements.
+  These keep filtered cards at a constant height, prevent the long
+  General Training label from wrapping while its column collapses, and
+  delay the intro reveal until the preview is visibly settled. They will
+  be folded into the permanent hub styles before release.
+*/
+body[data-test-view="academic"] .pathway.general,
+body[data-test-view="general"] .pathway.academic {
+  contain: size;
+}
+
+.pathway-heading {
+  white-space: nowrap;
+}
+
+.intro-char {
+  animation-delay: calc(650ms + var(--char-index) * 22ms);
+}
+
+@media (min-width:1181px) {
+  .header-actions {
+    gap:80px;
+  }
+}

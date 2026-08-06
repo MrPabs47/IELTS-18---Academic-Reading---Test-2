@@ -30,11 +30,99 @@
     .logo:hover,.logo:focus-visible{color:#ff334f;outline:none}
 
     .main-nav{justify-self:center;display:inline-flex;align-items:center;gap:5px}
+    .header-actions{justify-self:end;display:flex;align-items:center;gap:28px;min-width:0}
     .nav-pill{border:0;border-radius:8px;padding:8px 12px;background:transparent;color:#8f949d;font-weight:600;cursor:pointer;transition:color .16s ease,background .16s ease}
     .nav-pill:hover{color:#f5f5f5;background:#15171a}
     .nav-pill.active{color:#fff;background:#17191d}
 
-    .auth-actions{justify-self:end;display:flex;align-items:center;gap:11px}
+    .test-view-switch{
+      --view-index:0;
+      position:relative;
+      isolation:isolate;
+      display:grid;
+      grid-template-columns:repeat(3,minmax(0,1fr));
+      width:214px;
+      padding:3px;
+      border:1px solid #292c32;
+      border-radius:999px;
+      background:#101215;
+      box-shadow:inset 0 1px 0 rgba(255,255,255,.035),0 6px 18px rgba(0,0,0,.16);
+    }
+    .view-indicator{
+      position:absolute;
+      top:3px;
+      bottom:3px;
+      left:3px;
+      z-index:0;
+      width:calc((100% - 6px)/3);
+      border-radius:999px;
+      transform:translateX(calc(var(--view-index)*100%));
+      transition:transform .3s cubic-bezier(.22,1,.36,1),background .2s ease,box-shadow .2s ease;
+    }
+    .test-view-switch[data-active="all"] .view-indicator{background:#24272d;box-shadow:inset 0 1px 0 rgba(255,255,255,.07)}
+    .test-view-switch[data-active="academic"] .view-indicator{background:linear-gradient(135deg,#65058f,#8208b7);box-shadow:0 0 18px rgba(114,4,163,.25),inset 0 1px 0 rgba(255,255,255,.13)}
+    .test-view-switch[data-active="general"] .view-indicator{background:linear-gradient(135deg,#00558e,#0874bc);box-shadow:0 0 18px rgba(0,98,163,.25),inset 0 1px 0 rgba(255,255,255,.13)}
+    .view-option{
+      --switch-glow-x:50%;
+      --switch-glow-y:50%;
+      --switch-glow-one:114,4,163;
+      --switch-glow-two:0,98,163;
+      position:relative;
+      z-index:1;
+      isolation:isolate;
+      overflow:hidden;
+      border:0;
+      border-radius:999px;
+      padding:6px 8px;
+      background:transparent;
+      color:#858a93;
+      font-size:.69rem;
+      font-weight:760;
+      letter-spacing:.005em;
+      cursor:pointer;
+      transition:color .18s ease,box-shadow .18s ease;
+    }
+    .view-option[data-view="academic"]{--switch-glow-one:114,4,163;--switch-glow-two:165,58,214}
+    .view-option[data-view="general"]{--switch-glow-one:0,98,163;--switch-glow-two:39,153,214}
+    .view-option::before{
+      content:"";
+      position:absolute;
+      inset:1px;
+      z-index:0;
+      border-radius:inherit;
+      pointer-events:none;
+      background:
+        radial-gradient(74px circle at var(--switch-glow-x) var(--switch-glow-y),rgba(var(--switch-glow-one),.34),transparent 70%),
+        radial-gradient(68px circle at calc(100% - var(--switch-glow-x)) var(--switch-glow-y),rgba(var(--switch-glow-two),.20),transparent 74%);
+      opacity:0;
+      transition:opacity .18s ease;
+    }
+    .view-option::after{
+      content:"";
+      position:absolute;
+      inset:0;
+      z-index:2;
+      padding:1px;
+      border-radius:inherit;
+      pointer-events:none;
+      background:radial-gradient(62px circle at var(--switch-glow-x) var(--switch-glow-y),rgba(var(--switch-glow-one),.95),rgba(var(--switch-glow-two),.48) 44%,transparent 78%);
+      -webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);
+      -webkit-mask-composite:xor;
+      mask-composite:exclude;
+      opacity:0;
+      transition:opacity .18s ease;
+    }
+    .view-option>span{position:relative;z-index:1}
+    .view-option[aria-pressed="true"]{color:#fff}
+    .view-option[aria-pressed="true"]::before,.view-option[aria-pressed="true"]::after{opacity:0}
+    .view-option:focus-visible{outline:2px solid var(--focus);outline-offset:3px}
+    @media(hover:hover) and (pointer:fine){
+      .view-option:hover{color:#fff;box-shadow:0 0 15px rgba(var(--switch-glow-one),.08)}
+      .view-option:not([aria-pressed="true"]):hover::before{opacity:1}
+      .view-option:not([aria-pressed="true"]):hover::after{opacity:.9}
+    }
+
+    .auth-actions{display:flex;align-items:center;gap:11px}
     .auth-button{border:0;background:transparent;color:#92969f;padding:9px 12px;border-radius:999px;font-weight:600;cursor:not-allowed}
     .auth-button.signup{background:#f1f1f2;color:#151619;padding:10px 18px}
     .auth-button[aria-disabled="true"]{opacity:.88}
@@ -55,8 +143,24 @@
     .test-title{margin-bottom:10px;padding:2px 2px 9px;border-bottom:1px solid rgba(255,255,255,.055)}
     .test-title h3{margin:0;font-size:.93rem;font-weight:650;letter-spacing:-.01em}
 
-    .pathways{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
-    .pathway{min-width:0}
+    .pathways{
+      display:grid;
+      grid-template-columns:minmax(0,1fr) minmax(0,1fr);
+      gap:8px;
+      transition:grid-template-columns .46s cubic-bezier(.2,.72,.16,1),gap .38s cubic-bezier(.2,.72,.16,1);
+    }
+    .pathway{
+      min-width:0;
+      overflow:hidden;
+      opacity:1;
+      transform:translate3d(0,0,0);
+      transition:opacity .3s cubic-bezier(.2,.72,.16,1),transform .46s cubic-bezier(.2,.72,.16,1);
+      will-change:opacity,transform;
+    }
+    body[data-test-view="academic"] .pathways{grid-template-columns:minmax(0,1fr) minmax(0,0fr);gap:0}
+    body[data-test-view="general"] .pathways{grid-template-columns:minmax(0,0fr) minmax(0,1fr);gap:0}
+    body[data-test-view="academic"] .pathway.general{opacity:0;pointer-events:none;transform:translate3d(14px,0,0)}
+    body[data-test-view="general"] .pathway.academic{opacity:0;pointer-events:none;transform:translate3d(-14px,0,0)}
     .pathway-heading{display:block;width:100%;margin:0 0 7px;padding:7px 8px;border-radius:8px;color:#fff;text-align:center;font-size:.66rem;font-weight:800;letter-spacing:.045em;text-transform:uppercase;box-shadow:inset 0 1px 0 rgba(255,255,255,.13)}
     .academic .pathway-heading{background:var(--academic)}
     .general .pathway-heading{background:var(--general)}
@@ -171,17 +275,41 @@
     .book-16{--book-bg:#16130f;--book-border:#342b22;--book-accent:#9a7958}
 
     @media(max-width:1320px){.test-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
-    @media(max-width:850px){.header-inner{grid-template-columns:1fr auto}.main-nav{order:3;grid-column:1/-1;justify-self:center;width:100%;overflow-x:auto}.auth-actions{justify-self:end}.practice-options{grid-template-columns:repeat(2,1fr)}}
-    @media(max-width:600px){.header-inner{padding:13px 16px}.logo{font-size:1.2rem}.auth-button{padding:8px}.auth-button.signup{padding:9px 13px}.intro-line{padding:19px 16px 10px}.page{padding:10px 12px 40px}.test-grid{grid-template-columns:1fr}.pathways{gap:7px}.neutral-skills{width:84%}.practice-options{grid-template-columns:1fr}}
+    @media(max-width:1180px){
+      .header-inner{grid-template-columns:1fr auto}
+      .main-nav{order:3;grid-column:1/-1;justify-self:center}
+      .header-actions{justify-self:end;gap:18px}
+    }
+    @media(max-width:850px){
+      .main-nav{justify-content:center;max-width:100%;overflow-x:auto}
+      .header-actions{order:4;grid-column:1/-1;justify-self:center;width:100%;justify-content:center}
+      .practice-options{grid-template-columns:repeat(2,1fr)}
+    }
+    @media(max-width:600px){
+      .header-inner{padding:13px 16px;gap:10px 14px}
+      .logo{font-size:1.2rem}
+      .main-nav{width:100%}
+      .header-actions{gap:10px;flex-wrap:wrap}
+      .nav-pill{padding:7px 9px;font-size:.86rem}
+      .test-view-switch{width:198px}
+      .auth-button{padding:8px}
+      .auth-button.signup{padding:9px 13px}
+      .intro-line{padding:19px 16px 10px}
+      .page{padding:10px 12px 40px}
+      .test-grid{grid-template-columns:1fr}
+      .pathways{gap:7px}
+      .neutral-skills{width:84%}
+      .practice-options{grid-template-columns:1fr}
+    }
     @media(prefers-reduced-motion:reduce){
       .intro-char{opacity:1;transform:none;filter:none;animation:none}
-      .skill-row,.skill-row::before,.skill-row::after{transition:none}
+      .skill-row,.skill-row::before,.skill-row::after,.view-indicator,.view-option,.view-option::before,.view-option::after,.pathways,.pathway{transition:none}
       .skill-row.available:hover,.skill-row.available:focus-visible{transform:none}
     }
   </style>
   <link rel="stylesheet" href="./hub/seasonal-theme.css" />
 </head>
-<body>
+<body data-test-view="all">
 <header class="site-header">
   <div class="header-inner">
     <a class="logo" href="./index.html" aria-label="Refresh IELTS Pabs home">IELTS Pabs</a>
@@ -190,9 +318,17 @@
       <button class="nav-pill" data-panel="practice-lab">Practice Lab</button>
       <button class="nav-pill" data-panel="progress">My Progress</button>
     </nav>
-    <div class="auth-actions" aria-label="Account options coming soon">
-      <button class="auth-button" type="button" aria-disabled="true" title="Coming soon">Log in</button>
-      <button class="auth-button signup" type="button" aria-disabled="true" title="Coming soon">Sign up</button>
+    <div class="header-actions">
+      <div class="test-view-switch" data-active="all" role="group" aria-label="Show test type">
+        <span class="view-indicator" aria-hidden="true"></span>
+        <button class="view-option" type="button" data-view="all" aria-pressed="true"><span>All</span></button>
+        <button class="view-option" type="button" data-view="academic" aria-pressed="false"><span>Academic</span></button>
+        <button class="view-option" type="button" data-view="general" aria-pressed="false"><span>GT</span></button>
+      </div>
+      <div class="auth-actions" aria-label="Account options coming soon">
+        <button class="auth-button" type="button" aria-disabled="true" title="Coming soon">Log in</button>
+        <button class="auth-button signup" type="button" aria-disabled="true" title="Coming soon">Sign up</button>
+      </div>
     </div>
   </div>
 </header>
@@ -219,17 +355,25 @@ function getHref(type,book,test){const key=`${book}-${test}`;if(!availability[ty
 let results={};try{results=JSON.parse(localStorage.getItem('ielts-pabs-results')||'{}')}catch(error){results={}}
 const attemptData=id=>Array.isArray(results[id])?results[id].slice(-2):[];
 function skillRow({book,test,type,label,symbol=''}){const href=getHref(type,book,test),id=`${book}-${test}-${type}`,attempts=attemptData(id),row=document.createElement(href?'a':'div'),glow=type.startsWith('academic')?'academic':type.startsWith('general')?'general':'shared';row.className=`skill-row ${href?'available':'unavailable'}`;row.dataset.historyId=id;row.dataset.skillLabel=label;row.dataset.glow=glow;if(href)row.href=href;const scores=attempts.map((a,i)=>`<span class="score-chip">${i+1} · ${a.band??a.score??'—'}</span>`).join('');row.innerHTML=`<span class="skill-name"><span class="skill-label">${symbol?`<span class="skill-symbol">${symbol}</span>`:''}${label}</span></span><span class="skill-meta">${scores}${href?'':'<span class="soon-text">Coming soon</span>'}</span>`;return row}
-function testCard(book,test){const card=document.createElement('article');card.className='test-card';card.innerHTML=`<div class="test-title"><h3>Test ${test}</h3></div><div class="pathways"><div class="pathway academic" data-zone="academic"><div class="pathway-heading">Academic</div><div class="skill-stack"></div></div><div class="pathway general" data-zone="general"><div class="pathway-heading">General Training</div><div class="skill-stack"></div></div></div><div class="shared-divider" aria-hidden="true"></div><div class="neutral-skills" data-zone="neutral"></div>`;card.querySelector('[data-zone="academic"] .skill-stack').append(skillRow({book,test,type:'academicReading',label:'Reading'}),skillRow({book,test,type:'academicWriting',label:'Writing'}));card.querySelector('[data-zone="general"] .skill-stack').append(skillRow({book,test,type:'generalReading',label:'Reading'}),skillRow({book,test,type:'generalWriting',label:'Writing'}));card.querySelector('[data-zone="neutral"]').append(skillRow({book,test,type:'listening',label:'Listening',symbol:'◉'}),skillRow({book,test,type:'speaking',label:'Speaking',symbol:'◌'}));return card}
+function testCard(book,test){const card=document.createElement('article');card.className='test-card';card.innerHTML=`<div class="test-title"><h3>Test ${test}</h3></div><div class="pathways"><div class="pathway academic" data-zone="academic"><div class="pathway-heading">Academic</div><div class="skill-stack"></div></div><div class="pathway general" data-zone="general"><div class="pathway-heading">General Training</div><div class="skill-stack"></div></div></div><div class="shared-divider" aria-hidden="true"></div><div class="neutral-skills" data-zone="neutral"></div>`;const academic=card.querySelector('[data-zone="academic"]'),general=card.querySelector('[data-zone="general"]'),neutral=card.querySelector('[data-zone="neutral"]');academic.querySelector('.skill-stack').append(skillRow({book,test,type:'academicReading',label:'Reading'}),skillRow({book,test,type:'academicWriting',label:'Writing'}));general.querySelector('.skill-stack').append(skillRow({book,test,type:'generalReading',label:'Reading'}),skillRow({book,test,type:'generalWriting',label:'Writing'}));neutral.append(skillRow({book,test,type:'listening',label:'Listening',symbol:'◉'}),skillRow({book,test,type:'speaking',label:'Speaking',symbol:'◌'}));return card}
 function bookBlock(book){const section=document.createElement('section');section.className=`book-section book-${book}`;section.innerHTML=`<div class="book-heading"><h2>IELTS ${book}</h2></div>`;const grid=document.createElement('div');grid.className='test-grid';tests.forEach(test=>grid.appendChild(testCard(book,test)));section.appendChild(grid);return section}
 function renderBooks(){const container=document.getElementById('booksContainer');books.forEach(book=>container.appendChild(bookBlock(book)))}
 function cleanHomeUrl(){return`${location.pathname}${location.search}`}
 function switchPanel(id,{updateUrl=true,scroll=true}={}){document.querySelectorAll('.nav-pill').forEach(btn=>btn.classList.toggle('active',btn.dataset.panel===id));document.getElementById('mock-tests').style.display=id==='mock-tests'?'block':'none';document.querySelectorAll('.panel').forEach(panel=>panel.classList.toggle('visible',panel.id===id));if(updateUrl)history.replaceState(null,'',id==='mock-tests'?cleanHomeUrl():`#${id}`);if(scroll)window.scrollTo({top:0,behavior:'auto'})}
 document.querySelectorAll('.nav-pill').forEach(btn=>btn.addEventListener('click',()=>switchPanel(btn.dataset.panel)));
 const logo=document.querySelector('.logo');logo.addEventListener('click',event=>{event.preventDefault();history.replaceState(null,'',cleanHomeUrl());window.scrollTo(0,0);location.reload()});
-const finePointer=matchMedia('(hover:hover) and (pointer:fine)').matches&&!matchMedia('(prefers-reduced-motion:reduce)').matches;if(finePointer)document.addEventListener('pointermove',event=>{const row=event.target.closest&&event.target.closest('.skill-row');if(!row)return;const rect=row.getBoundingClientRect();row.style.setProperty('--glow-x',`${event.clientX-rect.left}px`);row.style.setProperty('--glow-y',`${event.clientY-rect.top}px`)},{passive:true});document.addEventListener('focusin',event=>{const row=event.target.closest&&event.target.closest('.skill-row');if(!row)return;row.style.setProperty('--glow-x','50%');row.style.setProperty('--glow-y','50%')});
+const reducedMotion=matchMedia('(prefers-reduced-motion:reduce)').matches,finePointer=matchMedia('(hover:hover) and (pointer:fine)').matches&&!reducedMotion;if(finePointer)document.addEventListener('pointermove',event=>{const target=event.target.closest&&event.target.closest('.skill-row,.view-option');if(!target)return;const rect=target.getBoundingClientRect(),x=`${event.clientX-rect.left}px`,y=`${event.clientY-rect.top}px`;if(target.classList.contains('view-option')){target.style.setProperty('--switch-glow-x',x);target.style.setProperty('--switch-glow-y',y)}else{target.style.setProperty('--glow-x',x);target.style.setProperty('--glow-y',y)}},{passive:true});document.addEventListener('focusin',event=>{const target=event.target.closest&&event.target.closest('.skill-row,.view-option');if(!target)return;if(target.classList.contains('view-option')){target.style.setProperty('--switch-glow-x','50%');target.style.setProperty('--switch-glow-y','50%')}else{target.style.setProperty('--glow-x','50%');target.style.setProperty('--glow-y','50%')}});
 const popover=document.getElementById('historyPopover');document.addEventListener('mouseover',e=>{const row=e.target.closest('.skill-row.available');if(!row)return;const attempts=attemptData(row.dataset.historyId);if(!attempts.length)return;const r=row.getBoundingClientRect();popover.innerHTML=`<h4>${row.dataset.skillLabel} history</h4>`+attempts.map((a,i)=>`<p><strong>Attempt ${i+1}:</strong> Band ${a.band??a.score??'—'}${a.raw?` · ${a.raw}`:''}${a.date?`<br>${a.date}`:''}</p>`).join('');popover.style.left=`${Math.min(innerWidth-286,Math.max(12,r.left))}px`;popover.style.top=`${Math.min(innerHeight-180,r.bottom+8)}px`;popover.classList.add('visible')});document.addEventListener('mouseout',e=>{if(e.target.closest('.skill-row.available'))popover.classList.remove('visible')});
+const testViewSwitch=document.querySelector('.test-view-switch'),viewButtons=[...testViewSwitch.querySelectorAll('.view-option')],viewOrder=['all','academic','general'];let viewAnimationRunning=false;
+function updateViewSwitch(view){const index=viewOrder.indexOf(view);testViewSwitch.dataset.active=view;testViewSwitch.style.setProperty('--view-index',index);viewButtons.forEach(button=>button.setAttribute('aria-pressed',String(button.dataset.view===view)))}
+function applyCardView(view){document.body.dataset.testView=view;document.querySelectorAll('.pathway.academic').forEach(pathway=>{const hidden=view==='general';pathway.setAttribute('aria-hidden',String(hidden));pathway.inert=hidden});document.querySelectorAll('.pathway.general').forEach(pathway=>{const hidden=view==='academic';pathway.setAttribute('aria-hidden',String(hidden));pathway.inert=hidden});popover.classList.remove('visible')}
+function applyTestView(view){updateViewSwitch(view);applyCardView(view)}
+function waitForViewMotion(milliseconds){return new Promise(resolve=>setTimeout(resolve,milliseconds))}
+async function setTestView(view,{openTests=true,animate=true}={}){const index=viewOrder.indexOf(view);if(index<0||viewAnimationRunning)return;const testsActive=document.querySelector('.nav-pill[data-panel="mock-tests"]').classList.contains('active'),from=document.body.dataset.testView;if(from===view){if(openTests&&!testsActive)switchPanel('mock-tests');return}if(openTests&&!testsActive)switchPanel('mock-tests');if(!animate||reducedMotion){applyTestView(view);return}viewAnimationRunning=true;testViewSwitch.setAttribute('aria-busy','true');updateViewSwitch(view);try{if(from!=='all'&&view!=='all'){applyCardView('all');await waitForViewMotion(210);applyCardView(view);await waitForViewMotion(380)}else{applyCardView(view);await waitForViewMotion(470)}}finally{testViewSwitch.removeAttribute('aria-busy');viewAnimationRunning=false}}
+viewButtons.forEach(button=>button.addEventListener('click',()=>setTestView(button.dataset.view)));
+testViewSwitch.addEventListener('keydown',event=>{const current=event.target.closest('.view-option');if(!current)return;let index=viewOrder.indexOf(current.dataset.view);if(event.key==='ArrowRight')index=(index+1)%viewOrder.length;else if(event.key==='ArrowLeft')index=(index-1+viewOrder.length)%viewOrder.length;else if(event.key==='Home')index=0;else if(event.key==='End')index=viewOrder.length-1;else return;event.preventDefault();const next=viewButtons[index];next.focus();setTestView(next.dataset.view)});
 const intro=document.getElementById('introMessage');const introText=intro.textContent;intro.textContent='';[...introText].forEach((char,index)=>{const span=document.createElement('span');span.className='intro-char';span.style.setProperty('--char-index',index);span.textContent=char===' '?'\u00a0':char;intro.appendChild(span)});
-renderBooks();const initialPanel=['practice-lab','progress'].includes(location.hash.slice(1))?location.hash.slice(1):'mock-tests';switchPanel(initialPanel,{scroll:false});if(initialPanel==='mock-tests'){history.replaceState(null,'',cleanHomeUrl());requestAnimationFrame(()=>window.scrollTo(0,0))}window.addEventListener('pageshow',()=>{if(!location.hash||location.hash==='#mock-tests')window.scrollTo(0,0)});
+renderBooks();applyTestView('all');const initialPanel=['practice-lab','progress'].includes(location.hash.slice(1))?location.hash.slice(1):'mock-tests';switchPanel(initialPanel,{scroll:false});if(initialPanel==='mock-tests'){history.replaceState(null,'',cleanHomeUrl());requestAnimationFrame(()=>window.scrollTo(0,0))}window.addEventListener('pageshow',()=>{if(!location.hash||location.hash==='#mock-tests')window.scrollTo(0,0)});
 </script>
 </body>
 </html>
