@@ -1,0 +1,46 @@
+name: Compact validated GT Reading fingerprint
+
+on:
+  push:
+    branches:
+      - fix/gt-reading-info-control-lifecycle
+    paths:
+      - .gt-reading-fingerprint-compact/READY
+
+permissions:
+  contents: write
+
+jobs:
+  compact:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: fix/gt-reading-info-control-lifecycle
+          fetch-depth: 0
+
+      - name: Preserve contract formatting and update only the approved SHA
+        shell: bash
+        run: |
+          set -euo pipefail
+          git show origin/main:hub/live-hub-contract.json > /tmp/live-hub-contract.json
+          python - <<'PY'
+          from pathlib import Path
+          path = Path('/tmp/live-hub-contract.json')
+          text = path.read_text(encoding='utf-8')
+          old = 'ac6fad0720dbd24bce312bfc59cdb6455485e62a'
+          new = '3454c5c3706ce46bdac894f501dd52145b1b6ef3'
+          if text.count(old) != 1:
+              raise SystemExit(f'Expected exactly one old fingerprint, found {text.count(old)}')
+          Path('hub/live-hub-contract.json').write_text(text.replace(old, new), encoding='utf-8')
+          PY
+
+      - name: Commit compact fingerprint update
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add hub/live-hub-contract.json
+          git commit -m "Keep validated Reading fingerprint update compact"
+          git push origin HEAD:fix/gt-reading-info-control-lifecycle
