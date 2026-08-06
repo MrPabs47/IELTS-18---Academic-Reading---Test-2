@@ -76,6 +76,7 @@
 
   document.write(
     '<script src="' + escapeAttribute(dataSource) + '"><\/script>' +
+    '<script src="test2-campsite-matching.js"><\/script>' +
     '<script>(' + installIeltsPabsHomeLink.toString() + ')();<\/script>'
   );
 }());
