@@ -1,7 +1,6 @@
 (function () {
   "use strict";
 
-  document.write('<style id="gt-test2-mode-info-visibility">html[data-gt-test2-mode="test"] .reading-shell-study-icon-button{display:none!important}<\/style>');
   document.write('<script src="../../shared/gt-reading-exam-guards.js"><\/script>');
 
   var current = document.currentScript;
@@ -11,23 +10,6 @@
 
   function escapeAttribute(value) {
     return String(value).replace(/&/g, "&amp;").replace(/"/g, "&quot;");
-  }
-
-  function installTest2ModeInfoVisibility() {
-    "use strict";
-
-    var root = document.documentElement;
-    if (root.getAttribute("data-gt-test2-info-visibility") === "ready") return;
-    root.setAttribute("data-gt-test2-info-visibility", "ready");
-
-    document.addEventListener("click", function (event) {
-      var button = event.target.closest && event.target.closest(".mode-btn[data-mode]");
-      if (!button) return;
-      var selectedMode = button.getAttribute("data-mode");
-      if (selectedMode === "test" || selectedMode === "study") {
-        root.setAttribute("data-gt-test2-mode", selectedMode);
-      }
-    }, true);
   }
 
   function installIeltsPabsHomeLink() {
@@ -91,8 +73,6 @@
       confirmGoHome();
     });
   }
-
-  installTest2ModeInfoVisibility();
 
   document.write(
     '<script src="' + escapeAttribute(dataSource) + '"><\/script>' +
