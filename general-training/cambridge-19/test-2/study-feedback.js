@@ -1,6 +1,7 @@
 (function () {
   "use strict";
 
+  document.write('<style id="gt-test2-hide-task-info">.reading-shell-study-icon-button{display:none!important}<\/style>');
   document.write('<script src="../../shared/gt-reading-exam-guards.js"><\/script>');
 
   var current = document.currentScript;
