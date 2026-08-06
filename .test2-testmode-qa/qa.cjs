@@ -17,7 +17,10 @@ const PAGE_URL = 'http://127.0.0.1:4173/general-training/cambridge-19/test-2/IEL
 
     await page.goto(PAGE_URL, { waitUntil: 'networkidle' });
     await page.waitForFunction(() => document.documentElement.dataset.gtTest2Campsites === 'ready');
-    await page.evaluate(() => window.startTest('test'));
+    await page.evaluate(() => {
+      window.startTest('test');
+      document.getElementById('modeScreen').style.display = 'none';
+    });
     await page.waitForFunction(() => getComputedStyle(document.getElementById('app')).display !== 'none');
     console.log('Test mode started');
 
