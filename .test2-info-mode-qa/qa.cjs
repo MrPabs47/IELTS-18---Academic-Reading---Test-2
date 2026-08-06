@@ -11,11 +11,12 @@ const URL = 'http://127.0.0.1:4173/general-training/cambridge-19/test-2/IELTS19%
     await study.goto(URL, { waitUntil: 'networkidle' });
     await study.getByRole('button', { name: /Study mode/i }).click();
     await study.waitForFunction(() => getComputedStyle(document.getElementById('app')).display !== 'none');
-    await study.waitForSelector('.reading-shell-study-icon-button');
+    await study.waitForSelector('.reading-shell-study-icon-button', { state: 'visible' });
     assert.equal(await study.locator('html').getAttribute('data-gt-test2-mode'), 'study');
     assert.ok(await study.locator('.reading-shell-study-icon-button:visible').count() > 0, 'info buttons visible in Study mode');
     assert.equal(await study.locator('.gt-test2-campsite-source').count(), 5);
     assert.equal(await study.locator('.gt-test2-campsite-zone').count(), 7);
+    console.log('Study mode info buttons visible');
 
     const test = await browser.newPage({ viewport: { width: 1440, height: 1000 } });
     test.setDefaultTimeout(10000);
@@ -28,7 +29,7 @@ const URL = 'http://127.0.0.1:4173/general-training/cambridge-19/test-2/IELTS19%
       document.getElementById('modeScreen').style.display = 'none';
     });
     await test.waitForFunction(() => getComputedStyle(document.getElementById('app')).display !== 'none');
-    await test.waitForSelector('.reading-shell-study-icon-button');
+    await test.waitForSelector('.reading-shell-study-icon-button', { state: 'attached' });
     assert.equal(await test.locator('.reading-shell-study-icon-button:visible').count(), 0, 'info buttons hidden in Test mode');
     assert.equal(await test.locator('.gt-test2-campsite-source').count(), 5);
     assert.equal(await test.locator('.gt-test2-campsite-zone').count(), 7);
