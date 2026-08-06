@@ -9,7 +9,7 @@ const tests = [1, 2, 3, 4].map(number => ({
 
 async function waitForShell(page) {
   await page.waitForFunction(() => Boolean(window.ReadingFeatureShell));
-  await page.waitForSelector('.reading-shell-study-icon-button');
+  await page.waitForFunction(() => document.querySelectorAll('.reading-shell-study-icon-button').length > 0);
 }
 
 async function startStudy(page) {
