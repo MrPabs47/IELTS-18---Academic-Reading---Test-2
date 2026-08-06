@@ -1,7 +1,7 @@
 (() => {
   const TEST_TITLE = "IELTS 18 Academic Writing Test 4";
   const TEACHER_EMAIL = "pablo.jaramillo@ilsc.com.au";
-  const TASK_IMAGE = "https://i0.wp.com/ieltswriting.org/wp-content/uploads/2024/09/ielts-18a-4-1.png?resize=560%2C435&ssl=1";
+  const TASK_IMAGE = "metals-price-change-4k.png";
 
   document.title = TEST_TITLE;
   document.querySelector("#modeScreenInner h1")?.replaceChildren(TEST_TITLE);
