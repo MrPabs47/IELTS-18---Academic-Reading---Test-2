@@ -1,0 +1,37 @@
+/* Test-specific presentation for IELTS 18 Academic Writing Test 4. */
+.task-question,
+.task-question p {
+  font-style: italic;
+}
+
+/* Reset the shared Test 2 sugar-cane image override. */
+#taskImage {
+  content: normal !important;
+}
+
+.task-visual {
+  margin-top: 12px;
+}
+
+.metals-graph-visual-frame {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 4px 0 8px;
+}
+
+.visual-frame img {
+  width: 100%;
+  max-width: 680px;
+  height: auto;
+}
+
+#passagePane.image-focus .metals-graph-visual-frame {
+  justify-content: center;
+}
+
+#passagePane.image-focus .visual-frame img {
+  width: auto;
+  max-width: 100%;
+  max-height: 100%;
+}
