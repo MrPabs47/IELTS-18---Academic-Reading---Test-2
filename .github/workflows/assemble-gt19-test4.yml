@@ -18,7 +18,7 @@ jobs:
         uses: actions/checkout@v4
         with:
           ref: feature/ielts19-gt-reading-test4-study-parity
-          fetch-depth: 0
+          fetch-depth: 1
 
       - name: Assemble implementation files
         shell: bash
@@ -38,6 +38,7 @@ jobs:
           from html.parser import HTMLParser
           from collections import Counter
           import re
+          import runpy
 
           class IdParser(HTMLParser):
               def __init__(self):
@@ -57,10 +58,16 @@ jobs:
           assert {int(value) for value in re.findall(r'data-q="(\d+)"', html)} == set(range(1, 41))
           assert '38: "C"' in html
           assert 'return "Below 3";' in html
+
+          checks = runpy.run_path('tests/ielts19_gt_test4_study_parity_test.py')
+          tests = [(name, value) for name, value in checks.items() if name.startswith('test_') and callable(value)]
+          for name, test in sorted(tests):
+              test()
+              print('PASS', name)
+          assert len(tests) == 7, len(tests)
           PY
           node --check general-training/cambridge-19/test-4/study-feedback.js
           node --check general-training/cambridge-19/test-4/study-feedback-data.js
-          python -m pytest -q tests/ielts19_gt_test4_study_parity_test.py
 
       - name: Commit assembled files and remove temporary assets
         shell: bash
