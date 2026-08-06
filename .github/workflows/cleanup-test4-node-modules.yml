@@ -1,0 +1,33 @@
+name: Clean IELTS 19 GT Test 4 QA dependencies
+
+on:
+  push:
+    branches:
+      - feature/ielts19-gt-reading-test4-study-parity
+    paths:
+      - .test4-cleanup/READY
+
+permissions:
+  contents: write
+
+jobs:
+  cleanup:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out review branch
+        uses: actions/checkout@v4
+        with:
+          ref: feature/ielts19-gt-reading-test4-study-parity
+          fetch-depth: 1
+
+      - name: Remove generated QA dependencies and temporary cleanup files
+        shell: bash
+        run: |
+          set -euo pipefail
+          git rm -r node_modules
+          git rm -r .test4-cleanup
+          git rm .github/workflows/cleanup-test4-node-modules.yml
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git commit -m 'Remove generated browser QA dependencies'
+          git push origin HEAD:feature/ielts19-gt-reading-test4-study-parity
