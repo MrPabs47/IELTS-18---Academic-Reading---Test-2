@@ -32,7 +32,7 @@ const URL = 'http://127.0.0.1:4173/general-training/cambridge-19/test-4/IELTS19%
     }));
 
     assert.equal(before.text.replace(/\u00a0/g, ' '), 'IELTS Pabs');
-    assert.equal(before.ariaLabel, 'IELTS Pabs');
+    assert.equal(before.ariaLabel, 'Return to IELTS Pabs home');
     assert.equal(before.charCount, 10);
     assert.match(before.className, /home-link/);
     assert.equal(before.title, 'Return to home');
