@@ -1,0 +1,36 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="3840" height="2880" viewBox="0 0 1600 1200" role="img" aria-labelledby="title desc" preserveAspectRatio="xMidYMid meet">
+<title id="title">Number of participants, by activity 2000–2020</title>
+<desc id="desc">Line graph comparing participation in film club, martial arts, amateur dramatics, table tennis and musical performances from 2000 to 2020.</desc>
+<rect width="1600" height="1200" fill="#fff"/>
+<style>
+text{font-family:Arial,Helvetica,sans-serif;fill:#111}.title{font-size:48px;font-weight:700;text-anchor:middle}.axis-label{font-size:38px;font-weight:700;text-anchor:middle}.tick{font-size:31px}.grid{stroke:#c8c8c8;stroke-width:1.5;stroke-dasharray:7 7}.axis{stroke:#111;stroke-width:3}.film{fill:none;stroke:#333;stroke-width:4}.martial{fill:none;stroke:#999;stroke-width:4;stroke-dasharray:12 10}.amateur{fill:none;stroke:#222;stroke-width:4;stroke-dasharray:2 8;stroke-linecap:round}.table{fill:none;stroke:#222;stroke-width:4;stroke-dasharray:15 6 3 6}.music{fill:none;stroke:#999;stroke-width:4}.open{fill:#fff;stroke:#222;stroke-width:3}.filled{fill:#333;stroke:#333;stroke-width:2}.legend{font-size:31px}.legend-box{fill:#fff;stroke:#777;stroke-width:2}
+</style>
+<text class="title" x="800" y="70">Number of participants, by activity 2000–2020</text>
+<g>
+<line class="grid" x1="150" y1="920" x2="1050" y2="920"/><line class="grid" x1="150" y1="806" x2="1050" y2="806"/><line class="grid" x1="150" y1="691" x2="1050" y2="691"/><line class="grid" x1="150" y1="577" x2="1050" y2="577"/><line class="grid" x1="150" y1="463" x2="1050" y2="463"/><line class="grid" x1="150" y1="349" x2="1050" y2="349"/><line class="grid" x1="150" y1="234" x2="1050" y2="234"/><line class="grid" x1="150" y1="120" x2="1050" y2="120"/>
+<line class="axis" x1="150" y1="120" x2="150" y2="920"/><line class="axis" x1="150" y1="920" x2="1050" y2="920"/>
+<g class="tick" text-anchor="end"><text x="130" y="930">0</text><text x="130" y="816">10</text><text x="130" y="701">20</text><text x="130" y="587">30</text><text x="130" y="473">40</text><text x="130" y="359">50</text><text x="130" y="244">60</text><text x="130" y="130">70</text></g>
+<g class="tick" text-anchor="middle"><text x="150" y="970">2000</text><text x="375" y="970">2005</text><text x="600" y="970">2010</text><text x="825" y="970">2015</text><text x="1050" y="970">2020</text></g>
+<text class="axis-label" x="600" y="1035">Year</text><text class="axis-label" transform="translate(50 520) rotate(-90)">Number of participants</text>
+<polyline class="film" points="150,189 375,211 600,234 825,189 1050,166"/>
+<polyline class="martial" points="150,509 375,554 600,486 825,531 1050,509"/>
+<polyline class="amateur" points="150,623 375,600 600,691 825,760 1050,851"/>
+<polyline class="table" points="150,737 375,691 600,691 825,520 1050,303"/>
+<polyline class="music" points="150,920 375,920 600,783 825,737 1050,714"/>
+<g>
+<circle class="open" cx="150" cy="189" r="11"/><circle class="open" cx="375" cy="211" r="11"/><circle class="open" cx="600" cy="234" r="11"/><circle class="open" cx="825" cy="189" r="11"/><circle class="open" cx="1050" cy="166" r="11"/>
+<polygon class="open" points="150,496 137,520 163,520"/><polygon class="open" points="375,541 362,565 388,565"/><polygon class="open" points="600,473 587,497 613,497"/><polygon class="open" points="825,518 812,542 838,542"/><polygon class="open" points="1050,496 1037,520 1063,520"/>
+<polygon class="filled" points="150,609 164,623 150,637 136,623"/><polygon class="filled" points="375,586 389,600 375,614 361,600"/><polygon class="filled" points="600,677 614,691 600,705 586,691"/><polygon class="filled" points="825,746 839,760 825,774 811,760"/><polygon class="filled" points="1050,837 1064,851 1050,865 1036,851"/>
+<rect class="open" x="139" y="726" width="22" height="22"/><rect class="open" x="364" y="680" width="22" height="22"/><rect class="open" x="589" y="680" width="22" height="22"/><rect class="open" x="814" y="509" width="22" height="22"/><rect class="open" x="1039" y="292" width="22" height="22"/>
+<g stroke="#222" stroke-width="4"><path d="M140 910l20 20m0-20l-20 20"/><path d="M365 910l20 20m0-20l-20 20"/><path d="M590 773l20 20m0-20l-20 20"/><path d="M815 727l20 20m0-20l-20 20"/><path d="M1040 704l20 20m0-20l-20 20"/></g>
+</g>
+</g>
+<rect class="legend-box" x="1110" y="300" width="420" height="420"/>
+<g class="legend">
+<line class="film" x1="1145" y1="365" x2="1235" y2="365"/><circle class="open" cx="1190" cy="365" r="11"/><text x="1260" y="376">Film club</text>
+<line class="martial" x1="1145" y1="445" x2="1235" y2="445"/><polygon class="open" points="1190,432 1177,456 1203,456"/><text x="1260" y="456">Martial arts</text>
+<line class="amateur" x1="1145" y1="525" x2="1235" y2="525"/><polygon class="filled" points="1190,511 1204,525 1190,539 1176,525"/><text x="1260" y="536">Amateur dramatics</text>
+<line class="table" x1="1145" y1="605" x2="1235" y2="605"/><rect class="open" x="1179" y="594" width="22" height="22"/><text x="1260" y="616">Table tennis</text>
+<line class="music" x1="1145" y1="685" x2="1235" y2="685"/><g stroke="#222" stroke-width="4"><path d="M1180 675l20 20m0-20l-20 20"/></g><text x="1260" y="696">Musical performances</text>
+</g>
+</svg>
