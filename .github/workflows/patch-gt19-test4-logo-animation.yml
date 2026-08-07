@@ -25,129 +25,109 @@ jobs:
           path = Path('general-training/cambridge-19/test-4/IELTS19 Test 4 - Reading - GT.html')
           text = path.read_text(encoding='utf-8')
 
-          css_marker = '''    .logo {
-            font-weight: 800;
-            font-size: 1.4rem;
-            letter-spacing: 0.08em;
-          }
+          css_marker = (
+              "    .logo {\n"
+              "      font-weight: 800;\n"
+              "      font-size: 1.4rem;\n"
+              "      letter-spacing: 0.08em;\n"
+              "    }\n\n"
+              "    .test-title {\n"
+          )
+          css_replacement = (
+              "    .logo {\n"
+              "      font-weight: 800;\n"
+              "      font-size: 1.4rem;\n"
+              "      letter-spacing: 0.08em;\n"
+              "    }\n\n"
+              "    /* IELTS Pabs animated logo */\n"
+              "    .logo.home-link,\n"
+              "    .logo-link .logo {\n"
+              "      transition: color 0.2s ease, opacity 0.2s ease;\n"
+              "    }\n\n"
+              "    .logo.home-link:hover,\n"
+              "    .home-link:hover,\n"
+              "    .logo-link:hover .logo {\n"
+              "      color: #e31837;\n"
+              "      opacity: 1;\n"
+              "    }\n\n"
+              "    .logo-char {\n"
+              "      display: inline-block;\n"
+              "      opacity: 1;\n"
+              "      transform: none;\n"
+              "      filter: none;\n"
+              "      will-change: transform, opacity, filter;\n"
+              "    }\n\n"
+              "    .logo.is-animating .logo-char {\n"
+              "      animation: logoReveal 0.45s cubic-bezier(0.22, 1, 0.36, 1) forwards;\n"
+              "      animation-delay: calc(var(--logo-char-index) * 200ms);\n"
+              "    }\n\n"
+              "    @keyframes logoReveal {\n"
+              "      from {\n"
+              "        opacity: 0;\n"
+              "        transform: translateY(8px);\n"
+              "        filter: blur(4px);\n"
+              "      }\n"
+              "      to {\n"
+              "        opacity: 1;\n"
+              "        transform: translateY(0);\n"
+              "        filter: blur(0);\n"
+              "      }\n"
+              "    }\n\n"
+              "    @media (prefers-reduced-motion: reduce) {\n"
+              "      .logo-char {\n"
+              "        opacity: 1;\n"
+              "        transform: none;\n"
+              "        filter: none;\n"
+              "        animation: none;\n"
+              "      }\n"
+              "    }\n\n"
+              "    .test-title {\n"
+          )
 
-          .test-title {
-          '''
-          css_replacement = '''    .logo {
-            font-weight: 800;
-            font-size: 1.4rem;
-            letter-spacing: 0.08em;
-          }
-
-          /* IELTS Pabs animated logo */
-          .logo.home-link,
-          .logo-link .logo {
-            transition: color 0.2s ease, opacity 0.2s ease;
-          }
-
-          .logo.home-link:hover,
-          .home-link:hover,
-          .logo-link:hover .logo {
-            color: #e31837;
-            opacity: 1;
-          }
-
-          .logo-char {
-            display: inline-block;
-            opacity: 1;
-            transform: none;
-            filter: none;
-            will-change: transform, opacity, filter;
-          }
-
-          .logo.is-animating .logo-char {
-            animation: logoReveal 0.45s cubic-bezier(0.22, 1, 0.36, 1) forwards;
-            animation-delay: calc(var(--logo-char-index) * 200ms);
-          }
-
-          @keyframes logoReveal {
-            from {
-              opacity: 0;
-              transform: translateY(8px);
-              filter: blur(4px);
-            }
-            to {
-              opacity: 1;
-              transform: translateY(0);
-              filter: blur(0);
-            }
-          }
-
-          @media (prefers-reduced-motion: reduce) {
-            .logo-char {
-              opacity: 1;
-              transform: none;
-              filter: none;
-              animation: none;
-            }
-          }
-
-          .test-title {
-          '''
-
-          js_marker = '''    // Ensure option buttons reflect the current theme and font selections on load.
-            updateThemeButtons();
-            updateFontButtons();
-            ensureModeWiring();
-          
-          </script>
-          '''
-          js_replacement = '''    // Ensure option buttons reflect the current theme and font selections on load.
-            updateThemeButtons();
-            updateFontButtons();
-            ensureModeWiring();
-
-            // IELTS Pabs animated logo
-            function initAnimatedLogo() {
-              const logoNodes = document.querySelectorAll('.logo.home-link, .logo-link .logo');
-              if (!logoNodes.length) return;
-              const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-
-              logoNodes.forEach((logoNode) => {
-                const rawText = (logoNode.textContent || '').trim();
-                if (rawText !== 'IELTS Pabs') return;
-
-                logoNode.setAttribute('aria-label', 'IELTS Pabs');
-
-                const fragment = document.createDocumentFragment();
-                Array.from(rawText).forEach((char, index) => {
-                  const span = document.createElement('span');
-                  span.className = 'logo-char';
-                  span.setAttribute('aria-hidden', 'true');
-                  span.style.setProperty('--logo-char-index', String(index));
-                  span.textContent = char === ' ' ? '\u00a0' : char;
-                  fragment.appendChild(span);
-                });
-
-                logoNode.textContent = '';
-                logoNode.appendChild(fragment);
-
-                if (reducedMotion) {
-                  logoNode.classList.remove('is-animating');
-                  return;
-                }
-
-                logoNode.addEventListener('mouseenter', () => {
-                  logoNode.classList.remove('is-animating');
-                  void logoNode.offsetWidth;
-                  logoNode.classList.add('is-animating');
-                });
-
-                logoNode.addEventListener('mouseleave', () => {
-                  logoNode.classList.remove('is-animating');
-                });
-              });
-            }
-
-            initAnimatedLogo();
-          
-          </script>
-          '''
+          js_marker = (
+              "    // Ensure option buttons reflect the current theme and font selections on load.\n"
+              "    updateThemeButtons();\n"
+              "    updateFontButtons();\n"
+              "    ensureModeWiring();\n"
+          )
+          js_replacement = js_marker + (
+              "\n"
+              "    // IELTS Pabs animated logo\n"
+              "    function initAnimatedLogo() {\n"
+              "      const logoNodes = document.querySelectorAll('.logo.home-link, .logo-link .logo');\n"
+              "      if (!logoNodes.length) return;\n"
+              "      const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;\n\n"
+              "      logoNodes.forEach((logoNode) => {\n"
+              "        const rawText = (logoNode.textContent || '').trim();\n"
+              "        if (rawText !== 'IELTS Pabs') return;\n\n"
+              "        logoNode.setAttribute('aria-label', 'IELTS Pabs');\n\n"
+              "        const fragment = document.createDocumentFragment();\n"
+              "        Array.from(rawText).forEach((char, index) => {\n"
+              "          const span = document.createElement('span');\n"
+              "          span.className = 'logo-char';\n"
+              "          span.setAttribute('aria-hidden', 'true');\n"
+              "          span.style.setProperty('--logo-char-index', String(index));\n"
+              "          span.textContent = char === ' ' ? '\\u00a0' : char;\n"
+              "          fragment.appendChild(span);\n"
+              "        });\n\n"
+              "        logoNode.textContent = '';\n"
+              "        logoNode.appendChild(fragment);\n\n"
+              "        if (reducedMotion) {\n"
+              "          logoNode.classList.remove('is-animating');\n"
+              "          return;\n"
+              "        }\n\n"
+              "        logoNode.addEventListener('mouseenter', () => {\n"
+              "          logoNode.classList.remove('is-animating');\n"
+              "          void logoNode.offsetWidth;\n"
+              "          logoNode.classList.add('is-animating');\n"
+              "        });\n\n"
+              "        logoNode.addEventListener('mouseleave', () => {\n"
+              "          logoNode.classList.remove('is-animating');\n"
+              "        });\n"
+              "      });\n"
+              "    }\n\n"
+              "    initAnimatedLogo();\n"
+          )
 
           if 'function initAnimatedLogo()' in text or '.logo.is-animating .logo-char' in text:
               raise SystemExit('Test 4 logo animation already appears to be present')
