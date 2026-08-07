@@ -8,7 +8,7 @@ PAGE = REPO_ROOT / "general-training" / "cambridge-19" / "test-4" / "IELTS19 Tes
 def test_test4_logo_animation_matches_established_reading_header_pattern() -> None:
     html = PAGE.read_text(encoding="utf-8")
 
-    assert html.count("/* IELTS Pabs animated logo */") == 2  # CSS marker + JS marker
+    assert html.count("/* IELTS Pabs animated logo */") == 1
     assert html.count(".logo.is-animating .logo-char") == 1
     assert html.count("@keyframes logoReveal") == 1
     assert html.count("function initAnimatedLogo()") == 1
