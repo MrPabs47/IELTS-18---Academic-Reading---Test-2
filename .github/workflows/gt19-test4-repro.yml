@@ -1,0 +1,37 @@
+name: GT19 Test 4 reproduction
+
+on:
+  push:
+    branches:
+      - fix/gt19-test4-feedback-home
+    paths:
+      - .gt19-test4-repro/**
+      - .github/workflows/gt19-test4-repro.yml
+
+jobs:
+  reproduce:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: fix/gt19-test4-feedback-home
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Install Playwright outside repository
+        run: |
+          npm install --prefix /tmp/gt19-test4-playwright playwright@1.55.0
+          npx --prefix /tmp/gt19-test4-playwright playwright install --with-deps chromium
+      - name: Run Test 4 reproduction
+        env:
+          NODE_PATH: /tmp/gt19-test4-playwright/node_modules
+        run: |
+          set -euo pipefail
+          python -m http.server 4173 >/tmp/gt19-test4-http.log 2>&1 &
+          server_pid=$!
+          trap 'kill $server_pid 2>/dev/null || true' EXIT
+          for attempt in {1..30}; do
+            if curl --fail --silent http://127.0.0.1:4173/ >/dev/null; then break; fi
+            sleep 1
+          done
+          node .gt19-test4-repro/qa.cjs
