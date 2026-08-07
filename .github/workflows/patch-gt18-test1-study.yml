@@ -15,27 +15,45 @@ jobs:
       - uses: actions/checkout@v4
         with:
           ref: feature/ielts18-gt-test1-study-feedback
-      - name: Wire target adapter
+      - name: Add local logo animation parity
         shell: bash
         run: |
           python - <<'PY'
           from pathlib import Path
 
-          path = Path('general-training/cambridge-18/test-1/IELTS18 Test 1 - Reading - GT.html')
+          path = Path('general-training/cambridge-18/test-1/study-feedback.js')
           text = path.read_text(encoding='utf-8')
-          script = '  <script src="study-feedback.js"></script>\n'
-          if script not in text:
-              marker = '</body>\n\n</html>'
-              if text.count(marker) != 1:
-                  raise SystemExit(f'Expected one closing body marker, found {text.count(marker)}')
-              text = text.replace(marker, script + marker, 1)
-          if text.count('study-feedback.js') != 1:
-              raise SystemExit('Study adapter script integration is not unique')
+
+          css_old = '''    '.reading-shell-locked{cursor:not-allowed!important;opacity:.72}' +\n    '@media(max-width:980px){.gt18-test1-header-left{gap:10px}.gt18-test1-header-right{gap:8px}.gt18-test1-header-left #candidateNameDisplay{max-width:18vw}}' +'''
+          css_new = '''    '.reading-shell-locked{cursor:not-allowed!important;opacity:.72}' +\n    '.logo.home-link,.logo-link .logo{transition:color .2s ease,opacity .2s ease}' +\n    '.logo.home-link:hover,.home-link:hover,.logo-link:hover .logo{color:#e31837;opacity:1}' +\n    '.logo-char{display:inline-block;opacity:1;transform:none;filter:none;will-change:transform,opacity,filter}' +\n    '.logo.is-animating .logo-char{animation:gt18LogoReveal .45s cubic-bezier(.22,1,.36,1) forwards;animation-delay:calc(var(--logo-char-index) * 200ms)}' +\n    '@keyframes gt18LogoReveal{from{opacity:0;transform:translateY(8px);filter:blur(4px)}to{opacity:1;transform:translateY(0);filter:blur(0)}}' +\n    '@media(prefers-reduced-motion:reduce){.logo-char{opacity:1;transform:none;filter:none;animation:none!important}}' +\n    '@media(max-width:980px){.gt18-test1-header-left{gap:10px}.gt18-test1-header-right{gap:8px}.gt18-test1-header-left #candidateNameDisplay{max-width:18vw}}' +'''
+          if 'gt18LogoReveal' not in text:
+              if text.count(css_old) != 1:
+                  raise SystemExit(f'Logo CSS anchor count: {text.count(css_old)}')
+              text = text.replace(css_old, css_new, 1)
+
+          function_anchor = '''  function syncCandidateHeader() {\n'''
+          function_code = '''  function prepareAnimatedLogo() {\n    document.querySelectorAll(".logo.home-link, .logo-link .logo").forEach(function (logoNode) {\n      if (logoNode.getAttribute("data-gt18-logo-ready") === "true") return;\n      var rawText = String(logoNode.textContent || "").trim();\n      if (rawText !== "IELTS Pabs") return;\n      logoNode.setAttribute("data-gt18-logo-ready", "true");\n      logoNode.setAttribute("aria-label", "IELTS Pabs — return to home");\n      var fragment = document.createDocumentFragment();\n      Array.from(rawText).forEach(function (character, index) {\n        var span = document.createElement("span");\n        span.className = "logo-char";\n        span.setAttribute("aria-hidden", "true");\n        span.style.setProperty("--logo-char-index", String(index));\n        span.textContent = character === " " ? "\\u00a0" : character;\n        fragment.appendChild(span);\n      });\n      logoNode.textContent = "";\n      logoNode.appendChild(fragment);\n      var reducedMotion = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;\n      if (reducedMotion) {\n        logoNode.classList.remove("is-animating");\n        return;\n      }\n      logoNode.addEventListener("mouseenter", function () {\n        logoNode.classList.remove("is-animating");\n        void logoNode.offsetWidth;\n        logoNode.classList.add("is-animating");\n      });\n      logoNode.addEventListener("mouseleave", function () {\n        logoNode.classList.remove("is-animating");\n      });\n    });\n  }\n\n'''
+          if 'function prepareAnimatedLogo()' not in text:
+              if text.count(function_anchor) != 1:
+                  raise SystemExit(f'Logo function anchor count: {text.count(function_anchor)}')
+              text = text.replace(function_anchor, function_code + function_anchor, 1)
+
+          call_old = '''  function prepareChrome() {\n    prepareCandidateHeader();\n\n'''
+          call_new = '''  function prepareChrome() {\n    prepareCandidateHeader();\n    prepareAnimatedLogo();\n\n'''
+          if 'prepareCandidateHeader();\n    prepareAnimatedLogo();' not in text:
+              if text.count(call_old) != 1:
+                  raise SystemExit(f'Logo call anchor count: {text.count(call_old)}')
+              text = text.replace(call_old, call_new, 1)
+
           path.write_text(text, encoding='utf-8')
           PY
-          git diff -- general-training/cambridge-18/test-1/'IELTS18 Test 1 - Reading - GT.html'
+          node --check general-training/cambridge-18/test-1/study-feedback.js
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add general-training/cambridge-18/test-1/'IELTS18 Test 1 - Reading - GT.html'
-          git commit -m "Wire IELTS 18 GT Test 1 study adapter"
+          git add general-training/cambridge-18/test-1/study-feedback.js
+          if git diff --cached --quiet; then
+            echo "No logo parity changes required"
+            exit 0
+          fi
+          git commit -m "Add IELTS 18 GT Test 1 logo animation parity"
           git push origin HEAD:feature/ielts18-gt-test1-study-feedback
