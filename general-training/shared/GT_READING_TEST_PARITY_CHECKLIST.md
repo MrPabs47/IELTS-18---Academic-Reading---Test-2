@@ -1,7 +1,7 @@
 # General Training Reading Test Parity Checklist
 
 **Use with:** `general-training/shared/IELTS_GT_READING_FAST_TRACK_WORKFLOW.md`  
-**Focused regression update:** PR #436 — header CSS inheritance and Study-dialog containment (6 August 2026)
+**Cambridge 19 reference-set update:** lifecycle, interaction, scoring, layout, logo and self-contained feedback parity through 8 August 2026
 
 This is the short pass/fail specification for every General Training Reading production branch. The target HTML, local source files, answer key, accepted variants and evaluator remain authoritative for test-specific content.
 
@@ -158,7 +158,7 @@ This is the short pass/fail specification for every General Training Reading pro
 - [ ] Strategy purpose is task-specific.
 - [ ] Numbered steps are practical.
 - [ ] Trap is realistic.
-- [ ] Every Q1–40 clue/Why/Skill trio passes the Aha test.
+- [ ] Every Q1–40 clue/Why/Skill trio passes the self-contained Aha test: question + displayed/highlighted clue(s) + Why are enough to understand why the answer is correct without the rest of the passage.
 - [ ] Why explicitly bridges question wording to source wording and then to the answer.
 - [ ] Why identifies the decisive contrast, paraphrase, missing detail or logical relationship.
 - [ ] Why addresses the likely distractor or misunderstanding where useful.
@@ -167,7 +167,7 @@ This is the short pass/fail specification for every General Training Reading pro
 - [ ] Correct-answer display does not imply unaccepted synonyms.
 - [ ] TRUE explains agreement.
 - [ ] FALSE identifies the contradiction.
-- [ ] NOT GIVEN identifies related information present and the required detail missing.
+- [ ] NOT GIVEN shows the closest relevant stated information and identifies the exact required detail missing; it never invents evidence for absence.
 - [ ] Matching explains the exact paraphrase.
 - [ ] Completion explains meaning and grammatical fit.
 - [ ] Multiple choice addresses the whole idea and useful distractors.
@@ -183,7 +183,7 @@ This is the short pass/fail specification for every General Training Reading pro
 - [ ] Every clue highlights the minimum sufficient evidence span, not merely an isolated answer word.
 - [ ] Every clue includes enough context to preserve the subject, action and logical relationship.
 - [ ] Decisive negation, qualifier, comparison, condition, cause, time marker or reference word is included when relevant.
-- [ ] No hard clue-length target is used; clarity and logical completeness determine the span.
+- [ ] No hard clue-length target is used; one complete sentence is the default, two connected sentences are allowed when necessary, and clarity/logical completeness determine the span.
 - [ ] A learner can understand why the evidence matters without guessing the omitted context.
 - [ ] Targets are distinctive and not dependent on brittle positional selectors.
 - [ ] Shared targets correctly represent every related question.
@@ -320,6 +320,59 @@ This is the short pass/fail specification for every General Training Reading pro
 - [ ] Fetch/prune completed.
 - [ ] Clean main confirmed.
 - [ ] Any exception is documented explicitly.
+
+## S. Cambridge 19 reference-set mandatory parity gate
+
+These checks capture regressions found while stabilising Cambridge 19 GT Tests 1–4 and are mandatory for Cambridge 18 onward.
+
+### S1. Reference set and lifecycle
+
+- [ ] Target is compared against the validated Cambridge 19 GT Tests 1–4 behavioural reference set.
+- [ ] Test 2 is used as the preferred direct-integration reference and Test 1 as the legacy-adapter reference; Tests 3–4 are used for regression behaviour, not copied as new templates.
+- [ ] Study Mode shows task-specific strategy/ⓘ controls.
+- [ ] Active Test Mode shows zero visible strategy/ⓘ controls, even if their DOM remains attached.
+- [ ] Submitted Test review restores strategy/ⓘ controls, Answer Key, score guide, feedback and clues while all submitted answers stay locked.
+- [ ] Browser QA verifies computed/visible state rather than trusting `hidden` alone.
+
+### S2. Low-score round trip
+
+- [ ] Current GT contract is 0–8 = `Below 3` and 9–11 = Band 3.
+- [ ] `Below 3` agrees across evaluator, result overlay, submitted-result snapshot/parser, Score guide and submitted Score feedback.
+- [ ] A blank/low-score Test submission still initialises completed-Test feedback and displays `Submitted band: Below 3.`
+
+### S3. Matching and custom interaction
+
+- [ ] Where present, matching/drag-drop is exercised through real drag, click-to-place, keyboard placement, repeated-letter reuse and Clear/reset as supported by the target.
+- [ ] Interaction initialisation order is validated; visible answer boxes alone are not a pass.
+- [ ] After Test submission, sources, zones, backing controls and Clear/reset remain locked.
+
+### S4. Self-contained feedback quality
+
+- [ ] For every Q1–40 item, question + clue(s) + Why are sufficient to understand the answer with surrounding passage context mentally hidden.
+- [ ] One complete clue sentence is the default; two short connected sentences are used only when the reasoning genuinely crosses a sentence boundary.
+- [ ] Shorter fragments are used only when genuinely self-contained; clues are not lengthened mechanically.
+- [ ] Why explicitly bridges question wording to source wording/paraphrase/logic and the correct answer.
+- [ ] A likely distractor is explained when that resolves a realistic learner misunderstanding.
+- [ ] NOT GIVEN uses the closest relevant stated information and identifies the exact missing detail without inventing evidence.
+- [ ] Matching-headings clues represent the paragraph’s main idea rather than an isolated detail.
+
+### S5. Layout and logo parity
+
+- [ ] Hidden/unrevealed feedback hosts contribute zero unexplained padding, margin or vertical gap.
+- [ ] Revealing feedback expands the block normally and hiding it contracts normally.
+- [ ] IELTS Pabs logo routes to the top-level Live Hub and uses the active-Test leave warning.
+- [ ] Logo is operable by mouse, Enter and Space.
+- [ ] Established per-letter hover animation works and honours reduced-motion preferences.
+- [ ] Header/logo changes do not break or squeeze Score guide, Answer Key or score-feedback dialogs.
+
+### S6. Browser and release safety
+
+- [ ] Browser lifecycle QA covers Fresh Study, checked/submitted Study, Fresh Test and completed Test/locked review.
+- [ ] Browser QA includes a blank/low-score submission, real custom interaction where present, hidden-host spacing and logo animation/navigation.
+- [ ] A newly discovered regression class receives the smallest permanent production-linked regression that would have caught it.
+- [ ] Live Hub Safety Guard passes before merge.
+- [ ] Protected reference fingerprints are refreshed only after the relevant Reading validation passes and only for deliberately changed reference files.
+- [ ] Unrelated Live Hub contract repair, activation or seasonal work is kept in a separate PR.
 
 ---
 

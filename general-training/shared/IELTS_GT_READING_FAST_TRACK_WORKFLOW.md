@@ -1,13 +1,13 @@
 # IELTS General Training Reading Fast-Track Production Workflow
 
 **IELTS Website Practice Creation — canonical General Training Reading production guide**  
-**Reference implementations:** Cambridge IELTS 19 General Training Reading Tests 1 and 2  
+**Reference implementations:** Cambridge IELTS 19 General Training Reading Tests 1–4  
 **Core releases:** PR #379 and PR #381  
 **Stabilisation releases:** PR #387, PR #389 and PR #392  
 **Focused regression release:** PR #436 — Test 3 header CSS inheritance and Study-dialog containment  
 **Current reference commit:** `94455b5135879d06e514388a2ba9341bb3273144`  
 **Prepared:** 2 August 2026  
-**Updated:** 6 August 2026
+**Updated:** 8 August 2026
 
 > **Operating rule**
 >
@@ -24,7 +24,7 @@
 
 ## Executive summary
 
-Cambridge IELTS 19 General Training Reading Tests 1 and 2 established the first stable General Training Reading reference pair for the project. They now use the shared Academic Reading shell while preserving General Training terminology, section structure, scoring, multiple-text layouts and target-specific answer controls.
+Cambridge IELTS 19 General Training Reading Tests 1–4 now form the project’s behavioural reference set. Tests 1 and 2 established the integration patterns; Tests 3 and 4 exposed lifecycle, scoring, matching, layout and header/logo regressions that are now part of the required parity contract. All four use the shared Academic Reading shell while preserving General Training terminology, section structure, scoring, multiple-text layouts and target-specific answer controls.
 
 The final experience includes:
 
@@ -68,7 +68,7 @@ A genuine shared-shell blocker may justify one extra tightly scoped task. Repeat
 
 ---
 
-## 1. What Tests 1 and 2 established
+## 1. What Tests 1–4 established
 
 ### 1.1 Canonical shared Reading shell
 
@@ -583,6 +583,14 @@ The Skill line must also tell the learner what to do differently next time. A la
 
 The clue, Why and Skill form one teaching sequence. Together they must move a learner from confusion to a clear understanding of both the answer and the reading move that produced it.
 
+#### Self-contained review standard
+
+Use this editorial pass/fail test: **could a student understand why the answer is correct using only the question, the displayed/highlighted clue(s) and the Why explanation, without needing the rest of the passage?** If not, the clue or explanation is too compressed.
+
+The preferred clue unit is one complete sentence. Use two short connected sentences when the logic crosses a sentence boundary—for example contrast, cause/effect, pronoun reference, condition or a qualification introduced in the next sentence. A shorter clause is acceptable only when it is genuinely self-contained. Do not lengthen clues mechanically.
+
+For matching headings, use the sentence or pair of sentences that captures the paragraph’s main idea rather than a vivid supporting detail. For NOT GIVEN, show the closest relevant stated information and make the Why identify exactly which required detail is absent; never invent evidence for absence.
+
 #### Clue
 
 The highlighted clue must show the **minimum sufficient evidence span**:
@@ -593,7 +601,7 @@ The highlighted clue must show the **minimum sufficient evidence span**:
 - do not highlight only the answer word or a fragment that forces the learner to infer the missing logic;
 - do not make the span unnecessarily broad.
 
-There is no fixed word count. The correct length is the shortest span that makes the evidence self-explanatory in context.
+There is no hard word count. Prefer one complete sentence, or two short connected sentences when the reasoning requires both. The correct length is the shortest span that remains self-contained and logically complete.
 
 #### Why
 
@@ -879,7 +887,7 @@ The shared shell must not independently redefine accepted answers or band conver
 
 ### 11.2 Reference GT guide
 
-The current Test 1 and Test 2 data use this estimate:
+The current Cambridge 19 GT Tests 1–4 use this estimate:
 
 | Correct | Band |
 |---|---|
@@ -1039,38 +1047,102 @@ Report:
 
 ---
 
-## 16. Next-target launch plan
+## 16. Cambridge 19 reference-set lessons and IELTS 18 launch gate
 
-The first target audited under this workflow should be the current IELTS 19 GT Test 3 implementation on `main`.
+Cambridge IELTS 19 GT Reading Tests 1–4 are now the behavioural reference set. Use them together, not as four independent templates:
 
-Treat it as a target, not as the source of truth. Compare it against the completed Tests 1 and 2 reference pair and verify:
+- **Test 2** — preferred direct-integration reference;
+- **Test 1** — legacy-adapter compatibility reference;
+- **Tests 3 and 4** — regression references for submitted-review lifecycle, dialogs, scoring, layout and logo behaviour;
+- **Tests 1–4 together** — expected Study/Test/locked-review parity.
 
-- Section terminology;
-- result compatibility;
-- complete question and clue coverage;
-- zero visible Evidence rows;
-- all 40 clue buttons and section clue control;
-- exact GT score conversion;
-- custom drag/drop locking;
-- header order and candidate-name placement;
-- shell mount ancestry and header/toolbar inheritance;
-- opened Score guide, Answer Key and score-feedback layouts;
-- home route;
-- Fresh/checked Study and Fresh/completed Test states;
-- no duplicated UI;
-- current Live Hub route.
+The following gates are mandatory before a new GT Reading test is considered aligned.
 
-If it already passes, do not redesign it. Add only missing tests or minimal target-specific fixes.
+### 16.1 Mode lifecycle — verify visible state, not just DOM state
 
-Expected normal outcome for subsequent GT tests:
+The required lifecycle is:
 
-- no new shared-core work;
-- direct integration where possible;
-- one target data sidecar;
-- one small adapter only if the legacy DOM requires it;
-- five lean target test modules;
-- one controlled browser QA session;
-- one PR.
+1. **Study Mode:** task-specific strategy/ⓘ controls are visible.
+2. **Active Test Mode:** zero strategy/ⓘ controls are visibly available, even if their DOM remains attached.
+3. **Submitted Test review:** strategy/ⓘ controls, Answer Key, score guide, feedback and clues return, while every submitted answer remains locked.
+
+A `hidden` attribute alone is not proof when CSS can force `display`. Browser QA must check computed/visible state in all three phases.
+
+### 16.2 Low-score contract — `Below 3` must round-trip
+
+Under the current project decision:
+
+- 0–8 correct = **`Below 3`**;
+- 9–11 correct = **Band 3**.
+
+`Below 3` is a valid first-class band label, not an error or missing numeric value. It must agree across the target evaluator, result overlay, submitted-result snapshot/parser, Score guide and submitted Score feedback. A blank Test submission is the fastest regression case: it must still initialise completed-Test feedback and show `Submitted band: Below 3.`
+
+### 16.3 Matching and drag/drop — presence is not functionality
+
+Where a target uses matching or drag/drop, browser QA must exercise the supported interaction paths before submission:
+
+- real drag/drop;
+- click-to-place;
+- keyboard placement;
+- repeated-letter reuse when the instructions allow it;
+- Clear/reset.
+
+Then submit the Test and verify source items, answer zones, native backing controls and Clear/reset remain locked. This catches initialisation-order failures where answer boxes exist but interaction wiring never attached.
+
+### 16.4 Self-contained clues and explanations
+
+For every Q1–40 item, judge the feedback as if the surrounding passage were hidden. **Question + clue(s) + Why must be enough to understand why the answer is correct.** Skill then tells the learner what reading action to reuse next time.
+
+Use one complete clue sentence by default. Use two short connected sentences only when the logic genuinely crosses the boundary. Shorter fragments are acceptable only when self-contained. Keep clues concise, but never so short that the learner has to reconstruct the missing subject, condition, comparison, negation, cause, time boundary or reference.
+
+For NOT GIVEN, show the closest relevant information the passage actually states and explain the exact detail that is absent. For matching headings, use evidence that represents the paragraph’s main idea rather than one memorable detail. Explain a likely distractor when doing so resolves a realistic misunderstanding.
+
+### 16.5 Layout hygiene
+
+Hidden feedback hosts and unrevealed wrappers must be layout-neutral. They must not contribute unexplained padding, margins or empty vertical space before feedback exists. Browser QA must verify the block expands when feedback is revealed and contracts again when it is hidden.
+
+### 16.6 Header and logo parity
+
+Verify the IELTS Pabs logo as one feature, not separate pieces:
+
+- correct route to the top-level Live Hub;
+- active-Test leave warning;
+- mouse, Enter and Space activation;
+- established per-letter hover animation;
+- reduced-motion behaviour;
+- no header CSS leakage into Score guide, Answer Key or score-feedback dialogs.
+
+### 16.7 Permanent regression and release safety
+
+When a new failure class is discovered, add the smallest production-linked permanent regression that would have caught it. Before merge:
+
+- run the focused target/shared Reading matrix;
+- run the full browser lifecycle matrix;
+- run the Live Hub Safety Guard;
+- refresh protected reference fingerprints only after the relevant Reading validation passes and only for deliberately changed reference files;
+- keep unrelated Hub contract repairs, activations and seasonal changes in separate PRs.
+
+### 16.8 Next target — Cambridge IELTS 18 GT Reading Test 1
+
+The next target is **Cambridge IELTS 18 General Training Reading Test 1**. Its HTML, source files, answer key, accepted variants and evaluator remain authoritative for test-specific content. Do not copy Cambridge 19 passages, task ranges, control shapes or accepted variants.
+
+The initial read-only audit must explicitly verify:
+
+- exact Section ranges, task groups and source-text roots;
+- exact instructions, word limits, answers and accepted variants;
+- current GT scoring, including the `Below 3` contract;
+- Study → active Test → submitted Test information-control lifecycle;
+- blank/low-score submitted feedback;
+- real matching/drag-drop interaction where present;
+- final locking of native and custom controls;
+- all 40 self-contained clue/Why/Skill trios;
+- zero dead spacing from hidden feedback hosts;
+- Score guide, Answer Key and score-feedback dialogs;
+- home route, leave warning, keyboard access and logo animation;
+- desktop, narrow, theme and text-size parity;
+- current Live Hub route and safety-guard constraints.
+
+If an item already works, preserve it. Do not redesign working behaviour merely to make the implementation resemble a Cambridge 19 file.
 
 ---
 
@@ -1146,9 +1218,9 @@ general-training/shared/GT_READING_TEST_PARITY_CHECKLIST.md
 
 Treat them as the required workflow and parity specification.
 
-Use Cambridge IELTS 19 General Training Reading Test 2 on current main as the preferred direct-integration reference and Test 1 as the legacy-adapter reference. The target test HTML, source files, answer key, accepted variants and evaluator remain authoritative for target-specific content.
+Use Cambridge IELTS 19 General Training Reading Tests 1–4 on current main as the behavioural reference set: Test 2 is the preferred direct-integration reference, Test 1 is the legacy-adapter reference, and Tests 3–4 are regression references for submitted-review lifecycle, dialogs, scoring, layout and logo parity. The target test HTML, source files, answer key, accepted variants and evaluator remain authoritative for target-specific content.
 
-For every question, make the clue, Why and Skill pass the Aha test: use the shortest complete evidence span, explicitly bridge question wording to source wording and conclusion, and give a reusable next-step reading action. Technically correct but vague or under-explained feedback does not pass.
+For every question, make the clue, Why and Skill pass the self-contained Aha test: a learner should understand why the answer is correct using only the question, displayed/highlighted clue(s) and Why explanation. Prefer one complete clue sentence, or two short connected sentences when the logic requires both. Explicitly bridge question wording to source wording and conclusion, and give a reusable next-step reading action. Technically correct but vague, undersized or under-explained feedback does not pass.
 
 Record the Reading-shell mount ancestry. After any header, toolbar, mount or responsive CSS change, open and inspect the Score guide, Answer Key and score-feedback dialogs at desktop and narrow widths; button presence alone is not a pass.
 
