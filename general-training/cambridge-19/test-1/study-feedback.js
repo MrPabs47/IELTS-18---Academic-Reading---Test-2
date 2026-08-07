@@ -4,6 +4,7 @@
   document.write('<script src="../../shared/gt-reading-exam-guards.js"><\/script>');
 
   document.write('<link rel="stylesheet" href="../../../academic/shared/reading-feature-shell.css" />');
+  document.write('<style id="gt19Test1SummaryFeedbackSpacing">#questionContent > div[data-section="3"] .summary-feedbacks > .question-block.feedback-only{margin:0;padding:0;border:0;background:transparent}</style>');
   document.write('<script src="study-feedback-data.js"><\/script>');
   document.write('<script src="../../../academic/shared/reading-feature-shell-core.js"><\/script>');
 
