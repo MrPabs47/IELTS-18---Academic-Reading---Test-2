@@ -38,9 +38,13 @@ def test_all_four_tests_use_below_3_for_zero_through_eight() -> None:
 
 
 def test_all_four_score_guides_show_zero_to_eight_as_below_3() -> None:
+    row_pattern = re.compile(
+        r'["\']?correctAnswers["\']?\s*:\s*["\']0–8["\']\s*,\s*'
+        r'["\']?band["\']?\s*:\s*["\']Below 3["\']'
+    )
     for test_number in range(1, 5):
         data = score_data(test_number).read_text(encoding="utf-8")
-        assert '{ correctAnswers: "0–8", band: "Below 3" }' in data
+        assert row_pattern.search(data), f"Test {test_number} score guide must map 0–8 to Below 3"
 
 
 def test_all_four_results_use_the_same_low_score_descriptor_and_gt_label() -> None:
