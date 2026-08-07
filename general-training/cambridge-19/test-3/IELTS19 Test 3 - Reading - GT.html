@@ -2765,6 +2765,10 @@
     };
 
     function getBandDescriptor(band) {
+      if (String(band) === "Below 3") return {
+        level: "Developing user",
+        description: "This result is below Band 3 on the current General Training Reading score guide. Focus on locating explicit details, recognising paraphrases and following word limits."
+      };
       if (bandDescriptors[band]) return bandDescriptors[band];
 
       const halfBandDescriptors = {
@@ -2932,9 +2936,7 @@
       if (correct >= 15) return 4;
       if (correct >= 12) return 3.5;
       if (correct >= 9) return 3;
-      if (correct >= 6) return 2.5;
-      if (correct === 0) return 0;
-      return 1;
+      return "Below 3";
     }
 
 
@@ -3001,7 +3003,7 @@
           "You answered " + correctCount + " out of 40 questions correctly.";
       if (bandLine)
         bandLine.textContent =
-          "Estimated IELTS Reading band: " +
+          "Estimated IELTS General Training Reading band: " +
           band +
           ". Skill level: " +
           desc.level;

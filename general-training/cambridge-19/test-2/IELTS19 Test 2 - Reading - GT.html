@@ -3079,6 +3079,10 @@
     }
 
     function descriptorForBand(band) {
+      if (String(band) === "Below 3") return {
+        level: "Developing user",
+        description: "This result is below Band 3 on the current General Training Reading score guide. Focus on locating explicit details, recognising paraphrases and following word limits."
+      };
       const numeric = Number.parseFloat(band);
       return Number.isFinite(numeric) ? (bandDescriptors[Math.floor(numeric)] || bandDescriptors[0]) : bandDescriptors[0];
     }
@@ -3170,8 +3174,8 @@
       }
       if (scoreLine) scoreLine.textContent = "You answered " + correctCount + " out of 40 questions correctly.";
       if (sectionScoresLine) sectionScoresLine.textContent = "Section 1: " + evaluation.sectionScores[1] + "/14 · Section 2: " + evaluation.sectionScores[2] + "/13 · Section 3: " + evaluation.sectionScores[3] + "/13";
-      if (bandLine) bandLine.textContent = band === "Below 3" ? "Estimated IELTS General Training Reading band: 2.5 or below (below Band 3)." : "Estimated IELTS General Training Reading band: " + band + ". Skill level: " + desc.level;
-      if (descriptorLine) descriptorLine.textContent = band === "Below 3" ? "The published conversion table does not provide a finer estimate below Band 3." : desc.description;
+      if (bandLine) bandLine.textContent = "Estimated IELTS General Training Reading band: " + band + ". Skill level: " + desc.level;
+      if (descriptorLine) descriptorLine.textContent = desc.description;
 
       if (mode === "test") {
         testSubmitted = true;

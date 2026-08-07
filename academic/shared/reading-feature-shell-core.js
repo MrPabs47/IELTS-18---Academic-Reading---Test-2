@@ -554,8 +554,11 @@
     var bandLine = global.document.getElementById("bandLine");
     var rawPattern = new RegExp("(\\d+(?:\\.5)?)\\s+out of\\s+" + config.test.totalQuestions, "i");
     var raw = scoreLine && String(scoreLine.textContent || "").match(rawPattern);
-    var band = bandLine && String(bandLine.textContent || "").match(/band:\s*([0-9]+(?:\.[0-9]+)?)/i);
-    return raw && band ? { rawScore: Number(raw[1]), band: band[1] } : null;
+    var bandText = bandLine ? String(bandLine.textContent || "") : "";
+    var numericBand = bandText.match(/band:\s*([0-9]+(?:\.[0-9]+)?)/i);
+    var belowBandThree = /band:\s*Below 3\b/i.test(bandText);
+    var band = belowBandThree ? "Below 3" : (numericBand ? numericBand[1] : "");
+    return raw && band ? { rawScore: Number(raw[1]), band: band } : null;
   }
   function resultOutcomesFromPage() {
     var outcomes = {};
