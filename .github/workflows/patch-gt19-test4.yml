@@ -1,0 +1,101 @@
+name: Patch GT19 Test 4 feedback and home
+
+on:
+  push:
+    branches:
+      - fix/gt19-test4-feedback-home
+    paths:
+      - .gt19-test4-patch/READY
+
+permissions:
+  contents: write
+
+jobs:
+  patch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: fix/gt19-test4-feedback-home
+      - name: Apply focused Test 4 repair
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+
+          path = Path('general-training/cambridge-19/test-4/study-feedback.js')
+          text = path.read_text(encoding='utf-8')
+
+          def replace_once(old, new, label):
+              global text
+              count = text.count(old)
+              if count != 1:
+                  raise SystemExit(f'{label}: expected exactly one match, found {count}')
+              text = text.replace(old, new, 1)
+
+          replace_once(
+              '  "use strict";\n\n  document.write',
+              '''  "use strict";\n\n  var submittedResultSnapshot = null;\n  var submissionSequence = 0;\n\n  function installIeltsPabsHomeLink() {\n    var HOME_URL = "../../../index.html";\n    var logo = document.querySelector(".top-left .logo");\n    if (!logo || logo.getAttribute("data-home-link-ready") === "true") return;\n\n    logo.removeAttribute("onclick");\n    logo.setAttribute("data-home-link-ready", "true");\n    logo.classList.add("home-link");\n    logo.setAttribute("role", "link");\n    logo.setAttribute("tabindex", "0");\n    logo.setAttribute("title", "Return to home");\n    logo.setAttribute("aria-label", "Return to IELTS Pabs home");\n\n    function confirmGoHome() {\n      var ok = window.confirm("Are you sure you want to leave this test and return to the home page? Your current answers may not be saved.");\n      if (ok) window.location.href = HOME_URL;\n    }\n\n    window.confirmGoHome = confirmGoHome;\n    logo.addEventListener("click", confirmGoHome);\n    logo.addEventListener("keydown", function (event) {\n      if (event.key !== "Enter" && event.key !== " ") return;\n      event.preventDefault();\n      confirmGoHome();\n    });\n  }\n\n  document.write''',
+              'module state and home link'
+          )
+
+          replace_once(
+              '      "body[data-gt-mode=test] .reading-shell-study-controls{display:none!important;}",',
+              '''      "body[data-gt-mode=test][data-gt-test-submitted=false] .reading-shell-study-controls{display:none!important;}",\n      "body[data-gt-mode=test][data-gt-test-submitted=true] .reading-shell-study-controls{display:inline-flex!important;}",''',
+              'submitted feedback CSS lifecycle'
+          )
+
+          replace_once(
+              '''    document.body.setAttribute("data-gt-mode", currentMode);\n    var candidate = document.getElementById("candidateNameDisplay");''',
+              '''    var submittedTest = currentMode === "test" && Boolean(testSubmitted);\n    var activeTest = currentMode === "test" && !submittedTest;\n    document.body.setAttribute("data-gt-mode", currentMode);\n    document.body.setAttribute("data-gt-test-submitted", submittedTest ? "true" : "false");\n    var candidate = document.getElementById("candidateNameDisplay");''',
+              'body lifecycle state'
+          )
+
+          replace_once(
+              '''    document.querySelectorAll(".reading-shell-study-controls").forEach(function (controls) {\n      var hidden = currentMode === "test";\n      controls.hidden = hidden;\n      controls.style.display = hidden ? "none" : "";\n      controls.setAttribute("aria-hidden", hidden ? "true" : "false");\n    });''',
+              '''    document.querySelectorAll(".reading-shell-study-controls").forEach(function (controls) {\n      controls.hidden = activeTest;\n      controls.style.display = activeTest ? "none" : "";\n      controls.setAttribute("aria-hidden", activeTest ? "true" : "false");\n    });''',
+              'feedback control lifecycle'
+          )
+
+          replace_once(
+              '''  function lockSubmittedTest() {''',
+              '''  function captureSubmittedResult() {\n    var scores = sectionScores();\n    var outcomes = {};\n    var rawScore = 0;\n    for (var question = 1; question <= 40; question += 1) {\n      outcomes[question] = Boolean(correctFor(question));\n      if (outcomes[question]) rawScore += 1;\n    }\n    submissionSequence += 1;\n    submittedResultSnapshot = {\n      submissionId: "gt19-test4-" + submissionSequence,\n      rawScore: rawScore,\n      band: computeBandScore(rawScore),\n      partScores: {\n        1: { score: scores[1], max: 14 },\n        2: { score: scores[2], max: 13 },\n        3: { score: scores[3], max: 13 }\n      },\n      questionOutcomes: outcomes\n    };\n    return submittedResultSnapshot;\n  }\n\n  function lockSubmittedTest() {''',
+              'authoritative submitted result'
+          )
+
+          replace_once(
+              '''      window.startTest = function () {\n        var result = originalStartTest.apply(this, arguments);''',
+              '''      window.startTest = function () {\n        submittedResultSnapshot = null;\n        var result = originalStartTest.apply(this, arguments);''',
+              'new attempt reset'
+          )
+
+          replace_once(
+              '''        var result = originalSubmitTest.apply(this, arguments);\n        var scores = sectionScores();''',
+              '''        var result = originalSubmitTest.apply(this, arguments);\n        captureSubmittedResult();\n        var scores = sectionScores();''',
+              'submission snapshot capture'
+          )
+
+          replace_once(
+              '''        isTestSubmitted: function () { return Boolean(testSubmitted); },\n        getActivePart: function () { return Number(activeSection || 1); }''',
+              '''        isTestSubmitted: function () { return Boolean(testSubmitted); },\n        getSubmittedResult: function () { return submittedResultSnapshot; },\n        getActivePart: function () { return Number(activeSection || 1); }''',
+              'submitted result state callback'
+          )
+
+          replace_once(
+              '''      compatibility: { allowDomSubmittedResult: true },\n      study:''',
+              '''      study:''',
+              'remove DOM result fallback'
+          )
+
+          replace_once(
+              '''  function initStudyMode() {\n    prepareChrome();''',
+              '''  function initStudyMode() {\n    prepareChrome();\n    installIeltsPabsHomeLink();''',
+              'home link initialisation'
+          )
+
+          path.write_text(text, encoding='utf-8')
+          PY
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add general-training/cambridge-19/test-4/study-feedback.js
+          git commit -m "Restore Test 4 submitted feedback and home link"
+          git push origin HEAD:fix/gt19-test4-feedback-home
