@@ -1,7 +1,6 @@
 (() => {
   const TEST_TITLE = "IELTS 19 Academic Writing Test 2";
   const TEACHER_EMAIL = "pablo.jaramillo@ilsc.com.au";
-  const TASK_IMAGE = "porth-harbour-tiled.svg";
 
   document.title = TEST_TITLE;
   document.querySelector("#modeScreenInner h1")?.replaceChildren(TEST_TITLE);
@@ -16,8 +15,14 @@
       </div>
       <p>Write at least 150 words.</p>
       <figure class="task-visual">
-        <div class="visual-frame porth-harbour-visual-frame">
-          <img id="taskImage" src="${TASK_IMAGE}" alt="Two plans comparing Porth Harbour in 2000 and today." tabindex="0" title="Click to enlarge the harbour plans within this pane">
+        <div id="taskImage" class="visual-frame porth-harbour-visual-frame" role="img" aria-label="Two plans comparing Porth Harbour in 2000 and today." tabindex="0" title="Click to enlarge the harbour plans within this pane">
+          <img class="porth-harbour-slice" src="t2map-part1.png" alt="" aria-hidden="true">
+          <img class="porth-harbour-slice" src="t2map-part2.png" alt="" aria-hidden="true">
+          <img class="porth-harbour-slice" src="t2map-part3a.png" alt="" aria-hidden="true">
+          <img class="porth-harbour-slice" src="t2map-part3b.png" alt="" aria-hidden="true">
+          <img class="porth-harbour-slice" src="t2map-part4.png" alt="" aria-hidden="true">
+          <img class="porth-harbour-slice" src="t2map-part5.png" alt="" aria-hidden="true">
+          <img class="porth-harbour-slice" src="t2map-part6.png" alt="" aria-hidden="true">
         </div>
       </figure>`,
     study: {
