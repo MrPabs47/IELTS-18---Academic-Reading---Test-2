@@ -1,0 +1,104 @@
+name: Patch GT Reading Cambridge 19 lessons docs v2
+
+on:
+  push:
+    branches:
+      - docs/gt-reading-cambridge19-lessons
+    paths:
+      - .gt-reading-docs-patch/READY2
+
+permissions:
+  contents: write
+
+jobs:
+  patch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: docs/gt-reading-cambridge19-lessons
+      - name: Apply canonical GT Reading documentation update
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+
+          wf_path = Path('general-training/shared/IELTS_GT_READING_FAST_TRACK_WORKFLOW.md')
+          ck_path = Path('general-training/shared/GT_READING_TEST_PARITY_CHECKLIST.md')
+          wf = wf_path.read_text(encoding='utf-8')
+          ck = ck_path.read_text(encoding='utf-8')
+
+          def one(text, old, new, label):
+              count = text.count(old)
+              if count != 1:
+                  raise SystemExit(f'{label}: expected 1 match, found {count}')
+              return text.replace(old, new, 1)
+
+          # Keep the established structure, but make the validated 1–4 set current.
+          wf = one(wf,
+              '**Reference implementations:** Cambridge IELTS 19 General Training Reading Tests 1 and 2',
+              '**Reference implementations:** Cambridge IELTS 19 General Training Reading Tests 1–4',
+              'reference implementations')
+          wf = one(wf, '**Updated:** 6 August 2026', '**Updated:** 8 August 2026', 'updated date')
+          wf = one(wf, '## 1. What Tests 1 and 2 established', '## 1. What Tests 1–4 established', 'section 1 title')
+          wf = one(wf,
+              'Cambridge IELTS 19 General Training Reading Tests 1 and 2 established the first stable General Training Reading reference pair for the project. They now use the shared Academic Reading shell while preserving General Training terminology, section structure, scoring, multiple-text layouts and target-specific answer controls.',
+              'Cambridge IELTS 19 General Training Reading Tests 1–4 now form the project’s behavioural reference set. Tests 1 and 2 established the integration patterns; Tests 3 and 4 exposed lifecycle, scoring, matching, layout and header/logo regressions that are now part of the required parity contract. All four use the shared Academic Reading shell while preserving General Training terminology, section structure, scoring, multiple-text layouts and target-specific answer controls.',
+              'reference-set summary')
+          wf = one(wf,
+              'The current Test 1 and Test 2 data use this estimate:',
+              'The current Cambridge 19 GT Tests 1–4 use this estimate:',
+              'score guide reference')
+
+          # Strengthen the existing Aha standard rather than duplicating it elsewhere.
+          anchor = 'The clue, Why and Skill form one teaching sequence. Together they must move a learner from confusion to a clear understanding of both the answer and the reading move that produced it.\n\n#### Clue'
+          replacement = '''The clue, Why and Skill form one teaching sequence. Together they must move a learner from confusion to a clear understanding of both the answer and the reading move that produced it.\n\n#### Self-contained review standard\n\nUse this editorial pass/fail test: **could a student understand why the answer is correct using only the question, the displayed/highlighted clue(s) and the Why explanation, without needing the rest of the passage?** If not, the clue or explanation is too compressed.\n\nThe preferred clue unit is one complete sentence. Use two short connected sentences when the logic crosses a sentence boundary—for example contrast, cause/effect, pronoun reference, condition or a qualification introduced in the next sentence. A shorter clause is acceptable only when it is genuinely self-contained. Do not lengthen clues mechanically.\n\nFor matching headings, use the sentence or pair of sentences that captures the paragraph’s main idea rather than a vivid supporting detail. For NOT GIVEN, show the closest relevant stated information and make the Why identify exactly which required detail is absent; never invent evidence for absence.\n\n#### Clue'''
+          wf = one(wf, anchor, replacement, 'self-contained Aha standard')
+          wf = one(wf,
+              'There is no fixed word count. The correct length is the shortest span that makes the evidence self-explanatory in context.',
+              'There is no hard word count. Prefer one complete sentence, or two short connected sentences when the reasoning requires both. The correct length is the shortest span that remains self-contained and logically complete.',
+              'clue length standard')
+
+          # Replace the obsolete Test 3 launch plan with the reference-set lessons and IELTS 18 launch gate.
+          start = wf.index('## 16. Next-target launch plan')
+          end = wf.index('\n---\n\n## 17. One-page runbook', start)
+          section16 = '''## 16. Cambridge 19 reference-set lessons and IELTS 18 launch gate\n\nCambridge IELTS 19 GT Reading Tests 1–4 are now the behavioural reference set. Use them together, not as four independent templates:\n\n- **Test 2** — preferred direct-integration reference;\n- **Test 1** — legacy-adapter compatibility reference;\n- **Tests 3 and 4** — regression references for submitted-review lifecycle, dialogs, scoring, layout and logo behaviour;\n- **Tests 1–4 together** — expected Study/Test/locked-review parity.\n\nThe following gates are mandatory before a new GT Reading test is considered aligned.\n\n### 16.1 Mode lifecycle — verify visible state, not just DOM state\n\nThe required lifecycle is:\n\n1. **Study Mode:** task-specific strategy/ⓘ controls are visible.\n2. **Active Test Mode:** zero strategy/ⓘ controls are visibly available, even if their DOM remains attached.\n3. **Submitted Test review:** strategy/ⓘ controls, Answer Key, score guide, feedback and clues return, while every submitted answer remains locked.\n\nA `hidden` attribute alone is not proof when CSS can force `display`. Browser QA must check computed/visible state in all three phases.\n\n### 16.2 Low-score contract — `Below 3` must round-trip\n\nUnder the current project decision:\n\n- 0–8 correct = **`Below 3`**;\n- 9–11 correct = **Band 3**.\n\n`Below 3` is a valid first-class band label, not an error or missing numeric value. It must agree across the target evaluator, result overlay, submitted-result snapshot/parser, Score guide and submitted Score feedback. A blank Test submission is the fastest regression case: it must still initialise completed-Test feedback and show `Submitted band: Below 3.`\n\n### 16.3 Matching and drag/drop — presence is not functionality\n\nWhere a target uses matching or drag/drop, browser QA must exercise the supported interaction paths before submission:\n\n- real drag/drop;\n- click-to-place;\n- keyboard placement;\n- repeated-letter reuse when the instructions allow it;\n- Clear/reset.\n\nThen submit the Test and verify source items, answer zones, native backing controls and Clear/reset remain locked. This catches initialisation-order failures where answer boxes exist but interaction wiring never attached.\n\n### 16.4 Self-contained clues and explanations\n\nFor every Q1–40 item, judge the feedback as if the surrounding passage were hidden. **Question + clue(s) + Why must be enough to understand why the answer is correct.** Skill then tells the learner what reading action to reuse next time.\n\nUse one complete clue sentence by default. Use two short connected sentences only when the logic genuinely crosses the boundary. Shorter fragments are acceptable only when self-contained. Keep clues concise, but never so short that the learner has to reconstruct the missing subject, condition, comparison, negation, cause, time boundary or reference.\n\nFor NOT GIVEN, show the closest relevant information the passage actually states and explain the exact detail that is absent. For matching headings, use evidence that represents the paragraph’s main idea rather than one memorable detail. Explain a likely distractor when doing so resolves a realistic misunderstanding.\n\n### 16.5 Layout hygiene\n\nHidden feedback hosts and unrevealed wrappers must be layout-neutral. They must not contribute unexplained padding, margins or empty vertical space before feedback exists. Browser QA must verify the block expands when feedback is revealed and contracts again when it is hidden.\n\n### 16.6 Header and logo parity\n\nVerify the IELTS Pabs logo as one feature, not separate pieces:\n\n- correct route to the top-level Live Hub;\n- active-Test leave warning;\n- mouse, Enter and Space activation;\n- established per-letter hover animation;\n- reduced-motion behaviour;\n- no header CSS leakage into Score guide, Answer Key or score-feedback dialogs.\n\n### 16.7 Permanent regression and release safety\n\nWhen a new failure class is discovered, add the smallest production-linked permanent regression that would have caught it. Before merge:\n\n- run the focused target/shared Reading matrix;\n- run the full browser lifecycle matrix;\n- run the Live Hub Safety Guard;\n- refresh protected reference fingerprints only after the relevant Reading validation passes and only for deliberately changed reference files;\n- keep unrelated Hub contract repairs, activations and seasonal changes in separate PRs.\n\n### 16.8 Next target — Cambridge IELTS 18 GT Reading Test 1\n\nThe next target is **Cambridge IELTS 18 General Training Reading Test 1**. Its HTML, source files, answer key, accepted variants and evaluator remain authoritative for test-specific content. Do not copy Cambridge 19 passages, task ranges, control shapes or accepted variants.\n\nThe initial read-only audit must explicitly verify:\n\n- exact Section ranges, task groups and source-text roots;\n- exact instructions, word limits, answers and accepted variants;\n- current GT scoring, including the `Below 3` contract;\n- Study → active Test → submitted Test information-control lifecycle;\n- blank/low-score submitted feedback;\n- real matching/drag-drop interaction where present;\n- final locking of native and custom controls;\n- all 40 self-contained clue/Why/Skill trios;\n- zero dead spacing from hidden feedback hosts;\n- Score guide, Answer Key and score-feedback dialogs;\n- home route, leave warning, keyboard access and logo animation;\n- desktop, narrow, theme and text-size parity;\n- current Live Hub route and safety-guard constraints.\n\nIf an item already works, preserve it. Do not redesign working behaviour merely to make the implementation resemble a Cambridge 19 file.\n'''
+          wf = wf[:start] + section16 + wf[end:]
+
+          # Update the required prompt so future work starts from the four-test reference set and stronger feedback contract.
+          wf = one(wf,
+              'Use Cambridge IELTS 19 General Training Reading Test 2 on current main as the preferred direct-integration reference and Test 1 as the legacy-adapter reference. The target test HTML, source files, answer key, accepted variants and evaluator remain authoritative for target-specific content.\n\nFor every question, make the clue, Why and Skill pass the Aha test: use the shortest complete evidence span, explicitly bridge question wording to source wording and conclusion, and give a reusable next-step reading action. Technically correct but vague or under-explained feedback does not pass.',
+              'Use Cambridge IELTS 19 General Training Reading Tests 1–4 on current main as the behavioural reference set: Test 2 is the preferred direct-integration reference, Test 1 is the legacy-adapter reference, and Tests 3–4 are regression references for submitted-review lifecycle, dialogs, scoring, layout and logo parity. The target test HTML, source files, answer key, accepted variants and evaluator remain authoritative for target-specific content.\n\nFor every question, make the clue, Why and Skill pass the self-contained Aha test: a learner should understand why the answer is correct using only the question, displayed/highlighted clue(s) and Why explanation. Prefer one complete clue sentence, or two short connected sentences when the logic requires both. Explicitly bridge question wording to source wording and conclusion, and give a reusable next-step reading action. Technically correct but vague, undersized or under-explained feedback does not pass.',
+              'required prompt reference set')
+
+          # Checklist: retain all existing items and add a concise mandatory reference-set gate.
+          ck = one(ck,
+              '**Focused regression update:** PR #436 — header CSS inheritance and Study-dialog containment (6 August 2026)',
+              '**Cambridge 19 reference-set update:** lifecycle, interaction, scoring, layout, logo and self-contained feedback parity through 8 August 2026',
+              'checklist update header')
+          ck = one(ck,
+              '- [ ] Every Q1–40 clue/Why/Skill trio passes the Aha test.',
+              '- [ ] Every Q1–40 clue/Why/Skill trio passes the self-contained Aha test: question + displayed/highlighted clue(s) + Why are enough to understand why the answer is correct without the rest of the passage.',
+              'checklist Aha line')
+          ck = one(ck,
+              '- [ ] No hard clue-length target is used; clarity and logical completeness determine the span.',
+              '- [ ] No hard clue-length target is used; one complete sentence is the default, two connected sentences are allowed when necessary, and clarity/logical completeness determine the span.',
+              'checklist clue length')
+          ck = one(ck,
+              '- [ ] NOT GIVEN identifies related information present and the required detail missing.',
+              '- [ ] NOT GIVEN shows the closest relevant stated information and identifies the exact required detail missing; it never invents evidence for absence.',
+              'checklist not given')
+
+          marker = '\n---\n\n## Required exception format'
+          mandatory = '''\n## S. Cambridge 19 reference-set mandatory parity gate\n\nThese checks capture regressions found while stabilising Cambridge 19 GT Tests 1–4 and are mandatory for Cambridge 18 onward.\n\n### S1. Reference set and lifecycle\n\n- [ ] Target is compared against the validated Cambridge 19 GT Tests 1–4 behavioural reference set.\n- [ ] Test 2 is used as the preferred direct-integration reference and Test 1 as the legacy-adapter reference; Tests 3–4 are used for regression behaviour, not copied as new templates.\n- [ ] Study Mode shows task-specific strategy/ⓘ controls.\n- [ ] Active Test Mode shows zero visible strategy/ⓘ controls, even if their DOM remains attached.\n- [ ] Submitted Test review restores strategy/ⓘ controls, Answer Key, score guide, feedback and clues while all submitted answers stay locked.\n- [ ] Browser QA verifies computed/visible state rather than trusting `hidden` alone.\n\n### S2. Low-score round trip\n\n- [ ] Current GT contract is 0–8 = `Below 3` and 9–11 = Band 3.\n- [ ] `Below 3` agrees across evaluator, result overlay, submitted-result snapshot/parser, Score guide and submitted Score feedback.\n- [ ] A blank/low-score Test submission still initialises completed-Test feedback and displays `Submitted band: Below 3.`\n\n### S3. Matching and custom interaction\n\n- [ ] Where present, matching/drag-drop is exercised through real drag, click-to-place, keyboard placement, repeated-letter reuse and Clear/reset as supported by the target.\n- [ ] Interaction initialisation order is validated; visible answer boxes alone are not a pass.\n- [ ] After Test submission, sources, zones, backing controls and Clear/reset remain locked.\n\n### S4. Self-contained feedback quality\n\n- [ ] For every Q1–40 item, question + clue(s) + Why are sufficient to understand the answer with surrounding passage context mentally hidden.\n- [ ] One complete clue sentence is the default; two short connected sentences are used only when the reasoning genuinely crosses a sentence boundary.\n- [ ] Shorter fragments are used only when genuinely self-contained; clues are not lengthened mechanically.\n- [ ] Why explicitly bridges question wording to source wording/paraphrase/logic and the correct answer.\n- [ ] A likely distractor is explained when that resolves a realistic learner misunderstanding.\n- [ ] NOT GIVEN uses the closest relevant stated information and identifies the exact missing detail without inventing evidence.\n- [ ] Matching-headings clues represent the paragraph’s main idea rather than an isolated detail.\n\n### S5. Layout and logo parity\n\n- [ ] Hidden/unrevealed feedback hosts contribute zero unexplained padding, margin or vertical gap.\n- [ ] Revealing feedback expands the block normally and hiding it contracts normally.\n- [ ] IELTS Pabs logo routes to the top-level Live Hub and uses the active-Test leave warning.\n- [ ] Logo is operable by mouse, Enter and Space.\n- [ ] Established per-letter hover animation works and honours reduced-motion preferences.\n- [ ] Header/logo changes do not break or squeeze Score guide, Answer Key or score-feedback dialogs.\n\n### S6. Browser and release safety\n\n- [ ] Browser lifecycle QA covers Fresh Study, checked/submitted Study, Fresh Test and completed Test/locked review.\n- [ ] Browser QA includes a blank/low-score submission, real custom interaction where present, hidden-host spacing and logo animation/navigation.\n- [ ] A newly discovered regression class receives the smallest permanent production-linked regression that would have caught it.\n- [ ] Live Hub Safety Guard passes before merge.\n- [ ] Protected reference fingerprints are refreshed only after the relevant Reading validation passes and only for deliberately changed reference files.\n- [ ] Unrelated Live Hub contract repair, activation or seasonal work is kept in a separate PR.\n'''
+          if ck.count(marker) != 1:
+              raise SystemExit(f'checklist mandatory marker: expected 1, found {ck.count(marker)}')
+          ck = ck.replace(marker, mandatory + marker, 1)
+
+          wf_path.write_text(wf, encoding='utf-8')
+          ck_path.write_text(ck, encoding='utf-8')
+          PY
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add general-training/shared/IELTS_GT_READING_FAST_TRACK_WORKFLOW.md general-training/shared/GT_READING_TEST_PARITY_CHECKLIST.md
+          git commit -m "Update GT Reading workflow with Cambridge 19 lessons"
+          git push origin HEAD:docs/gt-reading-cambridge19-lessons
