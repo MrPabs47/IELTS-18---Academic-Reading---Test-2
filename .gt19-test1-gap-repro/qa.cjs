@@ -1,89 +1,107 @@
+const assert = require('node:assert/strict');
 const { chromium } = require('playwright');
 
 const URL = 'http://127.0.0.1:4173/general-training/cambridge-19/test-1/IELTS19%20Test%201%20-%20Reading%20-%20GT.html';
 
+async function enterMode(page, selectedMode) {
+  await page.goto(URL, { waitUntil: 'networkidle' });
+  await page.waitForFunction(() => typeof window.startTest === 'function' && typeof window.switchSection === 'function');
+  await page.evaluate(modeName => {
+    window.startTest(modeName);
+    if (modeName === 'test') isTestRunning = true;
+    const modeScreen = document.getElementById('modeScreen');
+    if (modeScreen) modeScreen.style.display = 'none';
+    window.switchSection(3);
+  }, selectedMode);
+  await page.waitForFunction(() => document.querySelector('#questionContent > [data-section="3"]')?.style.display === 'block');
+  await page.waitForTimeout(350);
+}
+
+async function layoutSnapshot(page) {
+  return page.evaluate(() => {
+    const box = document.querySelector('#questionContent > [data-section="3"] .summary-completion-box');
+    const feedbacks = box && box.querySelector('.summary-feedbacks');
+    if (!box || !feedbacks) throw new Error('Test 1 summary completion layout not found');
+    const rect = node => {
+      const value = node.getBoundingClientRect();
+      return { width: value.width, height: value.height, top: value.top, bottom: value.bottom };
+    };
+    const hosts = Array.from(feedbacks.querySelectorAll(':scope > .question-block.feedback-only')).map(node => {
+      const style = getComputedStyle(node);
+      return {
+        rect: rect(node),
+        marginTop: style.marginTop,
+        marginBottom: style.marginBottom,
+        paddingTop: style.paddingTop,
+        paddingBottom: style.paddingBottom,
+        borderTopWidth: style.borderTopWidth,
+        borderBottomWidth: style.borderBottomWidth,
+        visibleCards: Array.from(node.querySelectorAll('.reading-shell-study-feedback-card')).filter(card => Boolean(
+          card.offsetWidth || card.offsetHeight || card.getClientRects().length
+        )).length
+      };
+    });
+    return {
+      box: rect(box),
+      feedbacks: rect(feedbacks),
+      hosts,
+      visibleCards: Array.from(feedbacks.querySelectorAll('.reading-shell-study-feedback-card')).filter(card => Boolean(
+        card.offsetWidth || card.offsetHeight || card.getClientRects().length
+      )).length
+    };
+  });
+}
+
 (async () => {
   const browser = await chromium.launch({ headless: true });
+  const pageErrors = [];
   try {
-    const page = await browser.newPage({ viewport: { width: 1660, height: 936 } });
-    page.setDefaultTimeout(20000);
-    const errors = [];
-    page.on('pageerror', error => errors.push(String(error)));
-    page.on('console', message => console.log('BROWSER', message.type(), message.text()));
+    const testPage = await browser.newPage({ viewport: { width: 1660, height: 936 } });
+    testPage.setDefaultTimeout(20000);
+    testPage.on('pageerror', error => pageErrors.push(`test: ${String(error)}`));
+    await enterMode(testPage, 'test');
 
-    await page.goto(URL, { waitUntil: 'networkidle' });
-    await page.waitForFunction(() => typeof window.startTest === 'function' && typeof window.switchSection === 'function');
-    await page.evaluate(() => {
-      window.startTest('test');
-      isTestRunning = true;
-      const modeScreen = document.getElementById('modeScreen');
-      if (modeScreen) modeScreen.style.display = 'none';
-      window.switchSection(3);
-    });
-    await page.waitForFunction(() => document.querySelector('#questionContent > [data-section="3"]')?.style.display === 'block');
-    await page.waitForTimeout(500);
+    const compact = await layoutSnapshot(testPage);
+    assert.equal(compact.hosts.length, 5, 'Questions 33–37 must retain five dedicated feedback hosts.');
+    assert.ok(compact.box.height < 340, `The untouched summary should stay content-sized; measured ${compact.box.height}px.`);
+    assert.equal(compact.feedbacks.height, 0, 'Hidden feedback hosts must not reserve empty vertical space.');
+    for (const host of compact.hosts) {
+      assert.equal(host.rect.height, 0, 'An empty feedback host must collapse to zero height.');
+      assert.equal(host.marginTop, '0px');
+      assert.equal(host.marginBottom, '0px');
+      assert.equal(host.paddingTop, '0px');
+      assert.equal(host.paddingBottom, '0px');
+      assert.equal(host.borderTopWidth, '0px');
+      assert.equal(host.borderBottomWidth, '0px');
+    }
 
-    const diagnostics = await page.evaluate(() => {
-      const box = document.querySelector('#questionContent > [data-section="3"] .summary-completion-box');
-      if (!box) throw new Error('Summary completion box not found');
-      const rect = node => {
-        const r = node.getBoundingClientRect();
-        return { top: r.top, bottom: r.bottom, left: r.left, right: r.right, width: r.width, height: r.height };
-      };
-      const style = node => {
-        const cs = getComputedStyle(node);
-        return {
-          display: cs.display,
-          position: cs.position,
-          height: cs.height,
-          minHeight: cs.minHeight,
-          maxHeight: cs.maxHeight,
-          flex: cs.flex,
-          flexGrow: cs.flexGrow,
-          flexShrink: cs.flexShrink,
-          alignSelf: cs.alignSelf,
-          paddingTop: cs.paddingTop,
-          paddingBottom: cs.paddingBottom,
-          marginTop: cs.marginTop,
-          marginBottom: cs.marginBottom,
-          boxSizing: cs.boxSizing,
-          overflow: cs.overflow,
-          contain: cs.contain
-        };
-      };
-      const matchedRules = [];
-      for (const sheet of Array.from(document.styleSheets)) {
-        let rules;
-        try { rules = sheet.cssRules; } catch { continue; }
-        if (!rules) continue;
-        const walk = list => {
-          for (const rule of Array.from(list)) {
-            if (rule.cssRules) walk(rule.cssRules);
-            if (!rule.selectorText) continue;
-            let matches = false;
-            try { matches = box.matches(rule.selectorText); } catch {}
-            if (!matches) continue;
-            matchedRules.push({
-              sheet: sheet.href || 'inline',
-              selector: rule.selectorText,
-              cssText: rule.style.cssText
-            });
-          }
-        };
-        walk(rules);
-      }
-      return {
-        box: { rect: rect(box), style: style(box), html: box.outerHTML.slice(0, 800) },
-        parent: { tag: box.parentElement.tagName, cls: box.parentElement.className, rect: rect(box.parentElement), style: style(box.parentElement) },
-        children: Array.from(box.children).map(node => ({ tag: node.tagName, cls: node.className, rect: rect(node), style: style(node), text: (node.textContent || '').replace(/\s+/g, ' ').trim().slice(0, 120) })),
-        matchedRules,
-        questionPane: { rect: rect(document.getElementById('questionContent')), scrollHeight: document.getElementById('questionContent').scrollHeight, clientHeight: document.getElementById('questionContent').clientHeight }
-      };
-    });
+    const studyPage = await browser.newPage({ viewport: { width: 1660, height: 936 } });
+    studyPage.setDefaultTimeout(20000);
+    studyPage.on('pageerror', error => pageErrors.push(`study: ${String(error)}`));
+    await enterMode(studyPage, 'study');
 
-    diagnostics.pageErrors = errors;
-    console.log('DIAGNOSTICS', JSON.stringify(diagnostics, null, 2));
-    await page.screenshot({ path: '/tmp/gt19-test1-summary-gap.png', fullPage: false });
+    const summaryReveal = studyPage.locator('#study-instruction-s3-summary .reading-shell-study-reveal-button');
+    await summaryReveal.waitFor({ state: 'visible' });
+    await summaryReveal.click();
+    await studyPage.waitForFunction(() => Array.from(
+      document.querySelectorAll('.summary-feedbacks .reading-shell-study-feedback-card')
+    ).some(card => Boolean(card.offsetWidth || card.offsetHeight || card.getClientRects().length)));
+
+    const expanded = await layoutSnapshot(studyPage);
+    assert.equal(expanded.visibleCards, 5, 'All five summary answers must still render detailed feedback cards.');
+    assert.ok(expanded.feedbacks.height > 0, 'The feedback area must expand when feedback is intentionally shown.');
+    assert.ok(expanded.box.height > compact.box.height, 'The summary box must grow naturally to contain shown feedback.');
+    for (const host of expanded.hosts) {
+      assert.equal(host.marginTop, '0px');
+      assert.equal(host.marginBottom, '0px');
+      assert.equal(host.paddingTop, '0px');
+      assert.equal(host.paddingBottom, '0px');
+      assert.equal(host.visibleCards, 1, 'Each question host must retain its own feedback card.');
+    }
+
+    assert.deepEqual(pageErrors, [], `Unexpected browser errors: ${pageErrors.join(' | ')}`);
+    console.log(JSON.stringify({ compact, expanded }, null, 2));
+    console.log('PASS Test 1 summary stays compact until Questions 33–37 feedback is shown');
   } finally {
     await browser.close();
   }
