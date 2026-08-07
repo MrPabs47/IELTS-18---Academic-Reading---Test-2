@@ -1,4 +1,4 @@
-name: GT19 Test 1 summary gap probe
+name: GT19 Test 1 summary gap QA
 
 on:
   push:
@@ -6,10 +6,11 @@ on:
       - fix/gt19-test1-summary-gap
     paths:
       - .gt19-test1-gap-repro/**
+      - tests/gt19_test1_summary_feedback_spacing_test.py
       - .github/workflows/gt19-test1-summary-gap-repro.yml
 
 jobs:
-  probe:
+  browser-and-static-qa:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -18,11 +19,12 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 22
-      - name: Install isolated Playwright
+      - name: Install isolated QA dependencies
         run: |
           npm install --prefix /tmp/gt19-test1-playwright playwright@1.55.0
           npx --prefix /tmp/gt19-test1-playwright playwright install --with-deps chromium
-      - name: Probe Test 1 summary layout
+          python -m pip install pytest
+      - name: Validate Test 1 summary layout in Chromium
         env:
           NODE_PATH: /tmp/gt19-test1-playwright/node_modules
         run: |
@@ -35,3 +37,5 @@ jobs:
             sleep 1
           done
           node .gt19-test1-gap-repro/qa.cjs
+      - name: Run focused spacing regression test
+        run: python -m pytest -q tests/gt19_test1_summary_feedback_spacing_test.py
