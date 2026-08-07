@@ -41,28 +41,6 @@ html[data-theme="light"]{
   --focus:#5a61d6;
 }
 
-body,
-.site-header,
-.logo,
-.nav-pill,
-.test-view-switch,
-.view-indicator,
-.view-option,
-.auth-button,
-.intro-star,
-.book-section,
-.test-card,
-.skill-row,
-.score-chip,
-.panel,
-.practice-option,
-.history-popover,
-.history-popover p{
-  transition-property:background-color,border-color,color,box-shadow;
-  transition-duration:.22s;
-  transition-timing-function:cubic-bezier(.22,1,.36,1);
-}
-
 html[data-theme="light"] body{background:var(--page);color:var(--text)}
 html[data-theme="light"] .site-header{background:rgba(249,250,251,.93);border-bottom-color:var(--line-soft);box-shadow:0 1px 0 rgba(17,24,39,.02)}
 html[data-theme="light"] .logo{color:#17181b}
@@ -128,22 +106,6 @@ html[data-theme="light"] .history-popover p{color:#686e78}
 }
 
 @media(prefers-reduced-motion:reduce){
-  .theme-toggle,
-  body,
-  .site-header,
-  .logo,
-  .nav-pill,
-  .test-view-switch,
-  .view-indicator,
-  .view-option,
-  .auth-button,
-  .intro-star,
-  .book-section,
-  .test-card,
-  .skill-row,
-  .score-chip,
-  .panel,
-  .practice-option,
-  .history-popover,
-  .history-popover p{transition:none}
+  .theme-toggle{transition:none}
+  .theme-toggle:active{transform:none}
 }
