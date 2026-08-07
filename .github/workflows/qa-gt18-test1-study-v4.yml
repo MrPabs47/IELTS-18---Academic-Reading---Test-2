@@ -1,0 +1,200 @@
+name: QA IELTS 18 GT Test 1 Study integration v4
+
+on:
+  push:
+    paths:
+      - '.gt18-test1-qa-v4-trigger'
+
+jobs:
+  browser:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: feature/ielts18-gt-test1-study-feedback
+      - name: Install browser runtime
+        shell: bash
+        run: |
+          npm init -y >/dev/null 2>&1
+          npm install --no-save playwright@1.55.0 >/dev/null 2>&1
+          npx playwright install --with-deps chromium >/dev/null 2>&1
+      - name: Run browser parity QA
+        shell: bash
+        run: |
+          python3 -m http.server 8000 >/tmp/gt18-server.log 2>&1 &
+          SERVER_PID=$!
+          trap 'kill $SERVER_PID || true' EXIT
+          sleep 2
+          cat >/tmp/gt18-qa.cjs <<'JS'
+          const { chromium } = require(process.cwd() + '/node_modules/playwright');
+          const URL = 'http://127.0.0.1:8000/general-training/cambridge-18/test-1/IELTS18%20Test%201%20-%20Reading%20-%20GT.html';
+          const CLUE = '.reading-shell-study-clue-button';
+          const FEEDBACK = '.reading-shell-study-feedback-card';
+          function assert(ok, message) { if (!ok) throw new Error(message); }
+          async function visibleCount(page, selector) {
+            return page.locator(selector).evaluateAll(nodes => nodes.filter(node => {
+              const style = getComputedStyle(node);
+              return !node.hidden && style.display !== 'none' && style.visibility !== 'hidden' && node.getClientRects().length > 0;
+            }).length);
+          }
+          async function openPage(browser, viewport, reducedMotion) {
+            const page = await browser.newPage({ viewport, reducedMotion: reducedMotion || 'no-preference' });
+            const errors = [];
+            page.on('pageerror', e => errors.push(String(e)));
+            page.on('console', msg => { if (msg.type() === 'error') errors.push('console: ' + msg.text()); });
+            await page.goto(URL, { waitUntil: 'networkidle' });
+            return { page, errors };
+          }
+          async function switchAndCheck(page, section, strategies, clues, feedback) {
+            await page.evaluate(n => switchSection(n), section);
+            await page.waitForTimeout(100);
+            assert(await visibleCount(page, '.reading-shell-study-icon-button') === strategies, `Section ${section}: strategies`);
+            assert(await visibleCount(page, CLUE) === clues, `Section ${section}: clues`);
+            if (feedback !== undefined) assert(await visibleCount(page, FEEDBACK) === feedback, `Section ${section}: feedback`);
+          }
+          async function fit(page, selector, width) {
+            const box = await page.locator(selector).boundingBox();
+            assert(box && box.x >= -1 && box.x + box.width <= width + 1, `${selector} overflow`);
+          }
+
+          (async () => {
+            const browser = await chromium.launch({ headless: true });
+
+            // Complete Study lifecycle including repeat check.
+            {
+              const { page, errors } = await openPage(browser, { width: 1440, height: 1000 });
+              await page.locator('.mode-btn[data-mode="study"]').click();
+              await page.waitForTimeout(250);
+              assert((await page.evaluate(() => ReadingFeatureShell.getStatus())).initialized, 'Study shell init');
+              assert(await page.locator('.reading-shell-study-icon-button').count() === 7, '7 strategy controls');
+              assert(await page.locator(CLUE).count() === 40, '40 clue controls');
+              assert(await page.locator(FEEDBACK).count() === 40, '40 feedback cards');
+              await switchAndCheck(page, 1, 2, 14, 14);
+              await switchAndCheck(page, 2, 2, 13, 13);
+              await switchAndCheck(page, 3, 3, 13, 13);
+              await switchAndCheck(page, 1, 2, 14, 14);
+              await page.locator(`${CLUE}:visible`).first().click();
+              await page.waitForTimeout(100);
+              assert(await page.locator('#text-s1-dry-cleaning .reading-shell-evidence-highlight').count() >= 1, 'Q1 evidence highlight');
+              await page.locator('#primarySubmitBtn').click();
+              await page.waitForTimeout(150);
+              assert(await page.locator('#resultsOverlay').isVisible(), 'Study results overlay first check');
+              await page.locator('#resultsCloseBtn').click();
+              await page.waitForTimeout(80);
+              await page.locator('#primarySubmitBtn').click();
+              await page.waitForTimeout(150);
+              assert(await page.locator('#resultsOverlay').isVisible(), 'Study results overlay repeat check');
+              await page.locator('#resultsCloseBtn').click();
+              assert(await visibleCount(page, '.reading-shell-study-icon-button') === 2, 'Study strategy persistence after recheck');
+              assert(errors.length === 0, 'Study errors: ' + errors.join(' | '));
+              console.log('PASS complete Study/recheck lifecycle');
+              await page.close();
+            }
+
+            // Test lifecycle + custom matching + Below 3 + submitted review.
+            {
+              const { page, errors } = await openPage(browser, { width: 1440, height: 1000 });
+              await page.evaluate(() => { studentName = 'QA Candidate Long Name For Header Truncation'; startTest('test'); isTestRunning = true; });
+              await page.waitForTimeout(250);
+              assert(await visibleCount(page, '#candidateNameDisplay') === 1, 'candidate visible');
+              assert(await visibleCount(page, '.reading-shell-study-icon-button') === 0, 'active Test strategies hidden');
+              assert(await visibleCount(page, CLUE) === 0, 'active Test clues hidden');
+              assert(await visibleCount(page, FEEDBACK) === 0, 'active Test feedback hidden');
+              assert(await visibleCount(page, '.reading-shell-score-guide-button') === 0, 'active Test score guide hidden');
+              assert(await visibleCount(page, '.reading-shell-answer-key-button') === 0, 'active Test key hidden');
+              assert(await page.locator('.gt-section1-clear').count() === 7, '7 Clear controls');
+              await page.locator('.passage-match-source[data-value="A"]').click();
+              await page.locator('.drop-zone[data-for="q8"]').click();
+              assert(await page.locator('select[name="q8"]').inputValue() === 'A', 'click place');
+              await page.locator('.drop-zone[data-for="q9"]').focus(); await page.keyboard.press('f');
+              assert(await page.locator('select[name="q9"]').inputValue() === 'F', 'keyboard place');
+              await page.locator('.drop-zone[data-for="q10"]').focus(); await page.keyboard.press('a');
+              assert(await page.locator('select[name="q10"]').inputValue() === 'A', 'repeated letter');
+              await page.locator('.drop-zone[data-for="q8"]').locator('..').locator('.gt-section1-clear').click();
+              assert(await page.locator('select[name="q8"]').inputValue() === '', 'clear');
+              await page.locator('.passage-match-source[data-value="B"]').dragTo(page.locator('.drop-zone[data-for="q8"]'));
+              assert(await page.locator('select[name="q8"]').inputValue() === 'B', 'drag place');
+              page.once('dialog', d => d.accept());
+              await page.locator('#primarySubmitBtn').click();
+              await page.waitForTimeout(400);
+              assert(await page.evaluate(() => testSubmitted), 'submitted state');
+              assert((await page.locator('#bandLine').innerText()).includes('Below 3'), 'Below 3 result');
+              await page.locator('#resultsCloseBtn').click();
+              await page.waitForTimeout(220);
+              await switchAndCheck(page, 1, 2, 14, 14);
+              assert(await visibleCount(page, '.reading-shell-score-guide-button') === 1, 'submitted score guide');
+              assert(await visibleCount(page, '.reading-shell-answer-key-button') === 1, 'submitted key');
+              assert(await visibleCount(page, '.reading-shell-score-feedback-button') === 1, 'submitted score feedback');
+              await page.locator('.reading-shell-score-feedback-button').click();
+              await page.waitForTimeout(120);
+              const scoreText = await page.locator('.reading-shell-score-feedback-dialog').innerText();
+              assert(scoreText.includes('Submitted band: Below 3.'), 'Below 3 score feedback');
+              assert(scoreText.includes('Performance by section'), 'Section terminology in score feedback');
+              await page.keyboard.press('Escape');
+              await switchAndCheck(page, 2, 2, 13, 13);
+              await switchAndCheck(page, 3, 3, 13, 13);
+              await switchAndCheck(page, 1, 2, 14, 14);
+              assert(await page.locator('#primarySubmitBtn').isDisabled(), 'submit locked');
+              assert(await page.locator('.gt-section1-clear').evaluateAll(xs => xs.every(x => x.disabled)), 'clear locked');
+              assert(await page.locator('.passage-match-source').evaluateAll(xs => xs.every(x => !x.draggable && x.getAttribute('aria-disabled') === 'true')), 'sources locked');
+              assert(await page.locator('.drop-zone[data-for="q8"]').getAttribute('aria-disabled') === 'true', 'zone locked');
+              assert(await page.locator('select[name="q8"]').isDisabled(), 'native select locked');
+              const frozen = await page.locator('select[name="q8"]').inputValue();
+              await page.locator('.passage-match-source[data-value="A"]').click({ force: true }).catch(() => {});
+              await page.locator('.drop-zone[data-for="q8"]').click({ force: true }).catch(() => {});
+              assert(await page.locator('select[name="q8"]').inputValue() === frozen, 'answer immutable after submit');
+              assert(errors.length === 0, 'Test errors: ' + errors.join(' | '));
+              console.log('PASS Test/matching/Below3/submitted review/lock');
+              await page.close();
+            }
+
+            // Narrow widths, all themes, extra-large text.
+            {
+              const { page, errors } = await openPage(browser, { width: 390, height: 844 });
+              await page.locator('.mode-btn[data-mode="study"]').click();
+              await page.waitForTimeout(200);
+              for (const theme of ['black-on-white', 'white-on-black', 'yellow-on-black']) {
+                await page.evaluate(v => setTheme(v), theme);
+                await page.evaluate(() => setFontSize('xlarge'));
+                await page.locator('.reading-shell-score-guide-button').click(); await page.waitForTimeout(60); await fit(page, '.reading-shell-score-guide-dialog', 390); await page.keyboard.press('Escape');
+                await page.locator('.reading-shell-answer-key-button').click(); await page.waitForTimeout(60); await fit(page, '.reading-shell-answer-key-dialog', 390); await page.keyboard.press('Escape');
+              }
+              assert(errors.length === 0, 'Narrow/theme errors: ' + errors.join(' | '));
+              console.log('PASS narrow/themes/xlarge dialogs');
+              await page.close();
+            }
+
+            // Logo animation and keyboard parity.
+            {
+              const { page, errors } = await openPage(browser, { width: 1200, height: 800 });
+              await page.locator('.mode-btn[data-mode="study"]').click();
+              const logo = page.locator('.logo.home-link');
+              assert(await logo.locator('.logo-char').count() === 10, 'logo letters not wrapped');
+              assert(await logo.getAttribute('tabindex') === '0', 'logo keyboard tabindex');
+              assert(await logo.getAttribute('role') === 'link', 'logo link role');
+              await logo.hover(); await page.waitForTimeout(50);
+              assert(await logo.evaluate(el => el.classList.contains('is-animating')), 'logo hover animation not triggered');
+              await page.mouse.move(800, 700); await page.waitForTimeout(50);
+              assert(!(await logo.evaluate(el => el.classList.contains('is-animating'))), 'logo animation not cleared on leave');
+              assert(errors.length === 0, 'Logo errors: ' + errors.join(' | '));
+              console.log('PASS logo keyboard/hover animation');
+              await page.close();
+            }
+            {
+              const { page, errors } = await openPage(browser, { width: 1200, height: 800 }, 'reduce');
+              await page.locator('.mode-btn[data-mode="study"]').click();
+              const logo = page.locator('.logo.home-link');
+              assert(await logo.locator('.logo-char').count() === 10, 'reduced logo letters not wrapped');
+              await logo.hover(); await page.waitForTimeout(50);
+              assert(!(await logo.evaluate(el => el.classList.contains('is-animating'))), 'reduced motion logo should not animate');
+              assert(errors.length === 0, 'Reduced-motion errors: ' + errors.join(' | '));
+              console.log('PASS logo reduced-motion');
+              await page.close();
+            }
+
+            await browser.close();
+            console.log('PASS IELTS 18 GT Reading Test 1 consolidated browser parity QA');
+          })().catch(e => { console.error(e.stack || e); process.exit(1); });
+          JS
+          node /tmp/gt18-qa.cjs
