@@ -1,0 +1,167 @@
+name: Patch GT19 Test 4 logo animation
+
+on:
+  push:
+    branches:
+      - fix/gt19-test4-logo-animation
+    paths:
+      - .gt19-test4-logo-animation/READY
+
+permissions:
+  contents: write
+
+jobs:
+  patch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: fix/gt19-test4-logo-animation
+      - name: Restore Test 4 animated IELTS Pabs logo
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+
+          path = Path('general-training/cambridge-19/test-4/IELTS19 Test 4 - Reading - GT.html')
+          text = path.read_text(encoding='utf-8')
+
+          css_marker = '''    .logo {
+            font-weight: 800;
+            font-size: 1.4rem;
+            letter-spacing: 0.08em;
+          }
+
+          .test-title {
+          '''
+          css_replacement = '''    .logo {
+            font-weight: 800;
+            font-size: 1.4rem;
+            letter-spacing: 0.08em;
+          }
+
+          /* IELTS Pabs animated logo */
+          .logo.home-link,
+          .logo-link .logo {
+            transition: color 0.2s ease, opacity 0.2s ease;
+          }
+
+          .logo.home-link:hover,
+          .home-link:hover,
+          .logo-link:hover .logo {
+            color: #e31837;
+            opacity: 1;
+          }
+
+          .logo-char {
+            display: inline-block;
+            opacity: 1;
+            transform: none;
+            filter: none;
+            will-change: transform, opacity, filter;
+          }
+
+          .logo.is-animating .logo-char {
+            animation: logoReveal 0.45s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+            animation-delay: calc(var(--logo-char-index) * 200ms);
+          }
+
+          @keyframes logoReveal {
+            from {
+              opacity: 0;
+              transform: translateY(8px);
+              filter: blur(4px);
+            }
+            to {
+              opacity: 1;
+              transform: translateY(0);
+              filter: blur(0);
+            }
+          }
+
+          @media (prefers-reduced-motion: reduce) {
+            .logo-char {
+              opacity: 1;
+              transform: none;
+              filter: none;
+              animation: none;
+            }
+          }
+
+          .test-title {
+          '''
+
+          js_marker = '''    // Ensure option buttons reflect the current theme and font selections on load.
+            updateThemeButtons();
+            updateFontButtons();
+            ensureModeWiring();
+          
+          </script>
+          '''
+          js_replacement = '''    // Ensure option buttons reflect the current theme and font selections on load.
+            updateThemeButtons();
+            updateFontButtons();
+            ensureModeWiring();
+
+            // IELTS Pabs animated logo
+            function initAnimatedLogo() {
+              const logoNodes = document.querySelectorAll('.logo.home-link, .logo-link .logo');
+              if (!logoNodes.length) return;
+              const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+              logoNodes.forEach((logoNode) => {
+                const rawText = (logoNode.textContent || '').trim();
+                if (rawText !== 'IELTS Pabs') return;
+
+                logoNode.setAttribute('aria-label', 'IELTS Pabs');
+
+                const fragment = document.createDocumentFragment();
+                Array.from(rawText).forEach((char, index) => {
+                  const span = document.createElement('span');
+                  span.className = 'logo-char';
+                  span.setAttribute('aria-hidden', 'true');
+                  span.style.setProperty('--logo-char-index', String(index));
+                  span.textContent = char === ' ' ? '\u00a0' : char;
+                  fragment.appendChild(span);
+                });
+
+                logoNode.textContent = '';
+                logoNode.appendChild(fragment);
+
+                if (reducedMotion) {
+                  logoNode.classList.remove('is-animating');
+                  return;
+                }
+
+                logoNode.addEventListener('mouseenter', () => {
+                  logoNode.classList.remove('is-animating');
+                  void logoNode.offsetWidth;
+                  logoNode.classList.add('is-animating');
+                });
+
+                logoNode.addEventListener('mouseleave', () => {
+                  logoNode.classList.remove('is-animating');
+                });
+              });
+            }
+
+            initAnimatedLogo();
+          
+          </script>
+          '''
+
+          if 'function initAnimatedLogo()' in text or '.logo.is-animating .logo-char' in text:
+              raise SystemExit('Test 4 logo animation already appears to be present')
+          if text.count(css_marker) != 1:
+              raise SystemExit(f'Expected one Test 4 logo CSS marker, found {text.count(css_marker)}')
+          if text.count(js_marker) != 1:
+              raise SystemExit(f'Expected one Test 4 logo JS marker, found {text.count(js_marker)}')
+
+          text = text.replace(css_marker, css_replacement, 1)
+          text = text.replace(js_marker, js_replacement, 1)
+          path.write_text(text, encoding='utf-8')
+          PY
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add "general-training/cambridge-19/test-4/IELTS19 Test 4 - Reading - GT.html"
+          git commit -m "Restore Test 4 logo animation"
+          git push origin HEAD:fix/gt19-test4-logo-animation
