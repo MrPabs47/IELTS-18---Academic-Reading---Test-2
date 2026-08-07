@@ -29,6 +29,7 @@ async function layoutSnapshot(page) {
     const hosts = Array.from(feedbacks.querySelectorAll(':scope > .question-block.feedback-only')).map(node => {
       const style = getComputedStyle(node);
       return {
+        question: node.getAttribute('data-q'),
         rect: rect(node),
         marginTop: style.marginTop,
         marginBottom: style.marginBottom,
@@ -38,16 +39,27 @@ async function layoutSnapshot(page) {
         borderBottomWidth: style.borderBottomWidth,
         visibleCards: Array.from(node.querySelectorAll('.reading-shell-study-feedback-card')).filter(card => Boolean(
           card.offsetWidth || card.offsetHeight || card.getClientRects().length
-        )).length
+        )).length,
+        html: node.innerHTML.slice(0, 500)
       };
     });
+    const reveal = document.querySelector('#study-instruction-s3-summary .reading-shell-study-reveal-button');
     return {
+      mode: typeof mode === 'string' ? mode : null,
+      shellStatus: window.ReadingFeatureShell && window.ReadingFeatureShell.getStatus ? window.ReadingFeatureShell.getStatus() : null,
+      reveal: reveal ? {
+        hidden: reveal.hidden,
+        disabled: reveal.disabled,
+        expanded: reveal.getAttribute('aria-expanded'),
+        text: reveal.textContent
+      } : null,
       box: rect(box),
       feedbacks: rect(feedbacks),
       hosts,
       visibleCards: Array.from(feedbacks.querySelectorAll('.reading-shell-study-feedback-card')).filter(card => Boolean(
         card.offsetWidth || card.offsetHeight || card.getClientRects().length
-      )).length
+      )).length,
+      totalCardsAnywhere: document.querySelectorAll('.reading-shell-study-feedback-card').length
     };
   });
 }
@@ -80,18 +92,20 @@ async function layoutSnapshot(page) {
     studyPage.on('pageerror', error => pageErrors.push(`study: ${String(error)}`));
     await enterMode(studyPage, 'study');
 
+    const beforeReveal = await layoutSnapshot(studyPage);
     const summaryReveal = studyPage.locator('#study-instruction-s3-summary .reading-shell-study-reveal-button');
     await summaryReveal.waitFor({ state: 'visible' });
     await summaryReveal.click();
-    await studyPage.waitForFunction(() => Array.from(
-      document.querySelectorAll('.summary-feedbacks .reading-shell-study-feedback-card')
-    ).some(card => Boolean(card.offsetWidth || card.offsetHeight || card.getClientRects().length)));
+    await studyPage.waitForTimeout(800);
+    const afterReveal = await layoutSnapshot(studyPage);
 
-    const expanded = await layoutSnapshot(studyPage);
-    assert.equal(expanded.visibleCards, 5, 'All five summary answers must still render detailed feedback cards.');
-    assert.ok(expanded.feedbacks.height > 0, 'The feedback area must expand when feedback is intentionally shown.');
-    assert.ok(expanded.box.height > compact.box.height, 'The summary box must grow naturally to contain shown feedback.');
-    for (const host of expanded.hosts) {
+    console.log('BEFORE_REVEAL', JSON.stringify(beforeReveal, null, 2));
+    console.log('AFTER_REVEAL', JSON.stringify(afterReveal, null, 2));
+
+    assert.equal(afterReveal.visibleCards, 5, 'All five summary answers must still render detailed feedback cards.');
+    assert.ok(afterReveal.feedbacks.height > 0, 'The feedback area must expand when feedback is intentionally shown.');
+    assert.ok(afterReveal.box.height > compact.box.height, 'The summary box must grow naturally to contain shown feedback.');
+    for (const host of afterReveal.hosts) {
       assert.equal(host.marginTop, '0px');
       assert.equal(host.marginBottom, '0px');
       assert.equal(host.paddingTop, '0px');
@@ -100,7 +114,7 @@ async function layoutSnapshot(page) {
     }
 
     assert.deepEqual(pageErrors, [], `Unexpected browser errors: ${pageErrors.join(' | ')}`);
-    console.log(JSON.stringify({ compact, expanded }, null, 2));
+    console.log(JSON.stringify({ compact, afterReveal }, null, 2));
     console.log('PASS Test 1 summary stays compact until Questions 33–37 feedback is shown');
   } finally {
     await browser.close();
