@@ -22,7 +22,7 @@ This is the short pass/fail specification for every General Training Reading pro
 - [ ] Task instructions and word limits are recorded exactly.
 - [ ] Answer key, accepted variants, evaluator and GT band conversion are confirmed.
 - [ ] Native and custom answer-control shapes are inventoried.
-- [ ] Target is compared against GT19 Test 2 direct integration and GT19 Test 1 legacy integration.
+- [ ] Target is compared against the validated Cambridge 19 GT Tests 1–4 behavioural reference set; Test 2 is the direct-integration reference and Test 1 the legacy-adapter reference.
 - [ ] Shared-shell mount ancestry is recorded, including whether dialogs are mounted inside a header or toolbar container.
 - [ ] Header, toolbar and responsive selectors that may affect nested shared-shell UI are inventoried.
 - [ ] Read-only audit reports exact gaps, allowed paths and genuine blockers.
@@ -80,7 +80,7 @@ This is the short pass/fail specification for every General Training Reading pro
 - [ ] Score guide opens with its full title, introduction, table columns and all rows readable across the dialog width.
 - [ ] Answer Key has Q1–40 entries.
 - [ ] Answer Key opens at normal width without clipping, squeezed columns or inherited one-line layout.
-- [ ] Every exact task group has strategy information.
+- [ ] Every exact task group has visible strategy information/ⓘ controls in Study Mode.
 - [ ] Q1–40 neutral feedback cards are available.
 - [ ] Every card shows Correct answer, Why and Skill.
 - [ ] No visible Evidence row appears.
@@ -124,7 +124,7 @@ This is the short pass/fail specification for every General Training Reading pro
 - [ ] Leave/reload protection starts with the test.
 - [ ] Score guide is hidden.
 - [ ] Answer Key is hidden.
-- [ ] Strategies and feedback cards are hidden.
+- [ ] Strategies, feedback cards and all Study information/ⓘ controls are hidden; zero such controls are visually present during the active Test.
 - [ ] Clue buttons and section clue control are hidden.
 - [ ] Scores, band and section totals are hidden.
 - [ ] Answer and section navigation work.
@@ -143,9 +143,10 @@ This is the short pass/fail specification for every General Training Reading pro
 - [ ] Submit controls are disabled.
 - [ ] Results reopen without rescoring.
 - [ ] Closing results reveals the intended locked review.
-- [ ] Answer Key, score guide, feedback and clues become available.
+- [ ] Study information/ⓘ controls, Answer Key, score guide, feedback and clues become available again.
 - [ ] Newly available completed-Test dialogs open without clipping or inherited header layout.
 - [ ] Feedback derives from the submitted result, not mutable live answers.
+- [ ] A blank/low-score submission initialises completed-Test feedback and displays `Submitted band: Below 3.` under the current contract.
 - [ ] Section and question navigation remain available.
 - [ ] Highlights and notes remain usable where approved.
 - [ ] Answers remain locked through section changes and result reopen.
@@ -199,6 +200,8 @@ This is the short pass/fail specification for every General Training Reading pro
 ## L. Scoring and special controls
 
 - [ ] GT band conversion is used, not Academic conversion.
+- [ ] Under the current project contract, 0–8 returns/displays `Below 3` and 9–11 returns/displays Band 3.
+- [ ] `Below 3` round-trips through evaluator, result overlay, submitted-result snapshot/parser, Score guide and submitted Score feedback.
 - [ ] Section denominators match the target ranges.
 - [ ] Case and whitespace normalisation match the page evaluator.
 - [ ] Alternative spellings and number formats match accepted variants.
@@ -220,6 +223,7 @@ This is the short pass/fail specification for every General Training Reading pro
 - [ ] IELTS Pabs logo is mouse and keyboard operable.
 - [ ] Logo route returns to `../../../index.html` or the audited canonical relative route.
 - [ ] Active Test leave warning appears before home navigation.
+- [ ] Established per-letter logo hover animation works without breaking the home route and honours reduced-motion preferences.
 
 ## N. Highlights and notes
 
@@ -238,6 +242,7 @@ This is the short pass/fail specification for every General Training Reading pro
 - [ ] Multiple short texts are visually separated and readable.
 - [ ] Long Section 3 text remains readable.
 - [ ] Inline completions wrap naturally.
+- [ ] Hidden/unrevealed feedback hosts contribute zero unexplained vertical gap; revealing feedback expands normally and hiding it contracts normally.
 - [ ] Matching, tables, flow charts and drag/drop controls do not overflow.
 - [ ] Approximately 390 px width passes.
 - [ ] Black-on-white theme passes.
@@ -267,11 +272,12 @@ This is the short pass/fail specification for every General Training Reading pro
 - [ ] No trio leaves the reasonable questions `But why?`, `Which words matter?` or `What do I do next time?` unanswered.
 - [ ] Task-group coverage validator passes.
 - [ ] Text-root and clue-target validator passes.
-- [ ] Browser lifecycle test covers Fresh/checked Study and Fresh/completed Test.
+- [ ] Browser lifecycle test covers Fresh/checked Study and Fresh/completed Test, explicitly asserting Study-info visible → active-Test hidden → submitted-Test visible.
+- [ ] A blank/low-score completed-Test case verifies `Below 3` feedback initialises successfully.
 - [ ] Browser test verifies 40 cards, 40 Why, 40 Skill, zero visible Evidence and 40 enabled clues.
 - [ ] Any test-specific header, toolbar or responsive CSS change triggers the shared-dialog smoke matrix.
 - [ ] Shared-dialog smoke matrix opens Score guide, Answer Key and score feedback and verifies complete visible content rather than button presence only.
-- [ ] Custom-control locking is executable where present.
+- [ ] Where present, matching/drag-drop QA exercises real drag, click-to-place, keyboard placement, repeated-letter reuse and Clear/reset before verifying submitted locking.
 - [ ] Native fullscreen/browser limitations are reported separately from product defects.
 - [ ] `git diff --check` passes.
 
@@ -285,9 +291,12 @@ This is the short pass/fail specification for every General Training Reading pro
 - [ ] All sections visited.
 - [ ] Every independent source text reviewed.
 - [ ] Representative early, middle and late clue buttons checked.
-- [ ] Highlighted clue spans are neither misleadingly short nor unnecessarily broad.
+- [ ] Highlighted clue spans are neither misleadingly short nor unnecessarily broad, and representative clues pass the self-contained question + clue(s) + Why test.
 - [ ] Section-level clue control checked in each section/context.
-- [ ] Custom matching/drag/drop locking checked.
+- [ ] Where present, matching/drag-drop is actually used via its supported drag/click/keyboard/reuse/Clear paths before submitted locking is checked.
+- [ ] Active Test shows zero visible Study information/ⓘ controls; completed Test restores them.
+- [ ] Blank/low-score submission shows `Below 3` in results and submitted Score feedback.
+- [ ] Hidden feedback hosts show no dead vertical space before reveal.
 - [ ] Score guide opened and fully inspected in Fresh Study.
 - [ ] Answer Key opened and fully inspected in Fresh Study.
 - [ ] Score-feedback dialog opened and fully inspected after a Study check or final Test submission.
@@ -296,7 +305,7 @@ This is the short pass/fail specification for every General Training Reading pro
 - [ ] Approximately 390 px checked.
 - [ ] Extra-large text checked.
 - [ ] All three themes checked.
-- [ ] Home route checked.
+- [ ] Home route, leave warning, keyboard activation and logo hover animation checked.
 - [ ] Live Hub link opens the canonical target page.
 - [ ] Console is clean.
 
@@ -309,6 +318,9 @@ This is the short pass/fail specification for every General Training Reading pro
 - [ ] Branch is pushed after authentication is confirmed.
 - [ ] PR targets `main`.
 - [ ] PR changed-file list is correct.
+- [ ] Live Hub Safety Guard passes.
+- [ ] Protected reference fingerprints are refreshed only after the relevant Reading validation passes and only for deliberately changed reference files.
+- [ ] Unrelated Live Hub contract repair, activation or seasonal work is kept in a separate PR.
 - [ ] Validation and environment limitations are documented.
 - [ ] Unrelated tests and Live Hub files are unchanged unless explicitly authorised.
 - [ ] PR is squash-merged after checks and mergeability review.

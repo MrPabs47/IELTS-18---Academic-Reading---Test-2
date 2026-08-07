@@ -5,7 +5,7 @@
 **Core releases:** PR #379 and PR #381  
 **Stabilisation releases:** PR #387, PR #389 and PR #392  
 **Focused regression release:** PR #436 — Test 3 header CSS inheritance and Study-dialog containment  
-**Current reference commit:** `94455b5135879d06e514388a2ba9341bb3273144`  
+**Current reference commit:** `a52f6f9e67059e5c337167bc9091efb6fce8adda`  
 **Prepared:** 2 August 2026  
 **Updated:** 8 August 2026
 
@@ -72,7 +72,7 @@ A genuine shared-shell blocker may justify one extra tightly scoped task. Repeat
 
 ### 1.1 Canonical shared Reading shell
 
-Both reference tests use the project’s shared Reading assets:
+All four reference tests use the project’s shared Reading assets:
 
 - `academic/shared/reading-feature-shell.css`
 - `academic/shared/reading-feature-shell-core.js`
@@ -1177,7 +1177,8 @@ If an item already works, preserve it. Do not redesign working behaviour merely 
 - define exact task groups;
 - write Correct answer, Why and Skill for Q1–40;
 - map exact internal evidence targets to the correct text roots;
-- apply the Aha test to every clue/Why/Skill trio;
+- apply the self-contained Aha test to every clue/Why/Skill trio: question + clue(s) + Why must explain the answer without surrounding passage context;
+- prefer one complete clue sentence, or two short connected sentences where the logic genuinely crosses a sentence boundary;
 - ensure each clue is the shortest complete evidence span, not simply the shortest possible span;
 - set `showEvidenceText: false`;
 - activate complete coverage only after validation.
@@ -1189,8 +1190,11 @@ If an item already works, preserve it. Do not redesign working behaviour merely 
 - confirm 40 cards, 40 Why, 40 Skill, zero visible Evidence, 40 clues;
 - open and inspect Score guide, Answer Key and score feedback;
 - repeat the dialog smoke matrix after any header, toolbar, mount or responsive CSS change;
-- confirm Test locking including custom controls;
-- check desktop/mobile/themes/text size/home route/console;
+- confirm Study information/ⓘ controls are visible in Study, absent during the active Test and restored after Test submission;
+- submit a blank/low-score Test and confirm `Below 3` reaches submitted Score feedback;
+- exercise real matching/drag-drop interaction where present, then confirm final locking including custom controls;
+- check hidden feedback hosts for zero dead spacing before reveal;
+- check desktop/mobile/themes/text size/home route/logo animation/console;
 - run syntax checks and `git diff --check`;
 - verify exact changed paths;
 - record visual approval.
@@ -1202,6 +1206,9 @@ If an item already works, preserve it. Do not redesign working behaviour merely 
 - push;
 - PR to `main`;
 - verify checks and mergeability;
+- run the Live Hub Safety Guard;
+- refresh protected reference fingerprints only after the relevant Reading validation passes and only for deliberately changed references;
+- keep unrelated Hub repair/activation work in separate PRs;
 - squash merge;
 - verify `origin/main` and Live Hub route;
 - clean branch/worktree.
