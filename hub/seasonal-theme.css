@@ -64,3 +64,143 @@ body[data-test-view="general"] .pathway.academic {
     gap:80px;
   }
 }
+
+/*
+  Preview: make the real skill links read as the clickable controls.
+
+  Design intent:
+  - available Academic rows carry a calm purple tint at rest;
+  - available GT rows carry a calm blue tint at rest;
+  - shared Listening uses a restrained purple/blue tint;
+  - Coming soon rows stay neutral grey;
+  - hover/focus strengthens the colour without the cursor-following glow;
+  - the pathway headings remain the strongest colour labels, not controls.
+*/
+.skill-row.available::before,
+.skill-row.available::after {
+  opacity:0 !important;
+}
+
+.skill-row.available[data-glow="academic"] {
+  --row-bg:linear-gradient(135deg,rgba(114,4,163,.17),rgba(114,4,163,.08)),#15171a;
+  border-color:rgba(165,58,214,.32);
+  box-shadow:inset 2px 0 0 rgba(165,58,214,.62);
+}
+
+.skill-row.available[data-glow="general"] {
+  --row-bg:linear-gradient(135deg,rgba(0,98,163,.18),rgba(0,98,163,.08)),#15171a;
+  border-color:rgba(39,153,214,.32);
+  box-shadow:inset 2px 0 0 rgba(39,153,214,.62);
+}
+
+.skill-row.available[data-glow="shared"] {
+  --row-bg:linear-gradient(110deg,rgba(114,4,163,.09),rgba(0,98,163,.14)),#15171a;
+  border-color:rgba(91,119,190,.28);
+  box-shadow:inset 2px 0 0 rgba(91,119,190,.52);
+}
+
+@media(hover:hover) and (pointer:fine) {
+  .skill-row.available:hover {
+    transform:none;
+    outline:none;
+  }
+
+  .skill-row.available[data-glow="academic"]:hover {
+    --row-bg:linear-gradient(135deg,rgba(114,4,163,.34),rgba(114,4,163,.18)),#17121a;
+    border-color:rgba(165,58,214,.72);
+    box-shadow:inset 3px 0 0 rgba(165,58,214,.92),0 7px 18px rgba(114,4,163,.12);
+  }
+
+  .skill-row.available[data-glow="general"]:hover {
+    --row-bg:linear-gradient(135deg,rgba(0,98,163,.36),rgba(0,98,163,.18)),#11171b;
+    border-color:rgba(39,153,214,.72);
+    box-shadow:inset 3px 0 0 rgba(39,153,214,.92),0 7px 18px rgba(0,98,163,.12);
+  }
+
+  .skill-row.available[data-glow="shared"]:hover {
+    --row-bg:linear-gradient(110deg,rgba(114,4,163,.18),rgba(0,98,163,.27)),#14171c;
+    border-color:rgba(91,119,190,.60);
+    box-shadow:inset 3px 0 0 rgba(91,119,190,.82),0 7px 18px rgba(65,92,168,.10);
+  }
+}
+
+.skill-row.available[data-glow="academic"]:focus-visible {
+  --row-bg:linear-gradient(135deg,rgba(114,4,163,.34),rgba(114,4,163,.18)),#17121a;
+  border-color:rgba(165,58,214,.78);
+  box-shadow:inset 3px 0 0 rgba(165,58,214,.96),0 0 0 2px rgba(165,58,214,.22);
+  transform:none;
+}
+
+.skill-row.available[data-glow="general"]:focus-visible {
+  --row-bg:linear-gradient(135deg,rgba(0,98,163,.36),rgba(0,98,163,.18)),#11171b;
+  border-color:rgba(39,153,214,.78);
+  box-shadow:inset 3px 0 0 rgba(39,153,214,.96),0 0 0 2px rgba(39,153,214,.22);
+  transform:none;
+}
+
+.skill-row.available[data-glow="shared"]:focus-visible {
+  --row-bg:linear-gradient(110deg,rgba(114,4,163,.18),rgba(0,98,163,.27)),#14171c;
+  border-color:rgba(91,119,190,.68);
+  box-shadow:inset 3px 0 0 rgba(91,119,190,.88),0 0 0 2px rgba(91,119,190,.20);
+  transform:none;
+}
+
+/* Light-mode equivalents: coloured enough to signal action, still calm. */
+html[data-theme="light"] body .skill-row.available[data-glow="academic"] {
+  --row-bg:linear-gradient(135deg,#f7effa,#fdf9ff);
+  border-color:#ddc3ea;
+  color:#38233f;
+  box-shadow:inset 2px 0 0 rgba(114,4,163,.52);
+}
+
+html[data-theme="light"] body .skill-row.available[data-glow="general"] {
+  --row-bg:linear-gradient(135deg,#eef7fc,#fbfdff);
+  border-color:#c5ddec;
+  color:#203543;
+  box-shadow:inset 2px 0 0 rgba(0,98,163,.52);
+}
+
+html[data-theme="light"] body .skill-row.available[data-glow="shared"] {
+  --row-bg:linear-gradient(110deg,#f7f1fa,#eef7fc);
+  border-color:#d4dbea;
+  color:#293342;
+  box-shadow:inset 2px 0 0 rgba(91,119,190,.44);
+}
+
+@media(hover:hover) and (pointer:fine) {
+  html[data-theme="light"] body .skill-row.available[data-glow="academic"]:hover {
+    --row-bg:linear-gradient(135deg,#ecdaf4,#f8edf9);
+    border-color:#b47acb;
+    box-shadow:inset 3px 0 0 rgba(114,4,163,.82),0 7px 18px rgba(114,4,163,.08);
+  }
+
+  html[data-theme="light"] body .skill-row.available[data-glow="general"]:hover {
+    --row-bg:linear-gradient(135deg,#dceefa,#eef7fc);
+    border-color:#75add0;
+    box-shadow:inset 3px 0 0 rgba(0,98,163,.82),0 7px 18px rgba(0,98,163,.08);
+  }
+
+  html[data-theme="light"] body .skill-row.available[data-glow="shared"]:hover {
+    --row-bg:linear-gradient(110deg,#eee0f4,#dfeefa);
+    border-color:#98a9d1;
+    box-shadow:inset 3px 0 0 rgba(91,119,190,.74),0 7px 18px rgba(65,92,168,.07);
+  }
+}
+
+html[data-theme="light"] body .skill-row.available[data-glow="academic"]:focus-visible {
+  --row-bg:linear-gradient(135deg,#ecdaf4,#f8edf9);
+  border-color:#a862c2;
+  box-shadow:inset 3px 0 0 rgba(114,4,163,.88),0 0 0 2px rgba(114,4,163,.14);
+}
+
+html[data-theme="light"] body .skill-row.available[data-glow="general"]:focus-visible {
+  --row-bg:linear-gradient(135deg,#dceefa,#eef7fc);
+  border-color:#5d9fc8;
+  box-shadow:inset 3px 0 0 rgba(0,98,163,.88),0 0 0 2px rgba(0,98,163,.14);
+}
+
+html[data-theme="light"] body .skill-row.available[data-glow="shared"]:focus-visible {
+  --row-bg:linear-gradient(110deg,#eee0f4,#dfeefa);
+  border-color:#8498c9;
+  box-shadow:inset 3px 0 0 rgba(91,119,190,.80),0 0 0 2px rgba(91,119,190,.14);
+}
