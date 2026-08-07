@@ -1,7 +1,7 @@
 (() => {
   const TEST_TITLE = "IELTS 19 Academic Writing Test 2";
   const TEACHER_EMAIL = "pablo.jaramillo@ilsc.com.au";
-  const TASK_IMAGE = "porth-harbour-enhanced.png";
+  const TASK_IMAGE = "porth-harbour-tiled.svg";
 
   document.title = TEST_TITLE;
   document.querySelector("#modeScreenInner h1")?.replaceChildren(TEST_TITLE);
