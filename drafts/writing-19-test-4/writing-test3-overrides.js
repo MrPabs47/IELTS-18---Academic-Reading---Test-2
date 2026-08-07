@@ -1,7 +1,13 @@
 (() => {
   const TEST_TITLE = "IELTS 19 Academic Writing Test 4";
   const TEACHER_EMAIL = "pablo.jaramillo@ilsc.com.au";
-  const DANCE_IMAGE = "dance-classes.avif?v=20260808-t4";
+  const DANCE_CHUNKS = [
+    "dance-image.b64.0",
+    "dance-image.b64.1",
+    "dance-image.b64.2",
+    "dance-image.b64.3",
+    "dance-image.b64.4"
+  ];
 
   document.title = TEST_TITLE;
   document.querySelector("#modeScreenInner h1")?.replaceChildren(TEST_TITLE);
@@ -76,21 +82,43 @@
     }
   };
 
+  let danceDataUrlPromise = null;
+
+  function loadDanceDataUrl() {
+    if (!danceDataUrlPromise) {
+      danceDataUrlPromise = Promise.all(
+        DANCE_CHUNKS.map((path) => fetch(`${path}?v=20260808-t4`, { cache: "force-cache" }).then((response) => {
+          if (!response.ok) throw new Error(`Image chunk failed: ${path} (${response.status})`);
+          return response.text();
+        }))
+      ).then((parts) => `data:image/avif;base64,${parts.map((part) => part.trim()).join("")}`);
+    }
+    return danceDataUrlPromise;
+  }
+
   function hydrateDanceImage() {
     const image = document.querySelector("#taskImage[data-dance-image]");
-    if (!image || image.dataset.hydrating === "true" || image.dataset.loaded === "true") return;
+    if (!image || image.dataset.hydrating === "true" || image.src.startsWith("data:image/avif")) return;
+
     image.dataset.hydrating = "true";
     image.setAttribute("aria-busy", "true");
-    image.addEventListener("load", () => {
-      image.dataset.loaded = "true";
-      image.removeAttribute("aria-busy");
-    }, { once: true });
-    image.addEventListener("error", () => {
+
+    loadDanceDataUrl().then((src) => {
+      if (!document.body.contains(image)) return;
+      image.addEventListener("load", () => {
+        image.dataset.loaded = "true";
+        image.removeAttribute("aria-busy");
+      }, { once: true });
+      image.addEventListener("error", () => {
+        image.dataset.loadError = "true";
+        image.removeAttribute("aria-busy");
+      }, { once: true });
+      image.src = src;
+    }).catch((error) => {
       image.dataset.loadError = "true";
       image.removeAttribute("aria-busy");
-      console.error("Failed to load the dance classes charts.");
-    }, { once: true });
-    image.src = DANCE_IMAGE;
+      console.error("Failed to load the dance classes charts.", error);
+    });
   }
 
   const baseRenderTask = renderTask;
