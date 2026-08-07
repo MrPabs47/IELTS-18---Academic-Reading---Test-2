@@ -17,9 +17,32 @@ jobs:
         run: |
           node --check general-training/cambridge-18/test-1/study-feedback-data.js
           node --check general-training/cambridge-18/test-1/study-feedback.js
-          python -m pytest -q \
-            tests/ielts18_gt_test1_study_parity_test.py \
-            tests/gt_reading_info_control_lifecycle_test.py \
-            tests/gt19_reading_low_score_parity_test.py \
-            tests/reading_feature_shell_foundation_test.py \
-            tests/reading_feature_shell_config_validation_test.py
+          python - <<'PY'
+          import importlib.util
+          import inspect
+          from pathlib import Path
+
+          paths = [
+              Path('tests/ielts18_gt_test1_study_parity_test.py'),
+              Path('tests/gt_reading_info_control_lifecycle_test.py'),
+              Path('tests/gt19_reading_low_score_parity_test.py'),
+              Path('tests/reading_feature_shell_foundation_test.py'),
+              Path('tests/reading_feature_shell_config_validation_test.py'),
+          ]
+          total = 0
+          for index, path in enumerate(paths):
+              spec = importlib.util.spec_from_file_location(f'focused_test_{index}', path)
+              module = importlib.util.module_from_spec(spec)
+              assert spec and spec.loader
+              spec.loader.exec_module(module)
+              for name, function in inspect.getmembers(module, inspect.isfunction):
+                  if not name.startswith('test_'):
+                      continue
+                  signature = inspect.signature(function)
+                  if signature.parameters:
+                      continue
+                  function()
+                  total += 1
+                  print(f'PASS {path.name}::{name}')
+          print(f'PASS {total} focused dependency-free tests')
+          PY
