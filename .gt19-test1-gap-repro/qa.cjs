@@ -29,7 +29,6 @@ async function layoutSnapshot(page) {
     const hosts = Array.from(feedbacks.querySelectorAll(':scope > .question-block.feedback-only')).map(node => {
       const style = getComputedStyle(node);
       return {
-        question: node.getAttribute('data-q'),
         rect: rect(node),
         marginTop: style.marginTop,
         marginBottom: style.marginBottom,
@@ -39,29 +38,29 @@ async function layoutSnapshot(page) {
         borderBottomWidth: style.borderBottomWidth,
         visibleCards: Array.from(node.querySelectorAll('.reading-shell-study-feedback-card')).filter(card => Boolean(
           card.offsetWidth || card.offsetHeight || card.getClientRects().length
-        )).length,
-        html: node.innerHTML.slice(0, 500)
+        )).length
       };
     });
     const reveal = document.querySelector('#study-instruction-s3-summary .reading-shell-study-reveal-button');
     return {
-      mode: typeof mode === 'string' ? mode : null,
-      shellStatus: window.ReadingFeatureShell && window.ReadingFeatureShell.getStatus ? window.ReadingFeatureShell.getStatus() : null,
-      reveal: reveal ? {
-        hidden: reveal.hidden,
-        disabled: reveal.disabled,
-        expanded: reveal.getAttribute('aria-expanded'),
-        text: reveal.textContent
-      } : null,
+      revealExpanded: reveal ? reveal.getAttribute('aria-expanded') : null,
       box: rect(box),
       feedbacks: rect(feedbacks),
       hosts,
       visibleCards: Array.from(feedbacks.querySelectorAll('.reading-shell-study-feedback-card')).filter(card => Boolean(
         card.offsetWidth || card.offsetHeight || card.getClientRects().length
-      )).length,
-      totalCardsAnywhere: document.querySelectorAll('.reading-shell-study-feedback-card').length
+      )).length
     };
   });
+}
+
+function assertZeroHostChrome(host) {
+  assert.equal(host.marginTop, '0px');
+  assert.equal(host.marginBottom, '0px');
+  assert.equal(host.paddingTop, '0px');
+  assert.equal(host.paddingBottom, '0px');
+  assert.equal(host.borderTopWidth, '0px');
+  assert.equal(host.borderBottomWidth, '0px');
 }
 
 (async () => {
@@ -79,12 +78,7 @@ async function layoutSnapshot(page) {
     assert.equal(compact.feedbacks.height, 0, 'Hidden feedback hosts must not reserve empty vertical space.');
     for (const host of compact.hosts) {
       assert.equal(host.rect.height, 0, 'An empty feedback host must collapse to zero height.');
-      assert.equal(host.marginTop, '0px');
-      assert.equal(host.marginBottom, '0px');
-      assert.equal(host.paddingTop, '0px');
-      assert.equal(host.paddingBottom, '0px');
-      assert.equal(host.borderTopWidth, '0px');
-      assert.equal(host.borderBottomWidth, '0px');
+      assertZeroHostChrome(host);
     }
 
     const studyPage = await browser.newPage({ viewport: { width: 1660, height: 936 } });
@@ -92,30 +86,33 @@ async function layoutSnapshot(page) {
     studyPage.on('pageerror', error => pageErrors.push(`study: ${String(error)}`));
     await enterMode(studyPage, 'study');
 
-    const beforeReveal = await layoutSnapshot(studyPage);
     const summaryReveal = studyPage.locator('#study-instruction-s3-summary .reading-shell-study-reveal-button');
     await summaryReveal.waitFor({ state: 'visible' });
-    await summaryReveal.click();
-    await studyPage.waitForTimeout(800);
-    const afterReveal = await layoutSnapshot(studyPage);
+    let shown = await layoutSnapshot(studyPage);
+    if (shown.revealExpanded !== 'true') {
+      await summaryReveal.click();
+      await studyPage.waitForTimeout(300);
+      shown = await layoutSnapshot(studyPage);
+    }
 
-    console.log('BEFORE_REVEAL', JSON.stringify(beforeReveal, null, 2));
-    console.log('AFTER_REVEAL', JSON.stringify(afterReveal, null, 2));
-
-    assert.equal(afterReveal.visibleCards, 5, 'All five summary answers must still render detailed feedback cards.');
-    assert.ok(afterReveal.feedbacks.height > 0, 'The feedback area must expand when feedback is intentionally shown.');
-    assert.ok(afterReveal.box.height > compact.box.height, 'The summary box must grow naturally to contain shown feedback.');
-    for (const host of afterReveal.hosts) {
-      assert.equal(host.marginTop, '0px');
-      assert.equal(host.marginBottom, '0px');
-      assert.equal(host.paddingTop, '0px');
-      assert.equal(host.paddingBottom, '0px');
+    assert.equal(shown.visibleCards, 5, 'All five summary answers must still render detailed feedback cards.');
+    assert.ok(shown.feedbacks.height > 0, 'The feedback area must expand when feedback is intentionally shown.');
+    assert.ok(shown.box.height > compact.box.height, 'The summary box must grow naturally to contain shown feedback.');
+    for (const host of shown.hosts) {
+      assertZeroHostChrome(host);
       assert.equal(host.visibleCards, 1, 'Each question host must retain its own feedback card.');
     }
 
+    await summaryReveal.click();
+    await studyPage.waitForTimeout(300);
+    const hiddenAgain = await layoutSnapshot(studyPage);
+    assert.equal(hiddenAgain.visibleCards, 0, 'Hiding feedback must remove the detailed cards.');
+    assert.equal(hiddenAgain.feedbacks.height, 0, 'The feedback area must collapse again without leaving a gap.');
+    assert.ok(hiddenAgain.box.height < 340, 'The summary must return to its compact content height after feedback closes.');
+
     assert.deepEqual(pageErrors, [], `Unexpected browser errors: ${pageErrors.join(' | ')}`);
-    console.log(JSON.stringify({ compact, afterReveal }, null, 2));
-    console.log('PASS Test 1 summary stays compact until Questions 33–37 feedback is shown');
+    console.log(JSON.stringify({ compact, shown, hiddenAgain }, null, 2));
+    console.log('PASS Test 1 summary remains compact while detailed Questions 33–37 feedback still expands normally');
   } finally {
     await browser.close();
   }
