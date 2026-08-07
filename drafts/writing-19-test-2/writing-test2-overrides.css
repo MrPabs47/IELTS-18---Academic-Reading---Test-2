@@ -4,6 +4,12 @@
   font-style: italic;
 }
 
+/* The shared Writing refinement injects the Test 2 sugar-cane image into #taskImage.
+   Reset it here so this test can render the harbour slices inside that element. */
+#taskImage {
+  content: normal !important;
+}
+
 .task-visual {
   margin-top: 12px;
   display: flex;
