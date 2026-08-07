@@ -1,0 +1,217 @@
+name: QA IELTS 18 GT Test 1 Study integration v3
+
+on:
+  push:
+    paths:
+      - '.gt18-test1-qa-v3-trigger'
+
+jobs:
+  browser:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: feature/ielts18-gt-test1-study-feedback
+      - name: Install browser runtime
+        shell: bash
+        run: |
+          npm init -y >/dev/null 2>&1
+          npm install --no-save playwright@1.55.0 >/dev/null 2>&1
+          npx playwright install --with-deps chromium >/dev/null 2>&1
+      - name: Run browser parity QA
+        shell: bash
+        run: |
+          python3 -m http.server 8000 >/tmp/gt18-server.log 2>&1 &
+          SERVER_PID=$!
+          trap 'kill $SERVER_PID || true' EXIT
+          sleep 2
+          cat >/tmp/gt18-qa.cjs <<'JS'
+          const { chromium } = require(process.cwd() + '/node_modules/playwright');
+          const URL = 'http://127.0.0.1:8000/general-training/cambridge-18/test-1/IELTS18%20Test%201%20-%20Reading%20-%20GT.html';
+          const CLUE = '.reading-shell-study-clue-button';
+          const FEEDBACK = '.reading-shell-study-feedback-card';
+
+          function assert(condition, message) { if (!condition) throw new Error(message); }
+          async function visibleCount(page, selector) {
+            return page.locator(selector).evaluateAll(nodes => nodes.filter(node => {
+              const style = getComputedStyle(node);
+              return !node.hidden && style.display !== 'none' && style.visibility !== 'hidden' && node.getClientRects().length > 0;
+            }).length);
+          }
+          async function openPage(browser, viewport) {
+            const page = await browser.newPage({ viewport });
+            const errors = [];
+            page.on('pageerror', error => errors.push(String(error)));
+            page.on('console', msg => { if (msg.type() === 'error') errors.push('console: ' + msg.text()); });
+            await page.goto(URL, { waitUntil: 'networkidle' });
+            return { page, errors };
+          }
+          async function assertStudySection(page, section, strategies, clues) {
+            await page.evaluate(sectionNumber => switchSection(sectionNumber), section);
+            await page.waitForTimeout(100);
+            assert(await visibleCount(page, '.reading-shell-study-icon-button') === strategies, `Section ${section}: wrong visible strategy count`);
+            assert(await visibleCount(page, CLUE) === clues, `Section ${section}: wrong visible clue count`);
+          }
+          async function assertDialogFits(page, selector, width) {
+            const box = await page.locator(selector).boundingBox();
+            assert(box && box.x >= -1 && box.x + box.width <= width + 1, `${selector} overflows ${width}px viewport`);
+          }
+
+          (async () => {
+            const browser = await chromium.launch({ headless: true });
+
+            // Study desktop: complete resources, all sections, clue highlighting and repeatable check.
+            {
+              const { page, errors } = await openPage(browser, { width: 1440, height: 1000 });
+              await page.locator('.mode-btn[data-mode="study"]').click();
+              await page.waitForTimeout(300);
+              const status = await page.evaluate(() => ReadingFeatureShell.getStatus());
+              assert(status && status.initialized, 'Study shell did not initialise');
+              assert(await page.locator('.reading-shell-study-icon-button').count() === 7, 'Expected seven strategy controls');
+              assert(await page.locator(CLUE).count() === 40, 'Expected forty clue controls');
+              assert(await page.locator(FEEDBACK).count() === 40, 'Expected forty neutral feedback cards');
+              assert(await visibleCount(page, '#candidateNameDisplay') === 0, 'Candidate leaked into Study');
+              await assertStudySection(page, 1, 2, 14);
+              await assertStudySection(page, 2, 2, 13);
+              await assertStudySection(page, 3, 3, 13);
+              await assertStudySection(page, 1, 2, 14);
+
+              await page.locator('.reading-shell-score-guide-button').click();
+              await page.waitForTimeout(80);
+              assert((await page.locator('.reading-shell-score-guide-dialog').innerText()).includes('Below 3'), 'Score guide missing Below 3');
+              await page.keyboard.press('Escape');
+              await page.locator('.reading-shell-answer-key-button').click();
+              await page.waitForTimeout(80);
+              assert((await page.locator('.reading-shell-answer-key-item').count()) === 40, 'Answer Key does not contain 40 items');
+              await page.keyboard.press('Escape');
+
+              await page.locator(`${CLUE}:visible`).first().click();
+              await page.waitForTimeout(120);
+              assert(await page.locator('#text-s1-dry-cleaning .reading-shell-evidence-highlight').count() >= 1, 'Q1 clue did not highlight passage evidence');
+
+              await page.locator('#primarySubmitBtn').click();
+              await page.waitForTimeout(180);
+              assert(await visibleCount(page, FEEDBACK) === 14, 'Checked Study did not keep Section 1 feedback visible');
+              assert(await visibleCount(page, '.reading-shell-study-icon-button') === 2, 'Checked Study lost strategy controls');
+              await page.locator('#primarySubmitBtn').click();
+              await page.waitForTimeout(120);
+              assert(await visibleCount(page, FEEDBACK) === 14, 'Repeated Study check did not remain stable');
+              assert(errors.length === 0, 'Study desktop errors: ' + errors.join(' | '));
+              console.log('PASS Study desktop/resources/recheck');
+              await page.close();
+            }
+
+            // Test lifecycle: no Study chrome, real matching paths, low score and permanent lock.
+            {
+              const { page, errors } = await openPage(browser, { width: 1440, height: 1000 });
+              await page.evaluate(() => {
+                studentName = 'QA Candidate Long Name For Header Truncation';
+                startTest('test');
+                isTestRunning = true;
+              });
+              await page.waitForTimeout(250);
+              assert(await visibleCount(page, '#candidateNameDisplay') === 1, 'Candidate missing in active Test');
+              assert((await page.locator('#candidateNameDisplay').innerText()).startsWith('Candidate: QA Candidate'), 'Candidate header text wrong');
+              assert(await visibleCount(page, '.reading-shell-study-icon-button') === 0, 'Strategy controls leaked into active Test');
+              assert(await visibleCount(page, CLUE) === 0, 'Clue controls leaked into active Test');
+              assert(await visibleCount(page, FEEDBACK) === 0, 'Feedback leaked into active Test');
+              assert(await visibleCount(page, '.reading-shell-score-guide-button') === 0, 'Score guide leaked into active Test');
+              assert(await visibleCount(page, '.reading-shell-answer-key-button') === 0, 'Answer Key leaked into active Test');
+
+              assert(await page.locator('.passage-match-source').count() === 6, 'Expected six Q8–14 sources');
+              assert(await page.locator('.gt-section1-clear').count() === 7, 'Expected seven Clear controls');
+              await page.locator('.passage-match-source[data-value="A"]').click();
+              await page.locator('.drop-zone[data-for="q8"]').click();
+              assert(await page.locator('select[name="q8"]').inputValue() === 'A', 'Click-to-place failed');
+              await page.locator('.drop-zone[data-for="q9"]').focus();
+              await page.keyboard.press('f');
+              assert(await page.locator('select[name="q9"]').inputValue() === 'F', 'Keyboard placement failed');
+              await page.locator('.drop-zone[data-for="q10"]').focus();
+              await page.keyboard.press('a');
+              assert(await page.locator('select[name="q10"]').inputValue() === 'A', 'Repeated-letter placement failed');
+              await page.locator('.drop-zone[data-for="q8"]').locator('..').locator('.gt-section1-clear').click();
+              assert(await page.locator('select[name="q8"]').inputValue() === '', 'Clear failed');
+              await page.locator('.passage-match-source[data-value="B"]').dragTo(page.locator('.drop-zone[data-for="q8"]'));
+              assert(await page.locator('select[name="q8"]').inputValue() === 'B', 'Real drag failed');
+
+              page.once('dialog', dialog => dialog.accept());
+              await page.locator('#primarySubmitBtn').click();
+              await page.waitForTimeout(420);
+              assert(await page.evaluate(() => testSubmitted === true), 'Test did not submit');
+              assert((await page.locator('#bandLine').innerText()).includes('Below 3'), 'Low score did not display Below 3');
+              await page.locator('#resultsCloseBtn').click();
+              await page.waitForTimeout(250);
+
+              assert(await visibleCount(page, '.reading-shell-study-icon-button') === 2, 'Strategies did not return after Test submission');
+              assert(await visibleCount(page, CLUE) === 14, 'Clues did not return after Test submission');
+              assert(await visibleCount(page, FEEDBACK) === 14, 'Feedback did not return after Test submission');
+              assert(await visibleCount(page, '.reading-shell-score-guide-button') === 1, 'Score guide did not return after Test submission');
+              assert(await visibleCount(page, '.reading-shell-answer-key-button') === 1, 'Answer Key did not return after Test submission');
+              assert(await visibleCount(page, '.reading-shell-score-feedback-button') === 1, 'Score feedback did not become available after Test submission');
+
+              await page.locator('.reading-shell-score-feedback-button').click();
+              await page.waitForTimeout(100);
+              const scoreFeedback = await page.locator('.reading-shell-score-feedback-dialog').innerText();
+              assert(scoreFeedback.includes('Submitted band: Below 3.'), 'Submitted score feedback did not preserve Below 3');
+              assert(scoreFeedback.includes('Performance by section'), 'Score feedback did not use Section terminology');
+              await page.keyboard.press('Escape');
+
+              await assertStudySection(page, 2, 2, 13);
+              await assertStudySection(page, 3, 3, 13);
+              await assertStudySection(page, 1, 2, 14);
+
+              assert(await page.locator('#primarySubmitBtn').isDisabled(), 'Primary submit not locked');
+              assert(await page.locator('.gt-section1-clear').evaluateAll(buttons => buttons.every(button => button.disabled)), 'Clear controls not locked');
+              assert(await page.locator('.passage-match-source').evaluateAll(items => items.every(item => item.draggable === false && item.getAttribute('aria-disabled') === 'true')), 'Matching sources not locked');
+              assert(await page.locator('.drop-zone[data-for="q8"]').getAttribute('aria-disabled') === 'true', 'Drop zone not locked');
+              assert(await page.locator('select[name="q8"]').isDisabled(), 'Native matching select not locked');
+              const frozen = await page.locator('select[name="q8"]').inputValue();
+              await page.locator('.passage-match-source[data-value="A"]').click({ force: true }).catch(() => {});
+              await page.locator('.drop-zone[data-for="q8"]').click({ force: true }).catch(() => {});
+              assert(await page.locator('select[name="q8"]').inputValue() === frozen, 'Submitted answer changed after lock');
+              assert(errors.length === 0, 'Test desktop errors: ' + errors.join(' | '));
+              console.log('PASS Test lifecycle/matching/Below3/lock');
+              await page.close();
+            }
+
+            // Narrow + themes + extra-large text dialog containment.
+            {
+              const { page, errors } = await openPage(browser, { width: 390, height: 844 });
+              await page.locator('.mode-btn[data-mode="study"]').click();
+              await page.waitForTimeout(250);
+              for (const theme of ['black-on-white', 'white-on-black', 'yellow-on-black']) {
+                await page.evaluate(value => setTheme(value), theme);
+                await page.evaluate(() => setFontSize('xlarge'));
+                await page.locator('.reading-shell-score-guide-button').click();
+                await page.waitForTimeout(70);
+                await assertDialogFits(page, '.reading-shell-score-guide-dialog', 390);
+                await page.keyboard.press('Escape');
+                await page.locator('.reading-shell-answer-key-button').click();
+                await page.waitForTimeout(70);
+                await assertDialogFits(page, '.reading-shell-answer-key-dialog', 390);
+                await page.keyboard.press('Escape');
+              }
+              assert(errors.length === 0, 'Narrow/theme errors: ' + errors.join(' | '));
+              console.log('PASS narrow/themes/xlarge/dialog containment');
+              await page.close();
+            }
+
+            // Logo keyboard contract. Do not follow home route in this automated page run.
+            {
+              const { page, errors } = await openPage(browser, { width: 1200, height: 800 });
+              await page.locator('.mode-btn[data-mode="study"]').click();
+              const logo = page.locator('.logo.home-link');
+              assert(await logo.getAttribute('tabindex') === '0', 'Logo is not keyboard focusable');
+              assert(await logo.getAttribute('role') === 'link', 'Logo role is not link');
+              assert((await logo.getAttribute('aria-label') || '').toLowerCase().includes('home'), 'Logo lacks home accessible label');
+              assert(errors.length === 0, 'Logo page errors: ' + errors.join(' | '));
+              console.log('PASS logo keyboard contract');
+              await page.close();
+            }
+
+            await browser.close();
+            console.log('PASS IELTS 18 GT Reading Test 1 final browser parity QA');
+          })().catch(error => { console.error(error.stack || error); process.exit(1); });
+          JS
+          node /tmp/gt18-qa.cjs
