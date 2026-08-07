@@ -1,6 +1,36 @@
 (function () {
   "use strict";
 
+  var submittedResultSnapshot = null;
+  var submissionSequence = 0;
+
+  function installIeltsPabsHomeLink() {
+    var HOME_URL = "../../../index.html";
+    var logo = document.querySelector(".top-left .logo");
+    if (!logo || logo.getAttribute("data-home-link-ready") === "true") return;
+
+    logo.removeAttribute("onclick");
+    logo.setAttribute("data-home-link-ready", "true");
+    logo.classList.add("home-link");
+    logo.setAttribute("role", "link");
+    logo.setAttribute("tabindex", "0");
+    logo.setAttribute("title", "Return to home");
+    logo.setAttribute("aria-label", "Return to IELTS Pabs home");
+
+    function confirmGoHome() {
+      var ok = window.confirm("Are you sure you want to leave this test and return to the home page? Your current answers may not be saved.");
+      if (ok) window.location.href = HOME_URL;
+    }
+
+    window.confirmGoHome = confirmGoHome;
+    logo.addEventListener("click", confirmGoHome);
+    logo.addEventListener("keydown", function (event) {
+      if (event.key !== "Enter" && event.key !== " ") return;
+      event.preventDefault();
+      confirmGoHome();
+    });
+  }
+
   document.write('<script src="../../shared/gt-reading-exam-guards.js"><\/script>');
   document.write('<link rel="stylesheet" href="../../../academic/shared/reading-feature-shell.css" />');
   document.write('<script src="study-feedback-data.js"><\/script>');
@@ -104,7 +134,8 @@
       ".gt-test4-header-left #candidateNameDisplay{display:none;max-width:min(24vw,260px);flex:0 1 auto;}",
       ".gt-test4-header-right{gap:12px;min-width:0;flex:0 0 auto;}",
       "#readingFeatureShellMount,#readingFeatureShellMount *{white-space:normal;}",
-      "body[data-gt-mode=test] .reading-shell-study-controls{display:none!important;}",
+      "body[data-gt-mode=test][data-gt-test-submitted=false] .reading-shell-study-controls{display:none!important;}",
+      "body[data-gt-mode=test][data-gt-test-submitted=true] .reading-shell-study-controls{display:inline-flex!important;}",
       "@media(max-width:980px){.gt-test4-header-left{gap:10px}.gt-test4-header-right{gap:8px}.gt-test4-header-left #candidateNameDisplay{max-width:18vw}}"
     ].join("");
     document.head.appendChild(style);
@@ -216,7 +247,10 @@
   function syncModeUi() {
     if (!document.body) return;
     var currentMode = typeof mode === "string" ? mode : "";
+    var submittedTest = currentMode === "test" && Boolean(testSubmitted);
+    var activeTest = currentMode === "test" && !submittedTest;
     document.body.setAttribute("data-gt-mode", currentMode);
+    document.body.setAttribute("data-gt-test-submitted", submittedTest ? "true" : "false");
     var candidate = document.getElementById("candidateNameDisplay");
     if (candidate) {
       var name = typeof studentName === "string" ? studentName.trim() : "";
@@ -227,10 +261,9 @@
       candidate.style.display = showCandidate ? "block" : "none";
     }
     document.querySelectorAll(".reading-shell-study-controls").forEach(function (controls) {
-      var hidden = currentMode === "test";
-      controls.hidden = hidden;
-      controls.style.display = hidden ? "none" : "";
-      controls.setAttribute("aria-hidden", hidden ? "true" : "false");
+      controls.hidden = activeTest;
+      controls.style.display = activeTest ? "none" : "";
+      controls.setAttribute("aria-hidden", activeTest ? "true" : "false");
     });
   }
 
@@ -256,6 +289,29 @@
       scores[question <= 14 ? 1 : question <= 27 ? 2 : 3] += 1;
     }
     return scores;
+  }
+
+  function captureSubmittedResult() {
+    var scores = sectionScores();
+    var outcomes = {};
+    var rawScore = 0;
+    for (var question = 1; question <= 40; question += 1) {
+      outcomes[question] = Boolean(correctFor(question));
+      if (outcomes[question]) rawScore += 1;
+    }
+    submissionSequence += 1;
+    submittedResultSnapshot = {
+      submissionId: "gt19-test4-" + submissionSequence,
+      rawScore: rawScore,
+      band: computeBandScore(rawScore),
+      partScores: {
+        1: { score: scores[1], max: 14 },
+        2: { score: scores[2], max: 13 },
+        3: { score: scores[3], max: 13 }
+      },
+      questionOutcomes: outcomes
+    };
+    return submittedResultSnapshot;
   }
 
   function lockSubmittedTest() {
@@ -343,6 +399,7 @@
     var originalStartTest = window.startTest;
     if (typeof originalStartTest === "function") {
       window.startTest = function () {
+        submittedResultSnapshot = null;
         var result = originalStartTest.apply(this, arguments);
         if (window.ReadingFeatureShell) {
           if (mode === "study" && typeof window.ReadingFeatureShell.startStudySession === "function") window.ReadingFeatureShell.startStudySession();
@@ -394,6 +451,7 @@
       window.submitTest = function () {
         if (mode === "test" && testSubmitted) return;
         var result = originalSubmitTest.apply(this, arguments);
+        captureSubmittedResult();
         var scores = sectionScores();
         var sectionLine = document.getElementById("sectionScoresLine");
         if (sectionLine) sectionLine.textContent = "Section 1: " + scores[1] + "/14 · Section 2: " + scores[2] + "/13 · Section 3: " + scores[3] + "/13";
@@ -439,6 +497,7 @@
 
   function initStudyMode() {
     prepareChrome();
+    installIeltsPabsHomeLink();
     prepareTextRoots();
     prepareInstructionHosts();
     prepareInlineFeedbackHosts();
@@ -472,6 +531,7 @@
       state: {
         getMode: function () { return mode; },
         isTestSubmitted: function () { return Boolean(testSubmitted); },
+        getSubmittedResult: function () { return submittedResultSnapshot; },
         getActivePart: function () { return Number(activeSection || 1); }
       },
       answers: {
@@ -484,7 +544,6 @@
           return document.querySelector('.question-block[data-q="' + questionNumber + '"]:not(.feedback-only)') || document.querySelector('.question-block[data-q="' + questionNumber + '"]');
         }
       },
-      compatibility: { allowDomSubmittedResult: true },
       study: {
         completeQuestionCoverage: true,
         completeClueCoverage: true,
