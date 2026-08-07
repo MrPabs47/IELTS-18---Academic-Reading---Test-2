@@ -1,0 +1,454 @@
+name: Patch GT Reading Cambridge 19 lessons docs
+
+on:
+  push:
+    branches:
+      - docs/gt-reading-cambridge19-lessons
+    paths:
+      - .gt-reading-docs-patch/READY
+
+permissions:
+  contents: write
+
+jobs:
+  patch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: docs/gt-reading-cambridge19-lessons
+      - name: Update GT Reading workflow and parity checklist
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+
+          workflow_path = Path('general-training/shared/IELTS_GT_READING_FAST_TRACK_WORKFLOW.md')
+          checklist_path = Path('general-training/shared/GT_READING_TEST_PARITY_CHECKLIST.md')
+          workflow = workflow_path.read_text(encoding='utf-8')
+          checklist = checklist_path.read_text(encoding='utf-8')
+
+          def replace_once(text, old, new, label):
+              count = text.count(old)
+              if count != 1:
+                  raise SystemExit(f'{label}: expected exactly one match, found {count}')
+              return text.replace(old, new, 1)
+
+          def insert_before(text, marker, addition, label):
+              count = text.count(marker)
+              if count != 1:
+                  raise SystemExit(f'{label}: expected exactly one marker, found {count}')
+              return text.replace(marker, addition + marker, 1)
+
+          # Header/reference-set update.
+          workflow = replace_once(
+              workflow,
+              '**Reference implementations:** Cambridge IELTS 19 General Training Reading Tests 1 and 2  \n**Core releases:** PR #379 and PR #381  \n**Stabilisation releases:** PR #387, PR #389 and PR #392  \n**Focused regression release:** PR #436 — Test 3 header CSS inheritance and Study-dialog containment  \n**Current reference commit:** `94455b5135879d06e514388a2ba9341bb3273144`  \n**Prepared:** 2 August 2026  \n**Updated:** 6 August 2026',
+              '**Reference implementations:** Cambridge IELTS 19 General Training Reading Tests 1–4  \n**Core releases:** PR #379 and PR #381  \n**Stabilisation releases:** PR #387, PR #389, PR #392 and PR #436  \n**Cambridge 19 parity lessons:** PR #442, PR #443, PR #449, PR #450, PR #454, PR #456, PR #458 and PR #462  \n**Current reference commit:** `a52f6f9e67059e5c337167bc9091efb6fce8adda`  \n**Prepared:** 2 August 2026  \n**Updated:** 8 August 2026',
+              'workflow header'
+          )
+
+          workflow = replace_once(
+              workflow,
+              'Cambridge IELTS 19 General Training Reading Tests 1 and 2 established the first stable General Training Reading reference pair for the project. They now use the shared Academic Reading shell while preserving General Training terminology, section structure, scoring, multiple-text layouts and target-specific answer controls.',
+              'Cambridge IELTS 19 General Training Reading Tests 1–4 now form the project’s behavioural reference set. Tests 1 and 2 established the integration patterns; Tests 3 and 4 exposed lifecycle, scoring, layout, matching and header/logo regressions that are now part of the required parity contract. All four use the shared Academic Reading shell while preserving General Training terminology, section structure, scoring, multiple-text layouts and target-specific answer controls.',
+              'executive reference set'
+          )
+
+          workflow = replace_once(
+              workflow,
+              '- task-specific strategies;\n- Q1–40 Correct answer, Why and Skill feedback;',
+              '- task-specific strategies that are visible in Study, hidden during an active Test and restored in submitted Test review;\n- Q1–40 Correct answer, Why and Skill feedback;',
+              'executive strategy lifecycle'
+          )
+
+          workflow = replace_once(
+              workflow,
+              '- Test 1 and Test 2 used different integration shapes.\n',
+              '- Test 1 and Test 2 used different integration shapes.\n- A shared CSS rule could visually override the HTML `hidden` state, making Study information controls appear during an active Test; a local workaround then hid them too long after submission.\n- Test 4 could submit successfully while failing to initialise review feedback because a numeric-only result parser did not accept the valid `Below 3` band label.\n- Test 4’s logo was clickable but lacked both the established hover animation and, at one stage, a defined home-navigation handler.\n- Hidden feedback-host wrappers in Test 1 contributed real padding and created a large empty gap even while their content was invisible.\n- Test 2 matching answer boxes could exist without working passage-side drag/click behaviour because the boxes were created after the interaction setup had already run.\n',
+              'executive Cambridge19 lessons'
+          )
+
+          workflow = replace_once(
+              workflow,
+              '**Use the shared Reading shell, but audit the General Training page as its own product. Do not treat it as Academic Reading with different text, do not treat technically correct feedback as sufficient unless it produces a clear learner \'aha\', and do not assume a fixed overlay is isolated from the CSS ancestry of the element that mounts it.**',
+              '**Use the shared Reading shell, but audit the General Training page as its own product. Verify state, visible behaviour and real interaction—not merely DOM presence. Do not treat it as Academic Reading with different text, do not treat technically correct feedback as sufficient unless it produces a self-contained learner “aha”, and do not assume a fixed overlay is isolated from the CSS ancestry of the element that mounts it.**',
+              'central lesson'
+          )
+
+          workflow = replace_once(workflow, '## 1. What Tests 1 and 2 established', '## 1. What Tests 1–4 established', 'section 1 title')
+
+          workflow = replace_once(
+              workflow,
+              'Both reference tests use the project’s shared Reading assets:',
+              'All four reference tests use the project’s shared Reading assets:',
+              'shared asset wording'
+          )
+
+          workflow = replace_once(
+              workflow,
+              'For Cambridge IELTS 19 Tests 1 and 2, the section ranges are:',
+              'For Cambridge IELTS 19 Tests 1–4, the section ranges follow the same 14/13/13 split:',
+              'section range wording'
+          )
+
+          workflow = replace_once(
+              workflow,
+              '- the result overlay can close into a locked review;\n- learning resources become available without allowing answer changes;\n- reopening results does not create a new result.',
+              '- the result overlay can close into a locked review;\n- Study information/strategy controls that were hidden during the active Test become available again;\n- Answer Key, score guide, feedback and clues become available without allowing answer changes;\n- reopening results does not create a new result.',
+              'submitted lifecycle'
+          )
+
+          workflow = insert_before(
+              workflow,
+              '---\n\n## 2. Main causes of delay and the new rule for each',
+              '#### Behaviour-regression references — Tests 3 and 4\n\nTests 3 and 4 are not new integration templates. Use them as regression references for submitted-review lifecycle, shared-dialog containment, low-score round-tripping, layout hygiene, logo navigation/animation and custom interaction locking. The expected product behaviour is the intersection of the validated Tests 1–4 set, not whichever individual file happens to be newest.\n\n',
+              'behaviour reference note'
+          )
+
+          workflow = replace_once(
+              workflow,
+              '| Legacy submitted result | Older pages depended on DOM result compatibility | Prefer an authoritative snapshot; otherwise opt into the approved compatibility path explicitly and test it |\n',
+              '| Legacy submitted result | Older pages depended on DOM result compatibility | Prefer an authoritative snapshot; otherwise opt into the approved compatibility path explicitly, including a `Below 3` round-trip test |\n| Mode-info lifecycle | CSS could override `hidden`, while a local workaround could remain active after submission | Verify Study visible → active Test hidden → submitted Test visible in the browser; do not rely on DOM `hidden` alone |\n| Matching initialisation | Answer boxes could be present after the interaction wiring had already run | Browser-test real drag, click-to-place, keyboard, repeated-letter reuse and Clear where supported |\n| Low-score feedback | Numeric-only parsing rejected the valid `Below 3` result | Current GT contract is 0–8 = `Below 3`; result overlay, parser and submitted feedback must all agree |\n| Logo parity | Navigation and animation were implemented separately in different tests | Verify route, leave warning, mouse/keyboard activation, hover animation and reduced-motion behaviour |\n| Empty feedback hosts | Hidden wrappers still contributed padding and produced dead vertical space | Hidden feedback hosts must contribute zero layout space until content is revealed |\n',
+              'delay table new rows'
+          )
+
+          workflow = replace_once(
+              workflow,
+              '| 4 | Cambridge IELTS 19 GT Test 2 on current `main` | Preferred direct-integration reference |\n| 5 | Cambridge IELTS 19 GT Test 1 on current `main` | Legacy-adapter reference and compatibility proof |\n| 6 | Shared Reading shell and regression tests | Generic capability behaviour and regression protection |\n| 7 | Current Live Hub `index.html` | Canonical route and availability only |\n| 8 | Merged GT stabilisation PRs | Historical reasons for explicit terminology, compatibility, clue coverage and feedback display rules |',
+              '| 4 | Cambridge IELTS 19 GT Tests 1–4 on current `main` | Behavioural reference set for mode lifecycle, scoring, feedback, matching, layout and header/logo parity |\n| 5 | Cambridge IELTS 19 GT Test 2 on current `main` | Preferred direct-integration reference |\n| 6 | Cambridge IELTS 19 GT Test 1 on current `main` | Legacy-adapter reference and compatibility proof |\n| 7 | Cambridge IELTS 19 GT Tests 3 and 4 on current `main` | Regression references for completed-Test lifecycle, dialogs, low-score feedback, layout and logo parity |\n| 8 | Shared Reading shell and regression tests | Generic capability behaviour and regression protection |\n| 9 | Current Live Hub `index.html` | Canonical route and availability only |\n| 10 | Merged GT stabilisation PRs | Historical reasons for explicit terminology, compatibility, clue coverage and feedback display rules |',
+              'source of truth reference set'
+          )
+
+          workflow = insert_before(
+              workflow,
+              '#### The Live Hub is a router',
+              '#### Never treat `hidden` as a visual guarantee when CSS can override display\n\nFor Study-only controls, verify the computed visible state in each lifecycle phase: visible in Study, zero visible controls during the active Test, visible again in submitted Test review. A DOM attribute or selector assertion alone is not enough.\n\n#### Never let a valid low-score label disappear between result and review\n\nUnder the current GT Reading contract, 0–8 correct is `Below 3`. The page evaluator, result overlay, submitted-result object/parser, score guide and score-feedback dialog must all preserve that label. A numeric-only parser is a parity defect.\n\n',
+              'golden lifecycle/scoring rules'
+          )
+
+          workflow = replace_once(
+              workflow,
+              '- strategy information for every exact task group;\n- Q1–40 neutral feedback cards;',
+              '- strategy information/ⓘ controls for every exact task group;\n- Q1–40 neutral feedback cards;',
+              'fresh study info controls'
+          )
+
+          workflow = replace_once(
+              workflow,
+              '- strategies;\n- feedback cards;\n- clue buttons and section clue map;',
+              '- strategies and all Study information/ⓘ controls (zero visible, even if their DOM remains attached);\n- feedback cards;\n- clue buttons and section clue map;',
+              'fresh test info hidden'
+          )
+
+          workflow = replace_once(
+              workflow,
+              '- learning resources derived from the submitted result;\n- Answer Key, score guide, feedback and clues;',
+              '- learning resources derived from the submitted result;\n- restored Study information/ⓘ controls;\n- Answer Key, score guide, feedback and clues;',
+              'completed test info restored'
+          )
+
+          workflow = replace_once(
+              workflow,
+              'The clue, Why and Skill form one teaching sequence. Together they must move a learner from confusion to a clear understanding of both the answer and the reading move that produced it.\n\n#### Clue',
+              'The clue, Why and Skill form one teaching sequence. Together they must move a learner from confusion to a clear understanding of both the answer and the reading move that produced it.\n\n#### Self-contained review standard\n\nUse this as the editorial pass/fail test: **could a student understand why the answer is correct using only the question, the displayed/highlighted clue(s) and the Why explanation, without needing the rest of the passage?** If not, the clue or explanation is too compressed.\n\nThe default clue unit is one complete sentence. Use two short connected sentences when the logic crosses a sentence boundary—for example contrast, cause/effect, pronoun reference, condition or a qualification introduced in the next sentence. A shorter clause is acceptable only when it is genuinely self-contained. Do not lengthen clues mechanically.\n\nFor matching headings, favour the sentence or pair of sentences that captures the paragraph’s main idea rather than a vivid detail. For NOT GIVEN, show the closest relevant stated information and make the Why identify exactly which required detail is absent; never invent evidence for absence.\n\n#### Clue',
+              'self-contained feedback standard'
+          )
+
+          workflow = replace_once(
+              workflow,
+              'There is no fixed word count. The correct length is the shortest span that makes the evidence self-explanatory in context.',
+              'There is no hard word count. Prefer one complete sentence, or two short connected sentences when the reasoning requires both. The correct length is the shortest span that remains self-contained and logically complete.',
+              'clue length guidance'
+          )
+
+          workflow = replace_once(
+              workflow,
+              '- include the minimum sufficient context for the learner to understand the logic without reconstructing omitted words;\n- include decisive qualifiers, negation, comparison, condition, cause or time language when relevant;',
+              '- include the minimum sufficient context for the learner to understand the logic without reconstructing omitted words;\n- normally resolve to one complete sentence, or two short connected sentences when the relationship crosses the boundary;\n- include decisive qualifiers, negation, comparison, condition, cause or time language when relevant;',
+              'exact target length'
+          )
+
+          workflow = replace_once(
+              workflow,
+              '- GT19 Test 2 direct integration;\n- GT19 Test 1 legacy adapter;\n- the shared Reading contract.',
+              '- the validated GT19 Tests 1–4 behavioural reference set;\n- GT19 Test 2 direct integration;\n- GT19 Test 1 legacy adapter;\n- GT19 Tests 3–4 regression behaviour;\n- the shared Reading contract.',
+              'phase 1 references'
+          )
+
+          workflow = replace_once(
+              workflow,
+              '- evaluator and GT band conversion;\n- Test lifecycle and locking;\n- existing Study integration;',
+              '- evaluator and GT band conversion, including 0–8 = `Below 3` under the current project contract;\n- Study → active Test → submitted Test information-control lifecycle;\n- Test lifecycle and locking;\n- existing Study integration;',
+              'phase 1 lifecycle scoring audit'
+          )
+
+          workflow = replace_once(
+              workflow,
+              '- special controls such as drag/drop or Choose TWO;\n- current tests;',
+              '- special controls such as drag/drop or Choose TWO, including their real interaction initialisation order;\n- logo route, leave warning, keyboard activation and established hover animation;\n- hidden feedback hosts or empty wrappers that may contribute layout space;\n- current tests;',
+              'phase1 interaction layout audit'
+          )
+
+          workflow = replace_once(
+              workflow,
+              '- home route;\n- target foundation tests.',
+              '- home route and established logo animation/reduced-motion behaviour;\n- target foundation tests.',
+              'phase2 logo parity'
+          )
+
+          workflow = replace_once(
+              workflow,
+              'Activate complete coverage only after all targets resolve and every trio is instructionally clear, not merely present.',
+              'Activate complete coverage only after all targets resolve and every trio is instructionally clear, not merely present. For editorial review, temporarily judge each item as if the surrounding passage were hidden: question + clue(s) + Why must be enough to understand the answer.',
+              'phase3 self contained gate'
+          )
+
+          workflow = replace_once(
+              workflow,
+              '6. Fresh Test;\n7. completed Test/locked review and newly available dialogs;\n8. all sections and every source text;\n9. representative early, middle and late clues;\n10. section-level clue control;\n11. custom control locking;\n12. desktop, approximately 390 px, extra-large text and all themes;\n13. repeat the shared-dialog smoke matrix after any header, toolbar, mount or responsive CSS change;\n14. home route and leave warning;\n15. clean console.',
+              '6. Fresh Test, explicitly asserting zero visible Study information/ⓘ controls;\n7. completed Test/locked review, explicitly asserting those controls and submitted feedback return while answers remain locked;\n8. submit a blank or deliberately low-scoring Test and verify `Below 3` round-trips into Score feedback;\n9. all sections and every source text;\n10. representative early, middle and late clues plus the self-contained review test;\n11. section-level clue control;\n12. where matching/drag/drop exists: perform actual drag, click-to-place, keyboard placement, repeated-letter reuse and Clear before submission, then verify all are locked after submission;\n13. inspect hidden feedback hosts/empty wrappers for zero dead spacing before reveal and normal expansion after reveal;\n14. desktop, approximately 390 px, extra-large text and all themes;\n15. repeat the shared-dialog smoke matrix after any header, toolbar, mount or responsive CSS change;\n16. home route, leave warning, mouse/keyboard activation, logo hover animation and reduced-motion behaviour;\n17. clean console.',
+              'phase4 browser matrix'
+          )
+
+          workflow = replace_once(
+              workflow,
+              '- verify changed files, checks and mergeability;\n- squash merge;',
+              '- verify changed files, checks and mergeability;\n- run the Live Hub Safety Guard;\n- refresh protected reference fingerprints only when the relevant Reading validation has passed and only for deliberately changed references;\n- keep unrelated Live Hub contract repairs in a separate PR;\n- squash merge;',
+              'phase5 release safety'
+          )
+
+          workflow = replace_once(
+              workflow,
+              'Add a new deep module only for a genuinely new question-control mechanism. Automated checks can prove completeness and target resolution, but they cannot prove that a learner will understand the explanation or that a visually opened dialog is usable; the all-40 Aha-test editorial review and browser dialog inspection remain mandatory.',
+              'Add a new deep module only for a genuinely new question-control mechanism. When a new regression class is discovered—mode visibility, submitted-result parsing, custom interaction initialisation, layout dead space, logo behaviour or similar—add the smallest permanent regression that would have caught it. Automated checks can prove completeness and target resolution, but they cannot prove that a learner will understand the explanation or that a visually opened dialog is usable; the all-40 self-contained Aha-test editorial review and browser dialog inspection remain mandatory.',
+              'testing regression rule'
+          )
+
+          workflow = replace_once(
+              workflow,
+              'The current Test 1 and Test 2 data use this estimate:',
+              'The current Cambridge 19 GT Tests 1–4 use this estimate:',
+              'score reference set'
+          )
+
+          workflow = insert_before(
+              workflow,
+              '### 11.3 Special scoring',
+              '### 11.3 `Below 3` round-trip contract\n\nUnder the current project decision, raw scores 0–8 display `Below 3`. This is a first-class band label, not an error or missing numeric value. Verify the same value through:\n\n- `computeBandScore` / the target evaluator;\n- the result overlay;\n- any authoritative submitted-result snapshot or approved compatibility parser;\n- the Score guide;\n- submitted Score feedback.\n\nA blank Test submission is the quickest regression case. It must still initialise completed-Test feedback and show `Submitted band: Below 3.` while the attempt remains locked.\n\n',
+              'below3 contract section'
+          )
+
+          workflow = replace_once(workflow, '### 11.3 Special scoring', '### 11.4 Special scoring', 'renumber special scoring')
+
+          workflow = replace_once(
+              workflow,
+              '- the home logo works by mouse, Enter and Space;\n- dialogs close by their intended controls and restore focus;',
+              '- the home logo works by mouse, Enter and Space;\n- the established per-letter logo hover animation works without breaking navigation and honours reduced-motion preferences;\n- hidden feedback hosts and unrevealed cards contribute no unexplained vertical gap;\n- dialogs close by their intended controls and restore focus;',
+              'accessibility logo/layout'
+          )
+
+          workflow = replace_once(
+              workflow,
+              '| Does the behaviour already work in both GT19 Tests 1 and 2? | Reuse the existing contract | Keep the target change local |',
+              '| Does the behaviour already work across the validated GT19 Tests 1–4 reference set? | Reuse the existing contract | Keep the target change local or prove a generic gap |',
+              'shared vs local reference set'
+          )
+
+          workflow = replace_once(
+              workflow,
+              '14. Verify changed files, checks and mergeability.\n15. Squash merge.\n16. Verify the squash commit on `origin/main`.\n17. Verify target HTML, sidecars, tests and Live Hub route.\n18. Stop local servers.\n19. Close terminals/editors/Explorer windows holding the worktree.\n20. Remove worktree and local/remote feature branches.\n21. Fetch/prune and confirm clean main.',
+              '14. Verify changed files, checks and mergeability.\n15. Run the Live Hub Safety Guard.\n16. Refresh protected reference fingerprints only for validated, deliberately changed references; never use fingerprint refresh to approve an unrelated change.\n17. Keep unrelated Hub contract repairs separate.\n18. Squash merge.\n19. Verify the squash commit on `origin/main`.\n20. Verify target HTML, sidecars, tests and Live Hub route.\n21. Stop local servers.\n22. Close terminals/editors/Explorer windows holding the worktree.\n23. Remove worktree and local/remote feature branches.\n24. Fetch/prune and confirm clean main.',
+              'git release numbered steps'
+          )
+
+          workflow = replace_once(
+              workflow,
+              '| Silent DOM score parsing | Authoritative snapshot or explicit approved compatibility |\n| Locking only native inputs | Lock drag/drop and custom controls too |',
+              '| Silent DOM score parsing | Authoritative snapshot or explicit approved compatibility, including `Below 3` |\n| Assuming `hidden` means visually hidden | Check computed visibility in Study, active Test and submitted Test |\n| Checking matching boxes without using them | Exercise drag, click, keyboard, repeated reuse and Clear in the browser |\n| Numeric-only low-band parsing | Preserve `Below 3` from evaluator through submitted feedback |\n| Hidden feedback wrappers with padding/margins | Make unrevealed hosts layout-neutral until content exists |\n| Logo text without full parity | Verify home route, leave warning, keyboard access, hover animation and reduced motion |\n| Locking only native inputs | Lock drag/drop and custom controls too |',
+              'anti patterns Cambridge19'
+          )
+
+          # Replace obsolete next-target section with IELTS 18 launch plan.
+          start = workflow.index('## 16. Next-target launch plan')
+          end = workflow.index('\n---\n\n## 17. One-page runbook', start)
+          next_target = '''## 16. Next-target launch plan\n\nThe next target audited under this workflow is **Cambridge IELTS 18 General Training Reading Test 1**.\n\nUse the completed Cambridge 19 GT Tests 1–4 as the behavioural reference set:\n\n- Test 2 for preferred direct integration;\n- Test 1 for legacy-adapter compatibility;\n- Tests 3 and 4 for completed-Test lifecycle, dialog containment, scoring, layout and logo regressions;\n- all four together for the expected Study/Test/locked-review behaviour.\n\nThe IELTS 18 target HTML, source files, answer key, accepted variants and evaluator remain authoritative for test-specific content. Do not copy Cambridge 19 passages, task ranges, control shapes or accepted variants.\n\nThe initial read-only audit must explicitly verify:\n\n- Section terminology and source-text roots;\n- exact question/task ranges and accepted answers;\n- current GT conversion, including 0–8 = `Below 3`;\n- Study information controls visible in Study, absent in active Test and restored after Test submission;\n- submitted Score feedback, including a blank/low-score result;\n- custom matching/drag/drop behaviour through real interaction rather than DOM presence;\n- final locking of native and custom controls;\n- question + clue(s) + Why self-contained feedback quality for all 40 questions;\n- zero dead spacing from hidden feedback hosts;\n- Score guide, Answer Key and score-feedback dialog layouts;\n- home route, leave warning, keyboard access and logo hover animation;\n- desktop/narrow/theme/text-size parity;\n- current Live Hub route and safety-guard constraints.\n\nIf the target already satisfies an item, preserve it. Do not redesign working behaviour merely to make the implementation look like a Cambridge 19 file.\n\nExpected normal outcome:\n\n- no new shared-core work unless a focused failing regression proves a generic blocker;\n- direct integration where practical;\n- one target data sidecar;\n- one small adapter only if the legacy DOM requires it;\n- lean permanent regressions for target behaviour and any newly discovered failure class;\n- one controlled browser QA matrix;\n- one Reading PR, with unrelated Hub repairs kept separate.\n'''
+          workflow = workflow[:start] + next_target + workflow[end:]
+
+          workflow = replace_once(
+              workflow,
+              '- verify 40 questions, section ranges, evaluator and GT band;\n- identify every source text and stable root;',
+              '- verify 40 questions, section ranges, evaluator and GT band, including the current 0–8 = `Below 3` rule;\n- identify every source text and stable root;\n- compare behaviour against the validated Cambridge 19 GT Tests 1–4 set;',
+              'runbook before coding'
+          )
+
+          workflow = replace_once(
+              workflow,
+              '- apply the Aha test to every clue/Why/Skill trio;\n- ensure each clue is the shortest complete evidence span, not simply the shortest possible span;',
+              '- apply the self-contained Aha test to every clue/Why/Skill trio: question + clue(s) + Why must explain the answer without requiring surrounding passage context;\n- prefer one complete clue sentence, or two short connected sentences where the logic crosses a boundary;\n- ensure each clue is the shortest complete evidence span, not simply the shortest possible span;',
+              'runbook self-contained feedback'
+          )
+
+          workflow = replace_once(
+              workflow,
+              '- confirm Test locking including custom controls;\n- check desktop/mobile/themes/text size/home route/console;',
+              '- confirm active-Test Study controls are hidden and submitted-Test controls return;\n- confirm Test locking including custom controls, with real matching/drag/drop interaction where present;\n- submit a blank/low-score Test and confirm `Below 3` submitted feedback;\n- check hidden feedback hosts for zero dead spacing;\n- check desktop/mobile/themes/text size/home route/logo animation/console;',
+              'runbook precommit checks'
+          )
+
+          workflow = replace_once(
+              workflow,
+              'Use Cambridge IELTS 19 General Training Reading Test 2 on current main as the preferred direct-integration reference and Test 1 as the legacy-adapter reference. The target test HTML, source files, answer key, accepted variants and evaluator remain authoritative for target-specific content.\n\nFor every question, make the clue, Why and Skill pass the Aha test: use the shortest complete evidence span, explicitly bridge question wording to source wording and conclusion, and give a reusable next-step reading action. Technically correct but vague or under-explained feedback does not pass.',
+              'Use Cambridge IELTS 19 General Training Reading Tests 1–4 on current main as the behavioural reference set: Test 2 is the preferred direct-integration reference, Test 1 is the legacy-adapter reference, and Tests 3–4 are regression references for submitted-review lifecycle, dialogs, scoring, layout and logo parity. The target test HTML, source files, answer key, accepted variants and evaluator remain authoritative for target-specific content.\n\nFor every question, make the clue, Why and Skill pass the self-contained Aha test: a learner should understand why the answer is correct using only the question, displayed/highlighted clue(s) and Why explanation. Prefer one complete clue sentence, or two short connected sentences when the logic requires both. Explicitly bridge question wording to source wording and conclusion, and give a reusable next-step reading action. Technically correct but vague, undersized or under-explained feedback does not pass.',
+              'codex preamble reference/feedback'
+          )
+
+          # Checklist header and gates.
+          checklist = replace_once(
+              checklist,
+              '**Focused regression update:** PR #436 — header CSS inheritance and Study-dialog containment (6 August 2026)',
+              '**Cambridge 19 reference-set update:** PR #436 plus PRs #442, #443, #449, #450, #454, #456, #458 and #462 — lifecycle, interaction, scoring, layout, logo and feedback parity (8 August 2026)',
+              'checklist header'
+          )
+
+          checklist = replace_once(
+              checklist,
+              '- [ ] Target is compared against GT19 Test 2 direct integration and GT19 Test 1 legacy integration.\n',
+              '- [ ] Target is compared against the validated GT19 Tests 1–4 behavioural reference set, including Test 2 direct integration and Test 1 legacy integration.\n- [ ] Study → active Test → submitted Test information-control lifecycle is recorded.\n- [ ] Current GT low-score contract is recorded: 0–8 = `Below 3`, unless a later approved project decision supersedes it.\n- [ ] Matching/drag/drop controls are inventoried with their initialisation order and real interaction paths, not only their DOM boxes.\n- [ ] Logo route, leave warning, keyboard behaviour, hover animation and reduced-motion behaviour are inventoried.\n- [ ] Hidden feedback hosts/empty wrappers that can contribute spacing are inventoried.\n',
+              'checklist audit additions'
+          )
+
+          checklist = replace_once(
+              checklist,
+              '- [ ] Any `allowDomSubmittedResult: true` use is explicit, justified and browser-tested.\n',
+              '- [ ] Any `allowDomSubmittedResult: true` use is explicit, justified and browser-tested, including `Below 3`.\n- [ ] Study-only controls are visually governed by lifecycle state; CSS does not override `hidden` and leak them into an active Test.\n- [ ] Submitted Test review restores the intended Study information/ⓘ controls without unlocking answers.\n',
+              'checklist shared lifecycle parser'
+          )
+
+          checklist = replace_once(
+              checklist,
+              '- [ ] Every exact task group has strategy information.\n',
+              '- [ ] Every exact task group has visible strategy information/ⓘ controls in Study Mode.\n',
+              'checklist fresh study info'
+          )
+
+          checklist = replace_once(
+              checklist,
+              '- [ ] Strategies and feedback cards are hidden.\n',
+              '- [ ] Strategies, feedback cards and all Study information/ⓘ controls are hidden; zero such controls are visually present even if their DOM remains attached.\n',
+              'checklist fresh test hidden'
+          )
+
+          checklist = replace_once(
+              checklist,
+              '- [ ] Answer Key, score guide, feedback and clues become available.\n',
+              '- [ ] Study information/ⓘ controls, Answer Key, score guide, feedback and clues become available again.\n',
+              'checklist completed restore'
+          )
+
+          checklist = replace_once(
+              checklist,
+              '- [ ] Feedback derives from the submitted result, not mutable live answers.\n',
+              '- [ ] Feedback derives from the submitted result, not mutable live answers.\n- [ ] A blank or deliberately low-scoring submission still initialises review feedback and shows `Submitted band: Below 3.` under the current contract.\n',
+              'checklist completed below3'
+          )
+
+          checklist = replace_once(
+              checklist,
+              '- [ ] Every Q1–40 clue/Why/Skill trio passes the Aha test.\n',
+              '- [ ] Every Q1–40 clue/Why/Skill trio passes the self-contained Aha test: question + displayed/highlighted clue(s) + Why are enough to understand why the answer is correct without the rest of the passage.\n- [ ] Clues normally use one complete sentence; two short connected sentences are used only when the logic crosses a sentence boundary.\n- [ ] A shorter fragment is used only when it is genuinely self-contained; clues are not lengthened mechanically.\n',
+              'checklist self contained aha'
+          )
+
+          checklist = replace_once(
+              checklist,
+              '- [ ] NOT GIVEN identifies related information present and the required detail missing.\n',
+              '- [ ] NOT GIVEN shows the closest relevant stated information and identifies the exact required detail that is missing; it never invents evidence for absence.\n',
+              'checklist not given'
+          )
+
+          checklist = replace_once(
+              checklist,
+              '- [ ] Every clue includes enough context to preserve the subject, action and logical relationship.\n',
+              '- [ ] Every clue includes enough context to preserve the subject, action and logical relationship.\n- [ ] Judged with surrounding passage context mentally hidden, the clue still makes sense alongside the question and Why.\n- [ ] Matching-headings clues represent the main idea rather than an isolated supporting detail.\n',
+              'checklist clue self-contained'
+          )
+
+          checklist = replace_once(
+              checklist,
+              '- [ ] No hard clue-length target is used; clarity and logical completeness determine the span.\n',
+              '- [ ] No hard clue-length target is used; one complete sentence is the default, two connected sentences are allowed when necessary, and clarity/logical completeness determine the span.\n',
+              'checklist clue length'
+          )
+
+          checklist = replace_once(
+              checklist,
+              '- [ ] GT band conversion is used, not Academic conversion.\n',
+              '- [ ] GT band conversion is used, not Academic conversion.\n- [ ] Under the current project contract, raw scores 0–8 return/display `Below 3` and 9–11 return/display Band 3.\n- [ ] `Below 3` round-trips through evaluator, result overlay, submitted-result snapshot/parser, Score guide and submitted Score feedback.\n',
+              'checklist scoring below3'
+          )
+
+          checklist = replace_once(
+              checklist,
+              '- [ ] Active Test leave warning appears before home navigation.\n',
+              '- [ ] Active Test leave warning appears before home navigation.\n- [ ] Established per-letter logo hover animation works without breaking the home route.\n- [ ] Logo animation honours reduced-motion preferences.\n',
+              'checklist logo animation'
+          )
+
+          checklist = replace_once(
+              checklist,
+              '- [ ] Inline completions wrap naturally.\n',
+              '- [ ] Inline completions wrap naturally.\n- [ ] Hidden/unrevealed feedback hosts contribute zero unexplained vertical gap; revealing feedback expands the block normally and hiding it contracts normally.\n',
+              'checklist layout dead space'
+          )
+
+          checklist = replace_once(
+              checklist,
+              '- [ ] Browser lifecycle test covers Fresh/checked Study and Fresh/completed Test.\n',
+              '- [ ] Browser lifecycle test covers Fresh/checked Study and Fresh/completed Test, explicitly asserting Study-info visible → active-Test hidden → submitted-Test visible.\n- [ ] A blank/low-score completed-Test case verifies `Below 3` feedback initialises successfully.\n',
+              'checklist testing lifecycle'
+          )
+
+          checklist = replace_once(
+              checklist,
+              '- [ ] Custom-control locking is executable where present.\n',
+              '- [ ] Matching/drag-drop QA is executable where present: real drag, click-to-place, keyboard placement, repeated-letter reuse and Clear are exercised before submission, then custom locking is verified after submission.\n- [ ] Newly discovered regression classes receive the smallest permanent production-linked regression that would have caught them.\n',
+              'checklist testing interactions regression'
+          )
+
+          checklist = replace_once(
+              checklist,
+              '- [ ] Highlighted clue spans are neither misleadingly short nor unnecessarily broad.\n',
+              '- [ ] Highlighted clue spans are neither misleadingly short nor unnecessarily broad, and representative clues pass the self-contained question + clue(s) + Why test.\n',
+              'checklist visual selfcontained'
+          )
+
+          checklist = replace_once(
+              checklist,
+              '- [ ] Custom matching/drag/drop locking checked.\n',
+              '- [ ] Where present, custom matching/drag/drop is actually used via drag, click, keyboard, repeated reuse and Clear before its submitted locking is checked.\n- [ ] Active Test shows zero visible Study information/ⓘ controls; completed Test restores them.\n- [ ] Blank/low-score submission shows `Below 3` in results and submitted Score feedback.\n- [ ] Hidden feedback hosts show no dead vertical space before reveal.\n',
+              'checklist visual interactions lifecycle'
+          )
+
+          checklist = replace_once(
+              checklist,
+              '- [ ] Home route checked.\n',
+              '- [ ] Home route, leave warning, keyboard activation and logo hover animation checked.\n',
+              'checklist visual logo'
+          )
+
+          checklist = replace_once(
+              checklist,
+              '- [ ] PR changed-file list is correct.\n- [ ] Validation and environment limitations are documented.\n',
+              '- [ ] PR changed-file list is correct.\n- [ ] Live Hub Safety Guard passes.\n- [ ] Protected reference fingerprints are refreshed only after the relevant Reading validation passes and only for deliberately changed reference files.\n- [ ] Unrelated Live Hub contract repair, activation or seasonal work is kept in a separate PR.\n- [ ] Validation and environment limitations are documented.\n',
+              'checklist release safety'
+          )
+
+          workflow_path.write_text(workflow, encoding='utf-8')
+          checklist_path.write_text(checklist, encoding='utf-8')
+          PY
+          git diff --check
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add general-training/shared/IELTS_GT_READING_FAST_TRACK_WORKFLOW.md general-training/shared/GT_READING_TEST_PARITY_CHECKLIST.md
+          git commit -m "Update GT Reading workflow with Cambridge 19 lessons"
+          git push origin HEAD:docs/gt-reading-cambridge19-lessons
