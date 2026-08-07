@@ -112,3 +112,16 @@ def test_candidate_header_and_feedback_host_spacing_are_protected() -> None:
     assert "text-overflow:ellipsis" in adapter
     assert "white-space:nowrap" in adapter
     assert ".summary-feedbacks>.question-block.feedback-only{margin:0;padding:0;border:0;background:transparent}" in adapter
+
+
+def test_existing_logo_home_and_animation_contract_is_preserved() -> None:
+    html = HTML.read_text(encoding="utf-8")
+    adapter = ADAPTER.read_text(encoding="utf-8")
+    assert 'onclick="confirmGoHome()"' in html
+    assert 'window.location.href = "../../../index.html";' in html
+    assert 'function initAnimatedLogo()' in html
+    assert "logo-char" in html
+    assert "is-animating" in html
+    assert "prefers-reduced-motion: reduce" in html
+    assert "prepareAnimatedLogo" not in adapter
+    assert "gt18LogoReveal" not in adapter
