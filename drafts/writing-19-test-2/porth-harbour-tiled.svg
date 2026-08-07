@@ -1,1 +1,9 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1536" width="1024" height="1536" role="img" aria-label="Porth Harbour in 2000 and today"><image href="t2map-part1.png" x="0" y="0" width="1024" height="256"/><image href="t2map-part2.png" x="0" y="256" width="1024" height="256"/><image href="t2map-part3.png" x="0" y="512" width="1024" height="256"/><image href="t2map-part4.png" x="0" y="768" width="1024" height="256"/><image href="t2map-part5.png" x="0" y="1024" width="1024" height="256"/><image href="t2map-part6.png" x="0" y="1280" width="1024" height="256"/></svg>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1536" width="1024" height="1536" role="img" aria-label="Porth Harbour in 2000 and today">
+  <image href="t2map-part1.png" x="0" y="0" width="1024" height="256"/>
+  <image href="t2map-part2.png" x="0" y="256" width="1024" height="256"/>
+  <image href="t2map-part3a.png" x="0" y="512" width="1024" height="128"/>
+  <image href="t2map-part3b.png" x="0" y="640" width="1024" height="128"/>
+  <image href="t2map-part4.png" x="0" y="768" width="1024" height="256"/>
+  <image href="t2map-part5.png" x="0" y="1024" width="1024" height="256"/>
+  <image href="t2map-part6.png" x="0" y="1280" width="1024" height="256"/>
+</svg>
