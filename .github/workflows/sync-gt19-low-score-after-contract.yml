@@ -1,0 +1,27 @@
+name: Sync GT19 low-score parity after contract repair
+
+on:
+  push:
+    branches:
+      - fix/gt19-reading-low-score-parity
+    paths:
+      - .gt19-low-score-contract-sync/READY
+
+permissions:
+  contents: write
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: fix/gt19-reading-low-score-parity
+          fetch-depth: 0
+      - name: Merge current main into parity branch
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git fetch origin main
+          git merge --no-edit origin/main
+          git push origin HEAD:fix/gt19-reading-low-score-parity
