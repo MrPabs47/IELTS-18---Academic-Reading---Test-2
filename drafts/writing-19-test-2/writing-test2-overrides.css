@@ -1,86 +1,68 @@
-/* Test-specific presentation for IELTS 19 Academic Writing Test 2. */
+/* IELTS 19 Academic Writing Test 2 */
 .task-question,
 .task-question p {
   font-style: italic;
+}
+
+#taskImage {
+  content: normal !important;
 }
 
 .task-visual {
   margin-top: 12px;
 }
 
-/*
- * The harbour plans are assembled from verified PNG slices. This preserves
- * the approved enhanced map exactly while avoiding the earlier single-file
- * binary truncation in the preview branch.
- */
 .porth-harbour-visual-frame {
-  position: relative;
   display: flex;
-  flex-direction: column;
   align-items: center;
-  width: min(100%, 720px);
+  justify-content: center;
+  width: 100%;
   max-width: 100%;
   margin-inline: auto;
   padding: 4px 0 12px;
-  overflow: visible;
+  overflow: hidden;
 }
 
-.porth-harbour-visual-frame::before {
-  content: "";
-  display: block;
-  width: 100%;
-  aspect-ratio: 1024 / 1536;
-  background-image:
-    url("t2map-part1.png"),
-    url("t2map-part2.png"),
-    url("t2map-part3a.png"),
-    url("t2map-part3b.png"),
-    url("t2map-part4.png"),
-    url("t2map-part5.png"),
-    url("t2map-part6.png");
-  background-repeat: no-repeat;
-  background-size:
-    100% 16.666667%,
-    100% 16.666667%,
-    100% 8.333333%,
-    100% 8.333333%,
-    100% 16.666667%,
-    100% 16.666667%,
-    100% 16.666667%;
-  background-position:
-    0 0%,
-    0 20%,
-    0 36.363636%,
-    0 45.454545%,
-    0 60%,
-    0 80%,
-    0 100%;
-}
-
-/* Keep the existing click/keyboard enlargement target without displaying its broken source. */
 .porth-harbour-visual-frame #taskImage {
-  content: normal !important;
-  position: absolute;
-  inset: 4px 0 12px;
-  z-index: 1;
+  position: static;
   display: block;
-  width: 100%;
-  height: calc(100% - 16px);
-  max-width: none;
-  max-height: none;
-  margin: 0;
-  opacity: 0;
+  width: auto;
+  max-width: 100%;
+  height: auto;
+  max-height: min(62vh, calc(100vh - 430px));
+  margin: 0 auto;
+  opacity: 1;
+  object-fit: contain;
   cursor: zoom-in;
 }
 
 #passagePane.image-focus .porth-harbour-visual-frame {
-  justify-content: center;
-  width: min(100%, 900px);
-  max-width: 900px;
-  min-height: 100%;
+  width: 100%;
+  max-width: none;
+  height: 100%;
+  min-height: 0;
+  padding: 0;
+  overflow: hidden;
 }
 
 #passagePane.image-focus .porth-harbour-visual-frame #taskImage {
   width: 100%;
-  height: calc(100% - 16px);
+  max-width: 100%;
+  height: 100%;
+  max-height: 100%;
+  object-fit: contain;
+  cursor: zoom-out;
+}
+
+@media (max-width: 900px) {
+  .porth-harbour-visual-frame #taskImage {
+    width: min(100%, 560px);
+    max-height: none;
+  }
+
+  #passagePane.image-focus .porth-harbour-visual-frame #taskImage {
+    width: 100%;
+    height: 100%;
+    max-height: 100%;
+  }
 }
