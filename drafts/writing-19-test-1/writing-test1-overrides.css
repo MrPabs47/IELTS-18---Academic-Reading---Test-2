@@ -4,39 +4,74 @@
   font-style: italic;
 }
 
-/* Reset the shared Test 2 sugar-cane image override. */
-#taskImage {
-  content: normal !important;
-}
-
 .task-visual {
   margin-top: 12px;
 }
 
+/*
+ * The graph is assembled from verified PNG slices. This avoids the binary
+ * truncation that affected the earlier single-file preview while preserving
+ * the exact enhanced graph pixels.
+ */
 .participants-graph-visual-frame {
+  position: relative;
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: 4px 0 8px;
   width: 100%;
+  max-width: 900px;
+  margin-inline: auto;
+  padding: 4px 0 8px;
   overflow: visible;
 }
 
-.visual-frame img {
+.participants-graph-visual-frame::before {
+  content: "";
   display: block;
   width: 100%;
-  max-width: 900px;
-  height: auto;
-  object-fit: contain;
+  aspect-ratio: 1920 / 1172;
+  background-image:
+    url("t1graph-part1.png"),
+    url("t1graph-part2.png"),
+    url("t1graph-part3.png"),
+    url("t1graph-part4.png");
+  background-repeat: no-repeat;
+  background-size:
+    100% 25%,
+    100% 25%,
+    100% 25%,
+    100% 25%;
+  background-position:
+    0 0%,
+    0 33.333333%,
+    0 66.666667%,
+    0 100%;
+}
+
+/* Keep the existing click/keyboard enlargement target without displaying its broken source. */
+.participants-graph-visual-frame #taskImage {
+  content: normal !important;
+  position: absolute;
+  inset: 4px 0 8px;
+  z-index: 1;
+  display: block;
+  width: 100%;
+  height: calc(100% - 12px);
+  max-width: none;
+  max-height: none;
+  margin: 0;
+  opacity: 0;
+  cursor: zoom-in;
 }
 
 #passagePane.image-focus .participants-graph-visual-frame {
   justify-content: center;
+  width: min(100%, 1200px);
+  max-width: 1200px;
   min-height: 100%;
 }
 
-#passagePane.image-focus .visual-frame img {
-  width: auto;
-  max-width: 100%;
-  max-height: 100%;
+#passagePane.image-focus .participants-graph-visual-frame #taskImage {
+  width: 100%;
+  height: calc(100% - 12px);
 }
