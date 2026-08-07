@@ -53,7 +53,9 @@ function visibleCount(page, selector) {
       assert.match(bandText, /Estimated IELTS General Training Reading band: Below 3\. Skill level: Developing user/i, `Test ${number} result label`);
       assert.match(descriptorText, /below Band 3 on the current General Training Reading score guide/i, `Test ${number} descriptor`);
 
-      if (typeof window.closeResults === 'function') await page.evaluate(() => window.closeResults());
+      await page.evaluate(() => {
+        if (typeof window.closeResults === 'function') window.closeResults();
+      });
       await page.waitForTimeout(300);
 
       const scoreFeedbackButton = page.getByRole('button', { name: /score feedback/i }).first();
