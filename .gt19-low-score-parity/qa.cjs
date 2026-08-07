@@ -34,7 +34,7 @@ function visibleCount(page, selector) {
         eight: computeBandScore(8),
         nine: computeBandScore(9),
       }));
-      assert.deepEqual(boundary, { zero: 'Below 3', one: 'Below 3', eight: 'Below 3', nine: 3 }, `Test ${number} score boundary mismatch`);
+      assert.deepEqual(boundary, { zero: 'Below 3', one: 'Below 3', eight: 'Below 3', nine: '3' }, `Test ${number} score boundary mismatch`);
 
       await page.waitForFunction(() => Boolean(window.ReadingFeatureShell));
       await page.evaluate(() => {
