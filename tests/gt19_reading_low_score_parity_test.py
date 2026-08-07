@@ -26,12 +26,13 @@ def compute_band_function(html: str) -> str:
     return match.group(1)
 
 
-def test_all_four_tests_use_below_3_for_zero_through_eight() -> None:
+def test_all_four_tests_use_the_same_string_band_contract() -> None:
+    expected_returns = ["9", "8.5", "8", "7.5", "7", "6.5", "6", "5.5", "5", "4.5", "4", "3.5", "3", "Below 3"]
     for test_number in range(1, 5):
         html = page(test_number).read_text(encoding="utf-8")
         function = compute_band_function(html)
-        assert 'return "Below 3";' in function
-        assert "if (correct >= 9)" in function
+        for band in expected_returns:
+            assert f'return "{band}";' in function, f"Test {test_number} must return band {band!r} as a string"
         assert "return 2.5;" not in function
         assert "return 1;" not in function
         assert "return 0;" not in function
