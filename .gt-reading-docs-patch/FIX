@@ -1,0 +1,1 @@
+Remove the temporary Markdown diff-check line so deliberate hard-break spacing does not block the documentation patch.
