@@ -1,0 +1,25 @@
+name: Validate IELTS 18 GT Test 1 Study integration
+
+on:
+  push:
+    paths:
+      - '.gt18-test1-validate-trigger'
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: feature/ielts18-gt-test1-study-feedback
+      - name: Syntax and focused regressions
+        shell: bash
+        run: |
+          node --check general-training/cambridge-18/test-1/study-feedback-data.js
+          node --check general-training/cambridge-18/test-1/study-feedback.js
+          python -m pytest -q \
+            tests/ielts18_gt_test1_study_parity_test.py \
+            tests/gt_reading_info_control_lifecycle_test.py \
+            tests/gt19_reading_low_score_parity_test.py \
+            tests/reading_feature_shell_foundation_test.py \
+            tests/reading_feature_shell_config_validation_test.py
