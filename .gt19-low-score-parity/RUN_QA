@@ -1,1 +1,1 @@
-Run the four-test low-score parity browser and static checks.
+Rerun the four-test low-score parity browser and static checks after making the score-guide assertion format-agnostic.
