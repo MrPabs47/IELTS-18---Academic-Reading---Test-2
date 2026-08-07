@@ -1,0 +1,105 @@
+name: Patch GT19 Reading low-score parity
+
+on:
+  push:
+    branches:
+      - fix/gt19-reading-low-score-parity
+    paths:
+      - .gt19-low-score-parity/READY
+
+permissions:
+  contents: write
+
+jobs:
+  patch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: fix/gt19-reading-low-score-parity
+      - name: Apply focused low-score parity patch
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+
+          root = Path('general-training/cambridge-19')
+          files = {
+              1: root / 'test-1' / 'IELTS19 Test 1 - Reading - GT.html',
+              2: root / 'test-2' / 'IELTS19 Test 2 - Reading - GT.html',
+              3: root / 'test-3' / 'IELTS19 Test 3 - Reading - GT.html',
+              4: root / 'test-4' / 'IELTS19 Test 4 - Reading - GT.html',
+          }
+
+          below_descriptor = '''      if (String(band) === "Below 3") return {\n        level: "Developing user",\n        description: "This result is below Band 3 on the current General Training Reading score guide. Focus on locating explicit details, recognising paraphrases and following word limits."\n      };\n'''
+
+          def replace_once(text, old, new, label):
+              count = text.count(old)
+              if count != 1:
+                  raise SystemExit(f'{label}: expected one match, found {count}')
+              return text.replace(old, new, 1)
+
+          # Tests 1 and 3: replace legacy sub-Band-3 estimates with the shared Below 3 result.
+          for number in (1, 3):
+              path = files[number]
+              text = path.read_text(encoding='utf-8')
+              old_tail = '''      if (correct >= 12) return 3.5;\n      if (correct >= 9) return 3;\n      if (correct >= 6) return 2.5;\n      if (correct === 0) return 0;\n      return 1;'''
+              new_tail = '''      if (correct >= 12) return 3.5;\n      if (correct >= 9) return 3;\n      return "Below 3";'''
+              text = replace_once(text, old_tail, new_tail, f'Test {number} conversion tail')
+              text = replace_once(
+                  text,
+                  '    function getBandDescriptor(band) {\n      if (bandDescriptors[band]) return bandDescriptors[band];',
+                  '    function getBandDescriptor(band) {\n' + below_descriptor + '      if (bandDescriptors[band]) return bandDescriptors[band];',
+                  f'Test {number} Below 3 descriptor'
+              )
+              text = replace_once(
+                  text,
+                  '          "Estimated IELTS Reading band: " +',
+                  '          "Estimated IELTS General Training Reading band: " +',
+                  f'Test {number} result label'
+              )
+              path.write_text(text, encoding='utf-8')
+
+          # Test 2 already scores 0–8 as Below 3; make its descriptor and result wording match Tests 1, 3 and 4.
+          path = files[2]
+          text = path.read_text(encoding='utf-8')
+          text = replace_once(
+              text,
+              '''    function descriptorForBand(band) {\n      const numeric = Number.parseFloat(band);\n      return Number.isFinite(numeric) ? (bandDescriptors[Math.floor(numeric)] || bandDescriptors[0]) : bandDescriptors[0];\n    }''',
+              '''    function descriptorForBand(band) {\n      if (String(band) === "Below 3") return {\n        level: "Developing user",\n        description: "This result is below Band 3 on the current General Training Reading score guide. Focus on locating explicit details, recognising paraphrases and following word limits."\n      };\n      const numeric = Number.parseFloat(band);\n      return Number.isFinite(numeric) ? (bandDescriptors[Math.floor(numeric)] || bandDescriptors[0]) : bandDescriptors[0];\n    }''',
+              'Test 2 Below 3 descriptor'
+          )
+          text = replace_once(
+              text,
+              '''      if (bandLine) bandLine.textContent = band === "Below 3" ? "Estimated IELTS General Training Reading band: 2.5 or below (below Band 3)." : "Estimated IELTS General Training Reading band: " + band + ". Skill level: " + desc.level;\n      if (descriptorLine) descriptorLine.textContent = band === "Below 3" ? "The published conversion table does not provide a finer estimate below Band 3." : desc.description;''',
+              '''      if (bandLine) bandLine.textContent = "Estimated IELTS General Training Reading band: " + band + ". Skill level: " + desc.level;\n      if (descriptorLine) descriptorLine.textContent = desc.description;''',
+              'Test 2 result wording'
+          )
+          path.write_text(text, encoding='utf-8')
+
+          # Test 4 already has the correct conversion and descriptor; align only the visible result label.
+          path = files[4]
+          text = path.read_text(encoding='utf-8')
+          text = replace_once(
+              text,
+              '          "Estimated IELTS Reading band: " +',
+              '          "Estimated IELTS General Training Reading band: " +',
+              'Test 4 result label'
+          )
+          path.write_text(text, encoding='utf-8')
+
+          # The compatibility parser used by Tests 1–3 must understand the non-numeric Below 3 label.
+          path = Path('academic/shared/reading-feature-shell-core.js')
+          text = path.read_text(encoding='utf-8')
+          text = replace_once(
+              text,
+              '''    var band = bandLine && String(bandLine.textContent || "").match(/band:\\s*([0-9]+(?:\\.[0-9]+)?)/i);\n    return raw && band ? { rawScore: Number(raw[1]), band: band[1] } : null;''',
+              '''    var bandText = bandLine ? String(bandLine.textContent || "") : "";\n    var numericBand = bandText.match(/band:\\s*([0-9]+(?:\\.[0-9]+)?)/i);\n    var belowBandThree = /band:\\s*Below 3\\b/i.test(bandText);\n    var band = belowBandThree ? "Below 3" : (numericBand ? numericBand[1] : "");\n    return raw && band ? { rawScore: Number(raw[1]), band: band } : null;''',
+              'shared submitted-result parser'
+          )
+          path.write_text(text, encoding='utf-8')
+          PY
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add academic/shared/reading-feature-shell-core.js general-training/cambridge-19/test-{1,2,3,4}/*.html
+          git commit -m "Align GT19 Reading low-score behaviour"
+          git push origin HEAD:fix/gt19-reading-low-score-parity
