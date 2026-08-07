@@ -64,3 +64,131 @@ body[data-test-view="general"] .pathway.academic {
     gap:80px;
   }
 }
+
+/*
+  Preview: make the real skill links read as the clickable controls.
+  Available rows use colour-filled surfaces rather than outlined cards.
+*/
+.skill-row.available::before,
+.skill-row.available::after {
+  opacity:0 !important;
+}
+
+.skill-row.available {
+  border-color:transparent;
+  box-shadow:none;
+}
+
+.skill-row.available[data-glow="academic"] {
+  --row-bg:linear-gradient(135deg,rgba(114,4,163,.25),rgba(114,4,163,.12)),#15171a;
+}
+
+.skill-row.available[data-glow="general"] {
+  --row-bg:linear-gradient(135deg,rgba(0,98,163,.27),rgba(0,98,163,.12)),#15171a;
+}
+
+.skill-row.available[data-glow="shared"] {
+  --row-bg:linear-gradient(110deg,rgba(114,4,163,.13),rgba(0,98,163,.20)),#15171a;
+}
+
+@media(hover:hover) and (pointer:fine) {
+  .skill-row.available:hover {
+    transform:none;
+    border-color:transparent;
+    box-shadow:none;
+    outline:none;
+  }
+
+  .skill-row.available[data-glow="academic"]:hover {
+    --row-bg:linear-gradient(135deg,rgba(114,4,163,.50),rgba(114,4,163,.27)),#17121a;
+  }
+
+  .skill-row.available[data-glow="general"]:hover {
+    --row-bg:linear-gradient(135deg,rgba(0,98,163,.52),rgba(0,98,163,.27)),#11171b;
+  }
+
+  .skill-row.available[data-glow="shared"]:hover {
+    --row-bg:linear-gradient(110deg,rgba(114,4,163,.27),rgba(0,98,163,.39)),#14171c;
+  }
+}
+
+/* Keep keyboard focus unmistakable without turning the resting design into an outline card. */
+.skill-row.available[data-glow="academic"]:focus-visible {
+  --row-bg:linear-gradient(135deg,rgba(114,4,163,.50),rgba(114,4,163,.27)),#17121a;
+  border-color:transparent;
+  box-shadow:0 0 0 2px rgba(165,58,214,.50);
+  transform:none;
+}
+
+.skill-row.available[data-glow="general"]:focus-visible {
+  --row-bg:linear-gradient(135deg,rgba(0,98,163,.52),rgba(0,98,163,.27)),#11171b;
+  border-color:transparent;
+  box-shadow:0 0 0 2px rgba(39,153,214,.50);
+  transform:none;
+}
+
+.skill-row.available[data-glow="shared"]:focus-visible {
+  --row-bg:linear-gradient(110deg,rgba(114,4,163,.27),rgba(0,98,163,.39)),#14171c;
+  border-color:transparent;
+  box-shadow:0 0 0 2px rgba(91,119,190,.45);
+  transform:none;
+}
+
+/* Light-mode equivalents: slightly stronger fills, still no resting border. */
+html[data-theme="light"] body .skill-row.available {
+  border-color:transparent;
+  box-shadow:none;
+}
+
+html[data-theme="light"] body .skill-row.available[data-glow="academic"] {
+  --row-bg:linear-gradient(135deg,#f0e1f6,#faf2fc);
+  color:#38233f;
+}
+
+html[data-theme="light"] body .skill-row.available[data-glow="general"] {
+  --row-bg:linear-gradient(135deg,#e1f0f9,#f2f8fc);
+  color:#203543;
+}
+
+html[data-theme="light"] body .skill-row.available[data-glow="shared"] {
+  --row-bg:linear-gradient(110deg,#f0e4f5,#e3f0f9);
+  color:#293342;
+}
+
+@media(hover:hover) and (pointer:fine) {
+  html[data-theme="light"] body .skill-row.available[data-glow="academic"]:hover {
+    --row-bg:linear-gradient(135deg,#dfc2ec,#f0dbf5);
+    border-color:transparent;
+    box-shadow:none;
+  }
+
+  html[data-theme="light"] body .skill-row.available[data-glow="general"]:hover {
+    --row-bg:linear-gradient(135deg,#c5e1f1,#dceef8);
+    border-color:transparent;
+    box-shadow:none;
+  }
+
+  html[data-theme="light"] body .skill-row.available[data-glow="shared"]:hover {
+    --row-bg:linear-gradient(110deg,#e2cbed,#cde4f3);
+    border-color:transparent;
+    box-shadow:none;
+  }
+}
+
+html[data-theme="light"] body .skill-row.available[data-glow="academic"]:focus-visible {
+  --row-bg:linear-gradient(135deg,#dfc2ec,#f0dbf5);
+  border-color:transparent;
+  box-shadow:0 0 0 2px rgba(114,4,163,.32);
+}
+
+html[data-theme="light"] body .skill-row.available[data-glow="general"]:focus-visible {
+  --row-bg:linear-gradient(135deg,#c5e1f1,#dceef8);
+  border-color:transparent;
+  box-shadow:0 0 0 2px rgba(0,98,163,.30);
+}
+
+html[data-theme="light"] body .skill-row.available[data-glow="shared"]:focus-visible {
+  --row-bg:linear-gradient(110deg,#e2cbed,#cde4f3);
+  border-color:transparent;
+  box-shadow:0 0 0 2px rgba(91,119,190,.28);
+}
