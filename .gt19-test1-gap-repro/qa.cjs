@@ -77,11 +77,11 @@ const URL = 'http://127.0.0.1:4173/general-training/cambridge-19/test-1/IELTS19%
         parent: { tag: box.parentElement.tagName, cls: box.parentElement.className, rect: rect(box.parentElement), style: style(box.parentElement) },
         children: Array.from(box.children).map(node => ({ tag: node.tagName, cls: node.className, rect: rect(node), style: style(node), text: (node.textContent || '').replace(/\s+/g, ' ').trim().slice(0, 120) })),
         matchedRules,
-        questionPane: { rect: rect(document.getElementById('questionContent')), scrollHeight: document.getElementById('questionContent').scrollHeight, clientHeight: document.getElementById('questionContent').clientHeight },
-        errors
+        questionPane: { rect: rect(document.getElementById('questionContent')), scrollHeight: document.getElementById('questionContent').scrollHeight, clientHeight: document.getElementById('questionContent').clientHeight }
       };
     });
 
+    diagnostics.pageErrors = errors;
     console.log('DIAGNOSTICS', JSON.stringify(diagnostics, null, 2));
     await page.screenshot({ path: '/tmp/gt19-test1-summary-gap.png', fullPage: false });
   } finally {
