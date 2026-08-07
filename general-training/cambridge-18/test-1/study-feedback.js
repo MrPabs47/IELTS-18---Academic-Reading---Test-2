@@ -11,12 +11,6 @@
     '.gt18-test1-header-left #candidateNameDisplay{display:none;max-width:min(24vw,260px);flex:0 1 auto}' +
     '.gt18-test1-header-right{gap:12px;min-width:0;flex:0 0 auto;white-space:nowrap}' +
     '.reading-shell-locked{cursor:not-allowed!important;opacity:.72}' +
-    '.logo.home-link,.logo-link .logo{transition:color .2s ease,opacity .2s ease}' +
-    '.logo.home-link:hover,.home-link:hover,.logo-link:hover .logo{color:#e31837;opacity:1}' +
-    '.logo-char{display:inline-block;opacity:1;transform:none;filter:none;will-change:transform,opacity,filter}' +
-    '.logo.is-animating .logo-char{animation:gt18LogoReveal .45s cubic-bezier(.22,1,.36,1) forwards;animation-delay:calc(var(--logo-char-index) * 200ms)}' +
-    '@keyframes gt18LogoReveal{from{opacity:0;transform:translateY(8px);filter:blur(4px)}to{opacity:1;transform:translateY(0);filter:blur(0)}}' +
-    '@media(prefers-reduced-motion:reduce){.logo-char{opacity:1;transform:none;filter:none;animation:none!important}}' +
     '@media(max-width:980px){.gt18-test1-header-left{gap:10px}.gt18-test1-header-right{gap:8px}.gt18-test1-header-left #candidateNameDisplay{max-width:18vw}}' +
     '<\/style>');
   document.write('<script src="study-feedback-data.js"><\/script>');
@@ -181,40 +175,6 @@
     return candidate;
   }
 
-  function prepareAnimatedLogo() {
-    document.querySelectorAll(".logo.home-link, .logo-link .logo").forEach(function (logoNode) {
-      if (logoNode.getAttribute("data-gt18-logo-ready") === "true") return;
-      var rawText = String(logoNode.textContent || "").trim();
-      if (rawText !== "IELTS Pabs") return;
-      logoNode.setAttribute("data-gt18-logo-ready", "true");
-      logoNode.setAttribute("aria-label", "IELTS Pabs — return to home");
-      var fragment = document.createDocumentFragment();
-      Array.from(rawText).forEach(function (character, index) {
-        var span = document.createElement("span");
-        span.className = "logo-char";
-        span.setAttribute("aria-hidden", "true");
-        span.style.setProperty("--logo-char-index", String(index));
-        span.textContent = character === " " ? "\u00a0" : character;
-        fragment.appendChild(span);
-      });
-      logoNode.textContent = "";
-      logoNode.appendChild(fragment);
-      var reducedMotion = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-      if (reducedMotion) {
-        logoNode.classList.remove("is-animating");
-        return;
-      }
-      logoNode.addEventListener("mouseenter", function () {
-        logoNode.classList.remove("is-animating");
-        void logoNode.offsetWidth;
-        logoNode.classList.add("is-animating");
-      });
-      logoNode.addEventListener("mouseleave", function () {
-        logoNode.classList.remove("is-animating");
-      });
-    });
-  }
-
   function syncCandidateHeader() {
     var candidate = prepareCandidateHeader();
     if (!candidate) return;
@@ -229,7 +189,6 @@
 
   function prepareChrome() {
     prepareCandidateHeader();
-    prepareAnimatedLogo();
 
     var topRight = document.querySelector(".top-right");
     var timer = document.getElementById("timerContainer");
