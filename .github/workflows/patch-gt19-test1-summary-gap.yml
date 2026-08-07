@@ -1,0 +1,39 @@
+name: Patch GT19 Test 1 summary spacing
+
+on:
+  push:
+    branches:
+      - fix/gt19-test1-summary-gap
+    paths:
+      - .gt19-test1-gap-patch/READY
+
+permissions:
+  contents: write
+
+jobs:
+  patch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: fix/gt19-test1-summary-gap
+      - name: Apply scoped summary feedback-host spacing fix
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+
+          path = Path('general-training/cambridge-19/test-1/study-feedback.js')
+          text = path.read_text(encoding='utf-8')
+          marker = "  document.write('<link rel=\"stylesheet\" href=\"../../../academic/shared/reading-feature-shell.css\" />');\n"
+          addition = marker + "  document.write('<style id=\"gt19Test1SummaryFeedbackSpacing\">#questionContent > div[data-section=\"3\"] .summary-feedbacks > .question-block.feedback-only{margin:0;padding:0;border:0;background:transparent}</style>');\n"
+          if text.count(marker) != 1:
+              raise SystemExit(f'Expected one Reading shell stylesheet marker, found {text.count(marker)}')
+          if 'gt19Test1SummaryFeedbackSpacing' in text:
+              raise SystemExit('Scoped summary spacing fix is already present')
+          path.write_text(text.replace(marker, addition, 1), encoding='utf-8')
+          PY
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add general-training/cambridge-19/test-1/study-feedback.js
+          git commit -m "Collapse empty Test 1 summary feedback hosts"
+          git push origin HEAD:fix/gt19-test1-summary-gap
