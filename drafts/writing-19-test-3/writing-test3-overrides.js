@@ -2,7 +2,11 @@
   const TEST_TITLE = "IELTS 19 Academic Writing Test 3";
   const TEACHER_EMAIL = "pablo.jaramillo@ilsc.com.au";
   const ETHANOL_CHUNKS = [
-    "ethanol-image.b64.0",
+    "ethanol-image.b64.0a",
+    "ethanol-image.b64.0b",
+    "ethanol-image.b64.0c",
+    "ethanol-image.b64.0d",
+    "ethanol-image.b64.0e",
     "ethanol-image.b64.1",
     "ethanol-image.b64.2",
     "ethanol-image.b64.3a",
