@@ -1,4 +1,4 @@
-name: GT19 Test 4 reproduction
+name: GT19 Test 4 repair QA
 
 on:
   push:
@@ -9,7 +9,7 @@ on:
       - .github/workflows/gt19-test4-repro.yml
 
 jobs:
-  reproduce:
+  browser-and-static-qa:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -18,11 +18,12 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 22
-      - name: Install Playwright outside repository
+      - name: Install isolated QA dependencies
         run: |
           npm install --prefix /tmp/gt19-test4-playwright playwright@1.55.0
           npx --prefix /tmp/gt19-test4-playwright playwright install --with-deps chromium
-      - name: Run Test 4 reproduction
+          python -m pip install pytest
+      - name: Run Test 4 browser lifecycle QA
         env:
           NODE_PATH: /tmp/gt19-test4-playwright/node_modules
         run: |
@@ -35,3 +36,5 @@ jobs:
             sleep 1
           done
           node .gt19-test4-repro/qa.cjs
+      - name: Run permanent Test 4 regression tests
+        run: python -m pytest -q tests/gt19_test4_submitted_feedback_home_test.py
