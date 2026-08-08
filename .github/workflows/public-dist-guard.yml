@@ -1,0 +1,45 @@
+name: Public dist guard
+
+on:
+  pull_request:
+    paths:
+      - 'index.html'
+      - 'hub/**'
+      - 'academic/**'
+      - 'general-training/**'
+      - 'listening/**'
+      - 'drafts/**'
+      - 'scripts/build_public_dist.py'
+      - 'tests/test_public_dist_builder.py'
+      - '.github/workflows/public-dist-guard.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  validate-public-dist:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Run public builder unit tests
+        run: python -m unittest discover -s tests -p 'test_public_dist_builder.py' -v
+
+      - name: Build and validate least-privilege public site
+        run: python scripts/build_public_dist.py
+
+      - name: Re-run Live Hub route guard
+        run: python scripts/verify_live_hub.py
+
+      - name: Summarise generated deployment
+        run: |
+          echo "Public files: $(find dist -type f | wc -l)"
+          du -sh dist
