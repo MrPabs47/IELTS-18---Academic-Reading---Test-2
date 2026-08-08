@@ -1,6 +1,7 @@
 (() => {
   const TEST_TITLE = "IELTS 19 Academic Writing Test 3";
   const TEACHER_EMAIL = "pablo.jaramillo@ilsc.com.au";
+  const ETHANOL_IMAGE = "ethanol-image.avif";
   const ETHANOL_CHUNKS = [
     "ethanol-image.b64.0a",
     "ethanol-image.b64.0b",
@@ -108,27 +109,36 @@
 
   function hydrateEthanolImage() {
     const image = document.querySelector("#taskImage[data-ethanol-image]");
-    if (!image || image.dataset.hydrating === "true" || image.src.startsWith("data:image/avif")) return;
+    if (!image || image.dataset.hydrating === "true") return;
 
     image.dataset.hydrating = "true";
     image.setAttribute("aria-busy", "true");
 
-    loadEthanolDataUrl().then((src) => {
-      if (!document.body.contains(image)) return;
-      image.addEventListener("load", () => {
-        image.dataset.loaded = "true";
-        image.removeAttribute("aria-busy");
-      }, { once: true });
-      image.addEventListener("error", () => {
-        image.dataset.loadError = "true";
-        image.removeAttribute("aria-busy");
-      }, { once: true });
-      image.src = src;
-    }).catch((error) => {
+    const markLoaded = () => {
+      image.dataset.loaded = "true";
+      image.removeAttribute("aria-busy");
+    };
+    const markFailed = () => {
       image.dataset.loadError = "true";
       image.removeAttribute("aria-busy");
-      console.error("Failed to load the ethanol production diagram.", error);
+    };
+
+    image.addEventListener("load", markLoaded, { once: true });
+    image.addEventListener("error", () => {
+      if (image.dataset.chunkFallback === "true") {
+        markFailed();
+        return;
+      }
+      image.dataset.chunkFallback = "true";
+      loadEthanolDataUrl().then((src) => {
+        if (document.body.contains(image)) image.src = src;
+      }).catch((error) => {
+        markFailed();
+        console.error("Failed to load the ethanol production diagram.", error);
+      });
     });
+
+    image.src = `${ETHANOL_IMAGE}?v=20260808-static1`;
   }
 
   const baseRenderTask = renderTask;
