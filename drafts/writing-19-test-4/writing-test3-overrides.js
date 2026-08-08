@@ -1,6 +1,7 @@
 (() => {
   const TEST_TITLE = "IELTS 19 Academic Writing Test 4";
   const TEACHER_EMAIL = "pablo.jaramillo@ilsc.com.au";
+  const DANCE_IMAGE = "dance-image.avif";
   const DANCE_CHUNKS = [
     "dance-image.b64.0",
     "dance-image.b64.1",
@@ -98,27 +99,36 @@
 
   function hydrateDanceImage() {
     const image = document.querySelector("#taskImage[data-dance-image]");
-    if (!image || image.dataset.hydrating === "true" || image.src.startsWith("data:image/avif")) return;
+    if (!image || image.dataset.hydrating === "true") return;
 
     image.dataset.hydrating = "true";
     image.setAttribute("aria-busy", "true");
 
-    loadDanceDataUrl().then((src) => {
-      if (!document.body.contains(image)) return;
-      image.addEventListener("load", () => {
-        image.dataset.loaded = "true";
-        image.removeAttribute("aria-busy");
-      }, { once: true });
-      image.addEventListener("error", () => {
-        image.dataset.loadError = "true";
-        image.removeAttribute("aria-busy");
-      }, { once: true });
-      image.src = src;
-    }).catch((error) => {
+    const markLoaded = () => {
+      image.dataset.loaded = "true";
+      image.removeAttribute("aria-busy");
+    };
+    const markFailed = () => {
       image.dataset.loadError = "true";
       image.removeAttribute("aria-busy");
-      console.error("Failed to load the dance classes charts.", error);
+    };
+
+    image.addEventListener("load", markLoaded, { once: true });
+    image.addEventListener("error", () => {
+      if (image.dataset.chunkFallback === "true") {
+        markFailed();
+        return;
+      }
+      image.dataset.chunkFallback = "true";
+      loadDanceDataUrl().then((src) => {
+        if (document.body.contains(image)) image.src = src;
+      }).catch((error) => {
+        markFailed();
+        console.error("Failed to load the dance classes charts.", error);
+      });
     });
+
+    image.src = `${DANCE_IMAGE}?v=20260808-static1`;
   }
 
   const baseRenderTask = renderTask;
