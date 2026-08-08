@@ -57,7 +57,7 @@ jobs:
             assert(await dialog.isVisible(), `${label} score guide visible`);
             assert((await dialog.innerText()).includes('General Training Reading score guide'), `${label} full guide title`);
             assert((await dialog.innerText()).includes('Correct answers'), `${label} left table heading visible`);
-            assert((await dialog.innerText()).includes('Band'), `${label} band heading visible`);
+            assert((await dialog.innerText()).includes('Estimated band'), `${label} band heading visible`);
             await noOverflow(dialog, `${label} guide dialog`);
             const scroll = page.locator('.reading-shell-score-guide-scroll');
             await noOverflow(scroll, `${label} guide scroll area`);
