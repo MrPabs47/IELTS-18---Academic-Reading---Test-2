@@ -6,7 +6,7 @@ Cloudflare Pages production build command:
 
 Cloudflare Pages treats a static site without a top-level 404.html as a
 single-page application and serves index.html for unknown paths. This wrapper
-keeps the existing least-privilege dist build unchanged, then adds one small,
+runs the portable least-privilege deployment build, then adds one small,
 non-indexable 404.html so unknown URLs return the Pages not-found response
 instead of the Live Hub.
 """
@@ -18,7 +18,7 @@ import sys
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
-BUILDER = ROOT / "scripts" / "build_public_dist.py"
+BUILDER = ROOT / "scripts" / "build_deploy_dist.py"
 OUTPUT = ROOT / "dist"
 NOT_FOUND = """<!doctype html>
 <html lang="en">
