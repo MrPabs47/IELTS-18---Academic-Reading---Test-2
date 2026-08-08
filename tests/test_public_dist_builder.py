@@ -19,7 +19,7 @@ class PublicDistBuilderSafetyTests(unittest.TestCase):
 
     def test_noindex_is_injected_without_mutating_page_body(self) -> None:
         source = "<!doctype html><html><head><title>X</title></head><body>OK</body></html>"
-        rendered = builder.inject_noindex(source, PurePosixPath("index.html"))
+        rendered = builder.add_noindex(source, PurePosixPath("index.html"))
         self.assertIn('name="robots" content="noindex,nofollow"', rendered)
         self.assertIn("<body>OK</body>", rendered)
 
@@ -28,7 +28,7 @@ class PublicDistBuilderSafetyTests(unittest.TestCase):
             '<html><head><meta name="robots" content="noindex,nofollow" />'
             "</head><body></body></html>"
         )
-        rendered = builder.inject_noindex(source, PurePosixPath("index.html"))
+        rendered = builder.add_noindex(source, PurePosixPath("index.html"))
         self.assertEqual(rendered, source)
 
     def test_external_and_data_references_are_not_local_dependencies(self) -> None:
@@ -39,10 +39,10 @@ class PublicDistBuilderSafetyTests(unittest.TestCase):
             "mailto:teacher@example.com",
             "#section-2",
         ):
-            self.assertIsNone(builder.strip_reference(value), value)
+            self.assertIsNone(builder.clean_ref(value), value)
 
     def test_relative_reference_normalises_inside_repo(self) -> None:
-        resolved = builder.resolve_reference(
+        resolved = builder.resolve_ref(
             PurePosixPath("academic/cambridge-18/test-1/test.html"),
             "../../../hub/seasonal-theme.css?v=1",
         )
@@ -50,26 +50,24 @@ class PublicDistBuilderSafetyTests(unittest.TestCase):
 
     def test_blocked_source_areas_fail_closed(self) -> None:
         with self.assertRaises(builder.BuildFailure):
-            builder.assert_source_path_allowed(
-                PurePosixPath("scripts/build_public_dist.py"), set()
-            )
+            builder.assert_publishable(PurePosixPath("scripts/build_public_dist.py"), set())
         with self.assertRaises(builder.BuildFailure):
-            builder.assert_source_path_allowed(
+            builder.assert_publishable(
                 PurePosixPath(".github/workflows/public-dist-guard.yml"), set()
             )
 
     def test_unapproved_draft_directory_is_blocked(self) -> None:
         with self.assertRaises(builder.BuildFailure):
-            builder.assert_source_path_allowed(
+            builder.assert_publishable(
                 PurePosixPath("drafts/internal-preview/index.html"), set()
             )
 
     def test_approved_writing_runtime_directory_is_allowed(self) -> None:
         approved = {PurePosixPath("drafts/writing-18-test-1")}
-        builder.assert_source_path_allowed(
+        builder.assert_publishable(
             PurePosixPath("drafts/writing-18-test-1/index.html"), approved
         )
-        builder.assert_source_path_allowed(
+        builder.assert_publishable(
             PurePosixPath("drafts/writing-18-test-1/writing-preview.js"), approved
         )
 
@@ -80,7 +78,7 @@ class PublicDistBuilderSafetyTests(unittest.TestCase):
             PurePosixPath("notes.md"),
         ):
             with self.assertRaises(builder.BuildFailure):
-                builder.assert_source_path_allowed(relative, set())
+                builder.assert_publishable(relative, set())
 
 
 if __name__ == "__main__":
