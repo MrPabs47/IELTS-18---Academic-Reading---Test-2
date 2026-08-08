@@ -20,6 +20,8 @@
       --font-size-base: 15px;
       --footer-h: 72px;
       --header-h: 66px;
+      --app-header-h: var(--header-h);
+      --app-audio-h: 0px;
     }
     * { box-sizing: border-box; }
     html, body {
@@ -403,7 +405,7 @@
     }
     .submit-button:hover { background: #b71c1c; }
     .main {
-      padding-top: var(--header-h);
+      padding-top: var(--app-header-h);
       padding-bottom: var(--footer-h);
       min-height: 100vh;
     }
@@ -414,7 +416,7 @@
     }
     .content-shell {
       background: var(--bg);
-      min-height: calc(100vh - var(--header-h) - var(--footer-h) - 20px);
+      min-height: calc(100vh - var(--app-header-h) - var(--footer-h) - 20px);
     }
     .main,
     .page,
@@ -444,7 +446,7 @@
       padding: 4px 0;
       border-radius: 8px;
       background: transparent;
-      scroll-margin-top: calc(var(--header-h) + 20px);
+      scroll-margin-top: calc(var(--app-header-h) + var(--app-audio-h) + 20px);
     }
     .question-block.correct { outline: 2px solid var(--correct); outline-offset: 2px; }
     .question-block.partial { outline: 2px solid #b7791f; outline-offset: 2px; }
@@ -735,7 +737,7 @@
         padding-bottom: 8px;
         flex-wrap: wrap;
       }
-      .main { padding-top: calc(var(--header-h) + 14px); }
+      .main { padding-top: calc(var(--app-header-h) + 14px); }
     }
     @media (max-width: 980px) {
       .footer-main { grid-template-columns: 1fr 1fr; }
@@ -750,6 +752,305 @@
       .footer-main { grid-template-columns: 1fr; }
       .main { padding-bottom: 300px; }
       .top-right { width: 100%; justify-content: space-between; }
+    }
+
+    /* Pass 1 Study shell, question-only workspace, and annotations. */
+    [hidden] { display: none !important; }
+    .listening-study-header {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      flex-wrap: wrap;
+    }
+    .listening-study-header-button,
+    .listening-study-pill {
+      min-height: 34px;
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      background: var(--panel);
+      color: var(--text);
+      padding: 6px 11px;
+      font: inherit;
+      font-size: 0.84rem;
+      font-weight: 700;
+      cursor: pointer;
+    }
+    .listening-study-pill {
+      background: var(--accent-soft);
+      border-color: var(--accent);
+      color: var(--accent);
+      cursor: default;
+    }
+    .listening-study-pill.is-locked { cursor: pointer; }
+    .listening-study-header-button:focus-visible,
+    .listening-study-pill:focus-visible,
+    .answer-key-item:focus-visible,
+    .study-dialog-close:focus-visible {
+      outline: 3px solid var(--accent);
+      outline-offset: 2px;
+    }
+    .study-dialog-overlay {
+      position: fixed;
+      inset: 0;
+      z-index: 2050;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 18px;
+      background: rgba(0,0,0,0.58);
+    }
+    .study-dialog {
+      width: min(680px, 96vw);
+      max-height: min(760px, 92vh);
+      overflow: auto;
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      background: var(--panel);
+      color: var(--text);
+      box-shadow: var(--shadow-soft);
+      padding: 22px 24px;
+    }
+    .study-dialog-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 12px;
+    }
+    .study-dialog-head h2 { margin: 0; }
+    .study-dialog-close {
+      border: 0;
+      background: transparent;
+      color: var(--text);
+      font-size: 1.35rem;
+      cursor: pointer;
+    }
+    .score-guide-table { width: 100%; border-collapse: collapse; }
+    .score-guide-table th,
+    .score-guide-table td { border: 1px solid var(--border); padding: 7px 9px; text-align: left; }
+    .answer-key-grid { display: grid; grid-template-columns: repeat(4,minmax(0,1fr)); gap: 7px; }
+    .answer-key-item {
+      display: grid;
+      grid-template-columns: auto 1fr;
+      gap: 7px;
+      text-align: left;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      background: var(--panel);
+      color: var(--text);
+      padding: 7px 8px;
+      cursor: pointer;
+      min-width: 0;
+    }
+    .answer-key-item strong { color: var(--accent); }
+    .audio-bar.visible {
+      position: sticky;
+      top: calc(var(--app-header-h) + 4px);
+      z-index: 850;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+    .audio-bar label { flex: 0 0 auto; font-weight: 700; }
+    #sectionAudio { flex: 1 1 420px; min-width: 0; width: 100%; position: relative; z-index: 1; pointer-events: auto; }
+    .audio-note { flex: 1 1 100%; }
+    .study-workspace { width: 100%; min-width: 0; }
+    .study-question-pane { width: 100%; min-width: 0; }
+    .study-audioscript-pane[hidden] { display: none !important; }
+    .study-workspace.is-question-only .study-question-pane { width: 100%; }
+    .study-workspace.is-split {
+      display: grid;
+      grid-template-columns: minmax(380px,var(--question-pane-size,58%)) 18px minmax(300px,1fr);
+      align-items: stretch;
+      gap: 0;
+    }
+    .study-divider {
+      position: relative;
+      cursor: col-resize;
+      touch-action: none;
+      min-height: 300px;
+    }
+    .study-pane-swap-button {
+      position: sticky;
+      top: calc(var(--header-h) + 110px);
+      width: 34px;
+      height: 34px;
+      margin-left: -8px;
+      border-radius: 50%;
+      border: 1px solid var(--border);
+      background: var(--panel);
+      color: var(--accent);
+      cursor: pointer;
+    }
+    .study-workspace.is-panes-swapped .study-question-pane { order: 3; }
+    .study-workspace.is-panes-swapped .study-audioscript-pane { order: 1; }
+    .study-workspace.is-panes-swapped .study-divider { order: 2; }
+    .question-block [data-active-question],
+    .question-block[data-active-question] {
+      box-shadow: inset 4px 0 0 var(--accent);
+      background: linear-gradient(90deg,var(--accent-soft),transparent 42px);
+    }
+    #selectionToolbar {
+      position: fixed;
+      z-index: 2300;
+      display: flex;
+      gap: 4px;
+      padding: 5px;
+      border-radius: 9px;
+      background: #202124;
+      color: #fff;
+      box-shadow: 0 5px 18px rgba(0,0,0,.3);
+    }
+    #selectionToolbar button {
+      border: 0;
+      border-radius: 6px;
+      padding: 7px 10px;
+      background: transparent;
+      color: inherit;
+      cursor: pointer;
+      font: inherit;
+    }
+    #selectionToolbar button:hover,
+    #selectionToolbar button:focus-visible { background: rgba(255,255,255,.18); outline: 2px solid #fff; }
+    .student-highlight { background: #ffe66d; color: #111; border-radius: 2px; cursor: pointer; }
+    .note-anchor {
+      position: relative;
+      display: inline;
+      text-decoration: underline 2px var(--accent);
+      text-underline-offset: 3px;
+      cursor: pointer;
+    }
+    .note-anchor:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+    .note-delete {
+      position: absolute;
+      right: -8px;
+      top: -12px;
+      width: 18px;
+      height: 18px;
+      padding: 0;
+      border: 0;
+      border-radius: 50%;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      background: #c62828;
+      color: #fff;
+      font-size: 13px;
+      line-height: 1;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity .15s ease;
+    }
+    .note-anchor:hover .note-delete,
+    .note-anchor:focus .note-delete,
+    .note-anchor:focus-within .note-delete { opacity: 1; pointer-events: auto; }
+    .note-editor {
+      position: fixed;
+      z-index: 2350;
+      width: min(420px,calc(100vw - 24px));
+      left: max(12px,calc(50vw - 210px));
+      top: max(84px,calc(50vh - 150px));
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      background: var(--panel);
+      color: var(--text);
+      box-shadow: 0 12px 36px rgba(0,0,0,.28);
+      overflow: hidden;
+    }
+    .note-editor.is-dragging { user-select: none; }
+    .note-editor-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 9px 11px;
+      background: var(--bg-secondary);
+      cursor: move;
+    }
+    .note-editor-head button { border: 0; background: transparent; color: var(--text); cursor: pointer; font-size: 1.2rem; }
+    .note-editor-body { padding: 12px; }
+    #noteText { width: 100%; min-height: 110px; resize: vertical; font: inherit; }
+    .note-editor-actions { display: flex; justify-content: flex-end; gap: 8px; padding: 0 12px 12px; }
+    .note-editor-actions button { border: 1px solid var(--border); border-radius: 999px; background: var(--panel); color: var(--text); padding: 7px 12px; cursor: pointer; }
+    .note-editor-actions .danger { color: #c62828; }
+    @media (max-width: 900px) {
+      .answer-key-grid { grid-template-columns: repeat(2,minmax(0,1fr)); }
+      .study-workspace.is-split { display: block; }
+      .study-divider { display: none !important; }
+      .study-audioscript-pane { width: 100%; max-height: 320px; }
+    }
+    @media (max-width: 760px) {
+      .listening-study-header { width: 100%; order: 3; }
+      .audio-bar.visible { top: calc(var(--app-header-h) + 4px); }
+      #sectionAudio { flex-basis: 100%; }
+      .answer-key-grid { grid-template-columns: 1fr; }
+      #selectionToolbar { max-width: calc(100vw - 16px); }
+      .note-editor { left: 12px; right: 12px; top: 76px; width: auto; max-height: calc(100vh - 92px); }
+      .drag-layout,.two-answer-wrap,.radio-group,.inline-answer { max-width: 100%; }
+    }
+
+    /* Test 2 mobile chrome containment. */
+    @media (max-width: 760px) {
+      :root { --footer-h: 84px; }
+      .top-bar { align-content: flex-start; }
+      .top-left {
+        flex: 1 1 100%;
+        flex-wrap: wrap;
+      }
+      .info-strip {
+        flex: 1 1 100%;
+        min-width: 0;
+      }
+      .top-right {
+        width: 100%;
+        min-width: 0;
+        flex-wrap: wrap;
+        align-items: center;
+        justify-content: flex-start;
+        white-space: normal;
+      }
+      .listening-study-header {
+        order: 1;
+        width: 100%;
+        max-width: 100%;
+        flex: 1 1 100%;
+      }
+      .listening-study-header-button,
+      .listening-study-pill {
+        max-width: 100%;
+        white-space: normal;
+        overflow-wrap: anywhere;
+      }
+      #timerContainer { flex: 0 1 auto; }
+      .icon-group {
+        margin-left: auto;
+        flex: 0 0 auto;
+      }
+      .footer-bar {
+        height: var(--footer-h);
+        min-height: var(--footer-h);
+      }
+      .footer-main,
+      .footer-main[data-active-section="1"],
+      .footer-main[data-active-section="2"],
+      .footer-main[data-active-section="3"],
+      .footer-main[data-active-section="4"] {
+        display: flex;
+        grid-template-columns: none;
+        overflow-x: auto;
+        overflow-y: hidden;
+        min-width: 0;
+        scrollbar-gutter: stable;
+        overscroll-behavior-x: contain;
+      }
+      .part-group {
+        flex: 0 0 auto;
+        min-width: max-content;
+      }
+      .part-top,
+      .question-nav-row { overflow: visible; }
+      .submit-corner { flex: 0 0 64px; }
+      .main { padding-bottom: calc(var(--footer-h) + 16px); }
     }
   </style>
 </head>
@@ -772,10 +1073,10 @@
     </div>
   </div>
 
-  <div id="optionsOverlay">
-    <div id="optionsPanel">
+  <div id="optionsOverlay" role="presentation" aria-hidden="true">
+    <div id="optionsPanel" role="dialog" aria-modal="true" aria-labelledby="optionsTitle">
       <button class="options-close" type="button" id="closeOptionsBtn">✕</button>
-      <h2>Options</h2>
+      <h2 id="optionsTitle">Options</h2>
       <button class="submit-button" type="button" id="menuSubmitBtn">✔ Submit test &amp; check answers</button>
       <div class="options-section">
         <h3>Contrast</h3>
@@ -796,15 +1097,31 @@
     </div>
   </div>
 
-  <div id="resultsOverlay">
-    <div class="dialog" id="resultsPanel">
-      <h2>IELTS Listening Score Board</h2>
+  <div id="resultsOverlay" role="presentation" aria-hidden="true">
+    <div class="dialog" id="resultsPanel" role="dialog" aria-modal="true" aria-labelledby="resultsTitle">
+      <h2 id="resultsTitle">IELTS Listening Score Board</h2>
       <p id="studentLine"></p>
       <p id="timeLine"></p>
       <p id="scoreLine"></p>
       <p id="bandLine"></p>
+      <p id="integrityLine"></p>
       <p id="descriptorLine"></p>
       <button class="mode-btn" type="button" id="closeResultsBtn">Close</button>
+    </div>
+  </div>
+
+  <div class="study-dialog-overlay" id="scoreGuideDialog" role="dialog" aria-modal="true" aria-labelledby="scoreGuideTitle" hidden>
+    <div class="study-dialog">
+      <div class="study-dialog-head"><h2 id="scoreGuideTitle">IELTS Listening score guide</h2><button class="study-dialog-close" id="scoreGuideCloseBtn" type="button" aria-label="Close score guide">×</button></div>
+      <p>This guide shows the score conversion used by this page. It does not calculate or reveal a result.</p>
+      <div id="scoreGuideContent"></div>
+    </div>
+  </div>
+  <div class="study-dialog-overlay" id="answerKeyDialog" role="dialog" aria-modal="true" aria-labelledby="answerKeyTitle" hidden>
+    <div class="study-dialog">
+      <div class="study-dialog-head"><h2 id="answerKeyTitle">Answer Key</h2><button class="study-dialog-close" id="answerKeyCloseBtn" type="button" aria-label="Close Answer Key">×</button></div>
+      <p>Select an answer to navigate to its exact question. Opening the key does not score or modify your answers.</p>
+      <div class="answer-key-grid" id="answerKeyContent"></div>
     </div>
   </div>
 
@@ -815,10 +1132,15 @@
         <div class="info-strip">
           <span class="info-pill" id="candidateLine">Candidate:</span>
           <span class="info-pill"><strong>IELTS 16 - Listening Test 2</strong></span>
-          <span class="info-pill audio-status hidden" id="audioStatus">🔊 <span id="audioStatusText">Audio is playing: Part 1</span></span>
+          <span class="info-pill audio-status hidden" id="audioStatus">🔊 <span id="audioStatusText">Loading Part 1 audio</span></span>
         </div>
       </div>
       <div class="top-right">
+        <div class="listening-study-header" id="listeningStudyHeader" hidden>
+          <button class="listening-study-header-button" id="scoreGuideBtn" type="button" aria-haspopup="dialog" aria-controls="scoreGuideDialog">Score guide</button>
+          <button class="listening-study-header-button" id="answerKeyBtn" type="button" aria-haspopup="dialog" aria-controls="answerKeyDialog" aria-label="Answer Key">Answer Key</button>
+          <button class="listening-study-pill" id="listeningStudyPill" type="button" aria-disabled="true">Study Mode</button>
+        </div>
         <div id="timerContainer" role="status" aria-live="polite" aria-atomic="true" aria-hidden="true">Time left: <span id="timerDisplay">30:00</span></div>
         <div class="icon-group">
           <span class="icon" title="Connection status"><span class="sr-only">Connection status</span><svg viewBox="0 0 24 24"><path d="M4.93 9.93a10.5 10.5 0 0 1 14.14 0"/><path d="M7.76 12.76a6.5 6.5 0 0 1 8.48 0"/><path d="M10.59 15.59a2.5 2.5 0 0 1 2.82 0"/><path d="M12 18h.01"/></svg></span>
@@ -844,10 +1166,13 @@
       <div class="page">
         <div class="content-shell">
           <div class="audio-bar" id="audioBar">
-            <label for="sectionAudio">Section audio</label>
+            <label for="sectionAudio">Audio · <span id="studyAudioPartLabel">Part 1</span></label>
             <audio id="sectionAudio" controls preload="metadata"><source id="sectionAudioSource" src="" type="audio/mpeg" />Your browser does not support the audio element.</audio>
             <div class="audio-note">In study mode the player follows the section you are viewing. In test mode the audio continues automatically through the full test.</div>
           </div>
+
+          <div class="study-workspace is-question-only" id="studyWorkspace">
+            <div class="study-question-pane" id="studyQuestionPane">
 
           <section class="section-panel active" data-section="1"><div class="instruction-heading">Questions 1–10</div><p class="instruction-copy">Complete the notes below. Write <strong>ONE WORD AND/OR A NUMBER</strong> for each answer.</p><div class="question-block" data-qgroup="1-10"><div class="notes-panel"><div class="title-row">Copying photos to digital format</div><div class="body"><div><strong>Name of company:</strong> Picturerep</div><div class="notes-section-title">Requirements</div><ul class="bullet-list"><li>Maximum size of photos is 30 cm, minimum size 4 cm.</li><li>Photos must not be in a <span class="inline-answer" data-q="1"><input name="q1" type="text" /></span> or an album.</li></ul><div class="notes-section-title">Cost</div><ul class="bullet-list"><li>The cost for 360 photos is £ <span class="inline-answer" data-q="2"><input name="q2" type="text" /></span> (including one disk).</li><li>Before the complete order is sent, <span class="inline-answer" data-q="3"><input name="q3" type="text" /></span> is required.</li></ul><div class="notes-section-title">Services included in the price</div><ul class="bullet-list"><li>Photos can be placed in a folder, e.g. with the name <span class="inline-answer" data-q="4"><input name="q4" type="text" /></span>.</li><li>The <span class="inline-answer" data-q="5"><input name="q5" type="text" /></span> and contrast can be improved if necessary.</li><li>Photos which are very fragile will be scanned by <span class="inline-answer" data-q="6"><input name="q6" type="text" /></span>.</li></ul><div class="notes-section-title">Special restore service (costs extra)</div><ul class="bullet-list"><li>It may be possible to remove an object from a photo, or change the <span class="inline-answer" data-q="7"><input name="q7" type="text" /></span>.</li><li>A photo which is not correctly in <span class="inline-answer" data-q="8"><input name="q8" type="text" /></span> cannot be fixed.</li></ul><div class="notes-section-title">Other information</div><ul class="bullet-list"><li>Orders are completed within <span class="inline-answer" data-q="9"><input name="q9" type="text" /></span>.</li><li>Send the photos in a box (not <span class="inline-answer" data-q="10"><input name="q10" type="text" /></span>).</li></ul></div></div><div class="correct-answer" id="ca-1-10"></div></div></section>
 
@@ -889,12 +1214,28 @@
           <section class="section-panel" data-section="4"><div class="instruction-heading">Questions 31–40</div><p class="instruction-copy">Complete the notes below. Write <strong>ONE WORD ONLY</strong> for each answer.</p>
             <div class="question-block" data-qgroup="31-40"><div class="notes-panel"><div class="title-row">Health benefits of dance</div><div class="body"><div class="notes-section-title">Recent findings:</div><ul class="bullet-list"><li>All forms of dance produce various hormones associated with feelings of happiness.</li><li>Dancing with others has a more positive impact than dancing alone.</li><li>An experiment on university students suggested that dance increases <span class="inline-answer" data-q="31"><input name="q31" type="text" /></span>.</li><li>For those with mental illness, dance could be used as a form of <span class="inline-answer" data-q="32"><input name="q32" type="text" /></span>.</li></ul></div></div><div style="height:14px;"></div><div class="table-panel"><div class="title-row">Benefits of dance for older people</div><table><tbody><tr><td>accessible for people with low levels of <span class="inline-answer" data-q="33"><input name="q33" type="text" /></span></td></tr><tr><td>reduces the risk of heart disease</td></tr><tr><td>better <span class="inline-answer" data-q="34"><input name="q34" type="text" /></span> reduces the risk of accidents</td></tr><tr><td>improves <span class="inline-answer" data-q="35"><input name="q35" type="text" /></span> function by making it work faster</td></tr><tr><td>improves participants’ general well-being</td></tr><tr><td>gives people more <span class="inline-answer" data-q="36"><input name="q36" type="text" /></span> to take exercise</td></tr><tr><td>can lessen the feeling of <span class="inline-answer" data-q="37"><input name="q37" type="text" /></span>, very common in older people</td></tr></tbody></table></div><div style="height:14px;"></div><div class="notes-panel"><div class="body"><div class="notes-section-title">Benefits of Zumba:</div><ul class="bullet-list"><li>A study at The University of Wisconsin showed that doing Zumba for 40 minutes uses up as many <span class="inline-answer" data-q="38"><input name="q38" type="text" /></span> as other quite intense forms of exercise.</li><li>The <em>American Journal of Health Behavior</em> study showed that:<ul class="dash-list" style="margin-top:8px;"><li>women suffering from <span class="inline-answer" data-q="39"><input name="q39" type="text" /></span> benefited from doing Zumba.</li><li>Zumba became a <span class="inline-answer" data-q="40"><input name="q40" type="text" /></span> for the participants.</li></ul></li></ul></div></div><div class="correct-answer" id="ca-31-40"></div></div>
           </section>
+            </div>
+            <div class="study-audioscript-pane" id="studyAudioscriptPane" hidden aria-hidden="true"></div>
+            <div class="study-divider" id="studyDivider" role="separator" tabindex="0" aria-orientation="vertical" aria-label="Resize questions and audioscript panes" aria-valuemin="35" aria-valuemax="75" aria-valuenow="58" hidden>
+              <button class="study-pane-swap-button" id="studyPaneSwapButton" type="button" aria-label="Swap question and audioscript panes" aria-pressed="false" hidden>⇄</button>
+            </div>
+          </div>
         </div>
       </div>
     </main>
 
     <div class="floating-nav"><button type="button" class="nav-arrow prev" id="prevSectionBtn" aria-label="Previous section">←</button><button type="button" class="nav-arrow" id="nextSectionBtn" aria-label="Next section">→</button></div>
     <footer class="footer-bar"><div class="footer-main" id="footerMain"></div><div class="submit-corner"><button type="button" id="footerSubmitBtn" aria-label="Submit test">✓</button></div></footer>
+  </div>
+
+  <div id="selectionToolbar" role="toolbar" aria-label="Text annotation actions" hidden>
+    <button id="highlightSelectionBtn" type="button">Highlight</button>
+    <button id="noteSelectionBtn" type="button">Add note</button>
+  </div>
+  <div class="note-editor" id="noteEditor" role="dialog" aria-modal="false" aria-labelledby="noteEditorTitle" hidden>
+    <div class="note-editor-head" id="noteEditorDragHandle"><strong id="noteEditorTitle">Study note</strong><button id="noteEditorCloseBtn" type="button" aria-label="Close note editor">×</button></div>
+    <div class="note-editor-body"><label for="noteText" class="sr-only">Note</label><textarea id="noteText" placeholder="Write your note"></textarea></div>
+    <div class="note-editor-actions"><button class="danger" id="noteDeleteBtn" type="button">Delete</button><button id="noteCancelBtn" type="button">Cancel</button><button id="noteSaveBtn" type="button">Save</button></div>
   </div>
   <div id="fullscreenLockOverlay" role="dialog" aria-modal="true" aria-live="assertive">
     <div id="fullscreenLockPanel">
@@ -906,13 +1247,152 @@
 
   <script>
     const audioSources = { 1: '../../../Test 2 Part 1.mp3', 2: '../../../Test 2 Part 2.mp3', 3: '../../../Test 2 Part 3.mp3', 4: '../../../Test 2 Part 4.mp3' };
+    const questionLinksKey = 'related' + 'Questions';
+    const listeningStudyData = {
+      parts: {
+        1: {
+          audioSrc: audioSources[1],
+          speakers: {
+            narrator: { label: "Narrator" },
+            employee: { label: "Employee" },
+            woman: { label: "Woman" }
+          },
+          segments: [
+        { id: "t2-p1-i001", speaker: "narrator", text: "Test 2. This is the IELTS Listening test.", [questionLinksKey]: [], start: 0.33, end: 4.44 },
+        { id: "t2-p1-i002", speaker: "narrator", text: "You will hear a number of different recordings and you will have to answer questions on what you hear.", [questionLinksKey]: [], start: 5.64, end: 11.24 },
+        { id: "t2-p1-i003", speaker: "narrator", text: "There will be time for you to read the instructions and questions, and you will have a chance to check your work.", [questionLinksKey]: [], start: 12.16, end: 18.42 },
+        { id: "t2-p1-i004", speaker: "narrator", text: "All the recordings will be played once only.", [questionLinksKey]: [], start: 19.46, end: 22.4 },
+        { id: "t2-p1-i005", speaker: "narrator", text: "The test is in four parts.", [questionLinksKey]: [], start: 23.62, end: 25.82 },
+        { id: "t2-p1-i006", speaker: "narrator", text: "At the end of the test, you will be given ten minutes to transfer your answers to the answer sheet.", [questionLinksKey]: [], start: 26.54, end: 32.66 },
+        { id: "t2-p1-i007", speaker: "narrator", text: "Now turn to Part 1.", [questionLinksKey]: [], start: 34.5, end: 36.04 },
+        { id: "t2-p1-i008", speaker: "narrator", text: "Part 1.", [questionLinksKey]: [], start: 40.64, end: 41.82 },
+        { id: "t2-p1-i009", speaker: "narrator", text: "You will hear a woman phoning a company that converts old photographs to digital format.", [questionLinksKey]: [], start: 42.74, end: 48.9 },
+        { id: "t2-p1-i010", speaker: "narrator", text: "First, you have some time to look at Questions 1 to 3.", [questionLinksKey]: [], start: 50.04, end: 53.94 },
+        { id: "t2-p1-i011", speaker: "narrator", text: "Now listen carefully and answer Questions 1 to 3.", [questionLinksKey]: [], start: 69.08, end: 73.14 },
+        { id: "t2-p1-s001", speaker: "employee", text: "Hello, Picturerep. Can I help you?", [questionLinksKey]: [], start: 76.73, end: 78.4 },
+        { id: "t2-p1-s002", speaker: "woman", text: "Oh, hi. I saw your advertisement about copying pictures to disk and I?d like a bit more information about what you do.", [questionLinksKey]: [], start: 78.9, end: 87.46 },
+        { id: "t2-p1-s003", speaker: "employee", text: "Sure. What would you like to know?", [questionLinksKey]: [], start: 88.28, end: 89.72 },
+        { id: "t2-p1-s004", speaker: "woman", text: "Well, I?ve got a box full of old family photos that?s been up in the attic for years, some of them must be 50 or 60 years old, and I?d like to get them converted to digital format.", [questionLinksKey]: [], start: 90.56, end: 103.62 },
+        { id: "t2-p1-s005", speaker: "employee", text: "Sure, we can do that for you.", [questionLinksKey]: [], start: 104.18, end: 105.88 },
+        { id: "t2-p1-s006", speaker: "woman", text: "Right. And what about size? The photos are all sorts of sizes ? are there any restrictions?", [questionLinksKey]: [], start: 106.36, end: 113.88 },
+        { id: "t2-p1-s007", speaker: "employee", text: "Well the maximum size of photo we can do with our normal service is 30 centimetres. And each picture must be at least 4 centimetres, that?s the minimum we can cope with.", [questionLinksKey]: [], start: 115.18, end: 126.54 },
+        { id: "t2-p1-s008", speaker: "woman", text: "That should be fine. And some of them are in a frame ? should I take them out before I send them?", [questionLinksKey]: [1], start: 126.76, end: 133.38 },
+        { id: "t2-p1-s009", speaker: "employee", text: "Yes please, we can?t copy them otherwise. And also the photos must all be separate, they mustn?t be stuck into an album.", [questionLinksKey]: [1], start: 133.84, end: 141.34 },
+        { id: "t2-p1-s010", speaker: "woman", text: "OK, that?s not a problem. So can you give me an idea of how much this will cost? I?ve got about 360 photos I think.", [questionLinksKey]: [], start: 141.34, end: 152.58 },
+        { id: "t2-p1-s011", speaker: "employee", text: "We charge ?195 for 300 to 400 photos for the basic service.", [questionLinksKey]: [2], start: 153.1, end: 159.42 },
+        { id: "t2-p1-s012", speaker: "woman", text: "OK. And does that include the disk?", [questionLinksKey]: [], start: 160.1, end: 162.68 },
+        { id: "t2-p1-s013", speaker: "employee", text: "Yes, one disk ? but you can get extra ones for ?5 each.", [questionLinksKey]: [], start: 163.36, end: 168.04 },
+        { id: "t2-p1-s014", speaker: "woman", text: "That?s good. So do I need to pay when I send you the photos?", [questionLinksKey]: [], start: 168.04, end: 172.68 },
+        { id: "t2-p1-s015", speaker: "employee", text: "No, we won’t need anything until we’ve actually copied the pictures. Then we’ll let you know how much it is, and once we’ve received the payment, we’ll send the parcel off to you.", [questionLinksKey]: [3], start: 173.56, end: 184.34 },
+        { id: "t2-p1-s016", speaker: "woman", text: "Right.", [questionLinksKey]: [], start: 184.78, end: 185.1 },
+        { id: "t2-p1-i012", speaker: "narrator", text: "Before you hear the rest of the conversation,", [questionLinksKey]: [], start: 188.74, end: 191.26 },
+        { id: "t2-p1-i013", speaker: "narrator", text: "you have some time to look at Questions 4 to 10.", [questionLinksKey]: [], start: 191.71, end: 195.08 },
+        { id: "t2-p1-s017", speaker: "employee", text: "Is there anything else you?d like to ask about our services?", [questionLinksKey]: [], start: 231.62, end: 235.18 },
+        { id: "t2-p1-s018", speaker: "woman", text: "Yes. I?ve roughly sorted out the photos into groups, according to what they?re about ? so can you keep them in those groups when you copy them?", [questionLinksKey]: [], start: 236.48, end: 246.06 },
+        { id: "t2-p1-s019", speaker: "employee", text: "Sure. We?ll save each group in a different folder on the disk and if you like, you can suggest a name for each folder.", [questionLinksKey]: [], start: 247.0, end: 254.04 },
+        { id: "t2-p1-s020", speaker: "woman", text: "So I could have one called ?Grandparents? for instance?", [questionLinksKey]: [4], start: 254.04, end: 258.38 },
+        { id: "t2-p1-s021", speaker: "employee", text: "Exactly.", [questionLinksKey]: [], start: 259.08, end: 259.5 },
+        { id: "t2-p1-s022", speaker: "woman", text: "And do you do anything besides scan the photos? Like, can you make any improvements?", [questionLinksKey]: [], start: 261.08, end: 266.76 },
+        { id: "t2-p1-s023", speaker: "employee", text: "Yes, in the standard service each photo is checked, and we can sometimes touch up the colour a bit, or improve the contrast ? that can make a big difference.", [questionLinksKey]: [5], start: 267.8, end: 278.34 },
+        { id: "t2-p1-s024", speaker: "woman", text: "OK. And some of the photos are actually quite fragile ? they won?t get damaged in the process, will they?", [questionLinksKey]: [], start: 279.14, end: 286.0 },
+        { id: "t2-p1-s025", speaker: "employee", text: "No, if any look particularly fragile, we?d do them by hand. We do realise how precious these old photos can be.", [questionLinksKey]: [6], start: 286.58, end: 294.32 },
+        { id: "t2-p1-s026", speaker: "woman", text: "Sure.", [questionLinksKey]: [], start: 294.84, end: 295.18 },
+        { id: "t2-p1-s027", speaker: "employee", text: "And another thing is we can make changes to a photo if you want ? so if you want to remove an object from a photo, or maybe alter the background, we can do that.", [questionLinksKey]: [7], start: 295.98, end: 307.1 },
+        { id: "t2-p1-s028", speaker: "woman", text: "Really? I might be interested in that. I?ll have a look through the photos and see. Oh, and talking of fixing photos ? I?ve got a few that aren?t properly in focus. Can you do anything to make that better?", [questionLinksKey]: [8], start: 307.1, end: 322.84 },
+        { id: "t2-p1-s029", speaker: "employee", text: "No, I?m afraid that?s one thing we can?t do.", [questionLinksKey]: [8], start: 323.46, end: 326.3 },
+        { id: "t2-p1-s030", speaker: "woman", text: "OK.", [questionLinksKey]: [], start: 326.82, end: 327.4 },
+        { id: "t2-p1-s031", speaker: "employee", text: "Any other information I can give you?", [questionLinksKey]: [], start: 327.82, end: 329.84 },
+        { id: "t2-p1-s032", speaker: "woman", text: "Er ? oh, how long will it all take?", [questionLinksKey]: [], start: 331.62, end: 334.04 },
+        { id: "t2-p1-s033", speaker: "employee", text: "We aim to get the copying done in ten days.", [questionLinksKey]: [9], start: 334.04, end: 337.16 },
+        { id: "t2-p1-s034", speaker: "woman", text: "Fine. Right, well I?ll get the photos packed up in a box and post them off to you.", [questionLinksKey]: [], start: 338.12, end: 343.96 },
+        { id: "t2-p1-s035", speaker: "employee", text: "Right. If you?ve got a strong cardboard box, that?s best. We?ve found that plastic ones sometimes break in the post.", [questionLinksKey]: [10], start: 344.38, end: 351.92 },
+        { id: "t2-p1-s036", speaker: "woman", text: "OK. Right, thanks for your help. Bye.", [questionLinksKey]: [], start: 352.54, end: 356.78 },
+        { id: "t2-p1-s037", speaker: "employee", text: "Bye.", [questionLinksKey]: [], start: 357.54, end: 357.84 },
+        { id: "t2-p1-i014", speaker: "narrator", text: "That is the end of Part 1.", [questionLinksKey]: [], start: 361.49, end: 363.02 },
+        { id: "t2-p1-i015", speaker: "narrator", text: "You now have half a minute to check your answers to Part 1.", [questionLinksKey]: [], start: 363.74, end: 367.42 },
+          ]
+        },
+        2: {
+          audioSrc: audioSources[2],
+          speakers: {
+            narrator: { label: "Narrator" },
+            speaker: { label: "Speaker" }
+          },
+          segments: [
+        { id: "t2-p2-i001", speaker: "narrator", text: "Part 2. You will hear a head teacher talking to parents of pupils about changes at the school.", [questionLinksKey]: [], start: 0.27, end: 6.96 },
+        { id: "t2-p2-i002", speaker: "narrator", text: "First you have some time to look at Questions 11 to 15.", [questionLinksKey]: [], start: 8.14, end: 11.72 },
+        { id: "t2-p2-i003", speaker: "narrator", text: "Now listen carefully and answer Questions 11 to 15.", [questionLinksKey]: [], start: 47.07, end: 50.8 },
+        { id: "t2-p2-s001", speaker: "speaker", text: "Good morning and thank you for coming here today.", [questionLinksKey]: [], start: 54.4, end: 57.7 },
+        { id: "t2-p2-s002", speaker: "speaker", text: "I’d like to bring you up to date with changes in the school that will affect your children.", [questionLinksKey]: [], start: 58.44, end: 63.38 },
+        { id: "t2-p2-s003", speaker: "speaker", text: "As you know, the school buildings date from various times: some from the 1970s, some from the last five years, and of course Dartfield House is over a century old.", [questionLinksKey]: [], start: 64.6, end: 77.28 },
+        { id: "t2-p2-s004", speaker: "speaker", text: "It was commissioned by a businessman, Neville Richards, and intended as his family home, but he died before it was completed.", [questionLinksKey]: [], start: 78.08, end: 86.74 },
+        { id: "t2-p2-s005", speaker: "speaker", text: "His heir chose to sell it to the local council, who turned it into offices.", [questionLinksKey]: [11], start: 87.58, end: 92.34 },
+        { id: "t2-p2-s006", speaker: "speaker", text: "A later plan to convert it into a tourist information centre didn’t come about, through lack of money, and instead it formed the nucleus of this school when it opened 40 years ago.", [questionLinksKey]: [], start: 93.24, end: 106.32 },
+        { id: "t2-p2-s007", speaker: "speaker", text: "The school has grown as the local population has increased, and I can now give you some news about the lower school site, which is separated from the main site by a road.", [questionLinksKey]: [], start: 107.7, end: 119.36 },
+        { id: "t2-p2-s008", speaker: "speaker", text: "Planning permission has been granted for development of both sites.", [questionLinksKey]: [], start: 120.68, end: 124.28 },
+        { id: "t2-p2-s009", speaker: "speaker", text: "The lower school will move to new buildings that will be constructed on the main site.", [questionLinksKey]: [], start: 125.36, end: 130.84 },
+        { id: "t2-p2-s010", speaker: "speaker", text: "Developers will construct houses on the existing lower school site.", [questionLinksKey]: [12], start: 132.02, end: 136.16 },
+        { id: "t2-p2-s011", speaker: "speaker", text: "Work on the new school buildings should start within the next few months.", [questionLinksKey]: [], start: 137.36, end: 141.58 },
+        { id: "t2-p2-s012", speaker: "speaker", text: "A more imminent change concerns the catering facilities and the canteen.", [questionLinksKey]: [], start: 143.5, end: 148.48 },
+        { id: "t2-p2-s013", speaker: "speaker", text: "The canteen is always very busy throughout the lunch period – in fact it’s often full to capacity, because a lot of our pupils like the food that’s on offer there.", [questionLinksKey]: [], start: 149.48, end: 160.66 },
+        { id: "t2-p2-s014", speaker: "speaker", text: "But there’s only one serving point, so most pupils have to wait a considerable time to be served.", [questionLinksKey]: [13], start: 160.66, end: 168.4 },
+        { id: "t2-p2-s015", speaker: "speaker", text: "This is obviously unsatisfactory, as they may have hardly finished their lunch before afternoon lessons start.", [questionLinksKey]: [], start: 169.52, end: 176.46 },
+        { id: "t2-p2-s016", speaker: "speaker", text: "So we’ve had a new Food Hall built, and this will come into use next week.", [questionLinksKey]: [], start: 177.82, end: 183.58 },
+        { id: "t2-p2-s017", speaker: "speaker", text: "It’ll have several serving areas, and I’ll give you more details about those in a minute, but one thing we ask you to do, to help in the smooth running of the Food Hall, is to discuss with your children each morning which type of food they want to eat that day, so they can go straight to the relevant serving point.", [questionLinksKey]: [14], start: 184.4, end: 204.88 },
+        { id: "t2-p2-s018", speaker: "speaker", text: "There won’t be any junk food – everything on offer will be healthy – and there’s no change to the current system of paying for lunches by topping up your child’s electronic payment card online.", [questionLinksKey]: [], start: 206.06, end: 218.42 },
+        { id: "t2-p2-s019", speaker: "speaker", text: "You may be wondering what will happen to the old canteen.", [questionLinksKey]: [], start: 220.06, end: 223.26 },
+        { id: "t2-p2-s020", speaker: "speaker", text: "We’ll still have tables and chairs in there, and pupils can eat food from the Food Hall or lunch they’ve brought from home.", [questionLinksKey]: [15], start: 224.08, end: 231.56 },
+        { id: "t2-p2-s021", speaker: "speaker", text: "Eventually we may use part of the canteen for storage, but first we’ll see how many pupils go in there at lunchtime.", [questionLinksKey]: [], start: 232.6, end: 240.82 },
+        { id: "t2-p2-i004", speaker: "narrator", text: "Before you hear the rest of the talk, you have some time to look at Questions 16 to 20.", [questionLinksKey]: [], start: 244.37, end: 250.24 },
+        { id: "t2-p2-i005", speaker: "narrator", text: "Now listen and answer Questions 16 to 20.", [questionLinksKey]: [], start: 275.62, end: 279.03 },
+        { id: "t2-p2-s022", speaker: "speaker", text: "OK, back to the serving points in the Food Hall, which will all have side dishes, desserts and drinks on sale, as well as main courses.", [questionLinksKey]: [], start: 282.5, end: 292.64 },
+        { id: "t2-p2-s023", speaker: "speaker", text: "One serving point we call World Adventures.", [questionLinksKey]: [], start: 294.2, end: 297.12 },
+        { id: "t2-p2-s024", speaker: "speaker", text: "This will serve a different country’s cuisine each day, maybe Chinese one day and Lebanese the next.", [questionLinksKey]: [16], start: 298.22, end: 305.96 },
+        { id: "t2-p2-s025", speaker: "speaker", text: "The menus will be planned for a week at a time, so pupils will know what’s going to be available the whole of that week.", [questionLinksKey]: [], start: 306.92, end: 314.72 },
+        { id: "t2-p2-s026", speaker: "speaker", text: "Street Life is also international, with food from three particular cultures.", [questionLinksKey]: [], start: 316.52, end: 322.0 },
+        { id: "t2-p2-s027", speaker: "speaker", text: "We’ll ask pupils to make suggestions, so perhaps sometimes there’ll be food from Thailand, Ethiopia and Mexico, and then one of them will be replaced by Jamaican food for a week or two.", [questionLinksKey]: [17], start: 323.2, end: 337.18 },
+        { id: "t2-p2-s028", speaker: "speaker", text: "The Speedy Italian serving point will cater particularly for the many pupils who don’t eat meat or fish: they can be sure that all the food served there is suitable for them.", [questionLinksKey]: [18], start: 339.18, end: 351.72 },
+        { id: "t2-p2-s029", speaker: "speaker", text: "There’ll be plenty of variety, so they shouldn’t get bored with the food.", [questionLinksKey]: [], start: 352.76, end: 357.42 },
+        { id: "t2-p2-s030", speaker: "speaker", text: "OK, that’s all on the new Food Hall.", [questionLinksKey]: [], start: 358.74, end: 361.36 },
+        { id: "t2-p2-s031", speaker: "speaker", text: "Now after-school lessons.", [questionLinksKey]: [], start: 362.26, end: 363.8 },
+        { id: "t2-p2-s032", speaker: "speaker", text: "These are very popular with pupils, particularly swimming – in fact there’s a waiting list for lessons.", [questionLinksKey]: [], start: 364.88, end: 372.16 },
+        { id: "t2-p2-s033", speaker: "speaker", text: "Cycling is another favourite, and I’m delighted that dozens of pupils make use of the chance to learn to ride in off-road conditions.", [questionLinksKey]: [], start: 373.36, end: 381.84 },
+        { id: "t2-p2-s034", speaker: "speaker", text: "It means that more and more cycle to and from school every day.", [questionLinksKey]: [], start: 382.92, end: 386.66 },
+        { id: "t2-p2-s035", speaker: "speaker", text: "As you know, we have a well-equipped performance centre, and we’re going to start drama classes in there, too.", [questionLinksKey]: [19,20], start: 387.48, end: 394.24 },
+        { id: "t2-p2-s036", speaker: "speaker", text: "Pupils will be able to join in just for fun or work up to taking part in a play – we hope to put on at least one a year.", [questionLinksKey]: [], start: 395.36, end: 403.84 },
+        { id: "t2-p2-s037", speaker: "speaker", text: "We already teach a number of pupils to use the sound and lighting systems in the centre.", [questionLinksKey]: [], start: 405.26, end: 410.2 },
+        { id: "t2-p2-s038", speaker: "speaker", text: "And a former pupil has given a magnificent grand piano to the school, so a few pupils will be able to learn at the school instead of going to the local college, as many of them do at the moment.", [questionLinksKey]: [19,20], start: 410.2, end: 423.64 },
+        { id: "t2-p2-i006", speaker: "narrator", text: "That is the end of Part 2.", [questionLinksKey]: [], start: 427.2, end: 428.94 },
+        { id: "t2-p2-i007", speaker: "narrator", text: "You now have half a minute to check your answers to Part 2.", [questionLinksKey]: [], start: 429.96, end: 433.62 },
+          ]
+        }
+      }
+    };
+    const VERIFIED_PART_1_START_SECONDS = 0.30;
+    const VERIFIED_PART_2_START_SECONDS = 0.20;
+    const studyAudioStartFloors = {1:0,2:0,3:0,4:0};
+    studyAudioStartFloors[1]=VERIFIED_PART_1_START_SECONDS;
+    studyAudioStartFloors[2]=VERIFIED_PART_2_START_SECONDS;
     const sectionRanges = { 1:{from:1,to:10,label:'Part 1'}, 2:{from:11,to:20,label:'Part 2'}, 3:{from:21,to:30,label:'Part 3'}, 4:{from:31,to:40,label:'Part 4'} };
+    const auditedTaskGroups = ['1-10','11-15','16-18','19-20','21-24','25-30','31-40'];
     const answerKey = {1:['frame'],2:['195'],3:['payment'],4:['grandparents'],5:['colour','color'],6:['hand'],7:['background'],8:['focus'],9:['ten days','10 days'],10:['plastic'],11:['C'],12:['B'],13:['A'],14:['A'],15:['C'],16:['D'],17:['A'],18:['B'],19:['B'],20:['C'],21:['B'],22:['A'],23:['C'],24:['C'],25:['history'],26:['paper'],27:['humans','people'],28:['stress'],29:['graph'],30:['evaluate'],31:['creativity'],32:['therapy'],33:['fitness'],34:['balance'],35:['brain'],36:['motivation'],37:['isolation'],38:['calories'],39:['obesity'],40:['habit']};
     const displayAnswers = {1:'frame',2:'195',3:'payment',4:'Grandparents',5:'colour / color',6:'hand',7:'background',8:'focus',9:'ten days / 10 days',10:'plastic',11:'C',12:'B',13:'A',14:'A',15:'C',16:'D',17:'A',18:'B',19:'B',20:'C',21:'B',22:'A',23:'C',24:'C',25:'history',26:'paper',27:'humans / people',28:'stress',29:'graph',30:'evaluate',31:'creativity',32:'therapy',33:'fitness',34:'balance',35:'brain',36:'motivation',37:'isolation',38:'calories',39:'obesity',40:'habit'};
     const listeningBands = [{min:39,band:9,level:'Expert user',description:'Has fully operational command of the language: accurate, appropriate and fluent with complete understanding.'},{min:37,band:8.5,level:'Very good user',description:'Has fully operational command with only occasional unsystematic inaccuracies.'},{min:35,band:8,level:'Very good user',description:'Understands detailed listening well and handles a wide range of language successfully.'},{min:32,band:7.5,level:'Good user',description:'Shows strong listening ability with only occasional lapses.'},{min:30,band:7,level:'Good user',description:'Has operational command of the language, though with occasional misunderstandings.'},{min:26,band:6.5,level:'Competent user',description:'Generally effective listening in a range of familiar and less familiar situations.'},{min:23,band:6,level:'Competent user',description:'Can understand main ideas and much detail, despite some inaccuracies.'},{min:18,band:5.5,level:'Modest user',description:'Can cope with overall meaning in most situations, but errors still affect performance.'},{min:16,band:5,level:'Modest user',description:'Partial command of the language with noticeable limits in understanding.'},{min:13,band:4.5,level:'Limited user',description:'Basic competence is limited to more familiar situations.'},{min:11,band:4,level:'Limited user',description:'Frequent problems occur in understanding.'},{min:9,band:3.5,level:'Extremely limited user',description:'Conveys and understands only general meaning in very familiar situations.'},{min:7,band:3,level:'Extremely limited user',description:'Very limited understanding beyond familiar language.'},{min:5,band:2.5,level:'Intermittent user',description:'Only the most basic information is understood.'},{min:0,band:0,level:'Did not attempt test',description:'No assessable information provided.'}];
     const groupedQuestionMap = {19:'19-20',20:'19-20',1:'1-10',2:'1-10',3:'1-10',4:'1-10',5:'1-10',6:'1-10',7:'1-10',8:'1-10',9:'1-10',10:'1-10',16:'16-18',17:'16-18',18:'16-18',25:'25-30',26:'25-30',27:'25-30',28:'25-30',29:'25-30',30:'25-30',31:'31-40',32:'31-40',33:'31-40',34:'31-40',35:'31-40',36:'31-40',37:'31-40',38:'31-40',39:'31-40',40:'31-40'};
-    let mode = 'test', activeSection = 1, playbackSection = 1, timerSeconds = 30*60, timerId = null, submitted = false, studentName = '', currentQuestion = 1, selectedDragChoice = '';
-    let fullscreenSupported = false, fullScreenEnforcementEnabled = false, fullScreenExits = 0;
+    let mode = 'test', activeSection = 1, playbackSection = 1, timerSeconds = 30*60, timerId = null, submitted = false, submittedReview = false, studentName = '', currentQuestion = 1, selectedDragChoice = '';
+    let attemptStarted = false, submissionInProgress = false, submittedResultSnapshot = null;
+    let fullscreenSupported = false, fullScreenEnforcementEnabled = false, fullScreenExits = 0, focusLosses = 0, lastIntegrityEventAt = 0;
+    let fullscreenTimerPaused = false, testAudioWasPlayingBeforeFullscreenLock = false, testAudioStopped = false;
+    let studyAudioPositions = {1:0,2:0,3:0,4:0}, studyAudioPositionInitialized = {1:false,2:false,3:false,4:false};
+    let studyAudioLoadToken = 0, loadedAudioSection = null, studyAudioTransition = null, studyAudioObjectUrls = {};
+    let studyAudioUserSeekToken = 0, pendingStudyAudioUserSeek = null, studyAudioControlWasPlaying = null;
+    let studyAudioSeekabilityPending = {1:false,2:false,3:false,4:false};
+    let audioFloorCorrectionInProgress=false;
+    let activeQuestionNumber = null;
+    const hasCompleteTranscriptData=false;
+    let studyPanesSwapped=false, studySplitRatio=58;
+    let annotationSequence=0, pendingAnnotationRange=null, currentNoteId=null, annotationOpener=null;
+    const annotationNotes=new Map();
     const dragAssignments = {16:'',17:'',18:''};
     const AVAILABLE_THEMES = ['black-on-white','white-on-black','yellow-on-black'];
     const DEFAULT_THEME = 'black-on-white';
@@ -924,6 +1404,7 @@
     const fullscreenSupportNote = document.getElementById('fullscreenSupportNote');
     const studentNameInput = document.getElementById('studentNameInput');
     const app = document.getElementById('app');
+    const topBar = document.querySelector('.top-bar');
     const audioBar = document.getElementById('audioBar');
     const sectionAudio = document.getElementById('sectionAudio');
     const sectionAudioSource = document.getElementById('sectionAudioSource');
@@ -945,6 +1426,32 @@
     const returnFullscreenBtn = document.getElementById('returnFullscreenBtn');
     const closeResultsBtn = document.getElementById('closeResultsBtn');
     const homeLink = document.getElementById('homeLink');
+    const listeningStudyHeader=document.getElementById('listeningStudyHeader');
+    const scoreGuideBtn=document.getElementById('scoreGuideBtn');
+    const answerKeyBtn=document.getElementById('answerKeyBtn');
+    const listeningStudyPill=document.getElementById('listeningStudyPill');
+    const scoreGuideDialog=document.getElementById('scoreGuideDialog');
+    const answerKeyDialog=document.getElementById('answerKeyDialog');
+    const scoreGuideCloseBtn=document.getElementById('scoreGuideCloseBtn');
+    const answerKeyCloseBtn=document.getElementById('answerKeyCloseBtn');
+    const scoreGuideContent=document.getElementById('scoreGuideContent');
+    const answerKeyContent=document.getElementById('answerKeyContent');
+    const studyAudioPartLabel=document.getElementById('studyAudioPartLabel');
+    const studyWorkspace=document.getElementById('studyWorkspace');
+    const studyQuestionPane=document.getElementById('studyQuestionPane');
+    const studyAudioscriptPane=document.getElementById('studyAudioscriptPane');
+    const studyDivider=document.getElementById('studyDivider');
+    const studyPaneSwapButton=document.getElementById('studyPaneSwapButton');
+    const selectionToolbar=document.getElementById('selectionToolbar');
+    const highlightSelectionBtn=document.getElementById('highlightSelectionBtn');
+    const noteSelectionBtn=document.getElementById('noteSelectionBtn');
+    const noteEditor=document.getElementById('noteEditor');
+    const noteEditorDragHandle=document.getElementById('noteEditorDragHandle');
+    const noteEditorCloseBtn=document.getElementById('noteEditorCloseBtn');
+    const noteText=document.getElementById('noteText');
+    const noteDeleteBtn=document.getElementById('noteDeleteBtn');
+    const noteCancelBtn=document.getElementById('noteCancelBtn');
+    const noteSaveBtn=document.getElementById('noteSaveBtn');
 
     function fullscreenElement(){ return document.fullscreenElement || document.webkitFullscreenElement || document.msFullscreenElement || null; }
     function fullscreenEnabled(){ return Boolean(document.fullscreenEnabled || document.webkitFullscreenEnabled || document.msFullscreenEnabled); }
@@ -1008,14 +1515,23 @@
     }
     async function returnToFullscreenAndResume(){
       const ok = await requestAppFullscreen();
-      if(ok) hideFullscreenLockOverlay();
+      if(ok){ hideFullscreenLockOverlay(); fullscreenTimerPaused=false; resumeTestTimer(); }
       updateFullscreenButton();
     }
     function handleFullscreenChange(){
-      const runningLockedTest = mode==='test' && app.style.display==='block' && !submitted && fullScreenEnforcementEnabled;
+      const runningLockedTest = mode==='test' && attemptStarted && !submitted && fullScreenEnforcementEnabled;
       if(runningLockedTest){
-        if(!isFullscreenActive()){ fullScreenExits += 1; showFullscreenLockOverlay(); }
-        else hideFullscreenLockOverlay();
+        if(!isFullscreenActive()){
+          fullScreenExits += 1;
+          fullscreenTimerPaused=true;
+          testAudioWasPlayingBeforeFullscreenLock=!sectionAudio.paused;
+          pauseTestTimer();
+          showFullscreenLockOverlay();
+        } else {
+          hideFullscreenLockOverlay();
+          fullscreenTimerPaused=false;
+          resumeTestTimer();
+        }
       } else hideFullscreenLockOverlay();
       updateFullscreenButton();
     }
@@ -1026,9 +1542,70 @@
     function setFontSize(size) { document.body.classList.remove('font-large','font-xlarge'); if(size==='large') document.body.classList.add('font-large'); if(size==='xlarge') document.body.classList.add('font-xlarge'); updateFontButtons(); }
     function updateFontButtons() { const sizeClass = document.body.classList.contains('font-xlarge') ? 'xlarge' : document.body.classList.contains('font-large') ? 'large' : 'normal'; ['normal','large','xlarge'].forEach((s)=>{ const btn=document.getElementById('font-'+s); if(btn) btn.classList.toggle('active', s===sizeClass); }); }
     function updateCandidateLine(){ candidateLine.textContent = studentName ? `Candidate: ${studentName}` : 'Candidate:'; }
-    function updateAudioStatusLabel(){ audioStatusText.textContent = `Audio is playing: Part ${playbackSection}`; }
+    function getLoadedAudioStatusSection(){
+      const currentSrc=sectionAudio.currentSrc || '';
+      const sourceAttr=sectionAudioSource.getAttribute('src') || '';
+      for(let section=1;section<=4;section+=1){
+        const originalSrc=new URL(audioSources[section],document.URL).href;
+        const objectSrc=studyAudioObjectUrls[section] || '';
+        if(currentSrc===originalSrc || (objectSrc && currentSrc===objectSrc)) return section;
+      }
+      if(loadedAudioSection && sourceAttr===audioSources[loadedAudioSection]) return loadedAudioSection;
+      if(sectionAudio.readyState===0){
+        return Number(Object.keys(audioSources).find((section)=>audioSources[section]===sourceAttr) || 0) || null;
+      }
+      return null;
+    }
+    function updateAudioStatusLabel({state=null,section=null,loadToken=null}={}){
+      if(loadToken!==null){
+        if(loadToken!==studyAudioLoadToken || !studyAudioTransition || studyAudioTransition.loadToken!==loadToken) return false;
+        if(studyAudioTransition.section!==section || sectionAudioSource.getAttribute('src')!==audioSources[section]) return false;
+      }
+      const part=section || getLoadedAudioStatusSection();
+      if(!part) return false;
+      const mediaState=state || (sectionAudio.ended ? 'ended' : sectionAudio.readyState<2 ? 'loading' : sectionAudio.paused ? 'paused' : 'playing');
+      const labels={
+        loading:`Loading Part ${part} audio`,
+        paused:`Part ${part} audio paused`,
+        playing:`Part ${part} audio playing`,
+        ended:`Part ${part} audio ended`
+      };
+      audioStatusText.textContent=labels[mediaState] || labels.paused;
+      audioStatus.classList.remove('hidden');
+      return true;
+    }
     function formatDuration(totalSeconds){ const sign = totalSeconds < 0 ? '-' : ''; const abs=Math.abs(totalSeconds); return `${sign}${String(Math.floor(abs/60)).padStart(2,'0')}:${String(abs%60).padStart(2,'0')}`; }
-    function startTimer(){ const timerContainer=document.getElementById('timerContainer'); const timerDisplay=document.getElementById('timerDisplay'); if(mode==='test'){ timerContainer.style.display='block'; timerContainer.setAttribute('aria-hidden','false'); } else { timerContainer.style.display='none'; timerContainer.setAttribute('aria-hidden','true'); if(timerId) clearInterval(timerId); timerId=null; return; } timerSeconds=30*60; timerDisplay.textContent=formatDuration(timerSeconds); timerDisplay.classList.remove('timer-warning'); if(timerId) clearInterval(timerId); timerId=setInterval(()=>{ timerSeconds-=1; timerDisplay.textContent=formatDuration(timerSeconds); if(timerSeconds<=180) timerDisplay.classList.add('timer-warning'); },1000); }
+    function renderTimer(){ const timerDisplay=document.getElementById('timerDisplay'); timerDisplay.textContent=formatDuration(timerSeconds); timerDisplay.classList.toggle('timer-warning',timerSeconds<=180); }
+    function pauseTestTimer(){ if(timerId){ clearInterval(timerId); timerId=null; } }
+    function resumeTestTimer(){
+      if(mode!=='test' || !attemptStarted || submitted || fullscreenTimerPaused || timerId) return;
+      timerId=setInterval(()=>{
+        timerSeconds=Math.max(0,timerSeconds-1);
+        renderTimer();
+        if(timerSeconds===0){ pauseTestTimer(); submitTest({expired:true}); }
+      },1000);
+    }
+    function startTimer(){
+      const timerContainer=document.getElementById('timerContainer');
+      pauseTestTimer();
+      if(mode!=='test'){
+        timerContainer.style.display='none';
+        timerContainer.setAttribute('aria-hidden','true');
+        return;
+      }
+      timerSeconds=30*60;
+      timerContainer.style.display='block';
+      timerContainer.setAttribute('aria-hidden','false');
+      renderTimer();
+      resumeTestTimer();
+    }
+    function recordFocusLoss(){
+      if(mode!=='test' || !attemptStarted || submitted) return;
+      const now=Date.now();
+      if(now-lastIntegrityEventAt<350) return;
+      lastIntegrityEventAt=now;
+      focusLosses+=1;
+    }
     function openOptions(show){ optionsOverlay.style.display = show ? 'flex' : 'none'; }
     function getSectionForQuestion(q){ if(q<=10) return 1; if(q<=20) return 2; if(q<=30) return 3; return 4; }
     function normalizeAnswer(value){ return String(value || '').trim().toLowerCase().replace(/\s+/g,' '); }
@@ -1037,15 +1614,441 @@
     function isCorrect(q){ const user=normalizeAnswer(getUserAnswer(q)); if(!user) return false; return answerKey[q].some((ans)=>normalizeAnswer(ans)===user); }
     function isAnswered(q){ if(q===19||q===20) return getTwoAnswerSelection().length >= (q===19?1:2); return String(getUserAnswer(q)).trim().length>0; }
     function scoreTwoAnswerGroup(groupName, questionNumbers){ const selected=new Set(getTwoAnswerSelection(groupName).map((answer)=>normalizeAnswer(answer))); return questionNumbers.reduce((score,q)=>score + (answerKey[q].some((answer)=>selected.has(normalizeAnswer(answer))) ? 1 : 0), 0); }
-    function playCurrentSectionAudio(){ updateAudioStatusLabel(); const p=sectionAudio.play(); if(p && typeof p.catch === 'function') p.catch(()=>{}); }
-    function updateSectionAudio(){ const shouldShow = mode==='study' || submitted; audioBar.classList.toggle('visible', shouldShow); const sectionForAudio = shouldShow ? activeSection : playbackSection; const src = audioSources[sectionForAudio] || ''; if(sectionAudioSource.getAttribute('src') !== src){ sectionAudio.pause(); sectionAudioSource.setAttribute('src', src); sectionAudio.load(); } if(mode==='test' && !submitted && sectionAudio.paused){ playCurrentSectionAudio(); } }
+    function getStudyAudioFloor(section){ return Number(studyAudioStartFloors[section]) || 0; }
+    function resetStudyAudioPositions(){
+      studyAudioPositions = {1:0,2:0,3:0,4:0};
+      studyAudioPositionInitialized = {1:false,2:false,3:false,4:false};
+      studyAudioLoadToken+=1;
+      loadedAudioSection=null;
+      studyAudioTransition=null;
+      pendingStudyAudioUserSeek=null;
+      studyAudioControlWasPlaying=null;
+    }
+    function normaliseStudyAudioPosition(section,value){
+      const floor=getStudyAudioFloor(section);
+      const numeric=Number.isFinite(value) ? value : floor;
+      const duration=Number.isFinite(sectionAudio.duration) ? sectionAudio.duration : numeric;
+      return Math.min(Math.max(floor,numeric),Math.max(floor,duration));
+    }
+    function clampListeningStudySeek(section,position){ return normaliseStudyAudioPosition(section,position); }
+    function getAudioFloorSection(){ return mode==='test' && !submittedReview ? playbackSection : activeSection; }
+    function enforceAudioPlaybackFloor(section=getAudioFloorSection()){
+      const floor=getStudyAudioFloor(section);
+      if(!floor || audioFloorCorrectionInProgress || sectionAudioSource.getAttribute('src')!==audioSources[section]) return false;
+      if(!Number.isFinite(sectionAudio.currentTime) || sectionAudio.currentTime>=floor) return false;
+      audioFloorCorrectionInProgress=true;
+      try {
+        sectionAudio.currentTime=normaliseStudyAudioPosition(section,floor);
+        if(mode==='study' || submittedReview){
+          studyAudioPositions[section]=floor;
+          studyAudioPositionInitialized[section]=true;
+        }
+        return true;
+      } catch {
+        return false;
+      } finally {
+        audioFloorCorrectionInProgress=false;
+      }
+    }
+    function saveStudyAudioPosition(sectionOverride=null){
+      const overrideSection=Number.isInteger(sectionOverride) ? sectionOverride : null;
+      const section=overrideSection || loadedAudioSection;
+      if((mode!=='study' && !submittedReview) || !section || (!overrideSection && studyAudioTransition) || !Number.isFinite(sectionAudio.currentTime)) return;
+      if(sectionAudioSource.getAttribute('src')!==audioSources[section]) return;
+      studyAudioPositions[section]=normaliseStudyAudioPosition(section,sectionAudio.currentTime);
+      studyAudioPositionInitialized[section]=true;
+    }
+    function beginStudyAudioControlInteraction(event){
+      if(mode!=='study' && !submittedReview) return;
+      if(event && event.type==='keydown' && !['ArrowLeft','ArrowRight','Home','End','PageUp','PageDown'].includes(event.key)) return;
+      studyAudioUserSeekToken+=1;
+      pendingStudyAudioUserSeek={token:studyAudioUserSeekToken,section:activeSection};
+      studyAudioControlWasPlaying=!sectionAudio.paused;
+      if(studyAudioTransition && studyAudioTransition.section===activeSection){
+        studyAudioTransition=null;
+        loadedAudioSection=activeSection;
+      }
+    }
+    async function prepareStudyAudioSeekability(section,src,loadToken){
+      if((mode!=='study' && !submittedReview) || studyAudioObjectUrls[section] || studyAudioSeekabilityPending[section]) return;
+      studyAudioSeekabilityPending[section]=true;
+      try {
+        const response=await fetch(src,{headers:{Range:'bytes=0-0'}});
+        if(response.status===206) return;
+        if(response.status!==200) return;
+        const objectUrl=URL.createObjectURL(await response.blob());
+        studyAudioObjectUrls[section]=objectUrl;
+        if((mode!=='study' && !submittedReview) || loadToken!==studyAudioLoadToken || activeSection!==section) return;
+        if(sectionAudioSource.getAttribute('src')!==src) return;
+        saveStudyAudioPosition(section);
+        sectionAudio.pause();
+        const objectLoadToken=++studyAudioLoadToken;
+        pendingStudyAudioUserSeek=null;
+        studyAudioTransition={loadToken:objectLoadToken,section,src};
+        loadedAudioSection=null;
+        restoreStudyAudioPosition(section,src,objectLoadToken);
+        sectionAudio.setAttribute('src',objectUrl);
+        sectionAudio.load();
+        updateAudioStatusLabel({state:'loading',section,loadToken:objectLoadToken});
+      } catch {
+      } finally {
+        studyAudioSeekabilityPending[section]=false;
+      }
+    }
+    function restoreStudyAudioPosition(section,src,loadToken){
+      const expectedCurrentSrc=studyAudioObjectUrls[section] || new URL(src,document.URL).href;
+      const restore=(event)=>{
+        if(loadToken!==studyAudioLoadToken || (mode!=='study' && !submittedReview) || activeSection!==section){
+          sectionAudio.removeEventListener('loadedmetadata',restore);
+          return;
+        }
+        if(sectionAudioSource.getAttribute('src')!==src) return;
+        if(sectionAudio.currentSrc!==expectedCurrentSrc) return;
+        if(!studyAudioTransition || studyAudioTransition.loadToken!==loadToken){
+          sectionAudio.removeEventListener('loadedmetadata',restore);
+          return;
+        }
+        if(pendingStudyAudioUserSeek && pendingStudyAudioUserSeek.section===section) return;
+        if(event && event.type==='loadedmetadata'){
+          sectionAudio.removeEventListener('loadedmetadata',restore);
+          sectionAudio.addEventListener('canplay',restore,{once:true});
+          return;
+        }
+        if(sectionAudio.readyState<2){
+          sectionAudio.removeEventListener('loadedmetadata',restore);
+          sectionAudio.addEventListener('canplay',restore,{once:true});
+          return;
+        }
+        sectionAudio.removeEventListener('loadedmetadata',restore);
+        const target=studyAudioPositionInitialized[section] ? studyAudioPositions[section] : getStudyAudioFloor(section);
+        const safeTarget=normaliseStudyAudioPosition(section,target);
+        studyAudioPositions[section]=safeTarget;
+        studyAudioPositionInitialized[section]=true;
+        loadedAudioSection=section;
+        const finishRestore=()=>{
+          if(loadToken!==studyAudioLoadToken || activeSection!==section) return;
+          if(studyAudioTransition && studyAudioTransition.loadToken===loadToken) studyAudioTransition=null;
+          sectionAudio.pause();
+          updateAudioStatusLabel();
+        };
+        if(Math.abs(sectionAudio.currentTime-safeTarget)<0.05){ finishRestore(); return; }
+        sectionAudio.addEventListener('seeked',finishRestore,{once:true});
+        try { sectionAudio.currentTime=safeTarget; } catch { sectionAudio.addEventListener('canplay',restore,{once:true}); return; }
+        sectionAudio.pause();
+      };
+      if(sectionAudio.readyState>=1) restore();
+      if(loadedAudioSection!==section && studyAudioTransition && studyAudioTransition.loadToken===loadToken){
+        sectionAudio.addEventListener('loadedmetadata',restore);
+      }
+    }
+    function loadStudyAudioForSection(section){
+      const src=audioSources[section] || '';
+      studyAudioPartLabel.textContent=`Part ${section}`;
+      if(loadedAudioSection===section && sectionAudioSource.getAttribute('src')===src && !studyAudioTransition){ updateAudioStatusLabel(); return; }
+      const previousAudioSource=sectionAudioSource.getAttribute('src');
+      const previousAudioSection=loadedAudioSection || Number(Object.keys(audioSources).find((key)=>audioSources[key]===previousAudioSource) || 0);
+      saveStudyAudioPosition(previousAudioSection);
+      sectionAudio.pause();
+      const loadToken=++studyAudioLoadToken;
+      pendingStudyAudioUserSeek=null;
+      studyAudioTransition={loadToken,section,src};
+      loadedAudioSection=null;
+      restoreStudyAudioPosition(section,src,loadToken);
+      sectionAudioSource.setAttribute('src',src);
+      sectionAudio.removeAttribute('src');
+      if(studyAudioObjectUrls[section]) sectionAudio.setAttribute('src',studyAudioObjectUrls[section]);
+      sectionAudio.load();
+      updateAudioStatusLabel({state:'loading',section,loadToken});
+      prepareStudyAudioSeekability(section,src,loadToken);
+    }
+    function playCurrentSectionAudio(){
+      if(testAudioStopped || submitted) return false;
+      enforceAudioPlaybackFloor(playbackSection);
+      const playPromise=sectionAudio.play();
+      if(playPromise && typeof playPromise.catch==='function') playPromise.catch(()=>{ updateAudioStatusLabel(); return false; });
+      return playPromise;
+    }
+    function loadTestAudioSource(section){
+      const src=audioSources[section] || '';
+      if(sectionAudioSource.getAttribute('src')===src){ enforceAudioPlaybackFloor(section); return; }
+      sectionAudio.pause();
+      sectionAudioSource.setAttribute('src',src);
+      sectionAudio.removeAttribute('src');
+      sectionAudio.load();
+      enforceAudioPlaybackFloor(section);
+      updateAudioStatusLabel({state:'loading'});
+    }
+    function advanceTestAudioSequence(){
+      if(mode!=='test' || submitted || testAudioStopped || playbackSection>=4) return;
+      playbackSection+=1;
+      loadTestAudioSource(playbackSection);
+      playCurrentSectionAudio();
+    }
+    function stopActiveTestAudio(){
+      testAudioStopped=true;
+      sectionAudio.pause();
+      audioStatus.classList.add('hidden');
+    }
+    function updateSectionAudio(){
+      const shouldShow=mode==='study' || submittedReview;
+      audioBar.classList.toggle('visible',shouldShow);
+      if(shouldShow){ loadStudyAudioForSection(activeSection); return; }
+      studyAudioPartLabel.textContent=`Part ${playbackSection}`;
+      loadTestAudioSource(playbackSection);
+    }
     function buildFooter(){ footerMain.innerHTML=''; Object.entries(sectionRanges).forEach(([sec,range])=>{ const part=document.createElement('div'); part.className='part-group'; part.dataset.section=sec; part.innerHTML=`<div class="part-progress"><div class="part-progress-fill" id="progress-${sec}"></div></div><div class="part-top"><span class="part-label">${range.label}</span><span class="count" id="count-${sec}">0 of ${range.to-range.from+1}</span><span class="tick" id="tick-${sec}">✓</span><div class="question-nav-row" id="nav-${sec}"></div></div>`; part.addEventListener('click',(event)=>{ if(event.target.closest('.qnav')) return; switchSection(Number(sec)); }); footerMain.appendChild(part); const navRow=part.querySelector(`#nav-${sec}`); for(let q=range.from;q<=range.to;q+=1){ const btn=document.createElement('button'); btn.type='button'; btn.className='qnav'; btn.dataset.q=q; btn.textContent=q; btn.addEventListener('click',()=>jumpToQuestion(q)); navRow.appendChild(btn);} }); updateFooterState(); }
-    function updateFooterState(){ Object.entries(sectionRanges).forEach(([sec,range])=>{ const total=range.to-range.from+1; let answered=0; for(let q=range.from;q<=range.to;q+=1){ if(isAnswered(q)) answered+=1; const btn=footerMain.querySelector(`.qnav[data-q="${q}"]`); if(btn){ btn.classList.toggle('answered', isAnswered(q)); btn.classList.toggle('current', q===currentQuestion); } } const countEl=document.getElementById(`count-${sec}`); if(countEl) countEl.textContent=`${answered} of ${total}`; const progressEl=document.getElementById(`progress-${sec}`); if(progressEl) progressEl.style.width=`${(answered/total)*100}%`; const tickEl=document.getElementById(`tick-${sec}`); if(tickEl) tickEl.style.display = answered===total ? 'inline' : 'none'; const groupEl=footerMain.querySelector(`.part-group[data-section="${sec}"]`); if(groupEl){ groupEl.classList.toggle('active', Number(sec)===activeSection); groupEl.classList.toggle('complete', answered===total); } }); footerMain.dataset.activeSection=String(activeSection); }
-    function highlightCurrentQuestion(q){ document.querySelectorAll('.question-block').forEach((block)=>block.classList.remove('current')); const group=groupedQuestionMap[q]; let block=document.querySelector(`.question-block[data-q="${q}"]`); if(!block && group) block=document.querySelector(`.question-block[data-qgroup="${group}"]`); if(block) block.classList.add('current'); }
-    function switchSection(section){ activeSection=section; document.querySelectorAll('.section-panel').forEach((panel)=>panel.classList.toggle('active', Number(panel.dataset.section)===section)); const range=sectionRanges[section]; if(currentQuestion<range.from || currentQuestion>range.to) currentQuestion=range.from; updateSectionAudio(); updateFooterState(); highlightCurrentQuestion(currentQuestion); prevSectionBtn.disabled = section===1; nextSectionBtn.disabled = section===4; }
-    function jumpToQuestion(q){ const section=getSectionForQuestion(q); switchSection(section); currentQuestion=q; updateFooterState(); highlightCurrentQuestion(q); const group=groupedQuestionMap[q]; let selector=`.question-block[data-q="${q}"]`; if(group) selector=`.question-block[data-qgroup="${group}"]`; const block=document.querySelector(selector); if(block) block.scrollIntoView({behavior:'smooth', block:'start'}); }
-    function bindInputs(){ document.querySelectorAll('input[type="text"], select, input[type="radio"], input[type="checkbox"]').forEach((el)=>{ el.addEventListener('change', onAnswerChange); if(el.type==='text') el.addEventListener('input', onAnswerChange); }); document.querySelectorAll('input[name="q19_20"]').forEach((el)=>{ el.addEventListener('change', ()=>{ const checked=getTwoAnswerSelection(); if(checked.length>2) el.checked=false; document.getElementById('twoAnswerWarning').textContent=''; onAnswerChange(); }); }); }
-    function onAnswerChange(evt){ if(evt && evt.target && evt.target.name){ const name=evt.target.name; if(name==='q19_20') currentQuestion=19; else if(name.startsWith('q')){ const n=parseInt(name.replace(/\D/g,''),10); if(!isNaN(n)) currentQuestion=n; } } updateFooterState(); highlightCurrentQuestion(currentQuestion); }
+    function updateFooterState(){ Object.entries(sectionRanges).forEach(([sec,range])=>{ const total=range.to-range.from+1; let answered=0; for(let q=range.from;q<=range.to;q+=1){ if(isAnswered(q)) answered+=1; const btn=footerMain.querySelector(`.qnav[data-q="${q}"]`); if(btn){ btn.classList.toggle('answered', isAnswered(q)); btn.classList.toggle('current', q===activeQuestionNumber); } } const countEl=document.getElementById(`count-${sec}`); if(countEl) countEl.textContent=`${answered} of ${total}`; const progressEl=document.getElementById(`progress-${sec}`); if(progressEl) progressEl.style.width=`${(answered/total)*100}%`; const tickEl=document.getElementById(`tick-${sec}`); if(tickEl) tickEl.style.display = answered===total ? 'inline' : 'none'; const groupEl=footerMain.querySelector(`.part-group[data-section="${sec}"]`); if(groupEl){ groupEl.classList.toggle('active', Number(sec)===activeSection); groupEl.classList.toggle('complete', answered===total); } }); footerMain.dataset.activeSection=String(activeSection); }
+    function getExactQuestionTarget(q){
+      if(q===19 || q===20) return document.querySelector('.question-block[data-qgroup="19-20"]');
+      if(q>=16 && q<=18){ const slot=document.querySelector(`.drag-slot[data-q="${q}"]`); return slot ? slot.closest('.drag-question-row') : null; }
+      const text=document.querySelector(`input[type="text"][name="q${q}"]`);
+      if(text) return text.closest('.inline-answer') || text;
+      const select=document.querySelector(`select[name="q${q}"]`);
+      if(select) return select;
+      const radios=Array.from(document.querySelectorAll(`input[type="radio"][name="q${q}"]`));
+      if(radios.length){ const selected=radios.find((radio)=>radio.checked&&!radio.disabled) || radios.find((radio)=>!radio.disabled) || radios[0]; return selected.closest('.radio-option') || selected; }
+      const group=groupedQuestionMap[q];
+      return document.querySelector(`.question-block[data-q="${q}"]`) || (group ? document.querySelector(`.question-block[data-qgroup="${group}"]`) : null);
+    }
+    function clearActiveQuestionTarget(){ document.querySelectorAll('[data-active-question]').forEach((el)=>el.removeAttribute('data-active-question')); activeQuestionNumber=null; updateFooterState(); }
+    function activateQuestionTarget(q,{focus=false,scroll=false}={}){
+      const target=getExactQuestionTarget(q);
+      if(!target) return null;
+      document.querySelectorAll('[data-active-question]').forEach((el)=>el.removeAttribute('data-active-question'));
+      target.setAttribute('data-active-question',String(q));
+      activeQuestionNumber=q;
+      currentQuestion=q;
+      updateFooterState();
+      if(scroll) target.scrollIntoView({behavior:'smooth',block:'center'});
+      if(focus){
+        let focusTarget=target.matches('input,select,button,[tabindex]') ? target : target.querySelector('input:not(:disabled),select:not(:disabled),button:not(:disabled),[tabindex]');
+        if(focusTarget && !focusTarget.disabled) focusTarget.focus({preventScroll:true});
+      }
+      return target;
+    }
+    function highlightCurrentQuestion(q){ return activateQuestionTarget(q); }
+    function updateStudySplitLayout(){
+      const canSplit=hasCompleteTranscriptData && (mode==='study'||submittedReview) && window.innerWidth>900;
+      studyWorkspace.classList.toggle('is-split',canSplit);
+      studyWorkspace.classList.toggle('is-question-only',!canSplit);
+      studyAudioscriptPane.hidden=!canSplit;
+      studyDivider.hidden=!canSplit;
+      studyPaneSwapButton.hidden=!canSplit;
+      studyWorkspace.style.setProperty('--question-pane-size',`${Math.min(75,Math.max(35,studySplitRatio))}%`);
+    }
+    function swapStudyPanes(){ if(!studyWorkspace.classList.contains('is-split')) return; studyPanesSwapped=!studyPanesSwapped; studyWorkspace.classList.toggle('is-panes-swapped',studyPanesSwapped); studyPaneSwapButton.setAttribute('aria-pressed',String(studyPanesSwapped)); }
+    function switchSection(section){
+      if(!sectionRanges[section]) return;
+      activeSection=section;
+      document.querySelectorAll('.section-panel').forEach((panel)=>panel.classList.toggle('active',Number(panel.dataset.section)===section));
+      const range=sectionRanges[section];
+      if(currentQuestion<range.from || currentQuestion>range.to) currentQuestion=range.from;
+      updateSectionAudio();
+      updateFooterState();
+      updateStudySplitLayout();
+      if(submittedReview) enforceSubmittedReviewAnswerLock();
+      prevSectionBtn.disabled=section===1;
+      nextSectionBtn.disabled=section===4;
+    }
+    function jumpToQuestion(q){ const section=getSectionForQuestion(q); switchSection(section); activateQuestionTarget(q,{focus:true,scroll:true}); }
+    function questionNumberFromAnswerElement(target){
+      const control=target.closest('input[name],select[name]');
+      if(control){ if(control.name==='q19_20') return 19; const match=control.name.match(/^q(\d+)$/); if(match) return Number(match[1]); }
+      const slot=target.closest('.drag-slot,.drag-clear');
+      if(slot) return Number(slot.dataset.q || slot.dataset.clearQ);
+      return null;
+    }
+    function setCurrentQuestionFromElement(target){
+      if(!target || target.closest('.student-annotation,#selectionToolbar,#noteEditor')) return;
+      const q=questionNumberFromAnswerElement(target);
+      if(q) activateQuestionTarget(q);
+    }
+    function bindInputs(){
+      document.querySelectorAll('input[type="text"], select, input[type="radio"], input[type="checkbox"]').forEach((el)=>{
+        if(el.dataset.answerBound==='yes') return;
+        el.dataset.answerBound='yes';
+        el.addEventListener('change',onAnswerChange);
+        if(el.type==='text') el.addEventListener('input',onAnswerChange);
+      });
+      document.querySelectorAll('input[name="q19_20"]').forEach((el)=>{
+        if(el.dataset.twoBound==='yes') return;
+        el.dataset.twoBound='yes';
+        el.addEventListener('change',()=>{ const checked=getTwoAnswerSelection(); if(checked.length>2) el.checked=false; document.getElementById('twoAnswerWarning').textContent=''; onAnswerChange({target:el}); });
+      });
+    }
+    function onAnswerChange(evt){ if(isTestAnswerLocked()) return; if(evt&&evt.target) setCurrentQuestionFromElement(evt.target); updateFooterState(); }
+    let activeStudyDialog=null, studyDialogOpener=null;
+    function renderScoreGuide(){
+      const rows=listeningBands.map((row,index)=>{ const ceiling=index===0 ? 40 : listeningBands[index-1].min-1; const range=row.min===ceiling ? String(row.min) : `${row.min}–${ceiling}`; return `<tr><td>${range}</td><td>${row.band}</td><td>${row.level}</td></tr>`; }).join('');
+      scoreGuideContent.innerHTML=`<table class="score-guide-table"><thead><tr><th>Raw score</th><th>Band</th><th>Level</th></tr></thead><tbody>${rows}</tbody></table>`;
+    }
+    function renderAnswerKey(){
+      answerKeyContent.replaceChildren();
+      for(let q=1;q<=40;q+=1){
+        const button=document.createElement('button');
+        button.type='button';
+        button.className='answer-key-item';
+        button.dataset.q=String(q);
+        button.innerHTML=`<strong>${q}</strong><span>${displayAnswers[q]}</span>`;
+        button.setAttribute('aria-label',`Question ${q}: ${displayAnswers[q]}`);
+        button.addEventListener('click',()=>{ closeStudyDialog(false); jumpToQuestion(q); });
+        answerKeyContent.appendChild(button);
+      }
+    }
+    function openStudyDialog(dialog,opener){
+      if(!dialog) return;
+      activeStudyDialog=dialog;
+      studyDialogOpener=opener || document.activeElement;
+      dialog.hidden=false;
+      const focusTarget=dialog.querySelector('.study-dialog-close,button,[tabindex]');
+      if(focusTarget) focusTarget.focus({preventScroll:true});
+    }
+    function closeStudyDialog(restoreFocus=true){
+      if(!activeStudyDialog) return;
+      activeStudyDialog.hidden=true;
+      const opener=studyDialogOpener;
+      activeStudyDialog=null;
+      studyDialogOpener=null;
+      if(restoreFocus && opener && typeof opener.focus==='function') opener.focus({preventScroll:true});
+    }
+    function updateStudyModeHeader(){
+      const visible=mode==='study' || submittedReview;
+      listeningStudyHeader.hidden=!visible;
+      if(!visible) return;
+      listeningStudyPill.textContent=submittedReview ? 'Study Mode · Locked' : 'Study Mode';
+      listeningStudyPill.classList.toggle('is-locked',submittedReview);
+      listeningStudyPill.setAttribute('aria-disabled',String(!submittedReview));
+    }
+    function updatePrimarySubmitControlLabels(){
+      const hideStudyCheck=mode==='study' && !submittedReview;
+      menuSubmitBtn.hidden=hideStudyCheck;
+      footerSubmitBtn.hidden=hideStudyCheck;
+      const label=submitted ? 'View submitted results' : 'Submit test & check answers';
+      menuSubmitBtn.innerHTML=`✓ ${label}`;
+      footerSubmitBtn.setAttribute('aria-label',label);
+      footerSubmitBtn.setAttribute('title',label);
+    }
+
+    function isAnnotationEligibleNode(node){
+      const element=node && (node.nodeType===Node.ELEMENT_NODE ? node : node.parentElement);
+      if(!element || !studyQuestionPane.contains(element)) return false;
+      if(element.closest('input,textarea,select,button,.inline-answer,.radio-option,.checkbox-option,.drag-choice,.drag-slot,.drag-clear,.correct-answer,.study-feedback,.task-strategy,.student-annotation')) return false;
+      return Boolean(element.closest('.question-block'));
+    }
+    function getSafeAnnotationRange(){
+      const selection=window.getSelection();
+      if(!selection || selection.rangeCount!==1 || selection.isCollapsed) return null;
+      const range=selection.getRangeAt(0);
+      if(!isAnnotationEligibleNode(range.startContainer) || !isAnnotationEligibleNode(range.endContainer)) return null;
+      const startBoundary=(range.startContainer.nodeType===Node.ELEMENT_NODE?range.startContainer:range.startContainer.parentElement).closest('.question-block');
+      const endBoundary=(range.endContainer.nodeType===Node.ELEMENT_NODE?range.endContainer:range.endContainer.parentElement).closest('.question-block');
+      if(!startBoundary || startBoundary!==endBoundary || !range.toString().trim()) return null;
+      const overlaps=Array.from(startBoundary.querySelectorAll('.student-annotation')).some((annotation)=>{ try { return range.intersectsNode(annotation); } catch { return false; } });
+      return overlaps ? null : range.cloneRange();
+    }
+    function hideSelectionToolbar({clearSelection=false}={}){
+      selectionToolbar.hidden=true;
+      pendingAnnotationRange=null;
+      if(clearSelection){ const selection=window.getSelection(); if(selection) selection.removeAllRanges(); }
+    }
+    function positionSelectionToolbar(range){
+      const rect=range.getBoundingClientRect();
+      selectionToolbar.hidden=false;
+      const width=selectionToolbar.offsetWidth || 170;
+      selectionToolbar.style.left=`${Math.max(8,Math.min(window.innerWidth-width-8,rect.left+(rect.width-width)/2))}px`;
+      selectionToolbar.style.top=`${Math.max(8,rect.top-48)}px`;
+    }
+    function unwrapAnnotation(annotation){
+      const parent=annotation && annotation.parentNode;
+      if(!parent) return;
+      const fragment=document.createDocumentFragment();
+      Array.from(annotation.childNodes).forEach((child)=>{ if(!(child.nodeType===Node.ELEMENT_NODE && child.classList.contains('note-delete'))) fragment.appendChild(child); });
+      parent.replaceChild(fragment,annotation);
+      parent.normalize();
+    }
+    function removeAnnotation(annotationId){
+      const annotation=document.querySelector(`.student-annotation[data-annotation-id="${annotationId}"]`);
+      annotationNotes.delete(annotationId);
+      if(annotation) unwrapAnnotation(annotation);
+      if(currentNoteId===annotationId) closeNoteEditor();
+    }
+    function wrapRangeWithAnnotation(range,type){
+      if(!range) return null;
+      const id=`t2-annotation-${++annotationSequence}`;
+      const wrapper=document.createElement('span');
+      wrapper.className=`student-annotation ${type==='note'?'note-anchor':'student-highlight'}`;
+      wrapper.dataset.annotationId=id;
+      wrapper.tabIndex=0;
+      const fragment=range.extractContents();
+      wrapper.appendChild(fragment);
+      if(type==='note'){
+        wrapper.setAttribute('role','button');
+        wrapper.setAttribute('aria-label','Open study note');
+        const remove=document.createElement('button');
+        remove.type='button';
+        remove.className='note-delete';
+        remove.setAttribute('aria-label','Delete note');
+        remove.textContent='×';
+        wrapper.appendChild(remove);
+        annotationNotes.set(id,'');
+      } else {
+        wrapper.setAttribute('role','mark');
+        wrapper.setAttribute('aria-label','Highlighted text; press Delete to remove highlight');
+      }
+      range.insertNode(wrapper);
+      window.getSelection().removeAllRanges();
+      hideSelectionToolbar();
+      return wrapper;
+    }
+    function createHighlightFromSelection(){ return wrapRangeWithAnnotation(pendingAnnotationRange,'highlight'); }
+    function createNoteFromSelection(){ const note=wrapRangeWithAnnotation(pendingAnnotationRange,'note'); if(note) openNoteEditor(note.dataset.annotationId,note); }
+    function openNoteEditor(noteId,opener){
+      if(!annotationNotes.has(noteId)) return;
+      currentNoteId=noteId;
+      annotationOpener=opener || null;
+      noteText.value=annotationNotes.get(noteId) || '';
+      noteDeleteBtn.hidden=false;
+      noteEditor.hidden=false;
+      noteText.focus({preventScroll:true});
+    }
+    function closeNoteEditor({restoreFocus=true}={}){
+      noteEditor.hidden=true;
+      const opener=annotationOpener;
+      currentNoteId=null;
+      annotationOpener=null;
+      if(restoreFocus && opener && document.contains(opener)) opener.focus({preventScroll:true});
+    }
+    function saveNote(){ if(!currentNoteId) return; annotationNotes.set(currentNoteId,noteText.value); closeNoteEditor(); }
+    function deleteNote(noteId=currentNoteId){ if(!noteId) return; const opener=document.querySelector(`.note-anchor[data-annotation-id="${noteId}"]`); closeNoteEditor({restoreFocus:false}); removeAnnotation(noteId); if(opener && opener.parentElement) opener.parentElement.focus?.(); }
+    function setupAnnotationInteractions(){
+      document.addEventListener('selectionchange',()=>{ if(window.getSelection()?.isCollapsed) hideSelectionToolbar(); });
+      studyQuestionPane.addEventListener('mouseup',()=>{ setTimeout(()=>{ const range=getSafeAnnotationRange(); if(!range){ hideSelectionToolbar(); return; } pendingAnnotationRange=range; positionSelectionToolbar(range); },0); });
+      studyQuestionPane.addEventListener('touchend',()=>{ setTimeout(()=>{ const range=getSafeAnnotationRange(); if(!range){ hideSelectionToolbar(); return; } pendingAnnotationRange=range; positionSelectionToolbar(range); },0); });
+      studyQuestionPane.addEventListener('click',(event)=>{
+        const remove=event.target.closest('.note-delete');
+        if(remove){ event.preventDefault(); event.stopPropagation(); deleteNote(remove.closest('.note-anchor').dataset.annotationId); return; }
+        const note=event.target.closest('.note-anchor');
+        if(note){ event.preventDefault(); event.stopPropagation(); openNoteEditor(note.dataset.annotationId,note); }
+      });
+      studyQuestionPane.addEventListener('dblclick',(event)=>{ const highlight=event.target.closest('.student-highlight'); if(highlight){ event.preventDefault(); event.stopPropagation(); removeAnnotation(highlight.dataset.annotationId); } });
+      studyQuestionPane.addEventListener('keydown',(event)=>{
+        const note=event.target.closest('.note-anchor');
+        if(note && (event.key==='Enter' || event.key===' ')){ event.preventDefault(); event.stopPropagation(); openNoteEditor(note.dataset.annotationId,note); return; }
+        const highlight=event.target.closest('.student-highlight');
+        if(highlight && (event.key==='Delete'||event.key==='Backspace')){ event.preventDefault(); event.stopPropagation(); removeAnnotation(highlight.dataset.annotationId); }
+      });
+      highlightSelectionBtn.addEventListener('click',(event)=>{ event.preventDefault(); event.stopPropagation(); createHighlightFromSelection(); });
+      noteSelectionBtn.addEventListener('click',(event)=>{ event.preventDefault(); event.stopPropagation(); createNoteFromSelection(); });
+      noteSaveBtn.addEventListener('click',saveNote);
+      noteCancelBtn.addEventListener('click',()=>closeNoteEditor());
+      noteEditorCloseBtn.addEventListener('click',()=>closeNoteEditor());
+      noteDeleteBtn.addEventListener('click',()=>deleteNote());
+      let dragState=null;
+      noteEditorDragHandle.addEventListener('pointerdown',(event)=>{ if(event.target.closest('button')||window.innerWidth<=760) return; const rect=noteEditor.getBoundingClientRect(); dragState={x:event.clientX-rect.left,y:event.clientY-rect.top}; noteEditor.classList.add('is-dragging'); noteEditorDragHandle.setPointerCapture(event.pointerId); });
+      noteEditorDragHandle.addEventListener('pointermove',(event)=>{ if(!dragState) return; const left=Math.max(8,Math.min(window.innerWidth-noteEditor.offsetWidth-8,event.clientX-dragState.x)); const top=Math.max(8,Math.min(window.innerHeight-noteEditor.offsetHeight-8,event.clientY-dragState.y)); noteEditor.style.left=`${left}px`; noteEditor.style.top=`${top}px`; });
+      noteEditorDragHandle.addEventListener('pointerup',()=>{ dragState=null; noteEditor.classList.remove('is-dragging'); });
+    }
+
     function setupWheelFallback(){
       document.addEventListener('wheel',(event)=>{
         if(event.defaultPrevented || event.ctrlKey || Math.abs(event.deltaY) < 1) return;
@@ -1059,31 +2062,259 @@
     }
     function showCorrectAnswer(id,text){ const el=document.getElementById(id); if(!el) return; el.style.display='block'; el.textContent=`Correct answer: ${text}`; }
     function markBlock(q,correctState){ const group=groupedQuestionMap[q]; let block=document.querySelector(`.question-block[data-q="${q}"]`); if(!block && group) block=document.querySelector(`.question-block[data-qgroup="${group}"]`); if(!block) return; block.classList.remove('correct','incorrect','partial'); if(correctState===true){ block.classList.add('correct'); } else if(correctState===false){ block.classList.add('incorrect'); } else if(correctState==='partial'){ block.classList.add('partial'); } }
-    function evaluateAll(){ let totalCorrect=0; for(let q=1;q<=40;q+=1){ if(q===19||q===20) continue; const answered=isAnswered(q); const correct=answered ? isCorrect(q) : false; if(correct) totalCorrect+=1; if(answered) markBlock(q, correct); } const score19to20=scoreTwoAnswerGroup('q19_20',[19,20]); const answered19to20=getTwoAnswerSelection('q19_20').length>0; totalCorrect+=score19to20; if(answered19to20) markBlock(19, score19to20===2 ? true : score19to20===1 ? 'partial' : false); showCorrectAnswer('ca-1-10','1 frame, 2 195, 3 payment, 4 Grandparents, 5 colour / color, 6 hand, 7 background, 8 focus, 9 ten days / 10 days, 10 plastic'); showCorrectAnswer('ca-16-18','16 D, 17 A, 18 B'); showCorrectAnswer('ca-19-20','19 B, 20 C'); showCorrectAnswer('ca-25-30','25 history, 26 paper, 27 humans / people, 28 stress, 29 graph, 30 evaluate'); showCorrectAnswer('ca-31-40','31 creativity, 32 therapy, 33 fitness, 34 balance, 35 brain, 36 motivation, 37 isolation, 38 calories, 39 obesity, 40 habit'); for(let q=11;q<=15;q+=1) showCorrectAnswer(`ca-${q}`, displayAnswers[q]); for(let q=21;q<=24;q+=1) showCorrectAnswer(`ca-${q}`, displayAnswers[q]); return totalCorrect; }
+    function evaluateAll(){
+      const answers={},answeredByQuestion={},correctByQuestion={};
+      let totalCorrect=0;
+      const selectedTwo=new Set(getTwoAnswerSelection('q19_20').map(normalizeAnswer));
+      for(let q=1;q<=40;q+=1){
+        answers[q]=getUserAnswer(q);
+        if(q===19||q===20){
+          answeredByQuestion[q]=getTwoAnswerSelection('q19_20').length>=(q===19?1:2);
+          correctByQuestion[q]=selectedTwo.has(normalizeAnswer(answerKey[q][0]));
+        } else {
+          answeredByQuestion[q]=isAnswered(q);
+          correctByQuestion[q]=answeredByQuestion[q] && isCorrect(q);
+        }
+        if(q!==19 && q!==20 && correctByQuestion[q]) totalCorrect+=1;
+      }
+      totalCorrect+=scoreTwoAnswerGroup('q19_20',[19,20]);
+      return {answers,answeredByQuestion,correctByQuestion,totalCorrect,chooseTwo:Object.freeze([...getTwoAnswerSelection('q19_20')]),matching:Object.freeze({...dragAssignments})};
+    }
     function bandFromScore(score){ return listeningBands.find((row)=>score>=row.min) || listeningBands[listeningBands.length-1]; }
-    function submitTest(){ const totalCorrect=evaluateAll(); submitted=true; fullScreenEnforcementEnabled=false; hideFullscreenLockOverlay(); updateFullscreenButton(); updateSectionAudio(); if(mode==='test'){ document.querySelectorAll('input, select').forEach((el)=>{ el.disabled=true; }); if(timerId){ clearInterval(timerId); timerId=null; } } const bandInfo=bandFromScore(totalCorrect); document.getElementById('studentLine').innerHTML=`<strong>Candidate:</strong> ${studentName || 'Not provided'}`; document.getElementById('timeLine').innerHTML=`<strong>Time at submission:</strong> ${formatDuration((30*60)-timerSeconds)}`; document.getElementById('scoreLine').innerHTML=`<strong>Score:</strong> ${totalCorrect} out of 40`; document.getElementById('bandLine').innerHTML=`<strong>Estimated IELTS Listening band:</strong> ${bandInfo.band} (${bandInfo.level})`; document.getElementById('descriptorLine').textContent=bandInfo.description; resultsOverlay.style.display='flex'; openOptions(false); }
-    function handleSubmit(){ const ok=window.confirm('Are you sure you want to submit your test now?'); if(ok) submitTest(); }
-    function startApp(selectedMode){ mode=selectedMode; submitted=false; activeSection=1; playbackSection=1; modeScreen.style.display='none'; testStartScreen.style.display='none'; app.style.display='block'; updateCandidateLine(); buildFooter(); bindInputs(); setupDragMatch(); switchSection(1); startTimer(); updateThemeButtons(); updateFontButtons(); }
-    function setupDragMatch(){ const bank=document.getElementById('dragBank16to18'); if(!bank) return; bank.querySelectorAll('.drag-choice').forEach((choice)=>{ if(choice.dataset.bound==='yes') return; choice.dataset.bound='yes'; choice.addEventListener('dragstart',(e)=>{ e.dataTransfer.setData('text/plain', choice.dataset.value); }); choice.addEventListener('click',()=>{ bank.querySelectorAll('.drag-choice').forEach((c)=>c.classList.remove('selected')); choice.classList.add('selected'); selectedDragChoice = choice.dataset.value; }); }); document.querySelectorAll('.drag-slot').forEach((slot)=>{ if(slot.dataset.bound==='yes') return; slot.dataset.bound='yes'; slot.addEventListener('dragover',(e)=>{ e.preventDefault(); slot.classList.add('over'); }); slot.addEventListener('dragleave',()=>slot.classList.remove('over')); slot.addEventListener('drop',(e)=>{ e.preventDefault(); slot.classList.remove('over'); const val=e.dataTransfer.getData('text/plain'); if(val) setDragAssignment(Number(slot.dataset.q), val); }); slot.addEventListener('click',()=>{ if(selectedDragChoice) setDragAssignment(Number(slot.dataset.q), selectedDragChoice); }); }); document.querySelectorAll('.drag-clear').forEach((btn)=>{ if(btn.dataset.bound==='yes') return; btn.dataset.bound='yes'; btn.addEventListener('click',()=>clearDragAssignment(Number(btn.dataset.clearQ))); }); renderDragAssignments(); }
-    function setDragAssignment(questionNumber, value){ [16,17,18].forEach((q)=>{ if(dragAssignments[q]===value) dragAssignments[q]=''; }); dragAssignments[questionNumber]=value; const select=document.querySelector(`select[name="q${questionNumber}"]`); if(select){ select.value=value; select.dispatchEvent(new Event('change',{bubbles:true})); } selectedDragChoice=''; document.querySelectorAll('#dragBank16to18 .drag-choice').forEach((c)=>c.classList.remove('selected')); renderDragAssignments(); }
-    function clearDragAssignment(questionNumber){ dragAssignments[questionNumber]=''; const select=document.querySelector(`select[name="q${questionNumber}"]`); if(select){ select.value=''; select.dispatchEvent(new Event('change',{bubbles:true})); } renderDragAssignments(); }
+    function captureSubmittedResultSnapshot(evaluation,bandInfo){
+      return Object.freeze({
+        answers:Object.freeze({...evaluation.answers}),
+        answeredByQuestion:Object.freeze({...evaluation.answeredByQuestion}),
+        correctByQuestion:Object.freeze({...evaluation.correctByQuestion}),
+        chooseTwo:evaluation.chooseTwo,
+        matching:evaluation.matching,
+        totalCorrect:evaluation.totalCorrect,
+        bandInfo:Object.freeze({...bandInfo}),
+        candidate:studentName || 'Not provided',
+        elapsedSeconds:Math.max(0,(30*60)-timerSeconds),
+        integrity:Object.freeze({fullScreenExits,focusLosses}),
+        integritySummary:`Full-screen exits: ${fullScreenExits}; focus losses / tab switches: ${focusLosses}`
+      });
+    }
+    function renderResultSummaryData(result){
+      document.getElementById('studentLine').innerHTML=`<strong>Candidate:</strong> ${result.candidate}`;
+      document.getElementById('timeLine').innerHTML=`<strong>Time at submission:</strong> ${formatDuration(result.elapsedSeconds)}`;
+      document.getElementById('scoreLine').innerHTML=`<strong>Score:</strong> ${result.totalCorrect} out of 40`;
+      document.getElementById('bandLine').innerHTML=`<strong>Estimated IELTS Listening band:</strong> ${result.bandInfo.band} (${result.bandInfo.level})`;
+      document.getElementById('integrityLine').innerHTML=`<strong>Test integrity:</strong> ${result.integritySummary}`;
+      document.getElementById('descriptorLine').textContent=result.bandInfo.description;
+    }
+    function snapshotGroupState(questions){ const count=questions.reduce((sum,q)=>sum+(submittedResultSnapshot.correctByQuestion[q]?1:0),0); return count===questions.length ? true : count===0 ? false : 'partial'; }
+    function renderSubmittedReviewState(){
+      if(!submittedResultSnapshot) return;
+      [[1,2,3,4,5,6,7,8,9,10],[16,17,18],[19,20],[25,26,27,28,29,30],[31,32,33,34,35,36,37,38,39,40]].forEach((questions)=>markBlock(questions[0],snapshotGroupState(questions)));
+      [11,12,13,14,15,21,22,23,24].forEach((q)=>markBlock(q,submittedResultSnapshot.correctByQuestion[q]===true));
+      showCorrectAnswer('ca-1-10','1 frame, 2 195, 3 payment, 4 Grandparents, 5 colour / color, 6 hand, 7 background, 8 focus, 9 ten days / 10 days, 10 plastic');
+      showCorrectAnswer('ca-16-18','16 D, 17 A, 18 B');
+      showCorrectAnswer('ca-19-20','19 B, 20 C');
+      showCorrectAnswer('ca-25-30','25 history, 26 paper, 27 humans / people, 28 stress, 29 graph, 30 evaluate');
+      showCorrectAnswer('ca-31-40','31 creativity, 32 therapy, 33 fitness, 34 balance, 35 brain, 36 motivation, 37 isolation, 38 calories, 39 obesity, 40 habit');
+      for(let q=11;q<=15;q+=1) showCorrectAnswer(`ca-${q}`,displayAnswers[q]);
+      for(let q=21;q<=24;q+=1) showCorrectAnswer(`ca-${q}`,displayAnswers[q]);
+    }
+    function isTestAnswerLocked(){ return mode==='test' && submitted; }
+    function setCustomDragLocked(locked){
+      document.querySelectorAll('#dragBank16to18 .drag-choice').forEach((choice)=>{ choice.draggable=!locked; choice.tabIndex=locked?-1:0; choice.setAttribute('aria-disabled',String(locked)); });
+      document.querySelectorAll('.drag-slot').forEach((slot)=>{ slot.tabIndex=locked?-1:0; slot.setAttribute('aria-disabled',String(locked)); });
+      document.querySelectorAll('.drag-clear').forEach((button)=>{ button.disabled=locked; button.setAttribute('aria-disabled',String(locked)); });
+    }
+    function enforceSubmittedReviewAnswerLock(){
+      if(!submittedReview || !submitted) return;
+      studyQuestionPane.querySelectorAll('input,textarea,select').forEach((control)=>{ control.disabled=true; });
+      setCustomDragLocked(true);
+    }
+    function activateSubmittedReview(){
+      if(!submittedResultSnapshot) return false;
+      submittedReview=true;
+      fullScreenEnforcementEnabled=false;
+      fullscreenTimerPaused=false;
+      pauseTestTimer();
+      hideFullscreenLockOverlay();
+      resetStudyAudioPositions();
+      sectionAudio.pause();
+      enforceSubmittedReviewAnswerLock();
+      renderSubmittedReviewState();
+      updateStudyModeHeader();
+      updatePrimarySubmitControlLabels();
+      updateSectionAudio();
+      sectionAudio.pause();
+      updateAudioStatusLabel();
+      updateStudySplitLayout();
+      return true;
+    }
+    function showResultsSummary(){
+      if(!submittedResultSnapshot) return;
+      renderResultSummaryData(submittedResultSnapshot);
+      resultsOverlay.style.display='flex';
+      resultsOverlay.setAttribute('aria-hidden','false');
+      closeResultsBtn.focus({preventScroll:true});
+    }
+    function closeResultsSummary(){ resultsOverlay.style.display='none'; resultsOverlay.setAttribute('aria-hidden','true'); sectionAudio.pause(); }
+    function submitTest({expired=false}={}){
+      if(mode!=='test') return;
+      if(submissionInProgress || submitted) return submitted ? showResultsSummary() : undefined;
+      submissionInProgress=true;
+      const evaluation=evaluateAll();
+      const bandInfo=bandFromScore(evaluation.totalCorrect);
+      submitted=true;
+      attemptStarted=false;
+      pauseTestTimer();
+      fullScreenEnforcementEnabled=false;
+      hideFullscreenLockOverlay();
+      stopActiveTestAudio();
+      submittedResultSnapshot=captureSubmittedResultSnapshot(evaluation,bandInfo);
+      renderResultSummaryData(submittedResultSnapshot);
+      activateSubmittedReview();
+      openOptions(false);
+      showResultsSummary();
+      submissionInProgress=false;
+      updateFullscreenButton();
+      return expired;
+    }
+    function confirmSubmit(){ const ok=window.confirm('Are you sure you want to submit your test now? You will not be able to continue answering in Test mode.'); if(!ok) return; submitTest(); }
+    function handlePrimarySubmit(){ if(mode==='study'&&!submittedReview) return; if(submitted) return showResultsSummary(); confirmSubmit(); }
+    function startApp(selectedMode){
+      mode=selectedMode;
+      submitted=false;
+      submittedReview=false;
+      submittedResultSnapshot=null;
+      submissionInProgress=false;
+      attemptStarted=true;
+      testAudioStopped=false;
+      activeSection=1;
+      playbackSection=1;
+      currentQuestion=1;
+      clearActiveQuestionTarget();
+      if(mode==='study') resetStudyAudioPositions();
+      modeScreen.style.display='none';
+      testStartScreen.style.display='none';
+      app.style.display='block';
+      updateCandidateLine();
+      buildFooter();
+      bindInputs();
+      setupDragMatch();
+      switchSection(1);
+      startTimer();
+      updateStudyModeHeader();
+      updatePrimarySubmitControlLabels();
+      updateStudySplitLayout();
+      updateThemeButtons();
+      updateFontButtons();
+      updateResponsiveChromeOffsets();
+    }
+    async function beginTimedTest(){
+      fullscreenSupported=isFullscreenApiSupported();
+      fullScreenExits=0;
+      focusLosses=0;
+      lastIntegrityEventAt=0;
+      fullscreenTimerPaused=false;
+      testAudioWasPlayingBeforeFullscreenLock=false;
+      fullScreenEnforcementEnabled=false;
+      updateFullscreenSupportNote(false);
+      const fullscreenRequest=fullscreenSupported ? requestAppFullscreen() : null;
+      startApp('test');
+      playCurrentSectionAudio();
+      if(fullscreenRequest){ const ok=await fullscreenRequest; if(ok) fullScreenEnforcementEnabled=true; else updateFullscreenSupportNote(true); }
+      else updateFullscreenSupportNote(true);
+      updateFullscreenButton();
+    }
+    function setupDragMatch(){
+      const bank=document.getElementById('dragBank16to18'); if(!bank) return;
+      bank.querySelectorAll('.drag-choice').forEach((choice)=>{ if(choice.dataset.bound==='yes') return; choice.dataset.bound='yes'; choice.tabIndex=0; choice.setAttribute('role','button'); choice.addEventListener('dragstart',(e)=>{ if(isTestAnswerLocked()){ e.preventDefault(); return; } e.dataTransfer.setData('text/plain',choice.dataset.value); }); choice.addEventListener('click',()=>{ if(isTestAnswerLocked()) return; bank.querySelectorAll('.drag-choice').forEach((c)=>c.classList.remove('selected')); choice.classList.add('selected'); selectedDragChoice=choice.dataset.value; }); choice.addEventListener('keydown',(event)=>{ if((event.key==='Enter'||event.key===' ')&&!isTestAnswerLocked()){ event.preventDefault(); choice.click(); } }); });
+      document.querySelectorAll('.drag-slot').forEach((slot)=>{ if(slot.dataset.bound==='yes') return; slot.dataset.bound='yes'; slot.setAttribute('role','button'); slot.addEventListener('dragover',(e)=>{ if(isTestAnswerLocked()) return; e.preventDefault(); slot.classList.add('over'); }); slot.addEventListener('dragleave',()=>slot.classList.remove('over')); slot.addEventListener('drop',(e)=>{ e.preventDefault(); slot.classList.remove('over'); if(isTestAnswerLocked()) return; const value=e.dataTransfer.getData('text/plain'); if(value) setDragAssignment(Number(slot.dataset.q),value); }); slot.addEventListener('click',()=>{ if(isTestAnswerLocked()) return; if(selectedDragChoice) setDragAssignment(Number(slot.dataset.q),selectedDragChoice); }); slot.addEventListener('keydown',(event)=>{ if((event.key==='Enter'||event.key===' ')&&!isTestAnswerLocked()){ event.preventDefault(); slot.click(); } }); });
+      document.querySelectorAll('.drag-clear').forEach((button)=>{ if(button.dataset.bound==='yes') return; button.dataset.bound='yes'; button.addEventListener('click',()=>{ if(isTestAnswerLocked()) return; clearDragAssignment(Number(button.dataset.clearQ)); }); });
+      setCustomDragLocked(false);
+      renderDragAssignments();
+    }
+    function syncDragSelect(questionNumber,value){ if(isTestAnswerLocked()) return; const select=document.querySelector(`select[name="q${questionNumber}"]`); if(select){ select.value=value; select.dispatchEvent(new Event('change',{bubbles:true})); } }
+    function setDragAssignment(questionNumber, value){ if(isTestAnswerLocked()) return; [16,17,18].forEach((q)=>{ if(dragAssignments[q]===value){ dragAssignments[q]=''; syncDragSelect(q,''); } }); dragAssignments[questionNumber]=value; syncDragSelect(questionNumber,value); selectedDragChoice=''; document.querySelectorAll('#dragBank16to18 .drag-choice').forEach((choice)=>choice.classList.remove('selected')); renderDragAssignments(); activateQuestionTarget(questionNumber); }
+    function clearDragAssignment(questionNumber){ if(isTestAnswerLocked()) return; dragAssignments[questionNumber]=''; syncDragSelect(questionNumber,''); renderDragAssignments(); activateQuestionTarget(questionNumber); }
     function renderDragAssignments(){ document.querySelectorAll('.drag-slot').forEach((slot)=>{ const q=Number(slot.dataset.q); const val=dragAssignments[q]; slot.textContent = val || 'Drop here'; slot.classList.toggle('filled', Boolean(val)); }); document.querySelectorAll('#dragBank16to18 .drag-choice').forEach((choice)=>{ const used=[16,17,18].some((q)=>dragAssignments[q]===choice.dataset.value); choice.classList.toggle('used', used); }); }
 
+    function setupExactNavigation(){
+      studyQuestionPane.addEventListener('focusin',(event)=>setCurrentQuestionFromElement(event.target));
+      studyQuestionPane.addEventListener('click',(event)=>setCurrentQuestionFromElement(event.target));
+    }
+    function updateResponsiveChromeOffsets(){
+      const headerHeight=Math.ceil(topBar.getBoundingClientRect().height);
+      const audioHeight=audioBar.classList.contains('visible') ? Math.ceil(audioBar.getBoundingClientRect().height)+8 : 0;
+      document.documentElement.style.setProperty('--app-header-h',`${headerHeight}px`);
+      document.documentElement.style.setProperty('--app-audio-h',`${audioHeight}px`);
+    }
+    function setupResponsiveChromeOffsets(){
+      let responsiveChromeFrame=null;
+      const scheduleResponsiveChromeUpdate=()=>{
+        if(responsiveChromeFrame!==null) cancelAnimationFrame(responsiveChromeFrame);
+        responsiveChromeFrame=requestAnimationFrame(()=>{
+          responsiveChromeFrame=null;
+          updateResponsiveChromeOffsets();
+        });
+      };
+      window.addEventListener('resize',scheduleResponsiveChromeUpdate);
+      if('ResizeObserver' in window){
+        const layoutObserver=new ResizeObserver(scheduleResponsiveChromeUpdate);
+        layoutObserver.observe(topBar);
+        layoutObserver.observe(audioBar);
+      }
+      scheduleResponsiveChromeUpdate();
+    }
+    function setupSplitFoundation(){
+      studyPaneSwapButton.addEventListener('click',swapStudyPanes);
+      let dividerDrag=null;
+      studyDivider.addEventListener('pointerdown',(event)=>{ if(studyDivider.hidden) return; dividerDrag=studyWorkspace.getBoundingClientRect(); studyDivider.setPointerCapture(event.pointerId); });
+      studyDivider.addEventListener('pointermove',(event)=>{ if(!dividerDrag) return; studySplitRatio=Math.min(75,Math.max(35,((event.clientX-dividerDrag.left)/dividerDrag.width)*100)); updateStudySplitLayout(); studyDivider.setAttribute('aria-valuenow',String(Math.round(studySplitRatio))); });
+      studyDivider.addEventListener('pointerup',()=>{ dividerDrag=null; });
+      studyDivider.addEventListener('keydown',(event)=>{ if(!['ArrowLeft','ArrowRight'].includes(event.key)) return; event.preventDefault(); studySplitRatio+=event.key==='ArrowLeft'?-2:2; updateStudySplitLayout(); studyDivider.setAttribute('aria-valuenow',String(Math.round(studySplitRatio))); });
+      window.addEventListener('resize',updateStudySplitLayout);
+    }
+
     setupWheelFallback();
+    setupExactNavigation();
+    setupResponsiveChromeOffsets();
+    setupSplitFoundation();
+    setupAnnotationInteractions();
+    renderScoreGuide();
+    renderAnswerKey();
     modeButtons.forEach((btn)=>{ btn.addEventListener('click',()=>{ const selected=btn.dataset.mode; if(selected==='test'){ testStartScreen.style.display='block'; studentNameInput.focus(); return; } studentName=''; startApp('study'); }); });
-    startTestBtn.addEventListener('click',async ()=>{ const value=studentNameInput.value.trim(); if(!value){ alert('Please enter your name before starting test mode.'); studentNameInput.focus(); return; } studentName=value; fullscreenSupported=isFullscreenApiSupported(); fullScreenExits=0; fullScreenEnforcementEnabled=false; updateFullscreenSupportNote(false); if(fullscreenSupported){ const ok=await requestAppFullscreen(); if(!ok) updateFullscreenSupportNote(true); else fullScreenEnforcementEnabled=true; } else { updateFullscreenSupportNote(true); } startApp('test'); updateFullscreenButton(); });
-    optionsBtn.addEventListener('click',()=>openOptions(true));
+    startTestBtn.addEventListener('click',()=>{ const value=studentNameInput.value.trim(); if(!value){ alert('Please enter your name before starting test mode.'); studentNameInput.focus(); return; } studentName=value; beginTimedTest(); });
+    optionsBtn.addEventListener('click',()=>{ openOptions(true); optionsOverlay.setAttribute('aria-hidden','false'); closeOptionsBtn.focus({preventScroll:true}); });
     fullscreenBtn.addEventListener('click',()=>{ toggleFullscreen(); });
     returnFullscreenBtn.addEventListener('click',()=>{ returnToFullscreenAndResume(); });
-    closeOptionsBtn.addEventListener('click',()=>openOptions(false));
-    menuSubmitBtn.addEventListener('click', handleSubmit);
-    footerSubmitBtn.addEventListener('click', handleSubmit);
-    closeResultsBtn.addEventListener('click',()=>{ resultsOverlay.style.display='none'; });
+    closeOptionsBtn.addEventListener('click',()=>{ openOptions(false); optionsOverlay.setAttribute('aria-hidden','true'); optionsBtn.focus({preventScroll:true}); });
+    menuSubmitBtn.addEventListener('click', handlePrimarySubmit);
+    footerSubmitBtn.addEventListener('click', handlePrimarySubmit);
+    closeResultsBtn.addEventListener('click',closeResultsSummary);
+    scoreGuideBtn.addEventListener('click',()=>openStudyDialog(scoreGuideDialog,scoreGuideBtn));
+    answerKeyBtn.addEventListener('click',()=>openStudyDialog(answerKeyDialog,answerKeyBtn));
+    listeningStudyPill.addEventListener('click',()=>{ if(submittedReview) showResultsSummary(); });
+    scoreGuideCloseBtn.addEventListener('click',()=>closeStudyDialog());
+    answerKeyCloseBtn.addEventListener('click',()=>closeStudyDialog());
+    [scoreGuideDialog,answerKeyDialog].forEach((dialog)=>dialog.addEventListener('click',(event)=>{ if(event.target===dialog) closeStudyDialog(); }));
     prevSectionBtn.addEventListener('click',()=>{ if(activeSection>1) switchSection(activeSection-1); });
     nextSectionBtn.addEventListener('click',()=>{ if(activeSection<4) switchSection(activeSection+1); });
-    sectionAudio.addEventListener('play',()=>{ updateAudioStatusLabel(); audioStatus.classList.remove('hidden'); });
-    sectionAudio.addEventListener('pause',()=>{ if(!(mode==='test' && !submitted)) audioStatus.classList.add('hidden'); });
-    sectionAudio.addEventListener('ended',()=>{ if(mode==='test' && !submitted && playbackSection<4){ playbackSection += 1; updateSectionAudio(); playCurrentSectionAudio(); return; } audioStatus.classList.add('hidden'); });
+    sectionAudio.addEventListener('loadstart',()=>{ updateAudioStatusLabel({state:'loading'}); });
+    sectionAudio.addEventListener('loadedmetadata',()=>{ enforceAudioPlaybackFloor(); updateAudioStatusLabel(); });
+    sectionAudio.addEventListener('loadeddata',()=>{ enforceAudioPlaybackFloor(); updateAudioStatusLabel(); });
+    sectionAudio.addEventListener('canplay',()=>{ enforceAudioPlaybackFloor(); updateAudioStatusLabel(); });
+    sectionAudio.addEventListener('play',()=>{ enforceAudioPlaybackFloor(); updateAudioStatusLabel({state:'playing'}); });
+    sectionAudio.addEventListener('playing',()=>{ updateAudioStatusLabel({state:'playing'}); });
+    sectionAudio.addEventListener('pause',()=>{ enforceAudioPlaybackFloor(); updateAudioStatusLabel(); });
+    sectionAudio.addEventListener('waiting',()=>{ updateAudioStatusLabel({state:'loading'}); });
+    sectionAudio.addEventListener('seeking',()=>{ enforceAudioPlaybackFloor(); updateAudioStatusLabel(); });
+    sectionAudio.addEventListener('timeupdate',()=>{ enforceAudioPlaybackFloor(); });
+    sectionAudio.addEventListener('timeupdate',saveStudyAudioPosition);
+    sectionAudio.addEventListener('seeked',saveStudyAudioPosition);
+    sectionAudio.addEventListener('seeked',()=>{ enforceAudioPlaybackFloor(); updateAudioStatusLabel(); });
+    sectionAudio.addEventListener('pause',saveStudyAudioPosition);
+    sectionAudio.addEventListener('pointerdown',beginStudyAudioControlInteraction);
+    sectionAudio.addEventListener('keydown',beginStudyAudioControlInteraction);
+    sectionAudio.addEventListener('seeked',()=>{ if(pendingStudyAudioUserSeek && pendingStudyAudioUserSeek.token===studyAudioUserSeekToken){ pendingStudyAudioUserSeek=null; saveStudyAudioPosition(); } });
+    sectionAudio.addEventListener('ended',()=>{ updateAudioStatusLabel({state:'ended'}); if(mode==='test' && !submitted && playbackSection<4){ advanceTestAudioSequence(); } });
     document.getElementById('theme-black-white').addEventListener('click',()=>setTheme('black-on-white'));
     document.getElementById('theme-white-black').addEventListener('click',()=>setTheme('white-on-black'));
     document.getElementById('theme-yellow-black').addEventListener('click',()=>setTheme('yellow-on-black'));
@@ -1091,12 +2322,22 @@
     document.getElementById('font-large').addEventListener('click',()=>setFontSize('large'));
     document.getElementById('font-xlarge').addEventListener('click',()=>setFontSize('xlarge'));
     homeLink.addEventListener('click',(e)=>{ e.preventDefault(); if(window.confirm('Are you sure you want to leave this test and return to the home page? Your current answers may not be saved.')) window.location.href='../../../index.html'; });
-    window.addEventListener('beforeunload',(e)=>{ if(submitted) return; e.preventDefault(); e.returnValue='Are you sure you want to leave? Your progress will be lost.'; return e.returnValue; });
+    window.addEventListener('beforeunload',(e)=>{ if(!attemptStarted || submitted) return; e.preventDefault(); e.returnValue='Are you sure you want to leave? Your progress will be lost.'; return e.returnValue; });
+    window.addEventListener('blur',recordFocusLoss);
+    document.addEventListener('visibilitychange',()=>{ if(document.visibilityState==='hidden') recordFocusLoss(); });
     document.addEventListener('fullscreenchange', handleFullscreenChange);
     document.addEventListener('webkitfullscreenchange', handleFullscreenChange);
     document.addEventListener('MSFullscreenChange', handleFullscreenChange);
     restoreThemePreference(); updateThemeButtons(); updateFontButtons();
     updateFullscreenButton();
+    document.addEventListener('keydown',(event)=>{
+      if(event.key==='Escape'){
+        if(activeStudyDialog){ event.preventDefault(); closeStudyDialog(); return; }
+        if(!noteEditor.hidden){ event.preventDefault(); closeNoteEditor(); return; }
+        if(!selectionToolbar.hidden){ event.preventDefault(); hideSelectionToolbar({clearSelection:true}); return; }
+        if(optionsOverlay.style.display==='flex'){ event.preventDefault(); openOptions(false); optionsOverlay.setAttribute('aria-hidden','true'); optionsBtn.focus({preventScroll:true}); }
+      }
+    });
 
     // IELTS Pabs animated logo
     function initAnimatedLogo() {
