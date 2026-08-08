@@ -37,7 +37,7 @@ jobs:
           python -m pip install -q pytest
           node --check general-training/cambridge-18/test-2/study-feedback.js
           node --check general-training/cambridge-18/test-2/study-feedback-data.js
-          python -m pytest tests/ielts18_gt_test2_study_parity_test.py tests/ielts18_gt_test1_internal_modal_layout_test.py tests/gt_reading_info_control_lifecycle_test.py -q
+          python -m pytest tests/ielts18_gt_test2_study_parity_test.py tests/ielts18_gt_test1_modal_layout_test.py tests/gt_reading_info_control_lifecycle_test.py -q
           git diff --check
       - name: Commit fixes
         if: steps.guard.outputs.skip != 'true'
