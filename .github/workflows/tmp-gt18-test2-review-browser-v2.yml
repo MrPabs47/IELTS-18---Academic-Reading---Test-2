@@ -1,0 +1,163 @@
+name: Temporary IELTS 18 GT Test 2 review browser QA v2
+
+on:
+  pull_request:
+    branches: [main]
+    types: [opened, synchronize, reopened]
+
+permissions:
+  contents: read
+
+jobs:
+  browser:
+    if: github.head_ref == 'fix/ielts18-gt-test2-source-clues-layout'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.head_ref }}
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Install Chromium
+        run: |
+          npm init -y >/dev/null 2>&1
+          npm install --silent playwright@1.55.0
+          npx playwright install --with-deps chromium
+      - name: Run user-reported regression QA
+        shell: bash
+        run: |
+          python -m http.server 8000 --bind 127.0.0.1 >/tmp/gt18t2-http.log 2>&1 &
+          SERVER_PID=$!
+          trap 'kill $SERVER_PID 2>/dev/null || true' EXIT
+          sleep 2
+          node <<'JS'
+          const { chromium } = require('playwright');
+          const assert = require('assert');
+          const url = 'http://127.0.0.1:8000/general-training/cambridge-18/test-2/IELTS18%20Test%202%20-%20Reading%20-%20GT.html';
+          const appShown = () => {
+            const app = document.getElementById('app');
+            return app && getComputedStyle(app).display !== 'none';
+          };
+          const uniqNums = xs => [...new Set(xs.map(Number))].sort((a,b)=>a-b);
+
+          async function load(page) {
+            await page.goto(url, { waitUntil: 'domcontentloaded' });
+            await page.waitForFunction(() => typeof window.startTest === 'function' && typeof window.beginTimedTest === 'function');
+          }
+          async function study(page) {
+            await load(page);
+            await page.evaluate(() => window.startTest('study'));
+            await page.waitForFunction(appShown);
+            await page.waitForFunction(() => document.querySelectorAll('.reading-shell-study-icon-button').length === 7);
+          }
+          async function testMode(page, name) {
+            await load(page);
+            await page.evaluate(n => { document.getElementById('studentNameInput').value = n; }, name);
+            await page.evaluate(() => window.beginTimedTest());
+            await page.waitForFunction(appShown);
+            await page.waitForFunction(() => document.querySelector('#primarySubmitBtn'));
+          }
+          async function ensureClueMap(page, selector, count) {
+            if (await page.locator(selector + ' .reading-shell-clue-badge').count() < count) {
+              await page.locator('#passageClueToggle').click();
+            }
+            await page.waitForFunction(([sel, n]) => document.querySelectorAll(sel + ' .reading-shell-clue-badge').length >= n, [selector, count]);
+          }
+          async function submit(page) {
+            page.on('dialog', async d => { await d.accept(); });
+            await page.locator('#primarySubmitBtn').click();
+            await page.waitForFunction(() => {
+              const x = document.getElementById('resultsOverlay');
+              return x && getComputedStyle(x).display !== 'none';
+            });
+            const close = page.locator('#resultsCloseBtn');
+            if (await close.count()) await close.click();
+            await page.waitForFunction(() => {
+              const b = document.querySelector('.reading-shell-score-feedback-button');
+              return b && !b.hidden;
+            });
+          }
+
+          (async () => {
+            const browser = await chromium.launch({ headless: true });
+            const context = await browser.newContext({ viewport: { width: 1440, height: 900 } });
+            const errors = [];
+
+            const page = await context.newPage();
+            page.on('pageerror', e => errors.push('study pageerror: ' + e.message));
+            page.on('console', m => { if (m.type()==='error' && !/favicon/i.test(m.text())) errors.push('study console: ' + m.text()); });
+            await study(page);
+
+            const body = await page.locator('body').innerText();
+            for (const text of [
+              'no-frills, budget sleeping bag', 'animal-themed coat', 'Life Writing is defined as non-fiction',
+              'The regulation chefs’ shirts', 'each time they cut different types of food',
+              'staff must not try to fix them themselves', 'A home-sewing revival: the return of Clothkits',
+              'Sew-your-own kits', 'experiment with colour', 'In her late twenties', 'mass-producing manufacturer'
+            ]) assert(body.includes(text), 'official text correction missing: ' + text);
+            assert(body.includes('Writers only submit one entry each.'), 'official wording was changed incorrectly');
+
+            await ensureClueMap(page, '#text-s1-section', 14);
+            let qs = await page.locator('#text-s1-section .reading-shell-clue-badge').evaluateAll(ns => ns.map(n => n.dataset.readingShellClueQuestion));
+            assert.deepStrictEqual(uniqNums(qs), Array.from({length:14},(_,i)=>i+1));
+
+            await page.evaluate(() => switchSection(2));
+            await ensureClueMap(page, '#text-s2-section', 13);
+            qs = await page.locator('#text-s2-section .reading-shell-clue-badge').evaluateAll(ns => ns.map(n => n.dataset.readingShellClueQuestion));
+            assert.deepStrictEqual(uniqNums(qs), Array.from({length:13},(_,i)=>i+15));
+            await page.locator('.question-block[data-q="25"] .reading-shell-study-clue-button').click();
+            await page.waitForFunction(() => document.querySelector('#text-s2-section .reading-shell-evidence-focus'));
+            assert((await page.locator('#text-s2-section').innerText()).includes('must not try to fix them themselves'));
+            await page.close();
+
+            const test = await context.newPage();
+            test.on('pageerror', e => errors.push('test pageerror: ' + e.message));
+            test.on('console', m => { if (m.type()==='error' && !/favicon/i.test(m.text())) errors.push('test console: ' + m.text()); });
+            await testMode(test, 'Pablo Jaramillo');
+            assert.strictEqual(await test.locator('.reading-shell-study-icon-button:visible').count(), 0);
+            await submit(test);
+
+            const desktop = await test.locator('.reading-shell-score-feedback-button').evaluate(b => ({
+              parent: b.parentElement?.classList.contains('top-left'),
+              previous: b.previousElementSibling?.id,
+              candidate: document.getElementById('candidateNameDisplay')?.textContent
+            }));
+            assert(desktop.parent, 'Score feedback is not in the desktop candidate row');
+            assert.strictEqual(desktop.previous, 'candidateNameDisplay');
+            assert.strictEqual(desktop.candidate, 'Candidate: Pablo Jaramillo');
+
+            await test.evaluate(() => switchSection(3));
+            const info = test.locator('#study-instruction-s3-summary .reading-shell-study-icon-button');
+            await info.waitFor({ state: 'visible' });
+            await info.click();
+            const placement = await test.locator('.summary-completion-box').evaluate(box => {
+              const p = box.previousElementSibling;
+              return {
+                summaryBox: box.classList.contains('summary-box'),
+                panel: p?.classList.contains('reading-shell-study-panel'),
+                hidden: p?.hidden,
+                nested: Boolean(p?.closest('.summary-completion-box p'))
+              };
+            });
+            assert(placement.summaryBox && placement.panel && placement.hidden === false && placement.nested === false,
+              'Q36–40 strategy panel is not above the whole summary box');
+
+            await test.setViewportSize({ width: 390, height: 844 });
+            await test.waitForTimeout(200);
+            const mobile = await test.locator('.reading-shell-score-feedback-button').evaluate(b => {
+              const r = b.getBoundingClientRect();
+              return { root:b.parentElement?.classList.contains('reading-shell-root'), left:r.left, right:r.right, top:r.top, bottom:r.bottom, hidden:b.hidden };
+            });
+            assert(mobile.root && !mobile.hidden && mobile.left >= -1 && mobile.right <= 391 && mobile.top >= -1 && mobile.bottom <= 845,
+              'Score feedback is not reachable on narrow screens');
+            await test.locator('.reading-shell-score-feedback-button').click();
+            await test.locator('.reading-shell-score-feedback-dialog').waitFor({ state: 'visible' });
+            const geom = await test.locator('.reading-shell-score-feedback-dialog').evaluate(d => ({sw:d.scrollWidth,cw:d.clientWidth,bsw:d.querySelector('.reading-shell-score-feedback-body')?.scrollWidth||0,bcw:d.querySelector('.reading-shell-score-feedback-body')?.clientWidth||0}));
+            assert(geom.sw <= geom.cw + 1 && geom.bsw <= geom.bcw + 1, 'Score feedback overflows horizontally');
+
+            assert.deepStrictEqual(errors, [], errors.join(' | '));
+            await browser.close();
+            console.log('IELTS 18 GT Test 2 focused user-reported browser QA passed.');
+          })().catch(e => { console.error(e.stack || e); process.exit(1); });
+          JS
