@@ -84,12 +84,88 @@ class PublicDistBuilderSafetyTests(unittest.TestCase):
         source = "const objectUrl = URL.createObjectURL(await response.blob());"
         self.assertEqual(builder.references(source, ".html"), set())
 
+    def test_javascript_static_fetch_and_url_dependencies_are_detected(self) -> None:
+        source = '''
+          fetch("diagram.avif?v=2");
+          const worker = new URL('./worker.js', import.meta.url);
+          import('./helper.js');
+        '''
+        self.assertEqual(
+            builder.references(source, ".js"),
+            {"diagram.avif?v=2", "./worker.js", "./helper.js"},
+        )
+
     def test_canonical_writing_discovers_shared_runtime_without_opening_all_drafts(self) -> None:
         routes = builder.canonical_routes(builder.load_contract())
         approved = builder.writing_runtime_roots(routes)
         self.assertIn(PurePosixPath("drafts/general-writing-16-shared"), approved)
         self.assertNotIn(PurePosixPath("drafts"), approved)
         self.assertTrue(all(root.parts[0] == "drafts" and len(root.parts) > 1 for root in approved))
+
+    def test_runtime_chunks_are_narrowly_scoped_to_approved_writing_roots(self) -> None:
+        approved = {
+            PurePosixPath("drafts/writing-19-test-3"),
+            PurePosixPath("drafts/writing-19-test-4"),
+        }
+        accepted = (
+            PurePosixPath("drafts/writing-19-test-3/ethanol-image.b64.0a"),
+            PurePosixPath("drafts/writing-19-test-3/ethanol-image.b64.3d"),
+            PurePosixPath("drafts/writing-19-test-4/dance-image.b64.0"),
+            PurePosixPath("drafts/writing-19-test-4/dance-image.b64.4"),
+        )
+        for path in accepted:
+            self.assertTrue(builder.is_runtime_chunk(path, approved), path)
+            builder.assert_publishable(path, approved)
+
+        rejected = (
+            PurePosixPath("drafts/unapproved/ethanol-image.b64.0a"),
+            PurePosixPath("ethanol-image.b64.0a"),
+            PurePosixPath("drafts/writing-19-test-3/answers.b64"),
+            PurePosixPath("drafts/writing-19-test-3/secret.data.0a"),
+        )
+        for path in rejected:
+            self.assertFalse(builder.is_runtime_chunk(path, approved), path)
+            with self.assertRaises(builder.BuildFailure, msg=str(path)):
+                builder.assert_publishable(path, approved)
+
+    def test_known_dynamic_chunk_literals_are_discovered_from_javascript(self) -> None:
+        source = '''
+          const PARTS = ["ethanol-image.b64.0a", 'ethanol-image.b64.1'];
+          Promise.all(PARTS.map((path) => fetch(`${path}?v=1`)));
+        '''
+        self.assertEqual(
+            builder.references(source, ".js"),
+            {"ethanol-image.b64.0a", "ethanol-image.b64.1"},
+        )
+
+    def test_all_current_live_runtime_directories_have_classified_file_types(self) -> None:
+        routes = builder.canonical_routes(builder.load_contract())
+        drafts = builder.writing_runtime_roots(routes)
+        checked: set[PurePosixPath] = set()
+
+        for route in routes:
+            if route.parent not in checked:
+                builder.audit_runtime_directory(ROOT / route.parent, drafts)
+                checked.add(route.parent)
+        for shared in (
+            PurePosixPath("academic/shared"),
+            PurePosixPath("general-training/shared"),
+            PurePosixPath("listening/shared"),
+            PurePosixPath("hub"),
+        ):
+            builder.audit_runtime_directory(ROOT / shared, drafts)
+        for draft in drafts:
+            builder.audit_runtime_directory(ROOT / draft, drafts)
+
+    def test_known_test3_and_test4_chunks_exist_in_live_runtime(self) -> None:
+        expected = (
+            "drafts/writing-19-test-3/ethanol-image.b64.0a",
+            "drafts/writing-19-test-3/ethanol-image.b64.3d",
+            "drafts/writing-19-test-4/dance-image.b64.0",
+            "drafts/writing-19-test-4/dance-image.b64.4",
+        )
+        for relative in expected:
+            self.assertTrue((ROOT / relative).is_file(), relative)
 
 
 if __name__ == "__main__":
