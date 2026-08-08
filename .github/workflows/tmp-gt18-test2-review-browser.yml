@@ -40,22 +40,23 @@ jobs:
           function sortedNumbers(values) {
             return [...new Set(values.map(Number))].sort((a,b) => a-b);
           }
-          async function waitForModeWiring(page) {
-            await page.waitForFunction(() => document.getElementById('modeScreen')?.dataset.wired === 'true');
+          async function waitForPageApi(page) {
+            await page.waitForFunction(() => typeof window.startTest === 'function' && typeof window.beginTimedTest === 'function');
           }
           async function startStudy(page) {
             await page.goto(url, { waitUntil: 'domcontentloaded' });
-            await waitForModeWiring(page);
-            await page.locator('[data-mode="study"]').click();
+            await waitForPageApi(page);
+            await page.evaluate(() => window.startTest('study'));
             await page.locator('#app').waitFor({ state: 'visible' });
             await page.waitForFunction(() => document.querySelectorAll('.reading-shell-study-icon-button').length === 7);
           }
-          async function startTest(page, name='Pablo Jaramillo') {
+          async function startTestMode(page, name='Pablo Jaramillo') {
             await page.goto(url, { waitUntil: 'domcontentloaded' });
-            await waitForModeWiring(page);
-            await page.locator('[data-mode="test"]').click();
+            await waitForPageApi(page);
+            await page.evaluate(() => window.startTest('test'));
+            await page.locator('#testStartScreen').waitFor({ state: 'visible' });
             await page.locator('#studentNameInput').fill(name);
-            await page.locator('#testStartScreen .mode-btn').click();
+            await page.evaluate(() => window.beginTimedTest());
             await page.locator('#app').waitFor({ state: 'visible' });
             await page.waitForFunction(() => document.querySelector('#primarySubmitBtn'));
           }
@@ -127,7 +128,7 @@ jobs:
             testPage.on('console', msg => {
               if (msg.type() === 'error' && !/favicon/i.test(msg.text())) errors.push('test console: ' + msg.text());
             });
-            await startTest(testPage);
+            await startTestMode(testPage);
             assert.strictEqual(await testPage.locator('.reading-shell-study-icon-button:visible').count(), 0, 'active Test must hide strategy controls');
             await submitFinal(testPage);
 
