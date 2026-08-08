@@ -1,0 +1,80 @@
+name: Temporary shared Reading structured anchor fix
+
+on:
+  pull_request:
+    branches: [main]
+    types: [opened, synchronize, reopened]
+
+permissions:
+  contents: write
+
+jobs:
+  patch:
+    if: github.head_ref == 'fix/ielts18-gt-test2-source-clues-layout'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.head_ref }}
+          fetch-depth: 0
+      - name: Skip after patch commit
+        id: guard
+        shell: bash
+        run: |
+          if git log -1 --pretty=%s | grep -qx 'Prefer structured Reading task anchors'; then
+            echo 'skip=true' >> "$GITHUB_OUTPUT"
+          else
+            echo 'skip=false' >> "$GITHUB_OUTPUT"
+          fi
+      - name: Patch shared anchor rule and add regression
+        if: steps.guard.outputs.skip != 'true'
+        shell: bash
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          core = Path('academic/shared/reading-feature-shell-core.js')
+          text = core.read_text(encoding='utf-8')
+          old = '''  function groupAnchor(group) {
+            var target = targetFor(group.questions[0]);
+            return target && target.closest ? target.closest(".summary-box, .question-block") || target : target;
+          }
+          '''
+          new = '''  function groupAnchor(group) {
+            var target = targetFor(group.questions[0]);
+            if (!target || !target.closest) return target;
+            var structured = target.closest(".summary-box");
+            return structured || target.closest(".question-block") || target;
+          }
+          '''
+          if text.count(old) != 1:
+              raise SystemExit(f'Expected one shared groupAnchor block, found {text.count(old)}')
+          core.write_text(text.replace(old, new), encoding='utf-8', newline='\n')
+
+          regression = Path('tests/reading_feature_shell_structured_anchor_test.py')
+          regression.write_text('''from pathlib import Path\n\nROOT = Path(__file__).resolve().parents[1]\nCORE = ROOT / "academic/shared/reading-feature-shell-core.js"\n\n\ndef test_structured_task_container_wins_over_inline_question_anchor() -> None:\n    core = CORE.read_text(encoding="utf-8")\n    assert 'var structured = target.closest(".summary-box");' in core\n    assert 'return structured || target.closest(".question-block") || target;' in core\n    assert 'target.closest(".summary-box, .question-block") || target' not in core\n''', encoding='utf-8', newline='\n')
+          PY
+      - name: Validate Reading regressions
+        if: steps.guard.outputs.skip != 'true'
+        shell: bash
+        run: |
+          python -m pip install -q pytest
+          node --check academic/shared/reading-feature-shell-core.js
+          node --check general-training/cambridge-18/test-2/study-feedback.js
+          python -m pytest \
+            tests/reading_feature_shell_structured_anchor_test.py \
+            tests/ielts18_gt_test2_study_parity_test.py \
+            tests/ielts18_gt_test1_study_parity_test.py \
+            tests/ielts18_gt_test1_modal_layout_test.py \
+            tests/gt_reading_info_control_lifecycle_test.py \
+            tests/gt19_reading_low_score_parity_test.py \
+            tests/answer_key_panel_test.py -q
+          git diff --check -- academic/shared/reading-feature-shell-core.js tests
+      - name: Commit shared fix
+        if: steps.guard.outputs.skip != 'true'
+        shell: bash
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add academic/shared/reading-feature-shell-core.js tests/reading_feature_shell_structured_anchor_test.py
+          git commit -m "Prefer structured Reading task anchors"
+          git push origin HEAD:${{ github.head_ref }}
