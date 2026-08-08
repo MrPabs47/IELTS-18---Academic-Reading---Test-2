@@ -4,8 +4,8 @@
 **Reference implementations:** Cambridge IELTS 19 General Training Reading Tests 1–4  
 **Core releases:** PR #379 and PR #381  
 **Stabilisation releases:** PR #387, PR #389 and PR #392  
-**Focused regression release:** PR #436 — Test 3 header CSS inheritance and Study-dialog containment  
-**Current reference commit:** `a52f6f9e67059e5c337167bc9091efb6fce8adda`  
+**Focused regression releases:** PR #436 — Test 3 header CSS inheritance and Study-dialog containment; PR #473 — IELTS 18 GT Test 1 internal modal-overflow regression<br>
+**Current reference commit:** `3f2a7a6f56db866a9c3c8fca493f2f3aa833c598`<br>
 **Prepared:** 2 August 2026  
 **Updated:** 8 August 2026
 
@@ -19,6 +19,8 @@
 > Treat them as the required workflow and pass/fail specification. The target test HTML, local passage/question/answer files, answer key, accepted variants and evaluator remain authoritative for test-specific content.
 >
 > A shared Reading dialog is not verified merely because its button exists. Open and inspect every available Score guide, Answer Key and score-feedback dialog after any header, toolbar, mount or responsive CSS change.
+>
+> The outer dialog fitting the viewport is not enough. For Score guide, Answer Key and score feedback, browser QA must verify the internal dialog/scroll/body/card chain has no unexpected horizontal overflow (`scrollWidth <= clientWidth + 1`), long feedback wraps, and headings remain inside the dialog.
 
 ---
 
@@ -51,6 +53,7 @@ The final quality is strong, but the route exposed several avoidable delays:
 - General Training sections contain multiple independent text roots, so Academic assumptions about one passage per section are unsafe.
 - Custom drag/drop and matching controls require explicit final Test locking.
 - A Test 3 header `white-space: nowrap` rule leaked into nested shared Reading dialogs, squeezing the Score guide until modal content was explicitly protected.
+- IELTS 18 GT Test 1 exposed the same failure class in a subtler form: the outer modal still fitted the viewport, but a broad right-header `white-space: nowrap` rule was inherited by nested shell content, so the Score guide developed internal horizontal overflow and long score-feedback advice escaped its card.
 
 The central lesson is:
 
@@ -182,6 +185,7 @@ Use this pattern only when direct integration would create unnecessary risk. Kee
 | Multiple text roots | Whole-section searching could target the wrong notice/review | Give each source text a stable root and resolve clues within that root |
 | Custom locking | Native inputs locked but drag/drop could remain interactive | Include every custom control in final Test locking tests |
 | Header CSS inheritance | A broad Test 3 `white-space: nowrap` rule was inherited by fixed dialogs mounted inside the header | Record shell mount ancestry, scope header selectors to direct controls, explicitly reset dialog inheritance and open every shared dialog in browser QA |
+| Internal modal overflow | IELTS 18 GT Test 1 showed that an outer modal can look correctly sized while its title/table/cards still overflow internally | Measure `scrollWidth` against `clientWidth` for dialog, scroll/body and representative cards/text; verify long advice wraps and headings remain inside the dialog |
 | Home route | Test 2’s clickable home logo needed a separate repair | Treat the home route and leave warning as a standard parity item |
 | Browser automation | Fullscreen and native browser prompts can be environment-limited | Use the evidence hierarchy and report environment limitations separately |
 | Documentation timing | The GT contract was learned during implementation | Read the workflow and checklist before the next target audit |
@@ -227,7 +231,7 @@ Sections 1 and 2 may contain several notices, advertisements, reviews, instructi
 
 #### Never assume a fixed dialog is isolated from its mount ancestry
 
-The shared shell may append fixed backdrops inside a header or toolbar mount. Inherited properties and containing-block rules can still affect the dialog. Record the mount ancestry, scope page-level selectors narrowly, and inspect the opened dialog rather than checking only its trigger.
+The shared shell may append fixed backdrops inside a header or toolbar mount. Inherited properties and containing-block rules can still affect the dialog. Record the mount ancestry, scope page-level selectors narrowly, and inspect the opened dialog rather than checking only its trigger. The pass condition is rendered geometry, not appearance alone: the dialog and its internal scroll/body/card containers must not have unexplained horizontal overflow, and long learner-facing text must wrap inside its card.
 
 #### Never expose internal evidence merely because it exists
 
@@ -1122,27 +1126,44 @@ When a new failure class is discovered, add the smallest production-linked perma
 - refresh protected reference fingerprints only after the relevant Reading validation passes and only for deliberately changed reference files;
 - keep unrelated Hub contract repairs, activations and seasonal changes in separate PRs.
 
-### 16.8 Next target — Cambridge IELTS 18 GT Reading Test 1
+### 16.8 Completed IELTS 18 GT Reading Test 1 — internal modal-overflow lesson
 
-The next target is **Cambridge IELTS 18 General Training Reading Test 1**. Its HTML, source files, answer key, accepted variants and evaluator remain authoritative for test-specific content. Do not copy Cambridge 19 passages, task ranges, control shapes or accepted variants.
+IELTS 18 GT Reading Test 1 is now the first Cambridge 18 continuation reference. Its final regression repair is PR #473, merged as `3f2a7a6f56db866a9c3c8fca493f2f3aa833c598`.
+
+The defect was not that the modal itself exceeded the viewport. The target adapter applied `white-space: nowrap` to the whole right-hand header container, and the shared Reading shell mounts its dialogs inside that subtree. The inherited rule therefore reached Score guide and score-feedback descendants. The Score guide title/table could stretch sideways, and long `Focus next` advice could remain on one line and escape its card even though the outer dialog looked correctly positioned.
+
+The fix established four permanent rules:
+
+1. scope no-wrap/truncation to the exact header text/control that needs it; never use a broad header ancestor as a shortcut;
+2. allow shared dialog descendants to shrink with `min-width: 0` where flex/grid containment requires it;
+3. explicitly restore normal wrapping for dialog/backdrop content when target CSS inheritance can reach it;
+4. verify internal rendered geometry, not just outer-modal visibility.
+
+For Score guide, Answer Key and score feedback, the browser pass must now inspect the relevant dialog and internal scroll/body/card/text chain. Unexpected horizontal overflow fails when `scrollWidth > clientWidth + 1`. Long learner-facing advice must wrap to multiple lines when its natural length requires it. Dialog titles and table/card content must remain within the dialog bounding box.
+
+Run this at a desktop viewport representative of the reported/target layout and again at approximately 390 px with extra-large text. A header or toolbar change cannot be declared complete until this internal-overflow matrix passes.
+
+### 16.9 Next target — Cambridge IELTS 18 GT Reading Test 2
+
+The next target is **Cambridge IELTS 18 General Training Reading Test 2**. Its HTML, source files, answer key, accepted variants and evaluator remain authoritative. Do not copy Test 1 task ranges, control shapes, accepted variants or adapter assumptions merely because both are Cambridge 18.
 
 The initial read-only audit must explicitly verify:
 
 - exact Section ranges, task groups and source-text roots;
 - exact instructions, word limits, answers and accepted variants;
 - current GT scoring, including the `Below 3` contract;
-- Study → active Test → submitted Test information-control lifecycle;
-- blank/low-score submitted feedback;
-- real matching/drag-drop interaction where present;
-- final locking of native and custom controls;
+- Study → active Test → submitted Test information-control lifecycle using computed/visible state;
+- blank/low-score submitted feedback and an authoritative submitted-result snapshot where practical;
+- real matching/drag-drop interaction where present and final locking of every native/custom control;
 - all 40 self-contained clue/Why/Skill trios;
 - zero dead spacing from hidden feedback hosts;
-- Score guide, Answer Key and score-feedback dialogs;
+- shell mount ancestry plus every header/toolbar selector that can inherit into nested dialogs;
+- Score guide, Answer Key and score-feedback **internal** overflow using `scrollWidth <= clientWidth + 1`, not outer-dialog fit alone;
+- long feedback wrapping and dialog-title/table/card containment at desktop and approximately 390 px with extra-large text;
 - home route, leave warning, keyboard access and logo animation;
-- desktop, narrow, theme and text-size parity;
-- current Live Hub route and safety-guard constraints.
+- current Live Hub route, Live Hub Safety Guard and Public dist guard constraints.
 
-If an item already works, preserve it. Do not redesign working behaviour merely to make the implementation resemble a Cambridge 19 file.
+If an item already works, preserve it. Prefer a Test 2-local repair when a defect is local. A shared change still requires a focused generic failing test and the broader reference-set validation.
 
 ---
 
@@ -1207,6 +1228,7 @@ If an item already works, preserve it. Do not redesign working behaviour merely 
 - PR to `main`;
 - verify checks and mergeability;
 - run the Live Hub Safety Guard;
+- run the Public dist guard / least-privilege public build validation;
 - refresh protected reference fingerprints only after the relevant Reading validation passes and only for deliberately changed references;
 - keep unrelated Hub repair/activation work in separate PRs;
 - squash merge;
@@ -1229,7 +1251,7 @@ Use Cambridge IELTS 19 General Training Reading Tests 1–4 on current main as t
 
 For every question, make the clue, Why and Skill pass the self-contained Aha test: a learner should understand why the answer is correct using only the question, displayed/highlighted clue(s) and Why explanation. Prefer one complete clue sentence, or two short connected sentences when the logic requires both. Explicitly bridge question wording to source wording and conclusion, and give a reusable next-step reading action. Technically correct but vague, undersized or under-explained feedback does not pass.
 
-Record the Reading-shell mount ancestry. After any header, toolbar, mount or responsive CSS change, open and inspect the Score guide, Answer Key and score-feedback dialogs at desktop and narrow widths; button presence alone is not a pass.
+Record the Reading-shell mount ancestry. After any header, toolbar, mount or responsive CSS change, open and inspect the Score guide, Answer Key and score-feedback dialogs at desktop and narrow widths; button presence alone is not a pass. The outer dialog fitting is also not enough: measure internal `scrollWidth`/`clientWidth`, confirm long feedback wraps, and keep dialog titles/tables/cards inside their bounding box, including a narrow extra-large-text case.
 
 Model: 5.6 Sol
 Effort: Medium
@@ -1250,7 +1272,29 @@ Goal: off
 
 ---
 
-## 19. Required exception format
+## 19. Mandatory internal-overflow regression gate
+
+Use this gate on every GT Reading target from IELTS 18 Test 2 onward, and on any existing test touched by header, toolbar, mount or responsive CSS work.
+
+A pass requires all of the following:
+
+- the shell mount ancestry is recorded before editing;
+- no broad ancestor `white-space: nowrap`, `overflow`, `min-width`, flex/grid sizing or text-flow rule unintentionally controls nested Reading dialogs;
+- Score guide, Answer Key and score feedback are actually opened in the browser;
+- outer dialog positioning/visibility passes;
+- dialog and internal scroll/body containers satisfy `scrollWidth <= clientWidth + 1` unless horizontal scrolling is an explicit product requirement;
+- representative cards and long learner-facing text also satisfy the same width check;
+- long `Focus next`/strategy/feedback sentences use normal wrapping and remain inside their card;
+- title, introduction, table headings/content and close control remain inside the dialog bounding box;
+- desktop plus approximately 390 px with extra-large text are tested;
+- the permanent target regression would fail if the broad ancestor no-wrap/inheritance bug returned;
+- Live Hub Safety Guard and Public dist guard pass before merge.
+
+**Stop condition:** do not merge when the outer modal looks correct but any internal content clips, creates an unexplained horizontal scrollbar, remains forced onto one line, or exceeds its card/dialog geometry.
+
+---
+
+## 20. Required exception format
 
 ```text
 Checklist item:
