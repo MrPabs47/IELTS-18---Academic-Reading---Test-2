@@ -1,0 +1,40 @@
+name: Patch IELTS 18 GT Test 1 modal overflow
+
+on:
+  push:
+    paths:
+      - '.gt18-test1-modal-overflow-trigger'
+
+permissions:
+  contents: write
+
+jobs:
+  patch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: fix/ielts18-gt-test1-modal-overflow
+          fetch-depth: 0
+      - name: Fix inherited header nowrap in Reading modals
+        shell: bash
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+
+          path = Path('general-training/cambridge-18/test-1/study-feedback.js')
+          text = path.read_text(encoding='utf-8')
+          old = "    '.gt18-test1-header-right{gap:12px;min-width:0;flex:0 0 auto;white-space:nowrap}' +\n    '.reading-shell-locked{cursor:not-allowed!important;opacity:.72}' +"
+          new = "    '.gt18-test1-header-right{gap:12px;min-width:0;flex:0 0 auto}' +\n    '.gt18-test1-header-right .reading-shell-score-guide-backdrop,.gt18-test1-header-right .reading-shell-answer-key-backdrop,.gt18-test1-header-right .reading-shell-score-feedback-backdrop{white-space:normal}' +\n    '.gt18-test1-header-right .reading-shell-score-guide-dialog,.gt18-test1-header-right .reading-shell-answer-key-dialog,.gt18-test1-header-right .reading-shell-score-feedback-dialog,.gt18-test1-header-right .reading-shell-score-guide-header,.gt18-test1-header-right .reading-shell-answer-key-header,.gt18-test1-header-right .reading-shell-score-feedback-header,.gt18-test1-header-right .reading-shell-score-guide-scroll,.gt18-test1-header-right .reading-shell-answer-key-scroll,.gt18-test1-header-right .reading-shell-score-feedback-body,.gt18-test1-header-right .reading-shell-score-feedback-card{min-width:0}' +\n    '.gt18-test1-header-right .reading-shell-score-feedback-text,.gt18-test1-header-right .reading-shell-score-feedback-part-score{white-space:normal;overflow-wrap:anywhere}' +\n    '.reading-shell-locked{cursor:not-allowed!important;opacity:.72}' +"
+          if old not in text:
+              raise SystemExit('Expected GT18 Test 1 header-right style block not found')
+          text = text.replace(old, new, 1)
+          path.write_text(text, encoding='utf-8')
+          PY
+          node --check general-training/cambridge-18/test-1/study-feedback.js
+          git diff --check
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add general-training/cambridge-18/test-1/study-feedback.js
+          git commit -m "Fix IELTS 18 GT Test 1 modal wrapping"
+          git push origin HEAD:fix/ielts18-gt-test1-modal-overflow
