@@ -53,7 +53,12 @@ HTML_ATTR_RE = re.compile(
     r"(?:src|href|poster|action|data-src)\s*=\s*([\"'])(.*?)\1",
     re.IGNORECASE | re.DOTALL,
 )
-CSS_URL_RE = re.compile(r"url\(\s*([\"']?)(.*?)\1\s*\)", re.IGNORECASE | re.DOTALL)
+# Avoid matching JavaScript names such as createObjectURL(...). Genuine CSS
+# url(...) calls are not immediately preceded by an identifier character.
+CSS_URL_RE = re.compile(
+    r"(?<![A-Za-z0-9_-])url\(\s*([\"']?)(.*?)\1\s*\)",
+    re.IGNORECASE | re.DOTALL,
+)
 CSS_IMPORT_RE = re.compile(r"@import\s+(?:url\()?\s*([\"'])(.*?)\1", re.IGNORECASE)
 LOCATION_RE = re.compile(
     r"(?:window\.)?location\.replace\(\s*([\"'`])([^\"'`]+)\1\s*\)|"
@@ -244,12 +249,7 @@ def references(text: str, suffix: str) -> set[str]:
 
 
 def writing_runtime_roots(routes: list[PurePosixPath]) -> set[PurePosixPath]:
-    """Discover draft runtimes only by following canonical Writing entry points.
-
-    A canonical Writing page can redirect into one draft application, and that
-    application may link to a narrowly scoped shared runtime directory. We walk
-    that explicit HTML/CSS dependency graph rather than allowing all of drafts/.
-    """
+    """Discover draft runtimes only by following canonical Writing entry points."""
     approved: set[PurePosixPath] = set()
     pending: list[PurePosixPath] = [route for route in routes if "Writing.html" in route.name]
     seen: set[PurePosixPath] = set()
@@ -283,9 +283,6 @@ def writing_runtime_roots(routes: list[PurePosixPath]) -> set[PurePosixPath]:
             root = target.parent
             if root not in approved:
                 approved.add(root)
-                # Canonical redirect targets often use start.html with a dynamic
-                # cache-busting redirect. Inspect both standard entry pages so
-                # their explicit shared CSS/JS dependencies are discovered.
                 for name in ("start.html", "index.html"):
                     page = root / name
                     if (ROOT / Path(page.as_posix())).is_file():
