@@ -101,10 +101,10 @@
       ]
     },
     taskGroups: [
-      { id: "s1-sleeping-bags-matching", section: 1, textId: "s1-sleeping-bags", controlHost: "#study-instruction-s1-sleeping-bags", label: "Matching features", questions: [1,2,3,4,5,6,7,8], ...matchingFeatures },
-      { id: "s1-life-writing-tfng", section: 1, textId: "s1-life-writing", controlHost: "#study-instruction-s1-life-writing", label: "True / False / Not Given", questions: [9,10,11,12,13,14], ...tfng },
-      { id: "s2-employee-health-notes", section: 2, textId: "s2-employee-health", controlHost: "#study-instruction-s2-employee-health", label: "Note completion", questions: [15,16,17,18,19,20,21], ...noteCompletion },
-      { id: "s2-kitchen-sentences", section: 2, textId: "s2-kitchen", controlHost: "#study-instruction-s2-kitchen", label: "Sentence completion", questions: [22,23,24,25,26,27], ...sentenceCompletion },
+      { id: "s1-sleeping-bags-matching", section: 1, textId: "s1-section", controlHost: "#study-instruction-s1-sleeping-bags", label: "Matching features", questions: [1,2,3,4,5,6,7,8], ...matchingFeatures },
+      { id: "s1-life-writing-tfng", section: 1, textId: "s1-section", controlHost: "#study-instruction-s1-life-writing", label: "True / False / Not Given", questions: [9,10,11,12,13,14], ...tfng },
+      { id: "s2-employee-health-notes", section: 2, textId: "s2-section", controlHost: "#study-instruction-s2-employee-health", label: "Note completion", questions: [15,16,17,18,19,20,21], ...noteCompletion },
+      { id: "s2-kitchen-sentences", section: 2, textId: "s2-section", controlHost: "#study-instruction-s2-kitchen", label: "Sentence completion", questions: [22,23,24,25,26,27], ...sentenceCompletion },
       { id: "s3-clothkits-paragraphs", section: 3, textId: "s3-clothkits", controlHost: "#study-instruction-s3-paragraphs", label: "Matching information to paragraphs", questions: [28,29,30,31], ...matchingParagraphs },
       { id: "s3-clothkits-mc", section: 3, textId: "s3-clothkits", controlHost: "#study-instruction-s3-mc", label: "Multiple choice", questions: [32,33,34,35], ...multipleChoice },
       { id: "s3-clothkits-summary", section: 3, textId: "s3-clothkits", controlHost: "#study-instruction-s3-summary", label: "Summary completion", questions: [36,37,38,39,40], ...summaryCompletion }
@@ -143,14 +143,14 @@
         answer: "D",
         explanation: "The question describes a buyer who wants to spend little. Review D explicitly calls the bag a ‘budget sleeping bag’, so D matches the price requirement.",
         skill: "Identify the decisive price word; ‘budget’ is the direct signal for a low-cost option.",
-        evidence: "If you want a no—frills, budget sleeping bag that will last more than one summer, opt for this."
+        evidence: "If you want a no-frills, budget sleeping bag that will last more than one summer, opt for this."
       },
       6: {
         group: "s1-sleeping-bags-matching",
         answer: "F",
         explanation: "Review F says the sleeping bag can be unzipped and turned into an animal-themed coat. A coat can be worn outside bedtime to keep the child warm, so F is the bag that also works during the day.",
         skill: "Follow what a product can transform into and infer the stated function from that new form, without adding functions not supported by the text.",
-        evidence: "This innovative, high-quality kids’ sleeping bag enables you to undo some zips and turn it into a fun, animal—themed coat."
+        evidence: "This innovative, high-quality kids’ sleeping bag enables you to undo some zips and turn it into a fun, animal-themed coat."
       },
       7: {
         group: "s1-sleeping-bags-matching",
@@ -178,7 +178,7 @@
         answer: "FALSE",
         explanation: "The statement suggests writers can choose another person’s life as the subject. The rules require the piece to be based significantly on the author’s own experience and exclude traditional biographies that are only about someone else, so the statement is FALSE.",
         skill: "Check whose experience the rule requires; the topic can involve other people, but it cannot be only another person’s biography.",
-        evidence: "For the purposes of the Prize, Life Writing is defined as non fiction and should be based on a significant portion from the author’s own experience. Traditional biographies, where the piece is only about the experience of someone else, are excluded."
+        evidence: "For the purposes of the Prize, Life Writing is defined as non-fiction and should be based on a significant portion from the author’s own experience. Traditional biographies, where the piece is only about the experience of someone else, are excluded."
       },
       11: {
         group: "s1-life-writing-tfng",
@@ -199,14 +199,14 @@
         answer: "FALSE",
         explanation: "The statement says only one prize is awarded. The text describes a winner and also two highly commended entries that each receive money and other benefits, so more than one entrant receives an award and the statement is FALSE.",
         skill: "Count all award categories, not only the item labelled ‘winner’.",
-        evidence: "The winner will receive £1,500, publication on Spread the Word’s website, two years’ membership of the Royal Society of Literature, and a development meeting with an editor and an agent. Two highly commended entries will receive £500 and two mentoring sessions, a development meeting With an editor and an agent, and be published on the Spread the Word website."
+        evidence: "The winner will receive £1,500, publication on Spread the Word’s website, two years’ membership of the Royal Society of Literature, and a development meeting with an editor and an agent. Two highly commended entries will receive £500 and two mentoring sessions, a development meeting with an editor and an agent, and be published on the Spread the Word website."
       },
       14: {
         group: "s1-life-writing-tfng",
         answer: "NOT GIVEN",
         explanation: "The rules say the winning and highly commended entries are published on the competition website, but they do not describe what happened to previous winners’ later writing careers. The claim that earlier winners became successful published writers is therefore NOT GIVEN.",
         skill: "Separate a prize benefit that includes publication from an unstated claim about later professional success.",
-        evidence: "The winner will receive £1,500, publication on Spread the Word’s website, two years’ membership of the Royal Society of Literature, and a development meeting with an editor and an agent. Two highly commended entries will receive £500 and two mentoring sessions, a development meeting With an editor and an agent, and be published on the Spread the Word website."
+        evidence: "The winner will receive £1,500, publication on Spread the Word’s website, two years’ membership of the Royal Society of Literature, and a development meeting with an editor and an agent. Two highly commended entries will receive £500 and two mentoring sessions, a development meeting with an editor and an agent, and be published on the Spread the Word website."
       },
       15: {
         group: "s2-employee-health-notes",
@@ -262,14 +262,14 @@
         answer: "aprons",
         explanation: "The sentence asks what must be freshly washed along with chefs’ uniforms before every shift. The hygiene rule states that shirts and trousers must be freshly laundered, along with aprons if worn, so ‘aprons’ is correct.",
         skill: "Follow the list joined by ‘along with’ and copy the additional clothing item.",
-        evidence: "The regulation chefs” shirts and trousers are to be freshly laundered before starting a new shift, along with aprons if they are worn."
+        evidence: "The regulation chefs’ shirts and trousers are to be freshly laundered before starting a new shift, along with aprons if they are worn."
       },
       23: {
         group: "s2-kitchen-sentences",
         answer: "board",
         explanation: "The sentence asks what must be changed when staff start cutting a different type of food. The cross-contamination rule says staff must use a clean board each time they cut different types of food, so ‘board’ is the required item.",
         skill: "Identify the object controlled by the hygiene rule rather than the type of food that triggers the change.",
-        evidence: "Cross-contamination between raw and cooked food must be avoided. To this end. staff must use a clean board each time they out different types of food."
+        evidence: "Cross-contamination between raw and cooked food must be avoided. To this end, staff must use a clean board each time they cut different types of food."
       },
       24: {
         group: "s2-kitchen-sentences",
@@ -283,14 +283,14 @@
         answer: "appliances",
         explanation: "The sentence asks what kitchen workers must not try to repair. The safety rule says defective appliances must be switched off and staff must not try to fix them themselves, so ‘appliances’ is correct.",
         skill: "Match ‘repair’ in the question to ‘fix’ in the rule and copy the noun that receives that action.",
-        evidence: "Loose clothing or jewellery must not be worn. Defective appliances must be turned off and not used — staff must not tw to fix them themselves."
+        evidence: "Loose clothing or jewellery must not be worn. Defective appliances must be turned off and not used — staff must not try to fix them themselves."
       },
       26: {
         group: "s2-kitchen-sentences",
         answer: "labels",
         explanation: "The sentence asks what is required to identify chemicals. The safety rule says chemical containers must have clear labels to prevent confusion about their contents, so ‘labels’ is the one-word answer.",
         skill: "Match the function ‘identify’ to the passage’s purpose ‘avoid confusion about the contents’ and copy the required item.",
-        evidence: "If storing containers of chemicals in the kitchen. they must have clear labels, so as to avoid any confusion about the contents."
+        evidence: "If storing containers of chemicals in the kitchen, they must have clear labels, so as to avoid any confusion about the contents."
       },
       27: {
         group: "s2-kitchen-sentences",
@@ -325,7 +325,7 @@
         answer: "E",
         explanation: "Paragraph E explains that making your own clothes increases appreciation of the craftsmanship and makes you treasure the finished garment more. Those are the benefits of sewing and then wearing the garment, so E is correct.",
         skill: "When the question asks for benefits, find the stated consequences of the activity rather than merely a mention of the activity itself.",
-        evidence: "Making your own clothes gives you a greater appreciation of the craftsmanship in the construction of a garment,’ Mawer says. ‘When you know the process involved in making a skirt, you treasure it in a way you wouldn’t if you’d bought it from a mass- producing manufacturer."
+        evidence: "‘Making your own clothes gives you a greater appreciation of the craftsmanship in the construction of a garment,’ Mawer says. ‘When you know the process involved in making a skirt, you treasure it in a way you wouldn’t if you’d bought it from a mass-producing manufacturer."
       },
       32: {
         group: "s3-clothkits-mc",
@@ -388,7 +388,7 @@
         answer: "knitwear",
         explanation: "The summary asks what else Kennedy sold as the business grew. Paragraph B says sew-your-own kits were the core business and were supplemented by knitwear, so ‘knitwear’ is the additional product.",
         skill: "Match ‘also sold’ to a contrast between the core product and the supplementary product named in the passage.",
-        evidence: "Sew-your—own kits formed the core of the business, supplemented by knitwear."
+        evidence: "Sew-your-own kits formed the core of the business, supplemented by knitwear."
       }
     }
   };

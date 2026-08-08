@@ -1,0 +1,102 @@
+name: Temporary IELTS 18 GT Test 2 review browser QA v3
+
+on:
+  pull_request:
+    branches: [main]
+    types: [opened, synchronize, reopened]
+
+permissions:
+  contents: read
+
+jobs:
+  browser:
+    if: github.head_ref == 'fix/ielts18-gt-test2-source-clues-layout'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.head_ref }}
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Install Chromium
+        run: |
+          npm init -y >/dev/null 2>&1
+          npm install --silent playwright@1.55.0
+          npx playwright install --with-deps chromium
+      - name: Run focused browser QA
+        shell: bash
+        run: |
+          python -m http.server 8000 --bind 127.0.0.1 >/tmp/gt18t2-http.log 2>&1 &
+          SERVER_PID=$!
+          trap 'kill $SERVER_PID 2>/dev/null || true' EXIT
+          sleep 2
+          node <<'JS'
+          const { chromium } = require('playwright');
+          const assert = require('assert');
+          const url = 'http://127.0.0.1:8000/general-training/cambridge-18/test-2/IELTS18%20Test%202%20-%20Reading%20-%20GT.html';
+          const shown = () => { const x=document.getElementById('app'); return x && getComputedStyle(x).display !== 'none'; };
+          const uniq = xs => [...new Set(xs.map(Number))].sort((a,b)=>a-b);
+          async function load(p){ await p.goto(url,{waitUntil:'domcontentloaded'}); await p.waitForFunction(()=>typeof window.startTest==='function'&&typeof window.beginTimedTest==='function'); }
+          async function study(p){ await load(p); await p.evaluate(()=>window.startTest('study')); await p.waitForFunction(shown); await p.waitForFunction(()=>document.querySelectorAll('.reading-shell-study-icon-button').length===7); }
+          async function testMode(p,name){ await load(p); await p.evaluate(n=>document.getElementById('studentNameInput').value=n,name); await p.evaluate(()=>window.beginTimedTest()); await p.waitForFunction(shown); }
+          async function showMap(p,root,count){ if(await p.locator(root+' .reading-shell-clue-badge').count()<count) await p.locator('#passageClueToggle').click(); await p.waitForFunction(([r,n])=>document.querySelectorAll(r+' .reading-shell-clue-badge').length>=n,[root,count]); }
+          async function submit(p){ p.on('dialog',async d=>d.accept()); await p.locator('#primarySubmitBtn').click(); await p.waitForFunction(()=>{const x=document.getElementById('resultsOverlay');return x&&getComputedStyle(x).display!=='none'}); const c=p.locator('#resultsCloseBtn'); if(await c.count()) await c.click(); await p.waitForFunction(()=>{const b=document.querySelector('.reading-shell-score-feedback-button');return b&&!b.hidden}); }
+
+          (async()=>{
+            const browser=await chromium.launch({headless:true});
+            const ctx=await browser.newContext({viewport:{width:1440,height:900}});
+            const errors=[];
+            const p=await ctx.newPage();
+            p.on('pageerror',e=>errors.push('study pageerror: '+e.message));
+            p.on('console',m=>{if(m.type()==='error'&&!/favicon/i.test(m.text()))errors.push('study console: '+m.text())});
+            await study(p);
+
+            let visible=await p.locator('.passage-section[data-section="1"]').innerText();
+            for(const t of ['no-frills, budget sleeping bag','animal-themed coat','Life Writing is defined as non-fiction','Writers only submit one entry each.']) assert(visible.includes(t),'Section 1 source mismatch: '+t);
+            await showMap(p,'#text-s1-section',14);
+            let qs=await p.locator('#text-s1-section .reading-shell-clue-badge').evaluateAll(ns=>ns.map(n=>n.dataset.readingShellClueQuestion));
+            assert.deepStrictEqual(uniq(qs),Array.from({length:14},(_,i)=>i+1),'Section 1 clue map did not include both texts');
+
+            await p.evaluate(()=>switchSection(2));
+            visible=await p.locator('.passage-section[data-section="2"]').innerText();
+            for(const t of ['The regulation chefs’ shirts','each time they cut different types of food','staff must not try to fix them themselves','kitchen, they must have clear labels']) assert(visible.includes(t),'Section 2 source mismatch: '+t);
+            await showMap(p,'#text-s2-section',13);
+            qs=await p.locator('#text-s2-section .reading-shell-clue-badge').evaluateAll(ns=>ns.map(n=>n.dataset.readingShellClueQuestion));
+            assert.deepStrictEqual(uniq(qs),Array.from({length:13},(_,i)=>i+15),'Section 2 clue map did not include both texts');
+            await p.locator('.question-block[data-q="25"] .reading-shell-study-clue-button').click();
+            await p.waitForFunction(()=>document.querySelector('#text-s2-section .reading-shell-evidence-focus'));
+            await p.close();
+
+            const t=await ctx.newPage();
+            t.on('pageerror',e=>errors.push('test pageerror: '+e.message));
+            t.on('console',m=>{if(m.type()==='error'&&!/favicon/i.test(m.text()))errors.push('test console: '+m.text())});
+            await testMode(t,'Pablo Jaramillo');
+            assert.strictEqual(await t.locator('.reading-shell-study-icon-button:visible').count(),0,'active Test leaked Study controls');
+            await submit(t);
+
+            const desktop=await t.locator('.reading-shell-score-feedback-button').evaluate(b=>({parent:b.parentElement?.classList.contains('top-left'),previous:b.previousElementSibling?.id,candidate:document.getElementById('candidateNameDisplay')?.textContent}));
+            assert(desktop.parent&&desktop.previous==='candidateNameDisplay','Score feedback is not immediately after Candidate on desktop');
+            assert.strictEqual(desktop.candidate,'Candidate: Pablo Jaramillo');
+
+            await t.evaluate(()=>switchSection(3));
+            visible=await t.locator('.passage-section[data-section="3"]').innerText();
+            for(const x of ['A home-sewing revival: the return of Clothkits','Sew-your-own kits','experiment with colour','In her late twenties','mass-producing manufacturer']) assert(visible.includes(x),'Section 3 source mismatch: '+x);
+            const info=t.locator('#study-instruction-s3-summary .reading-shell-study-icon-button');
+            await info.waitFor({state:'visible'}); await info.click();
+            const pos=await t.locator('.summary-completion-box').evaluate(box=>{const panel=box.previousElementSibling;return{summary:box.classList.contains('summary-box'),panel:panel?.classList.contains('reading-shell-study-panel'),hidden:panel?.hidden,nested:Boolean(panel?.closest('.summary-completion-box p'))}});
+            assert(pos.summary&&pos.panel&&pos.hidden===false&&!pos.nested,'Q36–40 tip panel is not above the whole summary box');
+
+            await t.setViewportSize({width:390,height:844}); await t.waitForTimeout(200);
+            const mobile=await t.locator('.reading-shell-score-feedback-button').evaluate(b=>{const r=b.getBoundingClientRect();return{root:b.parentElement?.classList.contains('reading-shell-root'),hidden:b.hidden,left:r.left,right:r.right,top:r.top,bottom:r.bottom}});
+            assert(mobile.root&&!mobile.hidden&&mobile.left>=-1&&mobile.right<=391&&mobile.top>=-1&&mobile.bottom<=845,'Score feedback is not reachable on narrow screens');
+            await t.locator('.reading-shell-score-feedback-button').click();
+            await t.locator('.reading-shell-score-feedback-dialog').waitFor({state:'visible'});
+            const g=await t.locator('.reading-shell-score-feedback-dialog').evaluate(d=>({sw:d.scrollWidth,cw:d.clientWidth,bsw:d.querySelector('.reading-shell-score-feedback-body')?.scrollWidth||0,bcw:d.querySelector('.reading-shell-score-feedback-body')?.clientWidth||0}));
+            assert(g.sw<=g.cw+1&&g.bsw<=g.bcw+1,'Score feedback has internal horizontal overflow');
+
+            assert.deepStrictEqual(errors,[],errors.join(' | '));
+            await browser.close();
+            console.log('IELTS 18 GT Test 2 user-reported browser QA passed.');
+          })().catch(e=>{console.error(e.stack||e);process.exit(1)});
+          JS
