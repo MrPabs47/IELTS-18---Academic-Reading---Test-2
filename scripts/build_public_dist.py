@@ -10,6 +10,8 @@ area, file type, oversized asset or missing route stops the build.
 from __future__ import annotations
 
 import argparse
+import base64
+import binascii
 import html
 import json
 import posixpath
@@ -59,6 +61,37 @@ ROBOTS_TXT = "User-agent: *\nDisallow: /\n"
 # publishable only inside a canonical Writing draft runtime discovered from the
 # Live Hub contract, never globally.
 RUNTIME_CHUNK_RE = re.compile(r"^.+\.b64\.[A-Za-z0-9]+$")
+
+# Cloudflare Pages and similar static hosts should not need to fetch those
+# unusual chunk filenames at runtime. During the build we additionally rebuild
+# them into ordinary AVIF assets. The source chunk files remain available as a
+# compatibility fallback for the existing GitHub Pages reference deployment.
+GENERATED_CHUNK_IMAGES: dict[PurePosixPath, tuple[PurePosixPath, ...]] = {
+    PurePosixPath("drafts/writing-19-test-3/ethanol-image.avif"): (
+        PurePosixPath("drafts/writing-19-test-3/ethanol-image.b64.0a"),
+        PurePosixPath("drafts/writing-19-test-3/ethanol-image.b64.0b"),
+        PurePosixPath("drafts/writing-19-test-3/ethanol-image.b64.0c"),
+        PurePosixPath("drafts/writing-19-test-3/ethanol-image.b64.0d"),
+        PurePosixPath("drafts/writing-19-test-3/ethanol-image.b64.0e"),
+        PurePosixPath("drafts/writing-19-test-3/ethanol-image.b64.1"),
+        PurePosixPath("drafts/writing-19-test-3/ethanol-image.b64.2a"),
+        PurePosixPath("drafts/writing-19-test-3/ethanol-image.b64.2b"),
+        PurePosixPath("drafts/writing-19-test-3/ethanol-image.b64.2c"),
+        PurePosixPath("drafts/writing-19-test-3/ethanol-image.b64.2d"),
+        PurePosixPath("drafts/writing-19-test-3/ethanol-image.b64.2e"),
+        PurePosixPath("drafts/writing-19-test-3/ethanol-image.b64.3a"),
+        PurePosixPath("drafts/writing-19-test-3/ethanol-image.b64.3b"),
+        PurePosixPath("drafts/writing-19-test-3/ethanol-image.b64.3c"),
+        PurePosixPath("drafts/writing-19-test-3/ethanol-image.b64.3d"),
+    ),
+    PurePosixPath("drafts/writing-19-test-4/dance-image.avif"): (
+        PurePosixPath("drafts/writing-19-test-4/dance-image.b64.0"),
+        PurePosixPath("drafts/writing-19-test-4/dance-image.b64.1"),
+        PurePosixPath("drafts/writing-19-test-4/dance-image.b64.2"),
+        PurePosixPath("drafts/writing-19-test-4/dance-image.b64.3"),
+        PurePosixPath("drafts/writing-19-test-4/dance-image.b64.4"),
+    ),
+}
 
 HTML_ATTR_RE = re.compile(
     r"(?:src|href|poster|action|data-src)\s*=\s*([\"'])(.*?)\1",
@@ -269,6 +302,44 @@ def copy_support(source_dir: Path, output: Path, draft_roots: set[PurePosixPath]
             copy_file(relative, output, draft_roots)
 
 
+def materialize_chunked_images(output: Path, draft_roots: set[PurePosixPath]) -> int:
+    """Rebuild approved base64 image chunks as ordinary AVIF deployment assets."""
+    written = 0
+    for target_rel, chunk_rels in GENERATED_CHUNK_IMAGES.items():
+        if not any(within(target_rel, root) for root in draft_roots):
+            raise BuildFailure(f"Generated image target is outside an approved Writing runtime: {target_rel}")
+        assert_publishable(target_rel, draft_roots)
+
+        encoded_parts: list[str] = []
+        for chunk_rel in chunk_rels:
+            if not is_runtime_chunk(chunk_rel, draft_roots):
+                raise BuildFailure(f"Generated image recipe uses an unapproved chunk: {chunk_rel}")
+            source = ROOT / Path(chunk_rel.as_posix())
+            if not source.is_file() or source.is_symlink():
+                raise BuildFailure(f"Generated image chunk is missing or unsafe: {chunk_rel}")
+            try:
+                encoded_parts.append("".join(source.read_text(encoding="utf-8").split()))
+            except UnicodeDecodeError as exc:
+                raise BuildFailure(f"Generated image chunk is not UTF-8 base64 text: {chunk_rel}") from exc
+
+        payload = "".join(encoded_parts)
+        try:
+            decoded = base64.b64decode(payload, validate=True)
+        except (binascii.Error, ValueError) as exc:
+            raise BuildFailure(f"Generated image base64 is invalid: {target_rel}") from exc
+
+        if len(decoded) > MAX_FILE_BYTES:
+            raise BuildFailure(f"Generated image exceeds 25 MiB: {target_rel}")
+        if len(decoded) < 16 or decoded[4:8] != b"ftyp" or b"avif" not in decoded[8:32]:
+            raise BuildFailure(f"Generated image is not a valid AVIF container: {target_rel}")
+
+        target = output / Path(target_rel.as_posix())
+        target.parent.mkdir(parents=True, exist_ok=True)
+        target.write_bytes(decoded)
+        written += 1
+    return written
+
+
 def clean_ref(raw: str) -> str | None:
     raw = html.unescape(raw).strip()
     if not raw or raw.startswith("#") or "${" in raw:
@@ -448,9 +519,9 @@ def validate_dependencies(output: Path, drafts: set[PurePosixPath]) -> None:
 
 
 def validate(output: Path, routes: list[PurePosixPath], drafts: set[PurePosixPath]) -> tuple[int, int, PurePosixPath, int, int]:
-    for required in [PurePosixPath("index.html"), *routes]:
+    for required in [PurePosixPath("index.html"), *routes, *GENERATED_CHUNK_IMAGES.keys()]:
         if not (output / Path(required.as_posix())).is_file():
-            raise BuildFailure(f"Required public route is missing: {required}")
+            raise BuildFailure(f"Required public route/asset is missing: {required}")
 
     robots = output / "robots.txt"
     if not robots.is_file() or robots.read_text(encoding="utf-8") != ROBOTS_TXT:
@@ -523,12 +594,14 @@ def main() -> int:
         contract = load_contract()
         routes, drafts = seed(contract, output)
         dependency_closure(output, drafts)
+        generated_images = materialize_chunked_images(output, drafts)
         (output / "robots.txt").write_text(ROBOTS_TXT, encoding="utf-8", newline="\n")
         count, total, largest, largest_size, runtime_chunks = validate(output, routes, drafts)
 
         print("Safe public dist build passed.")
         print(f"Canonical routes: {len(routes)}")
         print(f"Approved Writing runtime directories: {len(drafts)}")
+        print(f"Materialised Writing images: {generated_images}")
         print(f"Dynamic runtime chunks: {runtime_chunks}")
         print("Unclassified runtime files: 0")
         print(f"Public files: {count:,} / {MAX_OUTPUT_FILES:,}")

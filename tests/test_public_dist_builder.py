@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import importlib.util
+import tempfile
 import unittest
 from pathlib import Path, PurePosixPath
 
@@ -166,6 +167,29 @@ class PublicDistBuilderSafetyTests(unittest.TestCase):
         )
         for relative in expected:
             self.assertTrue((ROOT / relative).is_file(), relative)
+
+    def test_materialised_writing_images_decode_to_real_avif_files(self) -> None:
+        routes = builder.canonical_routes(builder.load_contract())
+        drafts = builder.writing_runtime_roots(routes)
+        with tempfile.TemporaryDirectory() as temp_dir:
+            output = Path(temp_dir)
+            written = builder.materialize_chunked_images(output, drafts)
+            self.assertEqual(written, len(builder.GENERATED_CHUNK_IMAGES))
+            for target_rel in builder.GENERATED_CHUNK_IMAGES:
+                target = output / Path(target_rel.as_posix())
+                self.assertTrue(target.is_file(), target_rel)
+                data = target.read_bytes()
+                self.assertGreater(len(data), 16, target_rel)
+                self.assertEqual(data[4:8], b"ftyp", target_rel)
+                self.assertIn(b"avif", data[8:32], target_rel)
+
+    def test_current_chunked_writing_tests_prefer_standard_avif_assets(self) -> None:
+        test3 = (ROOT / "drafts/writing-19-test-3/writing-test3-overrides.js").read_text(encoding="utf-8")
+        test4 = (ROOT / "drafts/writing-19-test-4/writing-test3-overrides.js").read_text(encoding="utf-8")
+        self.assertIn('const ETHANOL_IMAGE = "ethanol-image.avif";', test3)
+        self.assertIn('image.src = `${ETHANOL_IMAGE}?v=20260808-static1`;', test3)
+        self.assertIn('const DANCE_IMAGE = "dance-image.avif";', test4)
+        self.assertIn('image.src = `${DANCE_IMAGE}?v=20260808-static1`;', test4)
 
 
 if __name__ == "__main__":
