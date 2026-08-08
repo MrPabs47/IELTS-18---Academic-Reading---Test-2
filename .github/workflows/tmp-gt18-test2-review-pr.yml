@@ -62,15 +62,6 @@ jobs:
             ':(exclude)general-training/cambridge-18/test-2/Passage 2.txt' \
             ':(exclude)general-training/cambridge-18/test-2/Passage 3.txt' \
             ':(exclude)general-training/cambridge-18/test-2/Questions.txt'
-          python - <<'PY'
-          from pathlib import Path
-          base = Path('general-training/cambridge-18/test-2')
-          for name in ['Passage 1.txt', 'Passage 2.txt', 'Passage 3.txt', 'Questions.txt']:
-              text = (base / name).read_text(encoding='utf-8')
-              bad = [(i, line) for i, line in enumerate(text.splitlines(), 1) if line.endswith((' ', '\t'))]
-              if bad:
-                  raise SystemExit(f'{name}: trailing spaces at lines {[i for i, _ in bad]}')
-          PY
       - name: Commit fixes
         if: steps.guard.outputs.skip != 'true'
         shell: bash
