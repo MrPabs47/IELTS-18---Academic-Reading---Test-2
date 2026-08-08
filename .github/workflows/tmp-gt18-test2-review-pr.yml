@@ -34,10 +34,15 @@ jobs:
           python scripts/tmp_gt18_test2_review_patch.py
           python - <<'PY'
           from pathlib import Path
-          path = Path('tests/ielts18_gt_test2_study_parity_test.py')
-          text = path.read_text(encoding='utf-8')
+          test = Path('tests/ielts18_gt_test2_study_parity_test.py')
+          text = test.read_text(encoding='utf-8')
           text = text.replace('combined = "\n".join', 'combined = "\\n".join')
-          path.write_text(text, encoding='utf-8', newline='\n')
+          test.write_text(text, encoding='utf-8', newline='\n')
+
+          data = Path('general-training/cambridge-18/test-2/study-feedback-data.js')
+          text = data.read_text(encoding='utf-8')
+          text = text.replace('The regulation chefs” shirts', 'The regulation chefs’ shirts')
+          data.write_text(text, encoding='utf-8', newline='\n')
           PY
       - name: Validate focused regressions
         if: steps.guard.outputs.skip != 'true'
