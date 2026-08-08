@@ -83,7 +83,7 @@ jobs:
             await page.waitForTimeout(140);
             const button = page.locator('.reading-shell-score-feedback-button');
             assert(await button.isVisible(), `${label} score feedback button visible`);
-            await button.click();
+            await button.evaluate(el => el.click());
             await page.waitForTimeout(90);
             const dialog = page.locator('.reading-shell-score-feedback-dialog');
             const body = page.locator('.reading-shell-score-feedback-body');
