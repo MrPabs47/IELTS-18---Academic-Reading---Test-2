@@ -19,6 +19,14 @@ jobs:
       - name: Update GT Reading workflow and parity checklist
         run: |
           python scripts/tmp_patch_gt_reading_docs.py
+          python - <<'PY'
+          from pathlib import Path
+          path = Path('general-training/shared/IELTS_GT_READING_FAST_TRACK_WORKFLOW.md')
+          text = path.read_text(encoding='utf-8')
+          text = text.replace('**Focused regression releases:** PR #436 — Test 3 header CSS inheritance and Study-dialog containment; PR #473 — IELTS 18 GT Test 1 internal modal-overflow regression  \n', '**Focused regression releases:** PR #436 — Test 3 header CSS inheritance and Study-dialog containment; PR #473 — IELTS 18 GT Test 1 internal modal-overflow regression\n', 1)
+          text = text.replace('**Current reference commit:** `3f2a7a6f56db866a9c3c8fca493f2f3aa833c598`  \n', '**Current reference commit:** `3f2a7a6f56db866a9c3c8fca493f2f3aa833c598`\n', 1)
+          path.write_text(text, encoding='utf-8')
+          PY
           git diff --check
           git diff -- general-training/shared/IELTS_GT_READING_FAST_TRACK_WORKFLOW.md general-training/shared/GT_READING_TEST_PARITY_CHECKLIST.md
           git config user.name "github-actions[bot]"
