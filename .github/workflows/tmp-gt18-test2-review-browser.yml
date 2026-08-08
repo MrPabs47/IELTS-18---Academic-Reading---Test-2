@@ -40,14 +40,19 @@ jobs:
           function sortedNumbers(values) {
             return [...new Set(values.map(Number))].sort((a,b) => a-b);
           }
+          async function waitForModeWiring(page) {
+            await page.waitForFunction(() => document.getElementById('modeScreen')?.dataset.wired === 'true');
+          }
           async function startStudy(page) {
             await page.goto(url, { waitUntil: 'domcontentloaded' });
+            await waitForModeWiring(page);
             await page.locator('[data-mode="study"]').click();
             await page.locator('#app').waitFor({ state: 'visible' });
             await page.waitForFunction(() => document.querySelectorAll('.reading-shell-study-icon-button').length === 7);
           }
           async function startTest(page, name='Pablo Jaramillo') {
             await page.goto(url, { waitUntil: 'domcontentloaded' });
+            await waitForModeWiring(page);
             await page.locator('[data-mode="test"]').click();
             await page.locator('#studentNameInput').fill(name);
             await page.locator('#testStartScreen .mode-btn').click();
