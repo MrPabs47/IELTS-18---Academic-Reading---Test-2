@@ -38,7 +38,7 @@ def test_feedback_data_covers_all_40_questions() -> None:
     assert data.count("evidence:") == 40
 
 
-def test_task_groups_cover_each_question_once_and_use_five_text_roots() -> None:
+def test_task_groups_cover_each_question_once_and_use_section_wide_clue_roots() -> None:
     data = DATA.read_text(encoding="utf-8")
     arrays = re.findall(r"questions:\s*\[([0-9, ]+)\]", data)
     flattened: list[int] = []
@@ -47,14 +47,9 @@ def test_task_groups_cover_each_question_once_and_use_five_text_roots() -> None:
     assert sorted(flattened) == list(range(1, 41))
     assert len(flattened) == 40
     assert data.count("controlHost:") == 7
-    for text_id in [
-        "s1-sleeping-bags",
-        "s1-life-writing",
-        "s2-employee-health",
-        "s2-kitchen",
-        "s3-clothkits",
-    ]:
-        assert f'textId: "{text_id}"' in data
+    assert data.count('textId: "s1-section"') == 2
+    assert data.count('textId: "s2-section"') == 2
+    assert data.count('textId: "s3-clothkits"') == 3
 
 
 def test_every_evidence_span_exists_in_target_html() -> None:
@@ -99,10 +94,8 @@ def test_matching_controls_cover_both_matching_tasks_and_lock_after_test() -> No
 def test_feedback_roots_instruction_hosts_and_summary_spacing_are_declared() -> None:
     adapter = ADAPTER.read_text(encoding="utf-8")
     for root in [
-        "text-s1-sleeping-bags",
-        "text-s1-life-writing",
-        "text-s2-employee-health",
-        "text-s2-kitchen",
+        "text-s1-section",
+        "text-s2-section",
         "text-s3-clothkits",
     ]:
         assert root in adapter
@@ -137,13 +130,16 @@ def test_header_and_internal_modal_overflow_regression_is_protected() -> None:
     assert ".icon-group>span.icon{display:none}" in adapter
     assert "#fullscreenBtnLabel{display:none}" in adapter
     assert "#candidateNameDisplay{max-width:82px}" in adapter
-    assert "function keepScoreFeedbackWithResources()" in adapter
+    assert "function positionScoreFeedbackButton()" in adapter
+    assert 'candidate.insertAdjacentElement("afterend", button)' in adapter
     assert 'root.appendChild(button)' in adapter
     assert '[/performance by part/g, "performance by section"]' in adapter
     assert "function activeTextIdForPart(part)" in adapter
     assert "getActiveTextId: activeTextIdForPart" in adapter
     assert "window.highlightCurrentQuestion = function ()" in adapter
     assert "group.questions.indexOf(question) !== -1" in adapter
+    assert "function prepareStructuredGroupAnchors()" in adapter
+    assert 'box.classList.add("summary-box")' in adapter
 
 
 def test_existing_logo_home_and_animation_contract_is_preserved() -> None:
@@ -154,3 +150,48 @@ def test_existing_logo_home_and_animation_contract_is_preserved() -> None:
     assert "logo-char" in html
     assert "is-animating" in html
     assert "prefers-reduced-motion: reduce" in html
+
+
+def test_official_cambridge_source_cleanup_is_preserved() -> None:
+    html = HTML.read_text(encoding="utf-8")
+    p1 = (TARGET / "Passage 1.txt").read_text(encoding="utf-8")
+    p2 = (TARGET / "Passage 2.txt").read_text(encoding="utf-8")
+    p3 = (TARGET / "Passage 3.txt").read_text(encoding="utf-8")
+    questions = (TARGET / "Questions.txt").read_text(encoding="utf-8")
+    combined = "\n".join([html, p1, p2, p3])
+    for bad in [
+        "no—frills", "animal—themed", "non fiction", "meeting With an editor",
+        "chefs” shirts", "To this end. staff", "they out different types of food",
+        "must not tw to fix", "kitchen. they must have clear labels", "Sew-your—own",
+        "experiment With colour", "trousers. in her late twenties", "mass- producing",
+    ]:
+        assert bad not in combined
+    assert "A home-sewing revival: the return of Clothkits" in html
+    assert "A home-sewing revival: the return of Clothkits" in p3
+    assert "The regulation chefs’ shirts" in html
+    assert "each time they cut different types of food" in p2
+    assert "staff must not try to fix them themselves" in p2
+    assert "‘Making your own clothes gives you a greater appreciation" in p3
+    assert "SECTION 2 Questions 15—27" in questions
+    assert " A Its designs represented the attitudes of the time." in questions
+    assert "Complete the summary below." in questions
+
+
+def test_section_wide_clues_and_structured_strategy_anchors_are_declared() -> None:
+    adapter = ADAPTER.read_text(encoding="utf-8")
+    data = DATA.read_text(encoding="utf-8")
+    assert 'setTextIdentity(s1, "text-s1-section")' in adapter
+    assert 'setTextIdentity(s2, "text-s2-section")' in adapter
+    assert data.count('textId: "s1-section"') == 2
+    assert data.count('textId: "s2-section"') == 2
+    assert 'document.querySelectorAll("#questionContent .note-completion-box,#questionContent .summary-completion-box")' in adapter
+    assert 'box.classList.add("summary-box")' in adapter
+
+
+def test_score_feedback_returns_to_candidate_row_on_desktop_with_mobile_fallback() -> None:
+    adapter = ADAPTER.read_text(encoding="utf-8")
+    assert "function positionScoreFeedbackButton()" in adapter
+    assert 'window.matchMedia("(max-width: 600px)").matches' in adapter
+    assert 'candidate.insertAdjacentElement("afterend", button)' in adapter
+    assert 'if (root && button.parentElement !== root) root.appendChild(button);' in adapter
+    assert 'window.addEventListener("resize", positionScoreFeedbackButton);' in adapter

@@ -119,24 +119,8 @@
     var s2 = document.querySelector('.passage-section[data-section="2"]');
     var s3 = document.querySelector('.passage-section[data-section="3"]');
 
-    function wrapBeforeDivider(section, id) {
-      if (!section) return null;
-      var existing = document.getElementById(id);
-      if (existing) return existing;
-      var divider = section.querySelector(":scope > .passage-divider");
-      if (!divider) return null;
-      var wrapper = document.createElement("div");
-      section.insertBefore(wrapper, section.firstChild);
-      while (wrapper.nextSibling && wrapper.nextSibling !== divider) wrapper.appendChild(wrapper.nextSibling);
-      return setTextIdentity(wrapper, id);
-    }
-
-    wrapBeforeDivider(s1, "text-s1-sleeping-bags");
-    if (s1) setTextIdentity(s1.querySelector(":scope > .passage-divider"), "text-s1-life-writing");
-
-    wrapBeforeDivider(s2, "text-s2-employee-health");
-    if (s2) setTextIdentity(s2.querySelector(":scope > .passage-divider"), "text-s2-kitchen");
-
+    if (s1) setTextIdentity(s1, "text-s1-section");
+    if (s2) setTextIdentity(s2, "text-s2-section");
     if (s3) setTextIdentity(s3, "text-s3-clothkits");
   }
 
@@ -149,6 +133,12 @@
       wrapper.setAttribute("data-q", String(question));
       answer.parentNode.insertBefore(wrapper, answer);
       wrapper.appendChild(answer);
+    });
+  }
+
+  function prepareStructuredGroupAnchors() {
+    document.querySelectorAll("#questionContent .note-completion-box,#questionContent .summary-completion-box").forEach(function (box) {
+      box.classList.add("summary-box");
     });
   }
 
@@ -472,15 +462,29 @@
     });
   }
 
-  function keepScoreFeedbackWithResources() {
+  function positionScoreFeedbackButton() {
     var mount = document.getElementById("readingFeatureShellMount");
     var root = mount && mount.querySelector(".reading-shell-root");
     var button = document.querySelector(".reading-shell-score-feedback-button");
-    if (root && button && button.parentElement !== root) root.appendChild(button);
+    var topLeft = document.querySelector(".top-left");
+    var candidate = document.getElementById("candidateNameDisplay");
+    if (!button || !topLeft) return;
+    var narrow = Boolean(window.matchMedia && window.matchMedia("(max-width: 600px)").matches);
+    if (narrow) {
+      if (root && button.parentElement !== root) root.appendChild(button);
+      return;
+    }
+    if (candidate && candidate.parentElement === topLeft) {
+      if (button.parentElement !== topLeft || button.previousElementSibling !== candidate) {
+        candidate.insertAdjacentElement("afterend", button);
+      }
+    } else if (button.parentElement !== topLeft) {
+      topLeft.appendChild(button);
+    }
   }
 
   function localiseReadingFeatureShell() {
-    keepScoreFeedbackWithResources();
+    positionScoreFeedbackButton();
     var replacements = [
       [/IELTS Academic Reading/g, "IELTS General Training Reading"],
       [/Academic Reading/g, "General Training Reading"],
@@ -701,6 +705,7 @@
     prepareTextRoots();
     prepareInstructionHosts();
     prepareInlineFeedbackHosts();
+    prepareStructuredGroupAnchors();
     ensureSectionThreeClearControls();
     installSubmittedMatchingGuard();
     patchPageFunctions();
@@ -759,6 +764,7 @@
       console.warn("IELTS 18 GT Test 2 Study Mode could not initialise.", shellInit && shellInit.error);
     }
     localiseReadingFeatureShell();
+    window.addEventListener("resize", positionScoreFeedbackButton);
   }
 
   document.addEventListener("DOMContentLoaded", initStudyMode, { once: true });
