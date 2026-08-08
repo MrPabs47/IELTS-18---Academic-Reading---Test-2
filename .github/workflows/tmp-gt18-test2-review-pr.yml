@@ -43,6 +43,11 @@ jobs:
           text = data.read_text(encoding='utf-8')
           text = text.replace('The regulation chefs” shirts', 'The regulation chefs’ shirts')
           data.write_text(text, encoding='utf-8', newline='\n')
+
+          passage2 = Path('general-training/cambridge-18/test-2/Passage 2.txt')
+          raw = passage2.read_bytes()
+          raw = raw.replace(b'contents. \r\n', b'contents.\r\n')
+          passage2.write_bytes(raw)
           PY
       - name: Validate focused regressions
         if: steps.guard.outputs.skip != 'true'
@@ -52,7 +57,20 @@ jobs:
           node --check general-training/cambridge-18/test-2/study-feedback.js
           node --check general-training/cambridge-18/test-2/study-feedback-data.js
           python -m pytest tests/ielts18_gt_test2_study_parity_test.py tests/ielts18_gt_test1_modal_layout_test.py tests/gt_reading_info_control_lifecycle_test.py -q
-          git diff --check
+          git diff --check -- . \
+            ':(exclude)general-training/cambridge-18/test-2/Passage 1.txt' \
+            ':(exclude)general-training/cambridge-18/test-2/Passage 2.txt' \
+            ':(exclude)general-training/cambridge-18/test-2/Passage 3.txt' \
+            ':(exclude)general-training/cambridge-18/test-2/Questions.txt'
+          python - <<'PY'
+          from pathlib import Path
+          base = Path('general-training/cambridge-18/test-2')
+          for name in ['Passage 1.txt', 'Passage 2.txt', 'Passage 3.txt', 'Questions.txt']:
+              text = (base / name).read_text(encoding='utf-8')
+              bad = [(i, line) for i, line in enumerate(text.splitlines(), 1) if line.endswith((' ', '\t'))]
+              if bad:
+                  raise SystemExit(f'{name}: trailing spaces at lines {[i for i, _ in bad]}')
+          PY
       - name: Commit fixes
         if: steps.guard.outputs.skip != 'true'
         shell: bash
