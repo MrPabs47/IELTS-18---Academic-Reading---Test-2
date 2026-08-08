@@ -1,0 +1,146 @@
+name: QA IELTS 18 GT Test 1 modal overflow
+
+on:
+  push:
+    paths:
+      - '.gt18-test1-modal-overflow-qa-trigger'
+
+jobs:
+  browser:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: fix/ielts18-gt-test1-modal-overflow
+      - name: Run permanent regression
+        run: python tests/ielts18_gt_test1_modal_layout_test.py
+      - name: Install Chromium QA dependency
+        run: |
+          npm init -y >/dev/null 2>&1
+          npm install --no-save playwright@1.55.0 >/dev/null 2>&1
+          npx playwright install --with-deps chromium >/dev/null 2>&1
+      - name: Reproduce score guide and score feedback layouts
+        shell: bash
+        run: |
+          python3 -m http.server 8000 >/tmp/gt18-modal-server.log 2>&1 &
+          SERVER_PID=$!
+          trap 'kill $SERVER_PID || true' EXIT
+          sleep 2
+          cat >/tmp/gt18-modal-qa.cjs <<'JS'
+          const { chromium } = require(process.cwd() + '/node_modules/playwright');
+          const URL = 'http://127.0.0.1:8000/general-training/cambridge-18/test-1/IELTS18%20Test%201%20-%20Reading%20-%20GT.html';
+          function assert(ok, message) { if (!ok) throw new Error(message); }
+          async function open(browser, viewport) {
+            const page = await browser.newPage({ viewport });
+            const errors = [];
+            page.on('pageerror', error => errors.push(String(error)));
+            page.on('console', msg => { if (msg.type() === 'error') errors.push('console: ' + msg.text()); });
+            await page.goto(URL, { waitUntil: 'networkidle' });
+            return { page, errors };
+          }
+          async function noOverflow(locator, label) {
+            const metrics = await locator.evaluate(el => ({
+              clientWidth: el.clientWidth,
+              scrollWidth: el.scrollWidth,
+              whiteSpace: getComputedStyle(el).whiteSpace,
+              overflowX: getComputedStyle(el).overflowX
+            }));
+            assert(metrics.scrollWidth <= metrics.clientWidth + 1, `${label} horizontal overflow: ${metrics.scrollWidth} > ${metrics.clientWidth}`);
+            return metrics;
+          }
+          async function studyGuide(page, label) {
+            await page.locator('.mode-btn[data-mode="study"]').click();
+            await page.waitForTimeout(180);
+            await page.locator('.reading-shell-score-guide-button').click();
+            await page.waitForTimeout(80);
+            const dialog = page.locator('.reading-shell-score-guide-dialog');
+            assert(await dialog.isVisible(), `${label} score guide visible`);
+            assert((await dialog.innerText()).includes('General Training Reading score guide'), `${label} full guide title`);
+            assert((await dialog.innerText()).includes('Correct answers'), `${label} left table heading visible`);
+            assert((await dialog.innerText()).includes('Band'), `${label} band heading visible`);
+            await noOverflow(dialog, `${label} guide dialog`);
+            const scroll = page.locator('.reading-shell-score-guide-scroll');
+            await noOverflow(scroll, `${label} guide scroll area`);
+            const backdropWhiteSpace = await page.locator('.reading-shell-score-guide-backdrop').evaluate(el => getComputedStyle(el).whiteSpace);
+            assert(backdropWhiteSpace === 'normal', `${label} guide backdrop white-space is ${backdropWhiteSpace}`);
+            const db = await dialog.boundingBox();
+            const tb = await page.locator('.reading-shell-score-guide-title').boundingBox();
+            assert(db && tb && tb.x >= db.x - 1 && tb.x + tb.width <= db.x + db.width + 1, `${label} guide title clipped`);
+            await page.locator('.reading-shell-score-guide-close').click();
+          }
+          async function submittedFeedback(page, label) {
+            await page.evaluate(() => {
+              studentName = 'QA Candidate';
+              startTest('test');
+              isTestRunning = true;
+            });
+            await page.waitForTimeout(180);
+            page.once('dialog', dialog => dialog.accept());
+            await page.locator('#primarySubmitBtn').click();
+            await page.waitForTimeout(320);
+            assert(await page.evaluate(() => testSubmitted), `${label} test submitted`);
+            if (await page.locator('#resultsOverlay').isVisible()) await page.locator('#resultsCloseBtn').click();
+            await page.waitForTimeout(140);
+            const button = page.locator('.reading-shell-score-feedback-button');
+            assert(await button.isVisible(), `${label} score feedback button visible`);
+            await button.click();
+            await page.waitForTimeout(90);
+            const dialog = page.locator('.reading-shell-score-feedback-dialog');
+            const body = page.locator('.reading-shell-score-feedback-body');
+            assert(await dialog.isVisible(), `${label} score feedback visible`);
+            await noOverflow(dialog, `${label} feedback dialog`);
+            await noOverflow(body, `${label} feedback body`);
+            const cards = page.locator('.reading-shell-score-feedback-card');
+            const cardCount = await cards.count();
+            assert(cardCount >= 5, `${label} expected feedback cards`);
+            for (let i = 0; i < cardCount; i++) await noOverflow(cards.nth(i), `${label} feedback card ${i + 1}`);
+            const texts = page.locator('.reading-shell-score-feedback-text');
+            const textCount = await texts.count();
+            for (let i = 0; i < textCount; i++) {
+              const metrics = await noOverflow(texts.nth(i), `${label} feedback text ${i + 1}`);
+              assert(metrics.whiteSpace === 'normal', `${label} feedback text ${i + 1} white-space is ${metrics.whiteSpace}`);
+            }
+            const focus = page.locator('.reading-shell-score-feedback-text').filter({ hasText: 'Underline the main claim and any limiting words in the statement.' }).first();
+            assert(await focus.count() === 1, `${label} long Focus next sentence found`);
+            const focusMetrics = await focus.evaluate(el => {
+              const style = getComputedStyle(el);
+              return { scrollWidth: el.scrollWidth, clientWidth: el.clientWidth, scrollHeight: el.scrollHeight, lineHeight: parseFloat(style.lineHeight) || 0, whiteSpace: style.whiteSpace };
+            });
+            assert(focusMetrics.scrollWidth <= focusMetrics.clientWidth + 1, `${label} long Focus next sentence escapes card`);
+            assert(focusMetrics.whiteSpace === 'normal', `${label} long Focus next sentence does not wrap`);
+            if (focusMetrics.lineHeight > 0) assert(focusMetrics.scrollHeight > focusMetrics.lineHeight * 1.5, `${label} long Focus next sentence did not wrap to multiple lines`);
+            await page.locator('.reading-shell-score-feedback-close').click();
+          }
+          (async () => {
+            const browser = await chromium.launch({ headless: true });
+            {
+              const { page, errors } = await open(browser, { width: 1846, height: 795 });
+              await studyGuide(page, 'desktop');
+              assert(errors.length === 0, 'desktop guide errors: ' + errors.join(' | '));
+              await page.close();
+            }
+            {
+              const { page, errors } = await open(browser, { width: 1846, height: 795 });
+              await submittedFeedback(page, 'desktop');
+              assert(errors.length === 0, 'desktop feedback errors: ' + errors.join(' | '));
+              await page.close();
+            }
+            {
+              const { page, errors } = await open(browser, { width: 390, height: 844 });
+              await page.evaluate(() => setFontSize('xlarge'));
+              await studyGuide(page, 'narrow xlarge');
+              assert(errors.length === 0, 'narrow guide errors: ' + errors.join(' | '));
+              await page.close();
+            }
+            {
+              const { page, errors } = await open(browser, { width: 390, height: 844 });
+              await page.evaluate(() => setFontSize('xlarge'));
+              await submittedFeedback(page, 'narrow xlarge');
+              assert(errors.length === 0, 'narrow feedback errors: ' + errors.join(' | '));
+              await page.close();
+            }
+            await browser.close();
+            console.log('PASS IELTS 18 GT Test 1 score guide and score feedback overflow regression');
+          })().catch(error => { console.error(error.stack || error); process.exit(1); });
+          JS
+          node /tmp/gt18-modal-qa.cjs
