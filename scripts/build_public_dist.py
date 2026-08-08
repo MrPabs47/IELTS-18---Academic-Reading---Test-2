@@ -27,15 +27,19 @@ MAX_OUTPUT_FILES = 20_000
 
 PUBLIC_EXTENSIONS = {
     ".html", ".css", ".js",
-    ".png", ".jpg", ".jpeg", ".webp", ".svg", ".gif", ".ico",
+    ".png", ".jpg", ".jpeg", ".webp", ".avif", ".svg", ".gif", ".ico",
     ".mp3", ".m4a", ".aac", ".ogg", ".wav", ".webm", ".mp4",
     ".woff", ".woff2", ".webmanifest",
 }
 SUPPORT_EXTENSIONS = PUBLIC_EXTENSIONS - {".html"}
 TEXT_EXTENSIONS = {".html", ".css", ".js", ".svg", ".webmanifest"}
-DEPENDENCY_TEXT_EXTENSIONS = {".html", ".css", ".svg"}
-REVIEW_REQUIRED_EXTENSIONS = {".json", ".wasm", ".xml", ".vtt", ".srt", ".ttf", ".otf"}
+DEPENDENCY_TEXT_EXTENSIONS = {".html", ".css", ".js", ".svg"}
+REVIEW_REQUIRED_EXTENSIONS = {".json", ".wasm", ".xml", ".vtt", ".srt", ".ttf", ".otf", ".csv"}
 REVIEW_EXEMPT_PATHS = {PurePosixPath("hub/live-hub-contract.json")}
+PRIVATE_SOURCE_EXTENSIONS = {
+    ".md", ".txt", ".py", ".pyc", ".yml", ".yaml", ".toml", ".ini", ".lock", ".log",
+    ".ps1", ".bat", ".cmd", ".sh",
+}
 
 BLOCKED_PARTS = {".git", ".github", "scripts", "tests", "dist"}
 BLOCKED_NAMES = {
@@ -48,6 +52,13 @@ OLD_PUBLIC_MARKERS = {
 }
 ROBOTS_META = '<meta name="robots" content="noindex,nofollow" />'
 ROBOTS_TXT = "User-agent: *\nDisallow: /\n"
+
+# Some approved Writing runtimes reconstruct high-resolution AVIF images from
+# co-located base64 chunks. These are runtime assets, but their final suffixes
+# are chunk IDs such as .0a rather than ordinary image extensions. They are
+# publishable only inside a canonical Writing draft runtime discovered from the
+# Live Hub contract, never globally.
+RUNTIME_CHUNK_RE = re.compile(r"^.+\.b64\.[A-Za-z0-9]+$")
 
 HTML_ATTR_RE = re.compile(
     r"(?:src|href|poster|action|data-src)\s*=\s*([\"'])(.*?)\1",
@@ -64,6 +75,16 @@ LOCATION_RE = re.compile(
     r"(?:window\.)?location\.replace\(\s*([\"'`])([^\"'`]+)\1\s*\)|"
     r"(?:window\.)?location\.href\s*=\s*([\"'`])([^\"'`]+)\3|"
     r"(?:window\.)?location\s*=\s*([\"'`])([^\"'`]+)\5",
+    re.IGNORECASE,
+)
+JS_FETCH_RE = re.compile(r"\bfetch\s*\(\s*([\"'`])([^\"'`$]+)\1", re.IGNORECASE)
+JS_NEW_URL_RE = re.compile(
+    r"\bnew\s+URL\s*\(\s*([\"'`])([^\"'`$]+)\1\s*,\s*import\.meta\.url",
+    re.IGNORECASE,
+)
+JS_IMPORT_RE = re.compile(r"\bimport\s*\(\s*([\"'`])([^\"'`$]+)\1", re.IGNORECASE)
+JS_RUNTIME_CHUNK_LITERAL_RE = re.compile(
+    r"([\"'`])([^\"'`\n]+\.b64\.[A-Za-z0-9]+)\1",
     re.IGNORECASE,
 )
 ROBOTS_TAG_RE = re.compile(
@@ -89,6 +110,20 @@ def within(path: PurePosixPath, parent: PurePosixPath) -> bool:
         return True
     except ValueError:
         return False
+
+
+def is_runtime_chunk(path: PurePosixPath, draft_roots: set[PurePosixPath]) -> bool:
+    return bool(RUNTIME_CHUNK_RE.fullmatch(path.name)) and any(
+        within(path, root) for root in draft_roots
+    )
+
+
+def has_publishable_type(path: PurePosixPath, draft_roots: set[PurePosixPath]) -> bool:
+    return path.suffix.lower() in PUBLIC_EXTENSIONS or is_runtime_chunk(path, draft_roots)
+
+
+def is_known_private_source(path: PurePosixPath) -> bool:
+    return path.name.lower() in BLOCKED_NAMES or path.suffix.lower() in PRIVATE_SOURCE_EXTENSIONS
 
 
 def load_contract() -> dict:
@@ -132,7 +167,7 @@ def assert_publishable(path: PurePosixPath, draft_roots: set[PurePosixPath]) -> 
         raise BuildFailure(f"Blocked source area cannot be published: {path}")
     if path.name.lower() in BLOCKED_NAMES:
         raise BuildFailure(f"Internal source file cannot be published: {path}")
-    if path.suffix.lower() not in PUBLIC_EXTENSIONS:
+    if not has_publishable_type(path, draft_roots):
         raise BuildFailure(f"Unapproved public file type: {path}")
     if path.parts and path.parts[0] == "drafts":
         if not any(within(path, root) for root in draft_roots):
@@ -178,31 +213,60 @@ def copy_file(path: PurePosixPath, output: Path, draft_roots: set[PurePosixPath]
     return True
 
 
-def audit_runtime_directory(source_dir: Path) -> None:
+def audit_runtime_directory(source_dir: Path, draft_roots: set[PurePosixPath]) -> None:
+    """Classify every file in a directory that can feed the public runtime.
+
+    Ordinary browser assets are publishable. Known source/documentation formats
+    are explicitly private. Ambiguous data formats and every unknown file type
+    fail the build so a future test cannot silently lose a runtime dependency.
+    """
     if not source_dir.is_dir():
         return
-    suspicious = sorted(
-        rel(path) for path in source_dir.rglob("*")
-        if path.is_file()
-        and path.suffix.lower() in REVIEW_REQUIRED_EXTENSIONS
-        and rel(path) not in REVIEW_EXEMPT_PATHS
-    )
-    if suspicious:
-        sample = "\n".join(f"  - {item}" for item in suspicious[:20])
-        extra = "" if len(suspicious) <= 20 else f"\n  ... and {len(suspicious)-20} more"
+
+    review_required: list[PurePosixPath] = []
+    unknown: list[PurePosixPath] = []
+    for path in source_dir.rglob("*"):
+        if not path.is_file():
+            continue
+        relative = rel(path)
+        if path.is_symlink():
+            unknown.append(relative)
+            continue
+        if relative in REVIEW_EXEMPT_PATHS or is_known_private_source(relative):
+            continue
+        if relative.suffix.lower() in REVIEW_REQUIRED_EXTENSIONS:
+            review_required.append(relative)
+            continue
+        if has_publishable_type(relative, draft_roots):
+            continue
+        unknown.append(relative)
+
+    if review_required:
+        sample = "\n".join(f"  - {item}" for item in sorted(review_required, key=str)[:20])
+        extra = "" if len(review_required) <= 20 else f"\n  ... and {len(review_required)-20} more"
         raise BuildFailure(
-            "A canonical runtime directory contains file types that require explicit review "
+            "A canonical runtime directory contains data/file types that require explicit review "
             "before publication:\n" + sample + extra
+        )
+    if unknown:
+        sample = "\n".join(f"  - {item}" for item in sorted(unknown, key=str)[:20])
+        extra = "" if len(unknown) <= 20 else f"\n  ... and {len(unknown)-20} more"
+        raise BuildFailure(
+            "A canonical runtime directory contains unclassified files. Review each file and "
+            "either add a narrow public rule or classify it as private:\n" + sample + extra
         )
 
 
 def copy_support(source_dir: Path, output: Path, draft_roots: set[PurePosixPath]) -> None:
     if not source_dir.is_dir():
         return
-    audit_runtime_directory(source_dir)
+    audit_runtime_directory(source_dir, draft_roots)
     for source in source_dir.rglob("*"):
-        if source.is_file() and not source.is_symlink() and source.suffix.lower() in SUPPORT_EXTENSIONS:
-            copy_file(rel(source), output, draft_roots)
+        if not source.is_file() or source.is_symlink():
+            continue
+        relative = rel(source)
+        if relative.suffix.lower() in SUPPORT_EXTENSIONS or is_runtime_chunk(relative, draft_roots):
+            copy_file(relative, output, draft_roots)
 
 
 def clean_ref(raw: str) -> str | None:
@@ -245,6 +309,11 @@ def references(text: str, suffix: str) -> set[str]:
         found.update(match.group(2) for match in CSS_URL_RE.finditer(text))
     if suffix == ".css":
         found.update(match.group(2) for match in CSS_IMPORT_RE.finditer(text))
+    if suffix == ".js":
+        found.update(match.group(2) for match in JS_FETCH_RE.finditer(text))
+        found.update(match.group(2) for match in JS_NEW_URL_RE.finditer(text))
+        found.update(match.group(2) for match in JS_IMPORT_RE.finditer(text))
+        found.update(match.group(2) for match in JS_RUNTIME_CHUNK_LITERAL_RE.finditer(text))
     return {item for item in found if item}
 
 
@@ -345,7 +414,7 @@ def dependency_closure(output: Path, drafts: set[PurePosixPath]) -> None:
                     continue
                 if not source.is_file():
                     continue
-                if target_rel.suffix.lower() not in PUBLIC_EXTENSIONS:
+                if not has_publishable_type(target_rel, drafts):
                     raise BuildFailure(
                         f"Public page references an unapproved file type: {source_rel} -> {target_rel}"
                     )
@@ -356,7 +425,7 @@ def dependency_closure(output: Path, drafts: set[PurePosixPath]) -> None:
     raise BuildFailure("Dependency closure did not stabilise")
 
 
-def validate_dependencies(output: Path) -> None:
+def validate_dependencies(output: Path, drafts: set[PurePosixPath]) -> None:
     broken: list[str] = []
     for built in output.rglob("*"):
         if not built.is_file() or built.suffix.lower() not in DEPENDENCY_TEXT_EXTENSIONS:
@@ -370,7 +439,7 @@ def validate_dependencies(output: Path) -> None:
             target = output / Path(target_rel.as_posix())
             if target.is_dir():
                 target = target / "index.html"
-            if target_rel.suffix and not target.is_file():
+            if has_publishable_type(target_rel, drafts) and not target.is_file():
                 broken.append(f"{source_rel} -> {raw}")
     if broken:
         sample = "\n".join(f"  - {item}" for item in broken[:30])
@@ -378,7 +447,7 @@ def validate_dependencies(output: Path) -> None:
         raise BuildFailure("Broken public dependencies:\n" + sample + extra)
 
 
-def validate(output: Path, routes: list[PurePosixPath], drafts: set[PurePosixPath]) -> tuple[int, int, PurePosixPath, int]:
+def validate(output: Path, routes: list[PurePosixPath], drafts: set[PurePosixPath]) -> tuple[int, int, PurePosixPath, int, int]:
     for required in [PurePosixPath("index.html"), *routes]:
         if not (output / Path(required.as_posix())).is_file():
             raise BuildFailure(f"Required public route is missing: {required}")
@@ -400,12 +469,15 @@ def validate(output: Path, routes: list[PurePosixPath], drafts: set[PurePosixPat
         raise BuildFailure(f"File-count ceiling exceeded: {len(files):,} > {MAX_OUTPUT_FILES:,}")
 
     total = 0
+    runtime_chunks = 0
     largest = PurePosixPath("index.html")
     largest_size = -1
     for path in files:
         public_rel = PurePosixPath(path.relative_to(output).as_posix())
         if public_rel.name != "robots.txt":
             assert_publishable(public_rel, drafts)
+        if is_runtime_chunk(public_rel, drafts):
+            runtime_chunks += 1
         size = path.stat().st_size
         total += size
         if size > MAX_FILE_BYTES:
@@ -423,8 +495,8 @@ def validate(output: Path, routes: list[PurePosixPath], drafts: set[PurePosixPat
             if any(marker in lower for marker in OLD_PUBLIC_MARKERS):
                 raise BuildFailure(f"Old GitHub Pages address leaked into public output: {public_rel}")
 
-    validate_dependencies(output)
-    return len(files), total, largest, largest_size
+    validate_dependencies(output, drafts)
+    return len(files), total, largest, largest_size, runtime_chunks
 
 
 def parse_args() -> argparse.Namespace:
@@ -452,11 +524,13 @@ def main() -> int:
         routes, drafts = seed(contract, output)
         dependency_closure(output, drafts)
         (output / "robots.txt").write_text(ROBOTS_TXT, encoding="utf-8", newline="\n")
-        count, total, largest, largest_size = validate(output, routes, drafts)
+        count, total, largest, largest_size, runtime_chunks = validate(output, routes, drafts)
 
         print("Safe public dist build passed.")
         print(f"Canonical routes: {len(routes)}")
         print(f"Approved Writing runtime directories: {len(drafts)}")
+        print(f"Dynamic runtime chunks: {runtime_chunks}")
+        print("Unclassified runtime files: 0")
         print(f"Public files: {count:,} / {MAX_OUTPUT_FILES:,}")
         print(f"Public size: {total / (1024 * 1024):.1f} MiB")
         print(
