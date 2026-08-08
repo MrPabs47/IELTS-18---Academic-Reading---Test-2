@@ -1,0 +1,8 @@
+{
+  "name": "study-room-4q7m8x",
+  "compatibility_date": "2026-08-08",
+  "assets": {
+    "directory": "./dist",
+    "not_found_handling": "none"
+  }
+}
