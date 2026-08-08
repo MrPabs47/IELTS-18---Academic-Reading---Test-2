@@ -9,7 +9,10 @@
     '.gt18-test1-header-left .test-title,.gt18-test1-header-left #candidateNameDisplay{font-size:.95rem;color:var(--text-soft);min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}' +
     '.gt18-test1-header-left .test-title{flex:0 1 auto}' +
     '.gt18-test1-header-left #candidateNameDisplay{display:none;max-width:min(24vw,260px);flex:0 1 auto}' +
-    '.gt18-test1-header-right{gap:12px;min-width:0;flex:0 0 auto;white-space:nowrap}' +
+    '.gt18-test1-header-right{gap:12px;min-width:0;flex:0 0 auto}' +
+    '.gt18-test1-header-right .reading-shell-score-guide-backdrop,.gt18-test1-header-right .reading-shell-answer-key-backdrop,.gt18-test1-header-right .reading-shell-score-feedback-backdrop{white-space:normal}' +
+    '.gt18-test1-header-right .reading-shell-score-guide-dialog,.gt18-test1-header-right .reading-shell-answer-key-dialog,.gt18-test1-header-right .reading-shell-score-feedback-dialog,.gt18-test1-header-right .reading-shell-score-guide-header,.gt18-test1-header-right .reading-shell-answer-key-header,.gt18-test1-header-right .reading-shell-score-feedback-header,.gt18-test1-header-right .reading-shell-score-guide-scroll,.gt18-test1-header-right .reading-shell-answer-key-scroll,.gt18-test1-header-right .reading-shell-score-feedback-body,.gt18-test1-header-right .reading-shell-score-feedback-card{min-width:0}' +
+    '.gt18-test1-header-right .reading-shell-score-feedback-text,.gt18-test1-header-right .reading-shell-score-feedback-part-score{white-space:normal;overflow-wrap:anywhere}' +
     '.reading-shell-locked{cursor:not-allowed!important;opacity:.72}' +
     '@media(max-width:980px){.gt18-test1-header-left{gap:10px}.gt18-test1-header-right{gap:8px}.gt18-test1-header-left #candidateNameDisplay{max-width:18vw}}' +
     '<\/style>');
