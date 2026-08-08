@@ -244,19 +244,55 @@ def references(text: str, suffix: str) -> set[str]:
 
 
 def writing_runtime_roots(routes: list[PurePosixPath]) -> set[PurePosixPath]:
+    """Discover draft runtimes only by following canonical Writing entry points.
+
+    A canonical Writing page can redirect into one draft application, and that
+    application may link to a narrowly scoped shared runtime directory. We walk
+    that explicit HTML/CSS dependency graph rather than allowing all of drafts/.
+    """
     approved: set[PurePosixPath] = set()
-    for route in routes:
-        if "Writing.html" not in route.name:
+    pending: list[PurePosixPath] = [route for route in routes if "Writing.html" in route.name]
+    seen: set[PurePosixPath] = set()
+
+    while pending:
+        current = pending.pop()
+        if current in seen:
             continue
-        text = (ROOT / Path(route.as_posix())).read_text(encoding="utf-8")
-        for raw in references(text, ".html"):
-            target = resolve_ref(route, raw)
+        seen.add(current)
+        source = ROOT / Path(current.as_posix())
+        if not source.is_file() or current.suffix.lower() not in {".html", ".css", ".svg"}:
+            continue
+        try:
+            text = source.read_text(encoding="utf-8")
+        except UnicodeDecodeError as exc:
+            raise BuildFailure(f"Writing runtime text is not UTF-8: {current}") from exc
+
+        for raw in references(text, current.suffix.lower()):
+            target = resolve_ref(current, raw)
             if target is None or not target.parts or target.parts[0] != "drafts":
                 continue
-            source = ROOT / Path(target.as_posix())
-            if not source.is_file():
-                raise BuildFailure(f"Writing runtime target is missing: {route} -> {target}")
-            approved.add(target.parent)
+            target_source = ROOT / Path(target.as_posix())
+            if target_source.is_dir():
+                target = target / "index.html"
+                target_source = ROOT / Path(target.as_posix())
+            if not target_source.is_file():
+                if target.suffix:
+                    raise BuildFailure(f"Writing runtime target is missing: {current} -> {target}")
+                continue
+
+            root = target.parent
+            if root not in approved:
+                approved.add(root)
+                # Canonical redirect targets often use start.html with a dynamic
+                # cache-busting redirect. Inspect both standard entry pages so
+                # their explicit shared CSS/JS dependencies are discovered.
+                for name in ("start.html", "index.html"):
+                    page = root / name
+                    if (ROOT / Path(page.as_posix())).is_file():
+                        pending.append(page)
+            if target.suffix.lower() in {".html", ".css", ".svg"}:
+                pending.append(target)
+
     return approved
 
 
