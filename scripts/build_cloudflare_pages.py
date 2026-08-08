@@ -1,6 +1,9 @@
 #!/usr/bin/env python3
 """Build the curated public site and add a real Cloudflare Pages 404 page.
 
+Cloudflare Pages production build command:
+    python scripts/build_cloudflare_pages.py
+
 Cloudflare Pages treats a static site without a top-level 404.html as a
 single-page application and serves index.html for unknown paths. This wrapper
 keeps the existing least-privilege dist build unchanged, then adds one small,
