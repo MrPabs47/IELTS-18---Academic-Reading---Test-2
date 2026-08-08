@@ -1,0 +1,50 @@
+name: Temporary IELTS 18 GT Test 2 PR patch
+
+on:
+  pull_request:
+    branches:
+      - main
+    types: [opened, synchronize, reopened]
+
+permissions:
+  contents: write
+
+jobs:
+  patch:
+    if: github.head_ref == 'fix/ielts18-gt-test2-source-clues-layout'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.head_ref }}
+          fetch-depth: 0
+      - name: Stop after patch commit
+        id: guard
+        shell: bash
+        run: |
+          if [ "$(git log -1 --pretty=%s)" = "Apply IELTS 18 GT Test 2 review fixes" ]; then
+            echo "skip=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "skip=false" >> "$GITHUB_OUTPUT"
+          fi
+      - name: Apply fixes
+        if: steps.guard.outputs.skip != 'true'
+        run: python scripts/tmp_gt18_test2_review_patch.py
+      - name: Validate focused regressions
+        if: steps.guard.outputs.skip != 'true'
+        shell: bash
+        run: |
+          python -m pip install -q pytest
+          node --check general-training/cambridge-18/test-2/study-feedback.js
+          node --check general-training/cambridge-18/test-2/study-feedback-data.js
+          python -m pytest tests/ielts18_gt_test2_study_parity_test.py tests/ielts18_gt_test1_internal_modal_layout_test.py tests/gt_reading_info_control_lifecycle_test.py -q
+          git diff --check
+      - name: Commit fixes
+        if: steps.guard.outputs.skip != 'true'
+        shell: bash
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add general-training/cambridge-18/test-2 tests/ielts18_gt_test2_study_parity_test.py
+          git commit -m "Apply IELTS 18 GT Test 2 review fixes"
+          git push origin HEAD:${{ github.head_ref }}
