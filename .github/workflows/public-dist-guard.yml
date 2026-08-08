@@ -10,7 +10,10 @@ on:
       - 'listening/**'
       - 'drafts/**'
       - 'scripts/build_public_dist.py'
+      - 'scripts/build_deploy_dist.py'
+      - 'scripts/build_cloudflare_pages.py'
       - 'tests/test_public_dist_builder.py'
+      - 'tests/test_deploy_dist_builder.py'
       - '.github/workflows/public-dist-guard.yml'
   workflow_dispatch:
 
@@ -30,11 +33,14 @@ jobs:
         with:
           python-version: '3.12'
 
-      - name: Run public builder unit tests
-        run: python -m unittest discover -s tests -p 'test_public_dist_builder.py' -v
+      - name: Run deployment builder unit tests
+        run: python -m unittest discover -s tests -p 'test_*dist_builder.py' -v
 
-      - name: Build and validate least-privilege public site
-        run: python scripts/build_public_dist.py
+      - name: Build and validate portable least-privilege public site
+        run: python scripts/build_deploy_dist.py
+
+      - name: Build Cloudflare Pages deployment with real 404
+        run: python scripts/build_cloudflare_pages.py
 
       - name: Re-run Live Hub route guard
         run: python scripts/verify_live_hub.py
@@ -42,4 +48,5 @@ jobs:
       - name: Summarise generated deployment
         run: |
           echo "Public files: $(find dist -type f | wc -l)"
+          test -f dist/404.html
           du -sh dist
