@@ -4,8 +4,8 @@
 **Reference implementations:** Cambridge IELTS 19 General Training Reading Tests 1–4  
 **Core releases:** PR #379 and PR #381  
 **Stabilisation releases:** PR #387, PR #389 and PR #392  
-**Focused regression releases:** PR #436 — Test 3 header CSS inheritance and Study-dialog containment; PR #473 — IELTS 18 GT Test 1 internal modal-overflow regression
-**Current reference commit:** `3f2a7a6f56db866a9c3c8fca493f2f3aa833c598`
+**Focused regression releases:** PR #436 — Test 3 header CSS inheritance and Study-dialog containment; PR #473 — IELTS 18 GT Test 1 internal modal-overflow regression<br>
+**Current reference commit:** `3f2a7a6f56db866a9c3c8fca493f2f3aa833c598`<br>
 **Prepared:** 2 August 2026  
 **Updated:** 8 August 2026
 
