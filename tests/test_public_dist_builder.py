@@ -80,6 +80,17 @@ class PublicDistBuilderSafetyTests(unittest.TestCase):
             with self.assertRaises(builder.BuildFailure):
                 builder.assert_publishable(relative, set())
 
+    def test_javascript_object_url_is_not_misread_as_css_dependency(self) -> None:
+        source = "const objectUrl = URL.createObjectURL(await response.blob());"
+        self.assertEqual(builder.references(source, ".html"), set())
+
+    def test_canonical_writing_discovers_shared_runtime_without_opening_all_drafts(self) -> None:
+        routes = builder.canonical_routes(builder.load_contract())
+        approved = builder.writing_runtime_roots(routes)
+        self.assertIn(PurePosixPath("drafts/general-writing-16-shared"), approved)
+        self.assertNotIn(PurePosixPath("drafts"), approved)
+        self.assertTrue(all(root.parts[0] == "drafts" and len(root.parts) > 1 for root in approved))
+
 
 if __name__ == "__main__":
     unittest.main()
