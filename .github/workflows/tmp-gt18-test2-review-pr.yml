@@ -29,7 +29,16 @@ jobs:
           fi
       - name: Apply fixes
         if: steps.guard.outputs.skip != 'true'
-        run: python scripts/tmp_gt18_test2_review_patch.py
+        shell: bash
+        run: |
+          python scripts/tmp_gt18_test2_review_patch.py
+          python - <<'PY'
+          from pathlib import Path
+          path = Path('tests/ielts18_gt_test2_study_parity_test.py')
+          text = path.read_text(encoding='utf-8')
+          text = text.replace('combined = "\n".join', 'combined = "\\n".join')
+          path.write_text(text, encoding='utf-8', newline='\n')
+          PY
       - name: Validate focused regressions
         if: steps.guard.outputs.skip != 'true'
         shell: bash
