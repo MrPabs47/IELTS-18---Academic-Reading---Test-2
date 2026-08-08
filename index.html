@@ -18,6 +18,7 @@
       --academic:#7204a3;
       --general:#0062a3;
       --focus:#b8bdff;
+      --game:#ff7a1a;
     }
     *{box-sizing:border-box}
     html{scroll-behavior:smooth}
@@ -35,92 +36,21 @@
     .nav-pill:hover{color:#f5f5f5;background:#15171a}
     .nav-pill.active{color:#fff;background:#17191d}
 
-    .test-view-switch{
-      --view-index:0;
-      position:relative;
-      isolation:isolate;
-      display:grid;
-      grid-template-columns:repeat(3,minmax(0,1fr));
-      width:214px;
-      padding:3px;
-      border:1px solid #292c32;
-      border-radius:999px;
-      background:#101215;
-      box-shadow:inset 0 1px 0 rgba(255,255,255,.035),0 6px 18px rgba(0,0,0,.16);
-    }
-    .view-indicator{
-      position:absolute;
-      top:3px;
-      bottom:3px;
-      left:3px;
-      z-index:0;
-      width:calc((100% - 6px)/3);
-      border-radius:999px;
-      transform:translateX(calc(var(--view-index)*100%));
-      transition:transform .3s cubic-bezier(.22,1,.36,1),background .2s ease,box-shadow .2s ease;
-    }
+    .test-view-switch{--view-index:0;position:relative;isolation:isolate;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));width:214px;padding:3px;border:1px solid #292c32;border-radius:999px;background:#101215;box-shadow:inset 0 1px 0 rgba(255,255,255,.035),0 6px 18px rgba(0,0,0,.16)}
+    .view-indicator{position:absolute;top:3px;bottom:3px;left:3px;z-index:0;width:calc((100% - 6px)/3);border-radius:999px;transform:translateX(calc(var(--view-index)*100%));transition:transform .3s cubic-bezier(.22,1,.36,1),background .2s ease,box-shadow .2s ease}
     .test-view-switch[data-active="all"] .view-indicator{background:#24272d;box-shadow:inset 0 1px 0 rgba(255,255,255,.07)}
     .test-view-switch[data-active="academic"] .view-indicator{background:linear-gradient(135deg,#65058f,#8208b7);box-shadow:0 0 18px rgba(114,4,163,.25),inset 0 1px 0 rgba(255,255,255,.13)}
     .test-view-switch[data-active="general"] .view-indicator{background:linear-gradient(135deg,#00558e,#0874bc);box-shadow:0 0 18px rgba(0,98,163,.25),inset 0 1px 0 rgba(255,255,255,.13)}
-    .view-option{
-      --switch-glow-x:50%;
-      --switch-glow-y:50%;
-      --switch-glow-one:114,4,163;
-      --switch-glow-two:0,98,163;
-      position:relative;
-      z-index:1;
-      isolation:isolate;
-      overflow:hidden;
-      border:0;
-      border-radius:999px;
-      padding:6px 8px;
-      background:transparent;
-      color:#858a93;
-      font-size:.69rem;
-      font-weight:760;
-      letter-spacing:.005em;
-      cursor:pointer;
-      transition:color .18s ease,box-shadow .18s ease;
-    }
+    .view-option{--switch-glow-x:50%;--switch-glow-y:50%;--switch-glow-one:114,4,163;--switch-glow-two:0,98,163;position:relative;z-index:1;isolation:isolate;overflow:hidden;border:0;border-radius:999px;padding:6px 8px;background:transparent;color:#858a93;font-size:.69rem;font-weight:760;letter-spacing:.005em;cursor:pointer;transition:color .18s ease,box-shadow .18s ease}
     .view-option[data-view="academic"]{--switch-glow-one:114,4,163;--switch-glow-two:165,58,214}
     .view-option[data-view="general"]{--switch-glow-one:0,98,163;--switch-glow-two:39,153,214}
-    .view-option::before{
-      content:"";
-      position:absolute;
-      inset:1px;
-      z-index:0;
-      border-radius:inherit;
-      pointer-events:none;
-      background:
-        radial-gradient(74px circle at var(--switch-glow-x) var(--switch-glow-y),rgba(var(--switch-glow-one),.34),transparent 70%),
-        radial-gradient(68px circle at calc(100% - var(--switch-glow-x)) var(--switch-glow-y),rgba(var(--switch-glow-two),.20),transparent 74%);
-      opacity:0;
-      transition:opacity .18s ease;
-    }
-    .view-option::after{
-      content:"";
-      position:absolute;
-      inset:0;
-      z-index:2;
-      padding:1px;
-      border-radius:inherit;
-      pointer-events:none;
-      background:radial-gradient(62px circle at var(--switch-glow-x) var(--switch-glow-y),rgba(var(--switch-glow-one),.95),rgba(var(--switch-glow-two),.48) 44%,transparent 78%);
-      -webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);
-      -webkit-mask-composite:xor;
-      mask-composite:exclude;
-      opacity:0;
-      transition:opacity .18s ease;
-    }
+    .view-option::before{content:"";position:absolute;inset:1px;z-index:0;border-radius:inherit;pointer-events:none;background:radial-gradient(74px circle at var(--switch-glow-x) var(--switch-glow-y),rgba(var(--switch-glow-one),.34),transparent 70%),radial-gradient(68px circle at calc(100% - var(--switch-glow-x)) var(--switch-glow-y),rgba(var(--switch-glow-two),.20),transparent 74%);opacity:0;transition:opacity .18s ease}
+    .view-option::after{content:"";position:absolute;inset:0;z-index:2;padding:1px;border-radius:inherit;pointer-events:none;background:radial-gradient(62px circle at var(--switch-glow-x) var(--switch-glow-y),rgba(var(--switch-glow-one),.95),rgba(var(--switch-glow-two),.48) 44%,transparent 78%);-webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);-webkit-mask-composite:xor;mask-composite:exclude;opacity:0;transition:opacity .18s ease}
     .view-option>span{position:relative;z-index:1}
     .view-option[aria-pressed="true"]{color:#fff}
     .view-option[aria-pressed="true"]::before,.view-option[aria-pressed="true"]::after{opacity:0}
     .view-option:focus-visible{outline:2px solid var(--focus);outline-offset:3px}
-    @media(hover:hover) and (pointer:fine){
-      .view-option:hover{color:#fff;box-shadow:0 0 15px rgba(var(--switch-glow-one),.08)}
-      .view-option:not([aria-pressed="true"]):hover::before{opacity:1}
-      .view-option:not([aria-pressed="true"]):hover::after{opacity:.9}
-    }
+    @media(hover:hover) and (pointer:fine){.view-option:hover{color:#fff;box-shadow:0 0 15px rgba(var(--switch-glow-one),.08)}.view-option:not([aria-pressed="true"]):hover::before{opacity:1}.view-option:not([aria-pressed="true"]):hover::after{opacity:.9}}
 
     .auth-actions{display:flex;align-items:center;gap:11px}
     .auth-button{border:0;background:transparent;color:#92969f;padding:9px 12px;border-radius:999px;font-weight:600;cursor:not-allowed}
@@ -138,25 +68,13 @@
     .book-heading h2{margin:0;font-size:1.08rem;font-weight:680;letter-spacing:-.025em}
 
     .test-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}
-    .test-card{min-width:0;padding:11px;border:1px solid var(--book-border);border-radius:14px;background:rgba(12,13,15,.74);transition:transform .16s ease,border-color .16s ease,background .16s ease}
+    .test-card{min-width:0;padding:11px;border:1px solid var(--book-border);border-radius:14px;background:rgba(12,13,15,.74);transition:transform .16s ease,border-color .16s ease,background .16s ease,box-shadow .2s ease}
     .test-card:hover{transform:translateY(-1px);border-color:var(--book-accent);background:rgba(15,16,19,.94)}
     .test-title{margin-bottom:10px;padding:2px 2px 9px;border-bottom:1px solid rgba(255,255,255,.055)}
     .test-title h3{margin:0;font-size:.93rem;font-weight:650;letter-spacing:-.01em}
 
-    .pathways{
-      display:grid;
-      grid-template-columns:minmax(0,1fr) minmax(0,1fr);
-      gap:8px;
-      transition:grid-template-columns .46s cubic-bezier(.2,.72,.16,1),gap .38s cubic-bezier(.2,.72,.16,1);
-    }
-    .pathway{
-      min-width:0;
-      overflow:hidden;
-      opacity:1;
-      transform:translate3d(0,0,0);
-      transition:opacity .3s cubic-bezier(.2,.72,.16,1),transform .46s cubic-bezier(.2,.72,.16,1);
-      will-change:opacity,transform;
-    }
+    .pathways{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:8px;transition:grid-template-columns .46s cubic-bezier(.2,.72,.16,1),gap .38s cubic-bezier(.2,.72,.16,1)}
+    .pathway{min-width:0;overflow:hidden;opacity:1;transform:translate3d(0,0,0);transition:opacity .3s cubic-bezier(.2,.72,.16,1),transform .46s cubic-bezier(.2,.72,.16,1);will-change:opacity,transform}
     body[data-test-view="academic"] .pathways{grid-template-columns:minmax(0,1fr) minmax(0,0fr);gap:0}
     body[data-test-view="general"] .pathways{grid-template-columns:minmax(0,0fr) minmax(0,1fr);gap:0}
     body[data-test-view="academic"] .pathway.general{opacity:0;pointer-events:none;transform:translate3d(14px,0,0)}
@@ -166,86 +84,17 @@
     .general .pathway-heading{background:var(--general)}
 
     .skill-stack,.neutral-skills{display:grid;gap:6px}
-    .skill-row{
-      --row-bg:#15171a;
-      --glow-x:50%;
-      --glow-y:50%;
-      --glow-one:114,4,163;
-      --glow-two:165,58,214;
-      --glow-fill-opacity:0;
-      --glow-border-opacity:0;
-      position:relative;
-      isolation:isolate;
-      overflow:hidden;
-      display:grid;
-      grid-template-columns:minmax(0,1fr) auto;
-      align-items:center;
-      gap:7px;
-      min-height:38px;
-      padding:8px 9px;
-      border:1px solid #2a2c31;
-      border-radius:8px;
-      background:var(--row-bg);
-      color:#e7e8ea;
-      text-decoration:none;
-      transition:transform .16s ease,border-color .18s ease,background .18s ease,box-shadow .18s ease;
-    }
-    .skill-row::after{
-      content:"";
-      position:absolute;
-      inset:0;
-      z-index:0;
-      pointer-events:none;
-      background:
-        radial-gradient(170px circle at var(--glow-x) var(--glow-y),rgba(var(--glow-one),.22),transparent 62%),
-        radial-gradient(150px circle at calc(100% - var(--glow-x)) var(--glow-y),rgba(var(--glow-two),.13),transparent 68%);
-      opacity:var(--glow-fill-opacity);
-      transition:opacity .18s ease;
-    }
-    .skill-row::before{
-      content:"";
-      position:absolute;
-      inset:-1px;
-      z-index:2;
-      padding:1px;
-      border-radius:inherit;
-      pointer-events:none;
-      background:radial-gradient(125px circle at var(--glow-x) var(--glow-y),rgba(var(--glow-one),.98),rgba(var(--glow-two),.52) 42%,transparent 75%);
-      -webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);
-      -webkit-mask-composite:xor;
-      mask-composite:exclude;
-      opacity:var(--glow-border-opacity);
-      transition:opacity .18s ease;
-    }
+    .skill-row{--row-bg:#15171a;--glow-x:50%;--glow-y:50%;--glow-one:114,4,163;--glow-two:165,58,214;--glow-fill-opacity:0;--glow-border-opacity:0;position:relative;isolation:isolate;overflow:hidden;display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:center;gap:7px;min-height:38px;padding:8px 9px;border:1px solid #2a2c31;border-radius:8px;background:var(--row-bg);color:#e7e8ea;text-decoration:none;transition:transform .16s ease,border-color .18s ease,background .18s ease,box-shadow .18s ease}
+    .skill-row::after{content:"";position:absolute;inset:0;z-index:0;pointer-events:none;background:radial-gradient(170px circle at var(--glow-x) var(--glow-y),rgba(var(--glow-one),.22),transparent 62%),radial-gradient(150px circle at calc(100% - var(--glow-x)) var(--glow-y),rgba(var(--glow-two),.13),transparent 68%);opacity:var(--glow-fill-opacity);transition:opacity .18s ease}
+    .skill-row::before{content:"";position:absolute;inset:-1px;z-index:2;padding:1px;border-radius:inherit;pointer-events:none;background:radial-gradient(125px circle at var(--glow-x) var(--glow-y),rgba(var(--glow-one),.98),rgba(var(--glow-two),.52) 42%,transparent 75%);-webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);-webkit-mask-composite:xor;mask-composite:exclude;opacity:var(--glow-border-opacity);transition:opacity .18s ease}
     .skill-row>*{position:relative;z-index:1}
     .skill-row[data-glow="academic"]{--glow-one:114,4,163;--glow-two:165,58,214}
     .skill-row[data-glow="general"]{--glow-one:0,98,163;--glow-two:39,153,214}
     .skill-row[data-glow="shared"]{--glow-one:114,4,163;--glow-two:0,98,163}
     .skill-row.available{cursor:pointer}
-    .skill-row.available:focus-visible{
-      --glow-fill-opacity:1;
-      --glow-border-opacity:1;
-      transform:translateY(-1px);
-      border-color:rgba(var(--glow-one),.58);
-      box-shadow:0 0 0 2px rgba(var(--glow-one),.28),0 10px 24px rgba(0,0,0,.24),0 0 24px rgba(var(--glow-one),.10);
-      outline:none;
-    }
+    .skill-row.available:focus-visible{--glow-fill-opacity:1;--glow-border-opacity:1;transform:translateY(-1px);border-color:rgba(var(--glow-one),.58);box-shadow:0 0 0 2px rgba(var(--glow-one),.28),0 10px 24px rgba(0,0,0,.24),0 0 24px rgba(var(--glow-one),.10);outline:none}
     .skill-row.unavailable{--row-bg:#121315;color:#696e77;cursor:default}
-    @media(hover:hover) and (pointer:fine){
-      .skill-row.available:hover{
-        --glow-fill-opacity:1;
-        --glow-border-opacity:1;
-        transform:translateY(-1px);
-        border-color:rgba(var(--glow-one),.58);
-        box-shadow:0 10px 24px rgba(0,0,0,.24),0 0 24px rgba(var(--glow-one),.10);
-        outline:none;
-      }
-      .skill-row.unavailable:hover{
-        --glow-fill-opacity:.28;
-        --glow-border-opacity:.32;
-        border-color:rgba(var(--glow-one),.20);
-      }
-    }
+    @media(hover:hover) and (pointer:fine){.skill-row.available:hover{--glow-fill-opacity:1;--glow-border-opacity:1;transform:translateY(-1px);border-color:rgba(var(--glow-one),.58);box-shadow:0 10px 24px rgba(0,0,0,.24),0 0 24px rgba(var(--glow-one),.10);outline:none}.skill-row.unavailable:hover{--glow-fill-opacity:.28;--glow-border-opacity:.32;border-color:rgba(var(--glow-one),.20)}}
     .skill-name{min-width:0;font-size:.77rem;font-weight:650}
     .skill-meta{display:flex;align-items:center;justify-content:flex-end;gap:4px;flex-wrap:wrap}
     .score-chip{display:inline-flex;align-items:center;min-height:19px;padding:2px 5px;border-radius:999px;background:#22252a;color:#b9bdc5;font-size:.58rem;font-weight:800}
@@ -260,9 +109,64 @@
     .panel h2{margin-top:0;font-size:1.65rem}
     .panel p{color:var(--soft)}
     .practice-options{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
-    .practice-option{padding:18px;border:1px solid var(--line);border-radius:13px;background:var(--surface-2)}
+    .practice-option{padding:18px;border:1px solid var(--line);border-radius:13px;background:var(--surface-2);color:var(--text);text-align:left}
+    button.practice-option{width:100%;cursor:pointer;transition:background .18s ease,transform .18s ease,border-color .18s ease}
+    button.practice-option:hover{background:#191b1f;border-color:#34373d;transform:translateY(-1px)}
+    button.practice-option:focus-visible{outline:2px solid var(--focus);outline-offset:3px}
     .practice-option strong{display:block;margin-bottom:6px}
     .practice-option small{color:var(--soft)}
+
+    /* Practice Lab > English Language Games */
+    .games-breadcrumb{display:flex;align-items:center;gap:8px;margin:0 0 18px;color:var(--muted);font-size:.78rem;font-weight:650}
+    .games-breadcrumb button{border:0;padding:0;background:transparent;color:var(--soft);cursor:pointer}
+    .games-breadcrumb button:hover,.games-breadcrumb button:focus-visible{color:var(--text);outline:none;text-decoration:underline;text-underline-offset:3px}
+    .games-heading{max-width:1040px;margin:0 auto 24px}
+    .games-heading h2{margin-bottom:7px}
+    .games-heading p{margin:0}
+    .games-layout{display:grid;grid-template-columns:minmax(360px,500px) minmax(340px,500px);gap:28px;align-items:start;justify-content:center;max-width:1040px;margin:0 auto}
+    .games-list{display:grid;gap:12px}
+    .game-card{position:relative;min-height:190px;border:1px solid #2b2d33;border-radius:16px;overflow:hidden;text-decoration:none;color:#fff;background:#111317;isolation:isolate}
+    .game-card.playable{cursor:pointer;transition:transform .22s cubic-bezier(.22,1,.36,1),border-color .22s ease,box-shadow .22s ease}
+    .game-card.playable:focus-visible{outline:2px solid var(--focus);outline-offset:4px}
+    .game-card.playable:hover,.game-card.playable:focus-visible{transform:translateY(-2px);border-color:rgba(255,122,26,.48);box-shadow:0 16px 36px rgba(0,0,0,.24),0 0 0 1px rgba(255,122,26,.06)}
+    .game-flag{position:absolute;inset:-10%;overflow:hidden;background-color:#d2d2d4;background-image:conic-gradient(from 90deg,#efeff0 25%,#707176 0 50%,#efeff0 0 75%,#707176 0);background-size:92px 92px;filter:grayscale(.05) contrast(.92);transform:scale(1.05) skewY(-.8deg);animation:flagDrift 4.8s ease-in-out infinite alternate;will-change:transform,background-position}
+    .game-flag span{display:none}
+    .game-flag::before{content:"";position:absolute;inset:-8%;background:linear-gradient(102deg,rgba(255,255,255,.48) 0 7%,rgba(255,255,255,.04) 15%,rgba(34,35,39,.26) 24%,rgba(255,255,255,.22) 34%,rgba(38,39,43,.18) 45%,rgba(255,255,255,.30) 57%,rgba(40,41,45,.23) 69%,rgba(255,255,255,.18) 82%,rgba(25,26,29,.22) 100%);mix-blend-mode:multiply;opacity:.72;transform:translateX(-3%);animation:flagFolds 5.2s ease-in-out infinite alternate}
+    .game-flag::after{content:"";position:absolute;inset:-5%;background:radial-gradient(ellipse at 18% 18%,rgba(255,255,255,.52),transparent 23%),radial-gradient(ellipse at 76% 28%,rgba(255,255,255,.30),transparent 22%),radial-gradient(ellipse at 38% 78%,rgba(30,31,35,.24),transparent 28%),linear-gradient(180deg,rgba(255,255,255,.08),rgba(18,19,22,.14));opacity:.72;animation:flagLight 4.8s ease-in-out infinite alternate}
+    @keyframes flagDrift{0%{transform:scale(1.08) skewY(-1deg) translate3d(-1.5%,-1%,0);background-position:0 0}100%{transform:scale(1.08) skewY(1.1deg) translate3d(1.5%,1%,0);background-position:10px -6px}}
+    @keyframes flagFolds{0%{transform:translateX(-5%) skewX(-1deg);opacity:.64}100%{transform:translateX(5%) skewX(1deg);opacity:.82}}
+    @keyframes flagLight{0%{transform:translate3d(-1%,0,0);opacity:.60}100%{transform:translate3d(2%,1%,0);opacity:.82}}
+    .game-card.playable:hover .game-flag,.game-card.playable:focus-visible .game-flag{animation-duration:3.5s}
+    .game-card.playable:hover .game-flag::before,.game-card.playable:focus-visible .game-flag::before{animation-duration:3.7s}
+    .game-card-content{position:relative;z-index:4;display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:190px;padding:22px;text-align:center}
+    .game-eyebrow{position:absolute;left:16px;bottom:14px;margin:0;color:rgba(255,255,255,.78);font-size:.58rem;font-weight:820;letter-spacing:.11em;text-transform:uppercase;text-shadow:0 1px 5px rgba(0,0,0,.38)}
+    .game-title{margin:0;color:#ff8a3d;font-family:"Trebuchet MS",Impact,ui-sans-serif,sans-serif;font-size:1.72rem;font-weight:900;letter-spacing:-.035em;text-transform:uppercase;-webkit-text-stroke:1px rgba(92,31,10,.76);text-shadow:1px 2px 0 rgba(54,20,8,.72),0 3px 12px rgba(0,0,0,.32);transform:rotate(-1deg);transition:transform .22s ease,text-shadow .22s ease,color .22s ease}
+    .game-card.playable:hover .game-title,.game-card.playable:focus-visible .game-title{color:#ff9a50;transform:rotate(-1deg) translateY(-1px) scale(1.035);text-shadow:1px 2px 0 rgba(54,20,8,.78),0 0 18px rgba(255,122,26,.30)}
+    .game-play-cue{position:absolute;right:15px;bottom:12px;display:inline-flex;align-items:center;gap:5px;padding:4px 7px;border-radius:999px;background:rgba(26,27,30,.40);backdrop-filter:blur(7px);color:rgba(255,255,255,.78);font-size:.57rem;font-weight:820;letter-spacing:.08em;text-transform:uppercase;opacity:.48;transform:translateY(2px);transition:opacity .2s ease,transform .2s ease,background .2s ease}
+    .game-card.playable:hover .game-play-cue,.game-card.playable:focus-visible .game-play-cue{opacity:1;transform:translateY(0);background:rgba(255,122,26,.24);color:#fff}
+    .future-game{min-height:86px;padding:17px;border:1px solid #24262b;border-radius:14px;background:#111316;color:#777c85;display:flex;align-items:center;justify-content:space-between;gap:18px}
+    .future-game strong{display:block;margin-bottom:5px;color:#8e939c;font-size:.76rem;letter-spacing:.08em;text-transform:uppercase}
+    .future-game span{font-size:.76rem;line-height:1.45}
+    .future-badge{flex:0 0 auto;padding:5px 8px;border-radius:999px;background:#191b1f;color:#666b74;font-size:.58rem;font-weight:800;text-transform:uppercase;letter-spacing:.06em}
+    .game-description{position:sticky;top:92px;min-height:250px;padding:24px;border:1px solid #2a2c31;border-radius:16px;background:linear-gradient(145deg,#15171a,#101215);box-shadow:inset 0 1px 0 rgba(255,255,255,.025)}
+    .game-description-kicker{margin-bottom:9px;color:#818690;font-size:.63rem;font-weight:800;letter-spacing:.09em;text-transform:uppercase}
+    .game-description h3{margin:0 0 12px;font-size:1.24rem;letter-spacing:-.025em}
+    .game-description p{margin:0;line-height:1.65;font-size:.9rem}
+    .game-description-content{transition:opacity .16s ease,transform .16s ease}
+    .game-description-content.is-changing{opacity:0;transform:translateY(4px)}
+    .mobile-game-detail{display:none;padding:17px;border:1px solid #2a2c31;border-radius:14px;background:#14161a}
+    .mobile-game-detail h3{margin:0 0 8px;font-size:1rem}
+    .mobile-game-detail p{margin:0 0 14px;line-height:1.55;font-size:.84rem}
+    .mobile-game-open{display:inline-flex;align-items:center;justify-content:center;min-height:38px;padding:8px 13px;border-radius:999px;background:#ff7a1a;color:#15100c;text-decoration:none;font-size:.76rem;font-weight:820}
+
+    /* Returned-from-test locator */
+    .skill-row.return-highlight{z-index:4;animation:returnSkillPulse 1.4s cubic-bezier(.22,1,.36,1) both}
+    .test-card.return-card{animation:returnCardPulse 1.4s cubic-bezier(.22,1,.36,1) both}
+    @keyframes returnSkillPulse{0%{transform:scale(1);filter:brightness(1)}22%{transform:scale(1.055);filter:brightness(1.22)}58%{transform:scale(1.025);filter:brightness(1.10)}100%{transform:scale(1);filter:brightness(1)}}
+    @keyframes returnCardPulse{0%,100%{box-shadow:none}28%{box-shadow:0 0 0 1px rgba(var(--return-rgb,101,120,184),.38),0 12px 30px rgba(0,0,0,.20)}68%{box-shadow:0 0 0 1px rgba(var(--return-rgb,101,120,184),.14)}}
+    .test-card[data-return-glow="academic"]{--return-rgb:114,4,163}
+    .test-card[data-return-glow="general"]{--return-rgb:0,98,163}
+    .test-card[data-return-glow="shared"]{--return-rgb:91,119,190}
 
     .history-popover{position:fixed;z-index:50;display:none;width:270px;padding:14px;border:1px solid #32343a;border-radius:12px;background:#141518;color:#fff;box-shadow:0 18px 44px rgba(0,0,0,.46)}
     .history-popover.visible{display:block}
@@ -275,15 +179,14 @@
     .book-16{--book-bg:#16130f;--book-border:#342b22;--book-accent:#9a7958}
 
     @media(max-width:1320px){.test-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
-    @media(max-width:1180px){
-      .header-inner{grid-template-columns:1fr auto}
-      .main-nav{order:3;grid-column:1/-1;justify-self:center}
-      .header-actions{justify-self:end;gap:18px}
-    }
+    @media(max-width:1180px){.header-inner{grid-template-columns:1fr auto}.main-nav{order:3;grid-column:1/-1;justify-self:center}.header-actions{justify-self:end;gap:18px}}
     @media(max-width:850px){
       .main-nav{justify-content:center;max-width:100%;overflow-x:auto}
       .header-actions{order:4;grid-column:1/-1;justify-self:center;width:100%;justify-content:center}
       .practice-options{grid-template-columns:repeat(2,1fr)}
+      .games-layout{grid-template-columns:1fr}
+      .game-description{display:none}
+      .mobile-game-detail.is-visible{display:block}
     }
     @media(max-width:600px){
       .header-inner{padding:13px 16px;gap:10px 14px}
@@ -300,11 +203,18 @@
       .pathways{gap:7px}
       .neutral-skills{width:84%}
       .practice-options{grid-template-columns:1fr}
+      .panel{padding:20px 16px}
+      .game-card,.game-card-content{min-height:154px}
+      .game-card-content{padding:18px}
+      .game-title{font-size:1.38rem}
+      .future-game{align-items:flex-start;flex-direction:column}
     }
     @media(prefers-reduced-motion:reduce){
       .intro-char{opacity:1;transform:none;filter:none;animation:none}
-      .skill-row,.skill-row::before,.skill-row::after,.view-indicator,.view-option,.view-option::before,.view-option::after,.pathways,.pathway{transition:none}
-      .skill-row.available:hover,.skill-row.available:focus-visible{transform:none}
+      .skill-row,.skill-row::before,.skill-row::after,.view-indicator,.view-option,.view-option::before,.view-option::after,.pathways,.pathway,.game-card,.game-title,.game-play-cue,.game-description-content{transition:none}
+      .skill-row.available:hover,.skill-row.available:focus-visible,.game-card.playable:hover,.game-card.playable:focus-visible{transform:none}
+      .game-flag,.game-flag::before,.game-flag::after{animation:none}
+      .skill-row.return-highlight,.test-card.return-card{animation:none}
     }
   </style>
   <link rel="stylesheet" href="./hub/seasonal-theme.css" />
@@ -349,9 +259,19 @@
     html[data-theme="light"] .score-chip{background:#edf0f3;color:#626873}
     html[data-theme="light"] .soon-text{color:#9a9fa8}
     html[data-theme="light"] .panel{border-color:var(--line);background:#fff}
-    html[data-theme="light"] .practice-option{border-color:var(--line);background:#f5f6f8}
+    html[data-theme="light"] .practice-option{border-color:var(--line);background:#f5f6f8;color:#17181b}
+    html[data-theme="light"] button.practice-option:hover{background:#eef0f3;border-color:#cfd3da}
     html[data-theme="light"] .history-popover{border-color:#d5d8de;background:#fff;color:#17181b;box-shadow:0 18px 44px rgba(35,39,47,.16)}
     html[data-theme="light"] .history-popover p{color:#686e78}
+    html[data-theme="light"] .game-card{border-color:#d7dbe1;background:#fff}
+    html[data-theme="light"] .game-flag{filter:saturate(.18) contrast(.95) brightness(1.08)}
+    html[data-theme="light"] .game-flag::after{background:linear-gradient(100deg,rgba(255,255,255,.12),rgba(255,255,255,.02) 48%,rgba(34,37,42,.24)),linear-gradient(0deg,rgba(0,0,0,.22),rgba(0,0,0,.04))}
+    html[data-theme="light"] .future-game{border-color:#e0e3e8;background:#f3f4f6;color:#858b95}
+    html[data-theme="light"] .future-game strong{color:#727984}
+    html[data-theme="light"] .future-badge{background:#e7e9ed;color:#7c828c}
+    html[data-theme="light"] .game-description{border-color:#dce0e6;background:linear-gradient(145deg,#fff,#f5f6f8);box-shadow:0 10px 28px rgba(31,35,42,.05)}
+    html[data-theme="light"] .game-description-kicker{color:#8b919b}
+    html[data-theme="light"] .mobile-game-detail{border-color:#dde1e7;background:#f4f5f7}
     @media(max-width:600px){.theme-toggle{width:32px;height:32px;flex-basis:32px}.theme-icon{width:15px;height:15px}}
     @media(prefers-reduced-motion:reduce){.theme-toggle{transition:none}.theme-toggle:active{transform:none}}
   </style>
@@ -411,7 +331,51 @@
 
 <main class="page">
   <section id="mock-tests"><div id="booksContainer"></div></section>
-  <section id="practice-lab" class="panel"><h2>Practice Lab</h2><p>Games and focused practice for vocabulary, grammar, pronunciation and other IELTS skills.</p><div class="practice-options"><div class="practice-option"><strong>◈ IELTS Games</strong><small>Vocabulary races and multiplayer challenges</small></div><div class="practice-option"><strong>⌁ Vocabulary</strong><small>Topic words, collocations and paraphrasing</small></div><div class="practice-option"><strong>◇ Grammar</strong><small>Accuracy practice for Speaking and Writing</small></div><div class="practice-option"><strong>◉ Pronunciation</strong><small>Sounds, stress, rhythm and clarity</small></div></div></section>
+  <section id="practice-lab" class="panel">
+    <h2>Practice Lab</h2>
+    <p>Games and focused practice for vocabulary, grammar, pronunciation and other IELTS skills.</p>
+    <div class="practice-options">
+      <button class="practice-option" type="button" data-open-games><strong>◈ English Language Games</strong><small>IELTS-focused and general English challenges</small></button>
+      <div class="practice-option"><strong>⌁ Vocabulary</strong><small>Topic words, collocations and paraphrasing</small></div>
+      <div class="practice-option"><strong>◇ Grammar</strong><small>Accuracy practice for Speaking and Writing</small></div>
+      <div class="practice-option"><strong>◉ Pronunciation</strong><small>Sounds, stress, rhythm and clarity</small></div>
+    </div>
+  </section>
+  <section id="ielts-games" class="panel" aria-labelledby="gamesTitle">
+    <div class="games-breadcrumb"><button type="button" data-back-practice>Practice Lab</button><span aria-hidden="true">›</span><span>English Language Games</span></div>
+    <div class="games-heading">
+      <h2 id="gamesTitle">English Language Games</h2>
+      <p>Games for vocabulary, spelling, typing and more — with a little more adrenaline.</p>
+    </div>
+    <div class="games-layout">
+      <div class="games-list">
+        <a class="game-card playable" id="wordRacingCard" data-game="word-racing" href="https://ielts-word-defender-live.pablosoad4747.workers.dev/" aria-describedby="gamesDescriptionText">
+          <div class="game-flag" aria-hidden="true">
+            <span style="--i:0"></span><span style="--i:1"></span><span style="--i:2"></span><span style="--i:3"></span><span style="--i:4"></span><span style="--i:5"></span><span style="--i:6"></span><span style="--i:7"></span>
+          </div>
+          <div class="game-card-content">
+            <span class="game-eyebrow">Typing · spelling · vocabulary</span>
+            <h3 class="game-title">IELTS Word Racing</h3>
+            <span class="game-play-cue" aria-hidden="true">Play <span>›</span></span>
+          </div>
+        </a>
+        <div class="mobile-game-detail" id="mobileGameDetail">
+          <h3>IELTS Word Racing</h3>
+          <p>Improve your IELTS typing speed and accuracy, spelling and vocabulary through fast-paced racing challenges. Practise alone or compete with others online.</p>
+          <a class="mobile-game-open" href="https://ielts-word-defender-live.pablosoad4747.workers.dev/">Play IELTS Word Racing</a>
+        </div>
+        <div class="future-game" aria-disabled="true"><div><strong>Coming soon</strong><span>More English language games are being developed.</span></div><span class="future-badge">In development</span></div>
+        <div class="future-game" aria-disabled="true"><div><strong>Coming soon</strong><span>More English language games are being developed.</span></div><span class="future-badge">In development</span></div>
+      </div>
+      <aside class="game-description" aria-live="polite">
+        <div class="game-description-content" id="gamesDescriptionContent">
+          <div class="game-description-kicker">Practice Lab</div>
+          <h3 id="gamesDescriptionTitle">English Language Games</h3>
+          <p id="gamesDescriptionText">Improve your English skills through games. Practise vocabulary, spelling, typing and more — learning English can be fun!</p>
+        </div>
+      </aside>
+    </div>
+  </section>
   <section id="progress" class="panel"><h2>My Progress</h2><p>Your two most recent attempts will appear beside each skill. Permanent cross-device tracking can be connected later through Cloudflare.</p></section>
 </main>
 <div class="history-popover" id="historyPopover" role="dialog" aria-live="polite"></div>
@@ -422,28 +386,92 @@ const books=[19,18,17,16],tests=[1,2,3,4];
 const allKeys=books.flatMap(book=>tests.map(test=>`${book}-${test}`));
 const availability={academicReading:new Set(allKeys),generalReading:new Set(allKeys),listening:new Set(allKeys.filter(key=>key!=='19-1')),academicWriting:new Set(['19-1','19-2','19-3','19-4','16-1','16-2','16-3','16-4','17-1','17-2','17-3','17-4','18-1','18-2','18-3','18-4']),generalWriting:new Set(['19-1','19-2','19-3','19-4','18-1','18-2','18-3','18-4','17-1','17-2','17-3','17-4','16-1','16-2','16-3','16-4']),speaking:new Set()};
 function getHref(type,book,test){const key=`${book}-${test}`;if(!availability[type].has(key))return'';if(type==='academicReading')return`./academic/cambridge-${book}/test-${test}/IELTS${book}%20Test%20${test}%20-%20Academic%20Reading.html`;if(type==='generalReading')return`./general-training/cambridge-${book}/test-${test}/IELTS${book}%20Test%20${test}%20-%20Reading%20-%20GT.html`;if(type==='listening')return`./listening/cambridge-${book}/test-${test}/IELTS${book}%20Test%20${test}%20-%20Listening.html`;if(type==='academicWriting')return`./academic/cambridge-${book}/test-${test}/IELTS${book}%20Test%20${test}%20-%20Academic%20Writing.html`;if(type==='generalWriting')return`./general-training/cambridge-${book}/test-${test}/IELTS${book}%20Test%20${test}%20-%20General%20Training%20Writing.html`;return''}
+
+const VIEW_STORAGE_KEY='ielts-pabs-test-view';
+const RETURN_STORAGE_KEY='ielts-pabs-return-test';
 let results={};try{results=JSON.parse(localStorage.getItem('ielts-pabs-results')||'{}')}catch(error){results={}}
 const attemptData=id=>Array.isArray(results[id])?results[id].slice(-2):[];
-function skillRow({book,test,type,label,symbol=''}){const href=getHref(type,book,test),id=`${book}-${test}-${type}`,attempts=attemptData(id),row=document.createElement(href?'a':'div'),glow=type.startsWith('academic')?'academic':type.startsWith('general')?'general':'shared';row.className=`skill-row ${href?'available':'unavailable'}`;row.dataset.historyId=id;row.dataset.skillLabel=label;row.dataset.glow=glow;if(href)row.href=href;const scores=attempts.map((a,i)=>`<span class="score-chip">${i+1} · ${a.band??a.score??'—'}</span>`).join('');row.innerHTML=`<span class="skill-name"><span class="skill-label">${symbol?`<span class="skill-symbol">${symbol}</span>`:''}${label}</span></span><span class="skill-meta">${scores}${href?'':'<span class="soon-text">Coming soon</span>'}</span>`;return row}
-function testCard(book,test){const card=document.createElement('article');card.className='test-card';card.innerHTML=`<div class="test-title"><h3>Test ${test}</h3></div><div class="pathways"><div class="pathway academic" data-zone="academic"><div class="pathway-heading">Academic</div><div class="skill-stack"></div></div><div class="pathway general" data-zone="general"><div class="pathway-heading">General Training</div><div class="skill-stack"></div></div></div><div class="shared-divider" aria-hidden="true"></div><div class="neutral-skills" data-zone="neutral"></div>`;const academic=card.querySelector('[data-zone="academic"]'),general=card.querySelector('[data-zone="general"]'),neutral=card.querySelector('[data-zone="neutral"]');academic.querySelector('.skill-stack').append(skillRow({book,test,type:'academicReading',label:'Reading'}),skillRow({book,test,type:'academicWriting',label:'Writing'}));general.querySelector('.skill-stack').append(skillRow({book,test,type:'generalReading',label:'Reading'}),skillRow({book,test,type:'generalWriting',label:'Writing'}));neutral.append(skillRow({book,test,type:'listening',label:'Listening',symbol:'◉'}),skillRow({book,test,type:'speaking',label:'Speaking',symbol:'◌'}));return card}
-function bookBlock(book){const section=document.createElement('section');section.className=`book-section book-${book}`;section.innerHTML=`<div class="book-heading"><h2>IELTS ${book}</h2></div>`;const grid=document.createElement('div');grid.className='test-grid';tests.forEach(test=>grid.appendChild(testCard(book,test)));section.appendChild(grid);return section}
+function skillRow({book,test,type,label,symbol=''}){
+  const href=getHref(type,book,test),id=`${book}-${test}-${type}`,attempts=attemptData(id),row=document.createElement(href?'a':'div'),glow=type.startsWith('academic')?'academic':type.startsWith('general')?'general':'shared';
+  row.className=`skill-row ${href?'available':'unavailable'}`;row.dataset.historyId=id;row.dataset.skillLabel=label;row.dataset.glow=glow;row.dataset.book=book;row.dataset.test=test;row.dataset.skillType=type;
+  if(href){row.href=href;row.addEventListener('click',()=>{returnFocusHandled=false;try{sessionStorage.setItem(RETURN_STORAGE_KEY,JSON.stringify({id,book,test,type,glow,at:Date.now()}))}catch(error){}})}
+  const scores=attempts.map((a,i)=>`<span class="score-chip">${i+1} · ${a.band??a.score??'—'}</span>`).join('');
+  row.innerHTML=`<span class="skill-name"><span class="skill-label">${symbol?`<span class="skill-symbol">${symbol}</span>`:''}${label}</span></span><span class="skill-meta">${scores}${href?'':'<span class="soon-text">Coming soon</span>'}</span>`;
+  return row
+}
+function testCard(book,test){const card=document.createElement('article');card.className='test-card';card.dataset.cardId=`${book}-${test}`;card.innerHTML=`<div class="test-title"><h3>Test ${test}</h3></div><div class="pathways"><div class="pathway academic" data-zone="academic"><div class="pathway-heading">Academic</div><div class="skill-stack"></div></div><div class="pathway general" data-zone="general"><div class="pathway-heading">General Training</div><div class="skill-stack"></div></div></div><div class="shared-divider" aria-hidden="true"></div><div class="neutral-skills" data-zone="neutral"></div>`;const academic=card.querySelector('[data-zone="academic"]'),general=card.querySelector('[data-zone="general"]'),neutral=card.querySelector('[data-zone="neutral"]');academic.querySelector('.skill-stack').append(skillRow({book,test,type:'academicReading',label:'Reading'}),skillRow({book,test,type:'academicWriting',label:'Writing'}));general.querySelector('.skill-stack').append(skillRow({book,test,type:'generalReading',label:'Reading'}),skillRow({book,test,type:'generalWriting',label:'Writing'}));neutral.append(skillRow({book,test,type:'listening',label:'Listening',symbol:'◉'}),skillRow({book,test,type:'speaking',label:'Speaking',symbol:'◌'}));return card}
+function bookBlock(book){const section=document.createElement('section');section.className=`book-section book-${book}`;section.dataset.book=book;section.innerHTML=`<div class="book-heading"><h2>IELTS ${book}</h2></div>`;const grid=document.createElement('div');grid.className='test-grid';tests.forEach(test=>grid.appendChild(testCard(book,test)));section.appendChild(grid);return section}
 function renderBooks(){const container=document.getElementById('booksContainer');books.forEach(book=>container.appendChild(bookBlock(book)))}
 function cleanHomeUrl(){return`${location.pathname}${location.search}`}
-function switchPanel(id,{updateUrl=true,scroll=true}={}){document.querySelectorAll('.nav-pill').forEach(btn=>btn.classList.toggle('active',btn.dataset.panel===id));document.getElementById('mock-tests').style.display=id==='mock-tests'?'block':'none';document.querySelectorAll('.panel').forEach(panel=>panel.classList.toggle('visible',panel.id===id));if(updateUrl)history.replaceState(null,'',id==='mock-tests'?cleanHomeUrl():`#${id}`);if(scroll)window.scrollTo({top:0,behavior:'auto'})}
+function switchPanel(id,{updateUrl=true,scroll=true}={}){
+  const navId=id==='ielts-games'?'practice-lab':id;
+  document.querySelectorAll('.nav-pill').forEach(btn=>btn.classList.toggle('active',btn.dataset.panel===navId));
+  document.getElementById('mock-tests').style.display=id==='mock-tests'?'block':'none';
+  document.querySelectorAll('.panel').forEach(panel=>panel.classList.toggle('visible',panel.id===id));
+  if(updateUrl)history.replaceState(null,'',id==='mock-tests'?cleanHomeUrl():`#${id}`);
+  if(scroll)window.scrollTo({top:0,behavior:'auto'})
+}
 document.querySelectorAll('.nav-pill').forEach(btn=>btn.addEventListener('click',()=>switchPanel(btn.dataset.panel)));
+document.querySelector('[data-open-games]').addEventListener('click',()=>switchPanel('ielts-games'));
+document.querySelector('[data-back-practice]').addEventListener('click',()=>switchPanel('practice-lab'));
 const logo=document.querySelector('.logo');logo.addEventListener('click',event=>{event.preventDefault();history.replaceState(null,'',cleanHomeUrl());window.scrollTo(0,0);location.reload()});
-const reducedMotion=matchMedia('(prefers-reduced-motion:reduce)').matches,finePointer=matchMedia('(hover:hover) and (pointer:fine)').matches&&!reducedMotion;if(finePointer)document.addEventListener('pointermove',event=>{const target=event.target.closest&&event.target.closest('.skill-row,.view-option');if(!target)return;const rect=target.getBoundingClientRect(),x=`${event.clientX-rect.left}px`,y=`${event.clientY-rect.top}px`;if(target.classList.contains('view-option')){target.style.setProperty('--switch-glow-x',x);target.style.setProperty('--switch-glow-y',y)}else{target.style.setProperty('--glow-x',x);target.style.setProperty('--glow-y',y)}},{passive:true});document.addEventListener('focusin',event=>{const target=event.target.closest&&event.target.closest('.skill-row,.view-option');if(!target)return;if(target.classList.contains('view-option')){target.style.setProperty('--switch-glow-x','50%');target.style.setProperty('--switch-glow-y','50%')}else{target.style.setProperty('--glow-x','50%');target.style.setProperty('--glow-y','50%')}});
-const popover=document.getElementById('historyPopover');document.addEventListener('mouseover',e=>{const row=e.target.closest('.skill-row.available');if(!row)return;const attempts=attemptData(row.dataset.historyId);if(!attempts.length)return;const r=row.getBoundingClientRect();popover.innerHTML=`<h4>${row.dataset.skillLabel} history</h4>`+attempts.map((a,i)=>`<p><strong>Attempt ${i+1}:</strong> Band ${a.band??a.score??'—'}${a.raw?` · ${a.raw}`:''}${a.date?`<br>${a.date}`:''}</p>`).join('');popover.style.left=`${Math.min(innerWidth-286,Math.max(12,r.left))}px`;popover.style.top=`${Math.min(innerHeight-180,r.bottom+8)}px`;popover.classList.add('visible')});document.addEventListener('mouseout',e=>{if(e.target.closest('.skill-row.available'))popover.classList.remove('visible')});
+const reducedMotion=matchMedia('(prefers-reduced-motion:reduce)').matches,finePointer=matchMedia('(hover:hover) and (pointer:fine)').matches&&!reducedMotion;
+if(finePointer)document.addEventListener('pointermove',event=>{const target=event.target.closest&&event.target.closest('.skill-row,.view-option');if(!target)return;const rect=target.getBoundingClientRect(),x=`${event.clientX-rect.left}px`,y=`${event.clientY-rect.top}px`;if(target.classList.contains('view-option')){target.style.setProperty('--switch-glow-x',x);target.style.setProperty('--switch-glow-y',y)}else{target.style.setProperty('--glow-x',x);target.style.setProperty('--glow-y',y)}},{passive:true});
+document.addEventListener('focusin',event=>{const target=event.target.closest&&event.target.closest('.skill-row,.view-option');if(!target)return;if(target.classList.contains('view-option')){target.style.setProperty('--switch-glow-x','50%');target.style.setProperty('--switch-glow-y','50%')}else{target.style.setProperty('--glow-x','50%');target.style.setProperty('--glow-y','50%')}});
+const popover=document.getElementById('historyPopover');
+document.addEventListener('mouseover',e=>{const row=e.target.closest('.skill-row.available');if(!row)return;const attempts=attemptData(row.dataset.historyId);if(!attempts.length)return;const r=row.getBoundingClientRect();popover.innerHTML=`<h4>${row.dataset.skillLabel} history</h4>`+attempts.map((a,i)=>`<p><strong>Attempt ${i+1}:</strong> Band ${a.band??a.score??'—'}${a.raw?` · ${a.raw}`:''}${a.date?`<br>${a.date}`:''}</p>`).join('');popover.style.left=`${Math.min(innerWidth-286,Math.max(12,r.left))}px`;popover.style.top=`${Math.min(innerHeight-180,r.bottom+8)}px`;popover.classList.add('visible')});
+document.addEventListener('mouseout',e=>{if(e.target.closest('.skill-row.available'))popover.classList.remove('visible')});
+
 const testViewSwitch=document.querySelector('.test-view-switch'),viewButtons=[...testViewSwitch.querySelectorAll('.view-option')],viewOrder=['all','academic','general'];let viewAnimationRunning=false;
+function readSavedTestView(){try{const saved=localStorage.getItem(VIEW_STORAGE_KEY);return viewOrder.includes(saved)?saved:'all'}catch(error){return'all'}}
+function persistTestView(view){try{localStorage.setItem(VIEW_STORAGE_KEY,view)}catch(error){}}
 function updateViewSwitch(view){const index=viewOrder.indexOf(view);testViewSwitch.dataset.active=view;testViewSwitch.style.setProperty('--view-index',index);viewButtons.forEach(button=>button.setAttribute('aria-pressed',String(button.dataset.view===view)))}
 function applyCardView(view){document.body.dataset.testView=view;document.querySelectorAll('.pathway.academic').forEach(pathway=>{const hidden=view==='general';pathway.setAttribute('aria-hidden',String(hidden));pathway.inert=hidden});document.querySelectorAll('.pathway.general').forEach(pathway=>{const hidden=view==='academic';pathway.setAttribute('aria-hidden',String(hidden));pathway.inert=hidden});popover.classList.remove('visible')}
-function applyTestView(view){updateViewSwitch(view);applyCardView(view)}
+function applyTestView(view,{persist=false}={}){updateViewSwitch(view);applyCardView(view);if(persist)persistTestView(view)}
 function waitForViewMotion(milliseconds){return new Promise(resolve=>setTimeout(resolve,milliseconds))}
-async function setTestView(view,{openTests=true,animate=true}={}){const index=viewOrder.indexOf(view);if(index<0||viewAnimationRunning)return;const testsActive=document.querySelector('.nav-pill[data-panel="mock-tests"]').classList.contains('active'),from=document.body.dataset.testView;if(from===view){if(openTests&&!testsActive)switchPanel('mock-tests');return}if(openTests&&!testsActive)switchPanel('mock-tests');if(!animate||reducedMotion){applyTestView(view);return}viewAnimationRunning=true;testViewSwitch.setAttribute('aria-busy','true');updateViewSwitch(view);try{if(from!=='all'&&view!=='all'){applyCardView('all');await waitForViewMotion(210);applyCardView(view);await waitForViewMotion(380)}else{applyCardView(view);await waitForViewMotion(470)}}finally{testViewSwitch.removeAttribute('aria-busy');viewAnimationRunning=false}}
+async function setTestView(view,{openTests=true,animate=true,persist=true}={}){const index=viewOrder.indexOf(view);if(index<0||viewAnimationRunning)return;const testsActive=document.querySelector('.nav-pill[data-panel="mock-tests"]').classList.contains('active'),from=document.body.dataset.testView;if(from===view){if(persist)persistTestView(view);if(openTests&&!testsActive)switchPanel('mock-tests');return}if(openTests&&!testsActive)switchPanel('mock-tests');if(!animate||reducedMotion){applyTestView(view,{persist});return}viewAnimationRunning=true;testViewSwitch.setAttribute('aria-busy','true');updateViewSwitch(view);if(persist)persistTestView(view);try{if(from!=='all'&&view!=='all'){applyCardView('all');await waitForViewMotion(210);applyCardView(view);await waitForViewMotion(380)}else{applyCardView(view);await waitForViewMotion(470)}}finally{testViewSwitch.removeAttribute('aria-busy');viewAnimationRunning=false}}
 viewButtons.forEach(button=>button.addEventListener('click',()=>setTestView(button.dataset.view)));
 testViewSwitch.addEventListener('keydown',event=>{const current=event.target.closest('.view-option');if(!current)return;let index=viewOrder.indexOf(current.dataset.view);if(event.key==='ArrowRight')index=(index+1)%viewOrder.length;else if(event.key==='ArrowLeft')index=(index-1+viewOrder.length)%viewOrder.length;else if(event.key==='Home')index=0;else if(event.key==='End')index=viewOrder.length-1;else return;event.preventDefault();const next=viewButtons[index];next.focus();setTestView(next.dataset.view)});
+
 const intro=document.getElementById('introMessage');const introText=intro.textContent;intro.textContent='';[...introText].forEach((char,index)=>{const span=document.createElement('span');span.className='intro-char';span.style.setProperty('--char-index',index);span.textContent=char===' '?'\u00a0':char;intro.appendChild(span)});
-renderBooks();applyTestView('all');const initialPanel=['practice-lab','progress'].includes(location.hash.slice(1))?location.hash.slice(1):'mock-tests';switchPanel(initialPanel,{scroll:false});if(initialPanel==='mock-tests'){history.replaceState(null,'',cleanHomeUrl());requestAnimationFrame(()=>window.scrollTo(0,0))}window.addEventListener('pageshow',()=>{if(!location.hash||location.hash==='#mock-tests')window.scrollTo(0,0)});
+
+const gameDescriptionContent=document.getElementById('gamesDescriptionContent'),gameDescriptionTitle=document.getElementById('gamesDescriptionTitle'),gameDescriptionText=document.getElementById('gamesDescriptionText'),wordRacingCard=document.getElementById('wordRacingCard'),mobileGameDetail=document.getElementById('mobileGameDetail');
+const gamesDefault={title:'English Language Games',text:'Improve your English skills through games. Practise vocabulary, spelling, typing and more — learning English can be fun!'};
+const wordRacingDescription={title:'IELTS Word Racing',text:'Improve your IELTS typing speed and accuracy, spelling and vocabulary through fast-paced racing challenges. Practise alone or compete with others online.'};
+let descriptionTimer=0;
+function setGameDescription(data){clearTimeout(descriptionTimer);gameDescriptionContent.classList.add('is-changing');descriptionTimer=setTimeout(()=>{gameDescriptionTitle.textContent=data.title;gameDescriptionText.textContent=data.text;gameDescriptionContent.classList.remove('is-changing')},reducedMotion?0:120)}
+wordRacingCard.addEventListener('mouseenter',()=>setGameDescription(wordRacingDescription));
+wordRacingCard.addEventListener('mouseleave',()=>setGameDescription(gamesDefault));
+wordRacingCard.addEventListener('focus',()=>setGameDescription(wordRacingDescription));
+wordRacingCard.addEventListener('blur',()=>setGameDescription(gamesDefault));
+const touchGames=matchMedia('(hover:none),(pointer:coarse)').matches;
+if(touchGames){wordRacingCard.addEventListener('click',event=>{event.preventDefault();mobileGameDetail.classList.add('is-visible');mobileGameDetail.scrollIntoView({behavior:reducedMotion?'auto':'smooth',block:'nearest'})})}
+
+function readReturnMarker(){try{const raw=sessionStorage.getItem(RETURN_STORAGE_KEY);if(!raw)return null;const marker=JSON.parse(raw);if(!marker||!marker.id||Date.now()-Number(marker.at||0)>21600000){sessionStorage.removeItem(RETURN_STORAGE_KEY);return null}return marker}catch(error){return null}}
+function consumeReturnMarker(){try{sessionStorage.removeItem(RETURN_STORAGE_KEY)}catch(error){}}
+let returnFocusHandled=false;
+function focusReturnedTest(){
+  if(returnFocusHandled)return false;
+  const marker=readReturnMarker();if(!marker)return false;
+  const row=document.querySelector(`.skill-row[data-history-id="${CSS.escape(marker.id)}"]`);if(!row){consumeReturnMarker();return false}
+  returnFocusHandled=true;consumeReturnMarker();
+  const card=row.closest('.test-card');if(card){card.dataset.returnGlow=marker.glow||'shared';card.classList.add('return-card')}
+  row.classList.add('return-highlight');
+  requestAnimationFrame(()=>requestAnimationFrame(()=>row.scrollIntoView({behavior:reducedMotion?'auto':'smooth',block:'center',inline:'nearest'})));
+  setTimeout(()=>{row.classList.remove('return-highlight');if(card){card.classList.remove('return-card');delete card.dataset.returnGlow}},reducedMotion?100:1500);
+  return true
+}
+
+renderBooks();
+const savedTestView=readSavedTestView();applyTestView(savedTestView);
+const hashPanel=location.hash.slice(1);const initialPanel=['practice-lab','ielts-games','progress'].includes(hashPanel)?hashPanel:'mock-tests';
+switchPanel(initialPanel,{scroll:false});
+const hasReturn=initialPanel==='mock-tests'&&Boolean(readReturnMarker());
+if(initialPanel==='mock-tests'){
+  history.replaceState(null,'',cleanHomeUrl());
+  if(hasReturn)requestAnimationFrame(()=>focusReturnedTest());else requestAnimationFrame(()=>window.scrollTo(0,0))
+}
+window.addEventListener('pageshow',()=>{if(returnFocusHandled)return;if(focusReturnedTest())return;if(!location.hash||location.hash==='#mock-tests')window.scrollTo(0,0)});
 </script>
 </body>
 </html>
