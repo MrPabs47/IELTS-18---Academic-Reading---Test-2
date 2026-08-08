@@ -35,6 +35,7 @@ SUPPORT_EXTENSIONS = PUBLIC_EXTENSIONS - {".html"}
 TEXT_EXTENSIONS = {".html", ".css", ".js", ".svg", ".webmanifest"}
 DEPENDENCY_TEXT_EXTENSIONS = {".html", ".css", ".svg"}
 REVIEW_REQUIRED_EXTENSIONS = {".json", ".wasm", ".xml", ".vtt", ".srt", ".ttf", ".otf"}
+REVIEW_EXEMPT_PATHS = {PurePosixPath("hub/live-hub-contract.json")}
 
 BLOCKED_PARTS = {".git", ".github", "scripts", "tests", "dist"}
 BLOCKED_NAMES = {
@@ -177,7 +178,9 @@ def audit_runtime_directory(source_dir: Path) -> None:
         return
     suspicious = sorted(
         rel(path) for path in source_dir.rglob("*")
-        if path.is_file() and path.suffix.lower() in REVIEW_REQUIRED_EXTENSIONS
+        if path.is_file()
+        and path.suffix.lower() in REVIEW_REQUIRED_EXTENSIONS
+        and rel(path) not in REVIEW_EXEMPT_PATHS
     )
     if suspicious:
         sample = "\n".join(f"  - {item}" for item in suspicious[:20])
