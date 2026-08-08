@@ -1,11 +1,11 @@
 # General Training Reading Test Parity Checklist
 
 **Use with:** `general-training/shared/IELTS_GT_READING_FAST_TRACK_WORKFLOW.md`  
-**Cambridge 19 reference-set update:** lifecycle, interaction, scoring, layout, logo and self-contained feedback parity through 8 August 2026
+**Cambridge 19 + IELTS 18 Test 1 regression update:** lifecycle, interaction, scoring, layout, logo, self-contained feedback and internal modal-overflow parity through 8 August 2026
 
 This is the short pass/fail specification for every General Training Reading production branch. The target HTML, local source files, answer key, accepted variants and evaluator remain authoritative for test-specific content.
 
-> **Dialog rule:** A Score guide, Answer Key or feedback button merely existing is not a pass. Open every available shared Reading dialog and verify its complete visible layout after any header, toolbar, mount or responsive CSS change.
+> **Dialog rule:** A Score guide, Answer Key or feedback button merely existing is not a pass. Open every available shared Reading dialog and verify its complete visible layout after any header, toolbar, mount or responsive CSS change. The outer dialog fitting the viewport is not enough: verify internal dialog/scroll/body/card geometry, including `scrollWidth <= clientWidth + 1`, normal wrapping for long feedback, and title/table/card containment.
 
 ---
 
@@ -319,6 +319,7 @@ This is the short pass/fail specification for every General Training Reading pro
 - [ ] PR targets `main`.
 - [ ] PR changed-file list is correct.
 - [ ] Live Hub Safety Guard passes.
+- [ ] Public dist guard / least-privilege public build validation passes.
 - [ ] Protected reference fingerprints are refreshed only after the relevant Reading validation passes and only for deliberately changed reference files.
 - [ ] Unrelated Live Hub contract repair, activation or seasonal work is kept in a separate PR.
 - [ ] Validation and environment limitations are documented.
@@ -333,7 +334,7 @@ This is the short pass/fail specification for every General Training Reading pro
 - [ ] Clean main confirmed.
 - [ ] Any exception is documented explicitly.
 
-## S. Cambridge 19 reference-set mandatory parity gate
+## S. Cambridge 19 reference-set + IELTS 18 Test 1 mandatory parity gate
 
 These checks capture regressions found while stabilising Cambridge 19 GT Tests 1–4 and are mandatory for Cambridge 18 onward.
 
@@ -385,6 +386,27 @@ These checks capture regressions found while stabilising Cambridge 19 GT Tests 1
 - [ ] Live Hub Safety Guard passes before merge.
 - [ ] Protected reference fingerprints are refreshed only after the relevant Reading validation passes and only for deliberately changed reference files.
 - [ ] Unrelated Live Hub contract repair, activation or seasonal work is kept in a separate PR.
+
+
+### S7. IELTS 18 Test 1 internal modal-overflow regression
+
+- [ ] Header no-wrap/truncation is scoped to the exact title/candidate/control that needs it; no whole header/right-header ancestor forces nested shell content to `white-space: nowrap`.
+- [ ] Shell mount ancestry is recorded and target CSS inheritance into fixed backdrops is understood before changing header/toolbar layout.
+- [ ] Score guide, Answer Key and score feedback are actually opened; outer-modal visibility alone is not a pass.
+- [ ] Score guide dialog and its scroll container satisfy `scrollWidth <= clientWidth + 1` at desktop width.
+- [ ] Score-feedback dialog, body, representative cards and long learner-facing text satisfy `scrollWidth <= clientWidth + 1`.
+- [ ] Long `Focus next`/feedback advice has computed `white-space: normal` (or equivalent intended wrapping) and wraps to multiple lines when required by available width.
+- [ ] Dialog titles, introductions, table headings/content, cards and close controls remain within the dialog bounding box.
+- [ ] Flex/grid descendants that need to shrink have a valid shrink path (for example `min-width: 0`) rather than forcing horizontal expansion.
+- [ ] The internal-overflow matrix is repeated at approximately 390 px with extra-large text.
+- [ ] A target-specific permanent regression protects the discovered inheritance/overflow failure class when the target required a repair.
+- [ ] A Playwright pointer-interception quirk is not confused with a layout defect: interaction is tested separately with real clicks where practical; layout geometry may be measured after a documented programmatic open only when the interaction itself is already proven.
+
+### S8. Cambridge 18 continuation gate
+
+- [ ] IELTS 18 GT Test 2 starts from current `main` and re-runs S1–S7 rather than assuming Test 1 implementation details transfer.
+- [ ] The target’s own HTML, evaluator, accepted variants, source roots and control shapes remain authoritative.
+- [ ] Any local defect is fixed locally unless a focused generic failing test proves a shared-shell blocker.
 
 ---
 
